@@ -1,0 +1,43 @@
+openapi: "3.0.0"
+info:
+  version: 0.0.1
+  title: poc
+  description: TODO
+  contact:
+    name: Omiga LLC
+    url: https://omiga.dool
+servers:
+  - url: http://{hostname}/poc/api # https://api.{hostname}/poc
+    variables:
+      hostname:
+        default: localhost
+security:
+  - bearerAuth: []
+paths:
+  /foo/{id}:
+    get:
+      operationId: getRobot
+      parameters:
+        - in: query
+          name: bar
+          schema:
+            type: string
+          required: false
+      responses:
+        "200":
+          description: TODO
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Foo"
+
+components:
+  schemas:
+    Foo:
+      type: object
+      required: [fieldA, fieldB]
+      properties:
+        fieldA:
+          type: string
+        fieldB:
+          type: boolean
