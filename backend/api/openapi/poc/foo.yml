@@ -14,10 +14,11 @@ servers:
 security:
   - bearerAuth: []
 paths:
-  /foo/{id}:
+  /foo/{fooId}:
     get:
       operationId: getRobot
       parameters:
+        - $ref: "#/components/parameters/fooId"
         - in: query
           name: bar
           schema:
@@ -32,6 +33,14 @@ paths:
                 $ref: "#/components/schemas/Foo"
 
 components:
+  parameters:
+    fooId:
+      name: fooId
+      in: path
+      description: TODO
+      required: true
+      schema:
+        type: integer
   schemas:
     Foo:
       type: object
