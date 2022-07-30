@@ -1,0 +1,28 @@
+﻿version: "3.8"
+
+services:
+  order-api:
+    image: ${DOCKER_REGISTRY-}orderapi
+    build:
+      context: .
+      dockerfile: order/order-api/Dockerfile
+      target: local
+    restart: unless-stopped
+    depends_on:
+      - postgresdb
+      - pulsar
+    networks:
+      - omiga_network
+
+  order-processor:
+    image: ${DOCKER_REGISTRY-}orderprocessor
+    build:
+      context: .
+      dockerfile: order/order-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    depends_on:
+      - postgresdb
+      - pulsar
+    networks:
+      - omiga_network

@@ -6,6 +6,7 @@ networks:
 
 volumes:
   omiga_pulsar_data:
+  omiga_postgres_data:
 
 
 services:
@@ -23,6 +24,20 @@ services:
         aliases:
           - dozzle.localhost
 
+  postgresdb:
+    image: postgres:14.4-alpine
+    hostname: postgresdb
+    restart: unless-stopped
+    volumes:
+      - omiga_postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: "12345678"
+    ports:
+      - "5432:5432"
+    networks:
+      omiga_network:
+        aliases:
+          - postgres.localhost
   pulsar:
     image: apachepulsar/pulsar:latest
     command: bin/pulsar standalone

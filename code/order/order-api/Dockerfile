@@ -1,0 +1,35 @@
+# syntax=docker/dockerfile:1.4.1
+ARG FINAL_IMAGE=alpine/git:latest
+ARG BUILD_IMAGE=golang:1.18
+
+FROM $FINAL_IMAGE as base
+LABEL maintainer="morteza@omiga.com.au"
+
+FROM $BUILD_IMAGE as build
+
+ENV CGO_ENABLED = 0
+
+RUN mkdir -p /src/order/order-api
+
+COPY go.mod /src/
+COPY go.sum /src/
+COPY order/order-api /src/order/order-api
+
+WORKDIR /src/order/order-api
+
+RUN --mount=type=cache,target=/go go mod tidy
+RUN --mount=type=cache,target=/go go get -v -t ./...
+RUN --mount=type=cache,target=/go go build -v -o /bin/order-api main.go
+
+FROM build AS local
+CMD ["/bin/order-api"]
+
+FROM build AS test
+RUN --mount=type=cache,target=/go go mod tidy
+RUN --mount=type=cache,target=/go go test ./...
+
+FROM base AS final
+
+WORKDIR /
+COPY --from=build /bin/order-api .
+CMD ["/bin/order-api"]

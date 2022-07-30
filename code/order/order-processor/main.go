@@ -18,4 +18,6 @@ func main() {
 	}
 
 	defer client.Close()
+
+	time.Sleep(1 * time.Minute)
 }
