@@ -1,6 +1,0 @@
-package: fooapi
-generate:
-  echo-server: true
-  models: true
-  embedded-spec: true
-output: foo.gen.go

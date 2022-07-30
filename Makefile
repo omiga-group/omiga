@@ -1,40 +1,30 @@
-# Build variables
-POC_API_BINARY_NAME = poc
-BACKEND_DIR = backend/
-BUILD_DIR ?= bin
+SHELL = /bin/bash
+CURRENT_DIRECTORY = $(shell pwd)
 
+# Go variables
+GOFILES = $(shell find . -type f -name '*.go' -not -path "*/mock/*.go" -not -path "*.pb.go")
 
 .PHONY: all
-all: dep generate build-poc #install ## Runs dep generate build-api build-simulator
-
-.PHONY: clean
-clean: ## Clean the working area and the project
-	@rm -rf $(BUILD_DIR)/
+all: dep generate ## Runs dep generate
 
 .PHONY: dep
 dep: ## Install dependencies
-	@cd $(BACKEND_DIR) && \
-	go install github.com/golang/mock/mockgen@v1.6.0 && \
-	go get -u -d github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest && \
-	go mod tidy && \
+	@go get -d golang.org/x/tools/cmd/cover
+	@go get -d github.com/mattn/goveralls
+	@go mod tidy
+	@go get -v -t ./...
 
 .PHONY: generate
-generate: ## Generates (golang) codes from different sources
-	@cd $(BACKEND_DIR) && \
-	go generate ./...
+generate: ## Generate models from GraphQL Schema
+	@go generate ./...
 
-.PHONY: build-poc
-build-api: GOARGS += -o $(BUILD_DIR)/$(POC_API_BINARY_NAME) ## Build API
-build-api:
-	@go build -v $(GOARGS) ./backend/poc/main.go
+.PHONY: lint
+lint: ## run golanci-lint locally
+	@docker run --rm -v $(CURRENT_DIRECTORY):/app -w /app golangci/golangci-lint:latest golangci-lint run -v
 
-
-.PHONY: test
-test: ## Run unit tests
-	@cd api && go test  -covermode=count ./...
-	@cd simulator && go test  -covermode=count ./...
-	@cd shared && go test  -covermode=count ./...
-
+.PHONY: format
+format: ## Format the source
+	@goimports -w $(GOFILES)
 
 .PHONY: list
 list: ## List all make targets
@@ -44,7 +34,6 @@ list: ## List all make targets
 .DEFAULT_GOAL := help
 help: ## Get help output
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
-
 
 # Variable outputting/exporting rules
 var-%: ; @echo $($*)
