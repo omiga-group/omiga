@@ -1,23 +1,11 @@
 package main
 
 import (
-	"log"
-	"time"
-
-	"github.com/apache/pulsar-client-go/pulsar"
+	"github.com/micro-business/go-core/pkg/util"
+	"github.com/omiga-group/omiga/code/order/order-processor/commands"
 )
 
 func main() {
-	client, err := pulsar.NewClient(pulsar.ClientOptions{
-		URL:               "pulsar://pulsar.localhost:6650",
-		OperationTimeout:  30 * time.Second,
-		ConnectionTimeout: 30 * time.Second,
-	})
-	if err != nil {
-		log.Fatalf("Could not instantiate Pulsar client: %v", err)
-	}
-
-	defer client.Close()
-
-	time.Sleep(1 * time.Minute)
+	rootCmd := commands.Root()
+	util.PrintIfError(rootCmd.Execute())
 }

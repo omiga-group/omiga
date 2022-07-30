@@ -22,7 +22,7 @@ RUN --mount=type=cache,target=/go go get -v -t ./...
 RUN --mount=type=cache,target=/go go build -v -o /bin/order-processor main.go
 
 FROM build AS local
-CMD ["/bin/order-processor"]
+CMD ["/bin/order-processor", "start"]
 
 FROM build AS test
 RUN --mount=type=cache,target=/go go mod tidy
@@ -32,4 +32,4 @@ FROM base AS final
 
 WORKDIR /
 COPY --from=build /bin/order-processor .
-CMD ["/bin/order-processor"]
+CMD ["/bin/order-processor", "start"]

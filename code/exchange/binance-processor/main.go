@@ -1,7 +1,11 @@
 package main
 
-import "time"
+import (
+	"github.com/micro-business/go-core/pkg/util"
+	"github.com/omiga-group/omiga/code/exchange/binance-processor/commands"
+)
 
 func main() {
-	time.Sleep(1 * time.Minute)
+	rootCmd := commands.Root()
+	util.PrintIfError(rootCmd.Execute())
 }
