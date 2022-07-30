@@ -1,0 +1,55 @@
+version: '3.8'
+
+networks:
+  omiga_network:
+
+
+volumes:
+  omiga_pulsar_data:
+
+
+services:
+  # Dozzle Docker Log Viewer - https://dozzle.dev/
+  # Local: http://dozzle.localhost:9999
+  # Repo: https://github.com/amir20/dozzle
+  dozzle:
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9999:8080
+    networks:
+      omiga_network:
+        aliases:
+          - dozzle.localhost
+
+  pulsar:
+    image: apachepulsar/pulsar:latest
+    command: bin/pulsar standalone
+    hostname: pulsar
+    ports:
+      - "8080:8080"
+      - "6650:6650"
+    restart: unless-stopped
+    volumes:
+      - omiga_pulsar_data:/pulsar/data
+    networks:
+      omiga_network:
+        aliases:
+          - pulsar.localhost
+
+  dashboard:
+    image: apachepulsar/pulsar-manager:latest
+    ports:
+      - "9527:9527"
+      - "7750:7750"
+    depends_on:
+      - pulsar
+    links:
+      - pulsar
+    environment:
+      SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties
+    networks:
+      omiga_network:
+        aliases:
+          - dashboard.localhost
