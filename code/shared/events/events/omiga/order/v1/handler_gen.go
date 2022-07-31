@@ -10,4 +10,3 @@ import (
 type Subscriber interface {
   Handle(ctx context.Context, event DomainEvent) error
 }
-  

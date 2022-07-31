@@ -21,7 +21,6 @@ channels:
     publish:
       message:
         $ref: "#/components/messages/orderEvent"
-      operationId: onLightMeasured
 
 components:
   messages:

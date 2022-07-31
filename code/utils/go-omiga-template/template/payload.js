@@ -63,7 +63,7 @@ import (
 type ID struct {
   UUID uuid.UUID
 }
-  `;
+`;
 
   const payloadUtils = `
 func (i *ID) UnmarshalJSON(b []byte) error {
@@ -75,7 +75,7 @@ func (i *ID) UnmarshalJSON(b []byte) error {
 
   return nil
 }
-  `;
+`;
 
   models.forEach((model) => {
     payloadContent += `

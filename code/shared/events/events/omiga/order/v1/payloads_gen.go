@@ -13,7 +13,7 @@ import (
 type ID struct {
   UUID uuid.UUID
 }
-  
+
     
     // DomainEvent represents a DomainEvent model.
 type DomainEvent struct {
@@ -65,4 +65,3 @@ func (i *ID) UnmarshalJSON(b []byte) error {
 
   return nil
 }
-  
