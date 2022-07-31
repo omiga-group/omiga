@@ -13,3 +13,16 @@ services:
       - pulsar
     networks:
       - omiga_network
+
+  ftx-processor:
+    image: ${DOCKER_REGISTRY-}ftxprocessor
+    build:
+      context: .
+      dockerfile: exchange/ftx-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    depends_on:
+      - postgresdb
+      - pulsar
+    networks:
+      - omiga_network

@@ -1,0 +1,5 @@
+integration:
+  api-key: "testing api key"
+service:
+  name: ""
+  port: 98760
