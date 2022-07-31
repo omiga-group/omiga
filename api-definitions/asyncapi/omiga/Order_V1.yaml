@@ -1,0 +1,106 @@
+asyncapi: 2.4.0
+
+info:
+  title: Order
+  version: 1.0.0
+  contact:
+    name: Order Domain
+    email: morteza@omiga.com.au
+
+servers:
+  production:
+    url: morteza@omiga.com.au
+    protocol: Pulsar
+    description: N.A.
+
+defaultContentType: application/json
+
+channels:
+  order.v1.event:
+    description: Enterprise topic for Order events
+    publish:
+      message:
+        $ref: "#/components/messages/orderEvent"
+      operationId: onLightMeasured
+
+components:
+  messages:
+    orderEvent:
+      description: An event describing a change in Order domain.
+      payload:
+        $ref: "#/components/schemas/domainEvent"
+
+  schemas:
+    domainEvent:
+      type: object
+      additionalProperties: false
+      required:
+        - metadata
+        - data
+      properties:
+        metadata:
+          $ref: "#/components/schemas/metadata"
+        data:
+          $ref: "#/components/schemas/data"
+
+    metadata:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - source
+        - type
+        - subject
+        - time
+        - correlationId
+        - actor
+      properties:
+        id:
+          type: string
+          description: The unique message ID
+          format: uuid
+        source:
+          type: string
+          format: urn
+          example: urn:nz:co:omiga:example
+        type:
+          type: string
+          enum:
+            - orderCreated
+            - orderUpdated
+        subject:
+          type: string
+        time:
+          type: string
+          format: date-time
+          example: 2021-03-25T23:04:34.00Z
+        correlationId:
+          type: string
+          format: uuid
+        actor:
+          type: string
+          format: urn
+          example: TBD
+
+    data:
+      type: object
+      additionalProperties: false
+      required:
+        - afterState
+      properties:
+        beforeState:
+          $ref: "#/components/schemas/order"
+        afterState:
+          $ref: "#/components/schemas/order"
+
+    order:
+      $id: order
+      type: object
+      additionalProperties: true
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: The unique order ID
+          format: uuid

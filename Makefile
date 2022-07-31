@@ -16,6 +16,7 @@ dep: ## Install dependencies
 
 .PHONY: generate
 generate: ## Generate models from GraphQL Schema
+	@./api-definitions/asyncapi/scripts/generate-all.sh
 	@go generate ./...
 
 .PHONY: lint
