@@ -11,6 +11,7 @@ all: dep generate ## Runs dep generate
 dep: ## Install dependencies
 	@go get -d golang.org/x/tools/cmd/cover
 	@go get -d github.com/mattn/goveralls
+	@go install github.com/google/wire/cmd/wire@latest
 	@go mod tidy
 	@go get -v -t ./...
 

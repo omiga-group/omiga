@@ -53,7 +53,7 @@ services:
         aliases:
           - pulsar.localhost
 
-  dashboard:
+  pulsar-dashboard:
     image: apachepulsar/pulsar-manager:latest
     ports:
       - "9527:9527"
@@ -67,4 +67,4 @@ services:
     networks:
       omiga_network:
         aliases:
-          - dashboard.localhost
+          - pulsar-dashboard.localhost

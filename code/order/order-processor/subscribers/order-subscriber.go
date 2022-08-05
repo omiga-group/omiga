@@ -4,15 +4,19 @@ import (
 	"context"
 
 	orderv1 "github.com/omiga-group/omiga/code/shared/events/events/omiga/order/v1"
+	"go.uber.org/zap"
 )
 
-type OrderSubscriber struct {
+type orderSubscriber struct {
+	logger *zap.SugaredLogger
 }
 
-func NewOrderSubscriber() (orderv1.Subscriber, error) {
-	return OrderSubscriber{}, nil
+func NewOrderSubscriber(logger *zap.SugaredLogger) (orderv1.Subscriber, error) {
+	return orderSubscriber{
+		logger: logger,
+	}, nil
 }
 
-func (o OrderSubscriber) Handle(ctx context.Context, event orderv1.DomainEvent) error {
+func (o orderSubscriber) Handle(ctx context.Context, event orderv1.DomainEvent) error {
 	return nil
 }
