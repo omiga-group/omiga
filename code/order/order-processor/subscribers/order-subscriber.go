@@ -3,7 +3,7 @@ package subscribers
 import (
 	"context"
 
-	orderv1 "github.com/omiga-group/omiga/code/shared/events/events/omiga/order/v1"
+	orderv1 "github.com/omiga-group/omiga/code/shared/clients/events/omiga/order/v1"
 	"go.uber.org/zap"
 )
 

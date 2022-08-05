@@ -7,7 +7,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/omiga-group/omiga/code/shared/messaging"
+	"github.com/omiga-group/omiga/code/shared/enterprise/messaging"
 	"go.uber.org/zap"
 )
 

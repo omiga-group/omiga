@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
-	"github.com/omiga-group/omiga/code/shared/messaging"
+	"github.com/omiga-group/omiga/code/shared/enterprise/messaging"
 	"go.uber.org/zap"
 )
 

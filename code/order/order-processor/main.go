@@ -5,7 +5,7 @@ import (
 
 	"github.com/micro-business/go-core/pkg/util"
 	"github.com/omiga-group/omiga/code/order/order-processor/commands"
-	"github.com/omiga-group/omiga/code/shared/configuration"
+	"github.com/omiga-group/omiga/code/shared/enterprise/configuration"
 )
 
 func main() {

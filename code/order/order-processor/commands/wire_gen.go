@@ -8,8 +8,8 @@ package commands
 
 import (
 	"github.com/omiga-group/omiga/code/order/order-processor/subscribers"
-	"github.com/omiga-group/omiga/code/shared/events/events/omiga/order/v1"
-	"github.com/omiga-group/omiga/code/shared/messaging/pulsar"
+	"github.com/omiga-group/omiga/code/shared/clients/events/omiga/order/v1"
+	"github.com/omiga-group/omiga/code/shared/enterprise/messaging/pulsar"
 	"go.uber.org/zap"
 )
 

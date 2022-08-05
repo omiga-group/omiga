@@ -16,4 +16,4 @@ find ../../code/shared/events -name "*_gen.go" -type f -delete || true
 # AsyncApi
 docker build --progress=plain -f Dockerfile -t asyncapi-generator ../../
 docker create --name extract-asyncapi-generator asyncapi-generator
-docker cp extract-asyncapi-generator:/generated-code/. "../../code/shared/events"
+docker cp extract-asyncapi-generator:/generated-code/. "../../code/shared/clients"

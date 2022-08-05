@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/omiga-group/omiga/code/shared/messaging/pulsar"
+	"github.com/omiga-group/omiga/code/shared/enterprise/messaging/pulsar"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
