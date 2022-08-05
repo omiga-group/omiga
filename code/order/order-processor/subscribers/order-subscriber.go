@@ -12,11 +12,11 @@ type orderSubscriber struct {
 }
 
 func NewOrderSubscriber(logger *zap.SugaredLogger) (orderv1.Subscriber, error) {
-	return orderSubscriber{
+	return &orderSubscriber{
 		logger: logger,
 	}, nil
 }
 
-func (o orderSubscriber) Handle(ctx context.Context, event orderv1.DomainEvent) error {
+func (o *orderSubscriber) Handle(ctx context.Context, event orderv1.DomainEvent) error {
 	return nil
 }
