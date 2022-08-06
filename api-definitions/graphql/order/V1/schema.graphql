@@ -1,0 +1,132 @@
+scalar Time
+scalar Cursor
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"""
+An object with an ID
+"""
+interface Node {
+  """
+  The id of the object.
+  """
+  id: ID!
+}
+
+type Query {
+  order(
+    """
+    ID
+    """
+    id: ID
+  ): Order
+
+  orders(
+    """
+    Returns the items in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first n items from the list.
+    """
+    first: Int
+
+    """
+    Returns the items in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last n items from the list.
+    """
+    last: Int
+  ): OrderConnection
+}
+
+type Mutation {
+    createOrder(input: CreateOrderInput!): OrderPayload
+    updateOrder(input: UpdateOrderInput!): OrderPayload
+}
+
+input CreateOrderInput {
+    clientMutationId: String
+    id: ID!
+}
+
+input UpdateOrderInput {
+    clientMutationId: String
+    id: ID!
+}
+
+type OrderPayload {
+    clientMutationId: String
+    order: Order
+}
+
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: Cursor
+
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: Cursor
+}
+
+type Order implements Node {
+  id: ID!
+}
+
+"""
+A connection to a list of items.
+"""
+type OrderConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [OrderEdge]
+
+  """
+  Total number of orders
+  """
+  totalCount: Int
+}
+
+"""
+An edge in a connection.
+"""
+type OrderEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Order
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: Cursor!
+}
