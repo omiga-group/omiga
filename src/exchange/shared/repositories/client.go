@@ -22,8 +22,6 @@ type Client struct {
 	Schema *migrate.Schema
 	// Exchange is the client for interacting with the Exchange builders.
 	Exchange *ExchangeClient
-	// additional fields for node api
-	tables tables
 }
 
 // NewClient creates a new client configured with the given options.

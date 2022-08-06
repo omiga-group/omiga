@@ -25,7 +25,6 @@ type ExchangeQuery struct {
 	order      []OrderFunc
 	fields     []string
 	predicates []predicate.Exchange
-	loadTotal  []func(context.Context, []*Exchange) error
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -319,11 +318,6 @@ func (eq *ExchangeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Exc
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
-	}
-	for i := range eq.loadTotal {
-		if err := eq.loadTotal[i](ctx, nodes); err != nil {
-			return nil, err
-		}
 	}
 	return nodes, nil
 }
