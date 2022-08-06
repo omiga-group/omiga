@@ -11,9 +11,9 @@ cleanup() {
 trap cleanup EXIT
 
 # Delete previously generated golang files
-find ../../code/shared/events -name "*_gen.go" -type f -delete || true
+find ../../src/shared/events -name "*_gen.go" -type f -delete || true
 
 # AsyncApi
 docker build --progress=plain -f Dockerfile -t asyncapi-generator ../../
 docker create --name extract-asyncapi-generator asyncapi-generator
-docker cp extract-asyncapi-generator:/generated-code/. "../../code/shared/clients"
+docker cp extract-asyncapi-generator:/generated-src/. "../../src/shared/clients"
