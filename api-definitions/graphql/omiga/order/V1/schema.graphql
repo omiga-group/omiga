@@ -44,6 +44,8 @@ type Query {
     Returns the last n items from the list.
     """
     last: Int
+
+    where: OrderWhereInput
   ): OrderConnection
 }
 

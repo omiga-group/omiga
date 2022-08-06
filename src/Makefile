@@ -11,14 +11,15 @@ all: dep generate ## Runs dep generate
 dep: ## Install dependencies
 	@go get -d golang.org/x/tools/cmd/cover
 	@go get -d github.com/mattn/goveralls
-	@go install github.com/google/wire/cmd/wire@latest
 	@go mod tidy
-	@go get github.com/google/wire/cmd/wire@v0.5.0
-	@go get -v -t ./...
+	@go install github.com/google/wire/cmd/wire@latest
+	@go install entgo.io/ent/cmd/ent@latest
 
 .PHONY: generate
 generate: ## Generate models from GraphQL Schema
 	@../api-definitions/asyncapi/scripts/generate-all.sh
+	@go get github.com/google/wire/cmd/wire@latest
+	@go get entgo.io/ent/cmd/ent@latest
 	@go generate ./...
 
 .PHONY: lint
