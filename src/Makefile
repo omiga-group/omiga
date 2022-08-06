@@ -22,7 +22,7 @@ generate: ## Generate models from GraphQL Schema
 
 .PHONY: lint
 lint: ## run golanci-lint locally
-	@docker run --rm -v $(CURRENT_DIRECTORY/..):/app -w /app golangci/golangci-lint:latest golangci-lint run -v
+	@docker run --rm -v $(CURRENT_DIRECTORY):/app -w /app golangci/golangci-lint:latest golangci-lint run -v
 
 .PHONY: format
 format: ## Format the source

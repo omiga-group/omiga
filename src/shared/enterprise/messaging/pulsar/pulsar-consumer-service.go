@@ -72,8 +72,6 @@ func (pmcs *pulsarMessageConsumerService) Diconnect(ctx context.Context) {
 		pmcs.pulsarClient.Close()
 		pmcs.pulsarClient = nil
 	}
-
-	return
 }
 
 func (pmcs *pulsarMessageConsumerService) Consume(ctx context.Context) (

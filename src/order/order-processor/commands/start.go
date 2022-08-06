@@ -22,7 +22,9 @@ func startCommand() *cobra.Command {
 		Long:  "Start order-processor",
 		Run: func(cmd *cobra.Command, args []string) {
 			var pulsarSettings pulsar.PulsarSettings
-			mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings)
+			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {
+				log.Fatal(err)
+			}
 
 			logger, err := zap.NewDevelopment()
 			if err != nil {
