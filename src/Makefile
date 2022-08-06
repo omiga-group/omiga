@@ -12,15 +12,13 @@ dep: ## Install dependencies
 	@go get -d golang.org/x/tools/cmd/cover
 	@go get -d github.com/mattn/goveralls
 	@go mod tidy
-	@go install github.com/google/wire/cmd/wire@latest
-	@go install entgo.io/ent/cmd/ent@latest
 
 .PHONY: generate
 generate: ## Generate models from GraphQL Schema
 	@../api-definitions/asyncapi/scripts/generate-all.sh
-	@go get github.com/google/wire/cmd/wire@latest
-	@go get entgo.io/ent/cmd/ent@latest
-	@go generate ./...
+	@go install github.com/google/wire/cmd/wire@latest
+	@go install entgo.io/ent/cmd/ent@latest
+	@GOFLAGS=-mod=mod go generate ./...
 
 .PHONY: lint
 lint: ## run golanci-lint locally

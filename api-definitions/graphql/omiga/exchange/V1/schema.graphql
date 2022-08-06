@@ -1,0 +1,134 @@
+scalar Time
+scalar Cursor
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"""
+An object with an ID
+"""
+interface Node {
+  """
+  The id of the object.
+  """
+  id: ID!
+}
+
+type Query {
+  exchange(
+    """
+    ID
+    """
+    id: ID
+  ): Exchange
+
+  exchanges(
+    """
+    Returns the items in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first n items from the list.
+    """
+    first: Int
+
+    """
+    Returns the items in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last n items from the list.
+    """
+    last: Int
+
+    where: ExchangeWhereInput
+  ): ExchangeConnection
+}
+
+type Mutation {
+    createExchange(input: CreateExchangeInput!): ExchangePayload
+    updateExchange(input: UpdateExchangeInput!): ExchangePayload
+}
+
+input CreateExchangeInput {
+    clientMutationId: String
+    id: ID!
+}
+
+input UpdateExchangeInput {
+    clientMutationId: String
+    id: ID!
+}
+
+type ExchangePayload {
+    clientMutationId: String
+    exchange: Exchange
+}
+
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: Cursor
+
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: Cursor
+}
+
+type Exchange implements Node {
+  id: ID!
+}
+
+"""
+A connection to a list of items.
+"""
+type ExchangeConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [ExchangeEdge]
+
+  """
+  Total number of exchanges
+  """
+  totalCount: Int
+}
+
+"""
+An edge in a connection.
+"""
+type ExchangeEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Exchange
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: Cursor!
+}
