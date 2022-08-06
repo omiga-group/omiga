@@ -1,10 +1,10 @@
 asyncapi: 2.4.0
 
 info:
-  title: Order
+  title: Order Book
   version: 1.0.0
   contact:
-    name: Order Domain
+    name: Exchange Domain
     email: morteza@omiga.com.au
 
 servers:
@@ -17,20 +17,20 @@ defaultContentType: application/json
 
 channels:
   order.v1.event:
-    description: Enterprise topic for Order events
+    description: Enterprise topic for Order Book events
     publish:
       message:
-        $ref: "#/components/messages/orderEvent"
+        $ref: "#/components/messages/orderBookEvent"
 
 components:
   messages:
-    orderEvent:
+    orderBookEvent:
       description: An event describing a change in Order domain.
       payload:
-        $ref: "#/components/schemas/orderEvent"
+        $ref: "#/components/schemas/orderBookEvent"
 
   schemas:
-    orderEvent:
+    orderBookEvent:
       type: object
       additionalProperties: false
       required:
@@ -40,7 +40,7 @@ components:
         metadata:
           $ref: "#/components/schemas/metadata"
         data:
-          $ref: "#/components/schemas/data"
+          $ref: "#/components/schemas/orderBook"
 
     metadata:
       type: object
@@ -65,8 +65,7 @@ components:
         type:
           type: string
           enum:
-            - orderCreated
-            - orderUpdated
+            - orderBookUpdated
         subject:
           type: string
         time:
@@ -81,19 +80,7 @@ components:
           format: urn
           example: TBD
 
-    data:
-      type: object
-      additionalProperties: false
-      required:
-        - afterState
-      properties:
-        beforeState:
-          $ref: "#/components/schemas/order"
-        afterState:
-          $ref: "#/components/schemas/order"
-
-    order:
-      $id: order
+    orderBook:
       type: object
       additionalProperties: true
       required:
@@ -101,51 +88,25 @@ components:
       properties:
         id:
           type: string
-          description: The unique order ID
-          format: uuid
-        destinations:
-          type: array
-          description: order supported exchanges
-          $ref: "#/components/schemas/orderDestination"
         baseCurrency:
           $ref: "./Common_V1.yaml#/components/schemas/currency"
         counterCurrency:
           $ref: "./Common_V1.yaml#/components/schemas/currency"
-        type:
-          $ref: "./Common_V1.yaml#/components/schemas/orderType"
-        side:
-          $ref: "./Common_V1.yaml#/components/schemas/orderSide"
+        bids:
+          type: array
+          $ref: "#/components/schemas/orderBookEntry"
+        asks:
+          type: array
+          $ref: "#/components/schemas/orderBookEntry"
+
+    orderBookEntry:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+      properties:
         quantity:
           $ref: "./Common_V1.yaml#/components/schemas/money"
         price:
           $ref: "./Common_V1.yaml#/components/schemas/money"
-        user:
-          $ref: "#/components/schemas/user"
 
-    orderDestination:
-      type: object
-      additionalProperties: false
-      properties:
-        destination:
-          type: string
-          description: The name of a supported exchange
-          format: string
-
-    user:
-      $id: user
-      type: object
-      additionalProperties: true
-      required:
-        - id
-      properties:
-        id:
-          type: string
-          format: uuid
-        created:
-          type: string
-          format: date-time
-        updated:
-          type: string
-          format: date-time
-        type:
-          $ref: "./Common_V1.yaml#/components/schemas/userType"

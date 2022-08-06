@@ -1,0 +1,57 @@
+asyncapi: 2.4.0
+
+components:
+  schemas:
+    money:
+      type: object
+      additionalProperties: false
+      required:
+        - amount
+        - currency
+        - scale
+      properties:
+        amount:
+          type: integer
+          format: int64
+        scale:
+          type: integer
+          format: int32
+        currency:
+          $ref: "#/components/schemas/currency"
+
+    currency:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - code
+        - maxPrecision
+        - digital
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        maxPrecision:
+          type: integer
+          format: int32
+        digital:
+          type: boolean
+
+    orderType:
+      enum:
+        - instant
+        - market
+        - limit
+        - stop
+        - trailing_stop
+
+    orderSide:
+      enum:
+        - bid
+        - ask
+
+    userType:
+      enum:
+        - retail
+        - institution

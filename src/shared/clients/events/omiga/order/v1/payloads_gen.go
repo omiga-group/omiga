@@ -15,8 +15,8 @@ type ID struct {
 }
 
     
-    // DomainEvent represents a DomainEvent model.
-type DomainEvent struct {
+    // OrderEvent represents a OrderEvent model.
+type OrderEvent struct {
   Metadata Metadata `json:"metadata"`
   Data Data `json:"data"`
 }
@@ -53,8 +53,79 @@ type Data struct {
     // Order represents a Order model.
 type Order struct {
   Id ID `json:"id"` // The unique order ID
+  Destinations *AnonymousSchema9 `json:"destinations",omitempty`
+  BaseCurrency *AnonymousSchema10 `json:"baseCurrency",omitempty`
+  CounterCurrency *AnonymousSchema10 `json:"counterCurrency",omitempty`
+  Type *AnonymousSchema15 `json:"type",omitempty`
+  Side *AnonymousSchema16 `json:"side",omitempty`
+  Quantity *AnonymousSchema17 `json:"quantity",omitempty`
+  Price *AnonymousSchema17 `json:"price",omitempty`
+  User *User `json:"user",omitempty`
   AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
 }
+    
+    
+    // AnonymousSchema9 represents a AnonymousSchema9 model.
+type AnonymousSchema9 struct {
+  Destination *string `json:"destination",omitempty` // The name of a supported exchange
+}
+    
+    
+    // AnonymousSchema10 represents a AnonymousSchema10 model.
+type AnonymousSchema10 struct {
+  Name string `json:"name"` // undefined
+  Code string `json:"code"` // undefined
+  MaxPrecision int `json:"maxPrecision"` // undefined
+  Digital bool `json:"digital"` // undefined
+}
+    
+    
+    // AnonymousSchema15 represents an enum of string.
+type AnonymousSchema15 string
+
+const (
+  AnonymousSchema15Instant AnonymousSchema15 = "instant"
+  AnonymousSchema15Market = "market"
+  AnonymousSchema15Limit = "limit"
+  AnonymousSchema15Stop = "stop"
+  AnonymousSchema15TrailingStop = "trailing_stop"
+)
+    
+    
+    // AnonymousSchema16 represents an enum of string.
+type AnonymousSchema16 string
+
+const (
+  AnonymousSchema16Bid AnonymousSchema16 = "bid"
+  AnonymousSchema16Ask = "ask"
+)
+    
+    
+    // AnonymousSchema17 represents a AnonymousSchema17 model.
+type AnonymousSchema17 struct {
+  Amount int `json:"amount"` // undefined
+  Scale int `json:"scale"` // undefined
+  Currency AnonymousSchema10 `json:"currency"`
+}
+    
+    
+    // User represents a User model.
+type User struct {
+  Id ID `json:"id"` // undefined
+  Created *time.Time `json:"created",omitempty` // undefined
+  Updated *time.Time `json:"updated",omitempty` // undefined
+  Type *AnonymousSchema23 `json:"type",omitempty`
+  AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
+}
+    
+    
+    // AnonymousSchema23 represents an enum of string.
+type AnonymousSchema23 string
+
+const (
+  AnonymousSchema23Retail AnonymousSchema23 = "retail"
+  AnonymousSchema23Institution = "institution"
+)
     
 func (i *ID) UnmarshalJSON(b []byte) error {
   if parsedUuid, err := uuid.Parse(strings.Trim(string(b), "\"")); err == nil {
