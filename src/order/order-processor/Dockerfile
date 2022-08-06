@@ -9,10 +9,14 @@ FROM $BUILD_IMAGE as build
 
 ENV CGO_ENABLED = 0
 
-RUN mkdir -p /src/order/order-processor
+RUN mkdir -p /src/shared/enterprise \
+    mkdir -p /src/shared/clients \
+    mkdir -p /src/order/order-processor
 
 COPY go.mod /src/
 COPY go.sum /src/
+COPY shared/enterprise /src/shared/enterprise
+COPY shared/clients /src/shared/clients
 COPY order/order-processor /src/order/order-processor
 
 WORKDIR /src/order/order-processor

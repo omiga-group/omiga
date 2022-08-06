@@ -9,10 +9,14 @@ FROM $BUILD_IMAGE as build
 
 ENV CGO_ENABLED = 0
 
-RUN mkdir -p /src/exchange/ftx-processor
+RUN mkdir -p /src/shared/enterprise \
+    mkdir -p /src/shared/clients \
+    mkdir -p /src/exchange/ftx-processor
 
 COPY go.mod /src/
 COPY go.sum /src/
+COPY shared/enterprise /src/shared/enterprise
+COPY shared/clients /src/shared/clients
 COPY exchange/ftx-processor /src/exchange/ftx-processor
 
 WORKDIR /src/exchange/ftx-processor
