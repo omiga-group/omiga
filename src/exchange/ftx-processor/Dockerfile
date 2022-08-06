@@ -11,12 +11,14 @@ ENV CGO_ENABLED = 0
 
 RUN mkdir -p /src/shared/enterprise \
     mkdir -p /src/shared/clients \
+    mkdir -p /src/exchange/shared \
     mkdir -p /src/exchange/ftx-processor
 
 COPY go.mod /src/
 COPY go.sum /src/
 COPY shared/enterprise /src/shared/enterprise
 COPY shared/clients /src/shared/clients
+COPY exchange/shared /src/exchange/shared
 COPY exchange/ftx-processor /src/exchange/ftx-processor
 
 WORKDIR /src/exchange/ftx-processor
