@@ -13,16 +13,17 @@ dep: ## Install dependencies
 	@go get -d github.com/mattn/goveralls
 	@go install github.com/google/wire/cmd/wire@latest
 	@go mod tidy
+	@go get github.com/google/wire/cmd/wire@v0.5.0
 	@go get -v -t ./...
 
 .PHONY: generate
 generate: ## Generate models from GraphQL Schema
-	@./api-definitions/asyncapi/scripts/generate-all.sh
+	@../api-definitions/asyncapi/scripts/generate-all.sh
 	@go generate ./...
 
 .PHONY: lint
 lint: ## run golanci-lint locally
-	@docker run --rm -v $(CURRENT_DIRECTORY):/app -w /app golangci/golangci-lint:latest golangci-lint run -v
+	@docker run --rm -v $(CURRENT_DIRECTORY/..):/app -w /app golangci/golangci-lint:latest golangci-lint run -v
 
 .PHONY: format
 format: ## Format the source
