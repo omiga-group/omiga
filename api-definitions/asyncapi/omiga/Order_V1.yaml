@@ -16,21 +16,37 @@ servers:
 defaultContentType: application/json
 
 channels:
-  order.v1.event:
+  order.v1.submitted:
     description: Enterprise topic for Order events
     publish:
       message:
-        $ref: "#/components/messages/orderEvent"
+        $ref: "#/components/messages/orderSubmittedEvent"
+  orderbook.v1.updated:
+    publish:
+      message:
+        $ref: "#/components/messages/orderBookUpdatedEvent"
+  order.v1.routed:
+    publish:
+      message:
+        $ref: "#/components/messages/orderRoutedEvent"
 
 components:
   messages:
-    orderEvent:
+    orderSubmittedEvent:
       description: An event describing a change in Order domain.
       payload:
-        $ref: "#/components/schemas/domainEvent"
+        $ref: "#/components/schemas/orderEvent"
+    orderBookUpdatedEvent:
+      description: An event containing fresh order book entries.
+      payload:
+        $ref: "#/components/schemas/orderBookEvent"
+    orderRoutedEvent:
+      description: An event describing order routing state.
+      payload:
+        $ref: "#/components/schemas/syntheticOrderEvent"
 
   schemas:
-    domainEvent:
+    orderEvent:
       type: object
       additionalProperties: false
       required:
@@ -41,6 +57,30 @@ components:
           $ref: "#/components/schemas/metadata"
         data:
           $ref: "#/components/schemas/data"
+    
+    orderBookEvent:
+      type: object
+      additionalProperties: false
+      required:
+        - metadata
+        - data
+      properties:
+        metadata:
+          $ref: "#/components/schemas/metadata"
+        data:
+          $ref: "#/components/schemas/orderBook"
+
+    syntheticOrderEvent:
+      type: object
+      additionalProperties: false
+      required:
+        - metadata
+        - data
+      properties:
+        metadata:
+          $ref: "#/components/schemas/metadata"
+        data:
+          $ref: "#/components/schemas/syntheticOrder"
 
     metadata:
       type: object
@@ -92,6 +132,69 @@ components:
         afterState:
           $ref: "#/components/schemas/order"
 
+    user:
+      $id: user
+      type: object
+      additionalProperties: true
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+        type:
+          $ref: "#/components/schemas/userType"
+
+    orderBook:
+      type: object
+      additionalProperties: true
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        baseCurrency:
+          $ref: "#/components/schemas/currency"
+        counterCurrency:
+          $ref: "#/components/schemas/currency"
+        bids:
+          type: array
+          $ref: "#/components/schemas/orderBookEntry"
+        asks:
+          type: array
+          $ref: "#/components/schemas/orderBookEntry"
+      
+    syntheticOrder:
+      type: object
+      additionalProperties: true
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        clientOrder:
+          $ref: "#/components/schemas/order"
+        exchangeOrders:
+          type: array
+          $ref: "#/components/schemas/order"
+
+    orderBookEntry:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+      properties:
+        quantity:
+          $ref: "#/components/schemas/money"
+        price:
+          $ref: "#/components/schemas/money"
+
     order:
       $id: order
       type: object
@@ -103,3 +206,84 @@ components:
           type: string
           description: The unique order ID
           format: uuid
+        destinations:
+          type: array
+          description: order supported exchanges
+          $ref: "#/components/schemas/orderDestination"
+        baseCurrency:
+          $ref: "#/components/schemas/currency"
+        counterCurrency:
+          $ref: "#/components/schemas/currency"
+        type:
+          $ref: "#/components/schemas/orderType"
+        side:
+          $ref: "#/components/schemas/orderSide"
+        quantity:
+          $ref: "#/components/schemas/money"
+        price:
+          $ref: "#/components/schemas/money"
+        user:
+          $ref: "#/components/schemas/user"
+
+    orderDestination:
+      type: object
+      additionalProperties: false
+      properties:
+        destination:
+          type: string
+          description: The name of a supported exchange
+          format: string
+
+    currency:
+        type: object
+        additionalProperties: false
+        required:
+          - name
+          - code
+          - maxPrecision
+          - digital
+        properties:
+          name:
+            type: string
+          code:
+            type: string
+          maxPrecision:
+            type: integer
+            format: int32
+          digital:
+            type: boolean
+
+    money:
+      type: object
+      additionalProperties: false
+      required:
+        - amount
+        - currency
+        - scale
+      properties:
+        amount:
+          type: integer
+          format: int64
+        scale:
+          type: integer
+          format: int32
+        currency:
+          $ref: "#/components/schemas/currency"
+
+    orderType:
+      enum:
+        - instant
+        - market
+        - limit
+        - stop
+        - trailing_stop
+
+    orderSide:
+      enum:
+        - bid
+        - ask
+
+    userType:
+      enum:
+        - retail
+        - institution
