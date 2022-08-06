@@ -1,7 +1,11 @@
 package commands
 
 import (
+	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -21,7 +25,29 @@ func startCommand() *cobra.Command {
 
 			_ = logger.Sugar()
 
-			time.Sleep(1 * time.Minute)
+			ctx, cancelFunc := context.WithCancel(context.Background())
+
+			sigc := make(chan os.Signal, 1)
+			signal.Notify(sigc,
+				syscall.SIGHUP,
+				syscall.SIGINT,
+				syscall.SIGTERM,
+				syscall.SIGQUIT)
+			go func() {
+				<-sigc
+				cancelFunc()
+			}()
+
+			for {
+				if ctx.Err() == context.Canceled {
+					break
+				}
+
+				select {
+				case <-ctx.Done():
+				case <-time.After(time.Second):
+				}
+			}
 		},
 	}
 

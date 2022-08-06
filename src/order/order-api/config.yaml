@@ -1,0 +1,6 @@
+pulsar:
+  url: "pulsar://pulsar.localhost:6650"
+
+postgres:
+  connectionString: "postgres://postgres:12345678@postgres.localhost/order"
+  maxOpenConns: 10

@@ -13,6 +13,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	rootCmd := commands.Root()
 	util.PrintIfError(rootCmd.Execute())
 }
