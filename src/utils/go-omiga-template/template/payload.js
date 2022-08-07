@@ -14,8 +14,9 @@ export default async function ({ asyncapi, params }) {
               ? ` // ${field.originalInput["description"]}`
               : "";
 
-            const isRequired =
-              required.findIndex((item) => item === fieldName) !== -1;
+            const isRequired = required
+              ? required.findIndex((item) => item === fieldName) !== -1
+              : false;
             const unrequiredMark = !isRequired ? "*" : "";
 
             const format = field.originalInput
