@@ -8,3 +8,6 @@ import (
 
 // Order is the predicate function for order builders.
 type Order func(*sql.Selector)
+
+// Outbox is the predicate function for outbox builders.
+type Outbox func(*sql.Selector)
