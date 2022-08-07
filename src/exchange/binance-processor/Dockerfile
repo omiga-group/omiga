@@ -24,7 +24,6 @@ COPY exchange/binance-processor /src/exchange/binance-processor
 WORKDIR /src/exchange/binance-processor
 
 RUN --mount=type=cache,target=/go go mod tidy
-RUN --mount=type=cache,target=/go go get -v -t ./...
 RUN --mount=type=cache,target=/go go build -v -o /bin/binance-processor main.go
 
 FROM build AS local

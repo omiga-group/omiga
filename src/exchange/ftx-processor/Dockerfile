@@ -24,7 +24,6 @@ COPY exchange/ftx-processor /src/exchange/ftx-processor
 WORKDIR /src/exchange/ftx-processor
 
 RUN --mount=type=cache,target=/go go mod tidy
-RUN --mount=type=cache,target=/go go get -v -t ./...
 RUN --mount=type=cache,target=/go go build -v -o /bin/ftx-processor main.go
 
 FROM build AS local
