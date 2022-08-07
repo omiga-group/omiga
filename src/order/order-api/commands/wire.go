@@ -22,6 +22,7 @@ import (
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/order/order-api/graphql"
 	"github.com/omiga-group/omiga/src/order/order-api/http"
+	"github.com/omiga-group/omiga/src/order/order-api/services"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
@@ -32,7 +33,7 @@ func NewHttpServer(
 	logger *zap.SugaredLogger,
 	appSettings configuration.AppSettings,
 	postgresSettings postgres.PostgresSettings) (http.HttpServer, error) {
-	wire.Build(postgres.NewPostgres, repositories.NewEntgoClient, http.NewHttpServer, graphql.NewGraphQLServer)
+	wire.Build(postgres.NewPostgres, repositories.NewEntgoClient, http.NewHttpServer, graphql.NewGraphQLServer, services.NewOrderService)
 
 	return nil, nil
 }

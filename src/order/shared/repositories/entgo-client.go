@@ -11,33 +11,26 @@ type EntgoClient interface {
 }
 
 type entgoClient struct {
-	logger   *zap.SugaredLogger
-	database database.Database
-	client   *Client
+	logger *zap.SugaredLogger
+	client *Client
 }
 
 func NewEntgoClient(
 	logger *zap.SugaredLogger,
 	database database.Database) (EntgoClient, error) {
 
-	return &entgoClient{
-		logger:   logger,
-		database: database,
-	}, nil
-}
-
-func (ec *entgoClient) GetClient() (*Client, error) {
-	if ec.client != nil {
-		return ec.client, nil
-	}
-
-	driver, err := ec.database.GetDriver()
+	driver, err := database.GetDriver()
 	if err != nil {
 		return nil, err
 	}
 
-	ec.client = NewClient(Driver(driver))
+	return &entgoClient{
+		logger: logger,
+		client: NewClient(Driver(driver)),
+	}, nil
+}
 
+func (ec *entgoClient) GetClient() (*Client, error) {
 	return ec.client, nil
 }
 

@@ -9,6 +9,7 @@ package commands
 import (
 	"github.com/omiga-group/omiga/src/order/order-api/graphql"
 	"github.com/omiga-group/omiga/src/order/order-api/http"
+	"github.com/omiga-group/omiga/src/order/order-api/services"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
@@ -26,7 +27,11 @@ func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSetti
 	if err != nil {
 		return nil, err
 	}
-	server, err := graphql.NewGraphQLServer(entgoClient)
+	orderService, err := services.NewOrderService(entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	server, err := graphql.NewGraphQLServer(entgoClient, orderService)
 	if err != nil {
 		return nil, err
 	}
