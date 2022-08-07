@@ -17,6 +17,6 @@ func NewOrderSubscriber(logger *zap.SugaredLogger) (orderv1.Subscriber, error) {
 	}, nil
 }
 
-func (o *orderSubscriber) Handle(ctx context.Context, event orderv1.DomainEvent) error {
+func (os *orderSubscriber) Handle(ctx context.Context, event orderv1.OrderEvent) error {
 	return nil
 }
