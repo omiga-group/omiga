@@ -7,14 +7,17 @@
 package commands
 
 import (
+	"github.com/omiga-group/omiga/src/order/order-api/graphql"
+	"github.com/omiga-group/omiga/src/order/order-api/http"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
+	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
-func NewEntgoClient(logger *zap.SugaredLogger, postgresSettings postgres.PostgresSettings) (repositories.EntgoClient, error) {
+func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSettings, postgresSettings postgres.PostgresSettings) (http.HttpServer, error) {
 	database, err := postgres.NewPostgres(postgresSettings)
 	if err != nil {
 		return nil, err
@@ -23,5 +26,13 @@ func NewEntgoClient(logger *zap.SugaredLogger, postgresSettings postgres.Postgre
 	if err != nil {
 		return nil, err
 	}
-	return entgoClient, nil
+	server, err := graphql.NewGraphQLServer(entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	httpServer, err := http.NewHttpServer(appSettings, server)
+	if err != nil {
+		return nil, err
+	}
+	return httpServer, nil
 }

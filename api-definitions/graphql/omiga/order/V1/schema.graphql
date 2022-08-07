@@ -13,7 +13,7 @@ interface Node {
   """
   The id of the object.
   """
-  id: ID!
+  id: ID
 }
 
 type Query {
@@ -21,7 +21,7 @@ type Query {
     """
     ID
     """
-    id: ID
+    id: ID!
   ): Order
 
   orders(
@@ -50,16 +50,16 @@ type Query {
 }
 
 type Mutation {
-    createOrder(input: CreateOrderInput!): OrderPayload
-    updateOrder(input: UpdateOrderInput!): OrderPayload
+    submitOrder(input: SubmitOrderInput!): OrderPayload
+    cancelOrder(input: CancelOrderInput!): OrderPayload
 }
 
-input CreateOrderInput {
+input SubmitOrderInput {
     clientMutationId: String
     id: ID!
 }
 
-input UpdateOrderInput {
+input CancelOrderInput {
     clientMutationId: String
     id: ID!
 }

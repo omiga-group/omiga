@@ -1,3 +1,6 @@
+app:
+  listeningInterface: ":8080"
+
 pulsar:
   url: "pulsar://pulsar.localhost:6650"
 

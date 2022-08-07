@@ -9,11 +9,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/database"
 )
 
-type PostgresSettings struct {
-	ConnectionString string
-	MaxOpenConns     int
-}
-
 type postgres struct {
 	postgresSettings PostgresSettings
 }

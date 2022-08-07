@@ -44,8 +44,8 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreateOrder func(childComplexity int, input CreateOrderInput) int
-		UpdateOrder func(childComplexity int, input UpdateOrderInput) int
+		CancelOrder func(childComplexity int, input CancelOrderInput) int
+		SubmitOrder func(childComplexity int, input SubmitOrderInput) int
 	}
 
 	Order struct {
@@ -76,17 +76,17 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Order  func(childComplexity int, id *int) int
+		Order  func(childComplexity int, id int) int
 		Orders func(childComplexity int, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, where *repositories.OrderWhereInput) int
 	}
 }
 
 type MutationResolver interface {
-	CreateOrder(ctx context.Context, input CreateOrderInput) (*OrderPayload, error)
-	UpdateOrder(ctx context.Context, input UpdateOrderInput) (*OrderPayload, error)
+	SubmitOrder(ctx context.Context, input SubmitOrderInput) (*OrderPayload, error)
+	CancelOrder(ctx context.Context, input CancelOrderInput) (*OrderPayload, error)
 }
 type QueryResolver interface {
-	Order(ctx context.Context, id *int) (*repositories.Order, error)
+	Order(ctx context.Context, id int) (*repositories.Order, error)
 	Orders(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, where *repositories.OrderWhereInput) (*repositories.OrderConnection, error)
 }
 
@@ -105,29 +105,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Mutation.createOrder":
-		if e.complexity.Mutation.CreateOrder == nil {
+	case "Mutation.cancelOrder":
+		if e.complexity.Mutation.CancelOrder == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createOrder_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_cancelOrder_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateOrder(childComplexity, args["input"].(CreateOrderInput)), true
+		return e.complexity.Mutation.CancelOrder(childComplexity, args["input"].(CancelOrderInput)), true
 
-	case "Mutation.updateOrder":
-		if e.complexity.Mutation.UpdateOrder == nil {
+	case "Mutation.submitOrder":
+		if e.complexity.Mutation.SubmitOrder == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updateOrder_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_submitOrder_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateOrder(childComplexity, args["input"].(UpdateOrderInput)), true
+		return e.complexity.Mutation.SubmitOrder(childComplexity, args["input"].(SubmitOrderInput)), true
 
 	case "Order.id":
 		if e.complexity.Order.ID == nil {
@@ -223,7 +223,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Order(childComplexity, args["id"].(*int)), true
+		return e.complexity.Query.Order(childComplexity, args["id"].(int)), true
 
 	case "Query.orders":
 		if e.complexity.Query.Orders == nil {
@@ -245,9 +245,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputCreateOrderInput,
+		ec.unmarshalInputCancelOrderInput,
 		ec.unmarshalInputOrderWhereInput,
-		ec.unmarshalInputUpdateOrderInput,
+		ec.unmarshalInputSubmitOrderInput,
 	)
 	first := true
 
@@ -323,7 +323,7 @@ interface Node {
   """
   The id of the object.
   """
-  id: ID!
+  id: ID
 }
 
 type Query {
@@ -331,7 +331,7 @@ type Query {
     """
     ID
     """
-    id: ID
+    id: ID!
   ): Order
 
   orders(
@@ -360,16 +360,16 @@ type Query {
 }
 
 type Mutation {
-    createOrder(input: CreateOrderInput!): OrderPayload
-    updateOrder(input: UpdateOrderInput!): OrderPayload
+    submitOrder(input: SubmitOrderInput!): OrderPayload
+    cancelOrder(input: CancelOrderInput!): OrderPayload
 }
 
-input CreateOrderInput {
+input SubmitOrderInput {
     clientMutationId: String
     id: ID!
 }
 
-input UpdateOrderInput {
+input CancelOrderInput {
     clientMutationId: String
     id: ID!
 }
@@ -469,13 +469,13 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Mutation_createOrder_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_cancelOrder_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 CreateOrderInput
+	var arg0 CancelOrderInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateOrderInput2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐCreateOrderInput(ctx, tmp)
+		arg0, err = ec.unmarshalNCancelOrderInput2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐCancelOrderInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -484,13 +484,13 @@ func (ec *executionContext) field_Mutation_createOrder_args(ctx context.Context,
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updateOrder_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_submitOrder_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 UpdateOrderInput
+	var arg0 SubmitOrderInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNUpdateOrderInput2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐUpdateOrderInput(ctx, tmp)
+		arg0, err = ec.unmarshalNSubmitOrderInput2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐSubmitOrderInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -517,10 +517,10 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_order_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *int
+	var arg0 int
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalOID2ᚖint(ctx, tmp)
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -618,8 +618,8 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _Mutation_createOrder(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createOrder(ctx, field)
+func (ec *executionContext) _Mutation_submitOrder(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_submitOrder(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -632,7 +632,7 @@ func (ec *executionContext) _Mutation_createOrder(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateOrder(rctx, fc.Args["input"].(CreateOrderInput))
+		return ec.resolvers.Mutation().SubmitOrder(rctx, fc.Args["input"].(SubmitOrderInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -646,7 +646,7 @@ func (ec *executionContext) _Mutation_createOrder(ctx context.Context, field gra
 	return ec.marshalOOrderPayload2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_createOrder(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_submitOrder(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -669,15 +669,15 @@ func (ec *executionContext) fieldContext_Mutation_createOrder(ctx context.Contex
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createOrder_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_submitOrder_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_updateOrder(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateOrder(ctx, field)
+func (ec *executionContext) _Mutation_cancelOrder(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_cancelOrder(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -690,7 +690,7 @@ func (ec *executionContext) _Mutation_updateOrder(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateOrder(rctx, fc.Args["input"].(UpdateOrderInput))
+		return ec.resolvers.Mutation().CancelOrder(rctx, fc.Args["input"].(CancelOrderInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -704,7 +704,7 @@ func (ec *executionContext) _Mutation_updateOrder(ctx context.Context, field gra
 	return ec.marshalOOrderPayload2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_updateOrder(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_cancelOrder(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -727,7 +727,7 @@ func (ec *executionContext) fieldContext_Mutation_updateOrder(ctx context.Contex
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateOrder_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_cancelOrder_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -1279,7 +1279,7 @@ func (ec *executionContext) _Query_order(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Order(rctx, fc.Args["id"].(*int))
+		return ec.resolvers.Query().Order(rctx, fc.Args["id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3283,8 +3283,8 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputCreateOrderInput(ctx context.Context, obj interface{}) (CreateOrderInput, error) {
-	var it CreateOrderInput
+func (ec *executionContext) unmarshalInputCancelOrderInput(ctx context.Context, obj interface{}) (CancelOrderInput, error) {
+	var it CancelOrderInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -3427,8 +3427,8 @@ func (ec *executionContext) unmarshalInputOrderWhereInput(ctx context.Context, o
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateOrderInput(ctx context.Context, obj interface{}) (UpdateOrderInput, error) {
-	var it UpdateOrderInput
+func (ec *executionContext) unmarshalInputSubmitOrderInput(ctx context.Context, obj interface{}) (SubmitOrderInput, error) {
+	var it SubmitOrderInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -3504,16 +3504,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "createOrder":
+		case "submitOrder":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createOrder(ctx, field)
+				return ec._Mutation_submitOrder(ctx, field)
 			})
 
-		case "updateOrder":
+		case "cancelOrder":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateOrder(ctx, field)
+				return ec._Mutation_cancelOrder(ctx, field)
 			})
 
 		default:
@@ -4110,8 +4110,8 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNCreateOrderInput2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐCreateOrderInput(ctx context.Context, v interface{}) (CreateOrderInput, error) {
-	res, err := ec.unmarshalInputCreateOrderInput(ctx, v)
+func (ec *executionContext) unmarshalNCancelOrderInput2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐCancelOrderInput(ctx context.Context, v interface{}) (CancelOrderInput, error) {
+	res, err := ec.unmarshalInputCancelOrderInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -4164,8 +4164,8 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNUpdateOrderInput2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐUpdateOrderInput(ctx context.Context, v interface{}) (UpdateOrderInput, error) {
-	res, err := ec.unmarshalInputUpdateOrderInput(ctx, v)
+func (ec *executionContext) unmarshalNSubmitOrderInput2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐSubmitOrderInput(ctx context.Context, v interface{}) (SubmitOrderInput, error) {
+	res, err := ec.unmarshalInputSubmitOrderInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

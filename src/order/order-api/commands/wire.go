@@ -20,13 +20,19 @@ package commands
 
 import (
 	"github.com/google/wire"
+	"github.com/omiga-group/omiga/src/order/order-api/graphql"
+	"github.com/omiga-group/omiga/src/order/order-api/http"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
+	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"go.uber.org/zap"
 )
 
-func NewEntgoClient(logger *zap.SugaredLogger, postgresSettings postgres.PostgresSettings) (repositories.EntgoClient, error) {
-	wire.Build(postgres.NewPostgres, repositories.NewEntgoClient)
+func NewHttpServer(
+	logger *zap.SugaredLogger,
+	appSettings configuration.AppSettings,
+	postgresSettings postgres.PostgresSettings) (http.HttpServer, error) {
+	wire.Build(postgres.NewPostgres, repositories.NewEntgoClient, http.NewHttpServer, graphql.NewGraphQLServer)
 
 	return nil, nil
 }

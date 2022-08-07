@@ -14,6 +14,7 @@ require (
 	github.com/jackc/pgx/v4 v4.17.0
 	github.com/micro-business/go-core v1.0.0
 	github.com/mitchellh/mapstructure v1.5.0
+	github.com/rs/cors v1.8.2
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
 	github.com/vektah/gqlparser/v2 v2.4.7
@@ -47,6 +48,7 @@ require (
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
+	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.10.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect

@@ -6,7 +6,7 @@ import (
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 )
 
-type CreateOrderInput struct {
+type CancelOrderInput struct {
 	ClientMutationID *string `json:"clientMutationId"`
 	ID               int     `json:"id"`
 }
@@ -16,7 +16,7 @@ type OrderPayload struct {
 	Order            *repositories.Order `json:"order"`
 }
 
-type UpdateOrderInput struct {
+type SubmitOrderInput struct {
 	ClientMutationID *string `json:"clientMutationId"`
 	ID               int     `json:"id"`
 }

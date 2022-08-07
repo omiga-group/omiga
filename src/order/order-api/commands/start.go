@@ -1,14 +1,13 @@
 package commands
 
 import (
-	"context"
 	"log"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
+	"github.com/mitchellh/mapstructure"
+	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
@@ -23,30 +22,26 @@ func startCommand() *cobra.Command {
 				log.Fatal(err)
 			}
 
-			_ = logger.Sugar()
+			sugarLogger := logger.Sugar()
 
-			ctx, cancelFunc := context.WithCancel(context.Background())
+			var appSettings configuration.AppSettings
+			if err := mapstructure.Decode(viper.Get(configuration.AppSettingsConfigKey), &appSettings); err != nil {
+				sugarLogger.Fatal(err)
+			}
 
-			sigc := make(chan os.Signal, 1)
-			signal.Notify(sigc,
-				syscall.SIGHUP,
-				syscall.SIGINT,
-				syscall.SIGTERM,
-				syscall.SIGQUIT)
-			go func() {
-				<-sigc
-				cancelFunc()
-			}()
+			var postgresSettings postgres.PostgresSettings
+			if err := mapstructure.Decode(viper.Get(postgres.ConfigKey), &postgresSettings); err != nil {
+				sugarLogger.Fatal(err)
+			}
 
-			for {
-				if ctx.Err() == context.Canceled {
-					break
-				}
+			httpServer, err := NewHttpServer(sugarLogger, appSettings, postgresSettings)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
 
-				select {
-				case <-ctx.Done():
-				case <-time.After(time.Second):
-				}
+			err = httpServer.ListenAndServe()
+			if err != nil {
+				sugarLogger.Fatal(err)
 			}
 		},
 	}

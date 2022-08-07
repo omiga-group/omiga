@@ -21,17 +21,17 @@ func startCommand() *cobra.Command {
 		Short: "Start order-processor",
 		Long:  "Start order-processor",
 		Run: func(cmd *cobra.Command, args []string) {
-			var pulsarSettings pulsar.PulsarSettings
-			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {
-				log.Fatal(err)
-			}
-
 			logger, err := zap.NewDevelopment()
 			if err != nil {
 				log.Fatal(err)
 			}
 
 			sugarLogger := logger.Sugar()
+
+			var pulsarSettings pulsar.PulsarSettings
+			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {
+				sugarLogger.Fatal(err)
+			}
 
 			ctx, cancelFunc := context.WithCancel(context.Background())
 

@@ -8,7 +8,7 @@ schema:
 
 resolver:
   layout: follow-schema
-  dir: ./graphql
+  dir: ../order-api/graphql
 
 autobind:
   - github.com/omiga-group/omiga/src/order/shared/repositories
