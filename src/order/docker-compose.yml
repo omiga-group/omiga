@@ -1,6 +1,18 @@
 ﻿version: "3.8"
 
 services:
+  order-database-migration:
+    image: ${DOCKER_REGISTRY-}orderdatabasemigration
+    build:
+      context: .
+      dockerfile: order/shared/repositories/cli/Dockerfile
+      target: local
+    restart: unless-stopped
+    depends_on:
+      - postgresdb
+    networks:
+      - omiga_network
+
   order-api:
     image: ${DOCKER_REGISTRY-}orderapi
     build:
@@ -11,6 +23,7 @@ services:
     depends_on:
       - postgresdb
       - pulsar
+      - order-database-migration
     networks:
       - omiga_network
 
@@ -24,5 +37,6 @@ services:
     depends_on:
       - postgresdb
       - pulsar
+      - order-database-migration
     networks:
       - omiga_network
