@@ -16,7 +16,7 @@ servers:
 defaultContentType: application/json
 
 channels:
-  order.v1.event:
+  orderbook.v1.event:
     description: Enterprise topic for Order Book events
     publish:
       message:

@@ -2,6 +2,30 @@ asyncapi: 2.4.0
 
 components:
   schemas:
+    orderDetails:
+      $id: orderDetails
+      type: object
+      additionalProperties: true
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: The unique order ID
+          format: uuid
+        baseCurrency:
+          $ref: "#/components/schemas/currency"
+        counterCurrency:
+          $ref: "#/components/schemas/currency"
+        type:
+          $ref: "#/components/schemas/orderType"
+        side:
+          $ref: "#/components/schemas/orderSide"
+        quantity:
+          $ref: "#/components/schemas/money"
+        price:
+          $ref: "#/components/schemas/money"
+
     money:
       type: object
       additionalProperties: false
@@ -51,7 +75,10 @@ components:
         - bid
         - ask
 
-    userType:
-      enum:
-        - retail
-        - institution
+    exchange:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: The unique ID of the supported exchange

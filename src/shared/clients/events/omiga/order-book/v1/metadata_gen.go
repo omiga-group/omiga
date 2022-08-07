@@ -3,4 +3,4 @@
 
 package orderbookv1
 
-const TopicName = "order.v1.event"
+const TopicName = "orderbook.v1.event"
