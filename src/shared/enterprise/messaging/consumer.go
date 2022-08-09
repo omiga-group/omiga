@@ -19,7 +19,7 @@ type MessageFailedCallback func()
 
 type MessageConsumer interface {
 	Connect(ctx context.Context, topic string) error
-	Diconnect(ctx context.Context)
+	Close(ctx context.Context)
 	Consume(ctx context.Context) (
 		Message,
 		MessageProcessedCallback,

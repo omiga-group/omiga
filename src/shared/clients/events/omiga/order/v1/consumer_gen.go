@@ -37,7 +37,7 @@ func (c *consumer) StartAsync(ctx context.Context) error {
 		if err := c.messageConsumer.Connect(ctx, TopicName); err != nil {
 			return
 		}
-		defer c.messageConsumer.Diconnect(ctx)
+		defer c.messageConsumer.Close(ctx)
 
 		for {
 			if ctx.Err() == context.Canceled {

@@ -58,7 +58,7 @@ func (pmcs *pulsarMessageConsumer) Connect(ctx context.Context, topic string) er
 	return nil
 }
 
-func (pmcs *pulsarMessageConsumer) Diconnect(ctx context.Context) {
+func (pmcs *pulsarMessageConsumer) Close(ctx context.Context) {
 	if pmcs.consumer != nil {
 		if err := pmcs.consumer.Unsubscribe(); err != nil {
 			pmcs.logger.Errorf("Failed to unsubscribe. Error: %v", err)
