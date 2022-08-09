@@ -16,6 +16,8 @@ type Tx struct {
 	config
 	// Exchange is the client for interacting with the Exchange builders.
 	Exchange *ExchangeClient
+	// Outbox is the client for interacting with the Outbox builders.
+	Outbox *OutboxClient
 
 	// lazily loaded.
 	client     *Client
@@ -152,6 +154,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Exchange = NewExchangeClient(tx.config)
+	tx.Outbox = NewOutboxClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

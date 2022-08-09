@@ -174,6 +174,30 @@ func (f ExchangeMutationRuleFunc) EvalMutation(ctx context.Context, m repositori
 	return Denyf("repositories/privacy: unexpected mutation type %T, expect *repositories.ExchangeMutation", m)
 }
 
+// The OutboxQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OutboxQueryRuleFunc func(context.Context, *repositories.OutboxQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OutboxQueryRuleFunc) EvalQuery(ctx context.Context, q repositories.Query) error {
+	if q, ok := q.(*repositories.OutboxQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("repositories/privacy: unexpected query type %T, expect *repositories.OutboxQuery", q)
+}
+
+// The OutboxMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OutboxMutationRuleFunc func(context.Context, *repositories.OutboxMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OutboxMutationRuleFunc) EvalMutation(ctx context.Context, m repositories.Mutation) error {
+	if m, ok := m.(*repositories.OutboxMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("repositories/privacy: unexpected mutation type %T, expect *repositories.OutboxMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -211,6 +235,8 @@ func queryFilter(q repositories.Query) (Filter, error) {
 	switch q := q.(type) {
 	case *repositories.ExchangeQuery:
 		return q.Filter(), nil
+	case *repositories.OutboxQuery:
+		return q.Filter(), nil
 	default:
 		return nil, Denyf("repositories/privacy: unexpected query type %T for query filter", q)
 	}
@@ -219,6 +245,8 @@ func queryFilter(q repositories.Query) (Filter, error) {
 func mutationFilter(m repositories.Mutation) (Filter, error) {
 	switch m := m.(type) {
 	case *repositories.ExchangeMutation:
+		return m.Filter(), nil
+	case *repositories.OutboxMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("repositories/privacy: unexpected mutation type %T for mutation filter", m)

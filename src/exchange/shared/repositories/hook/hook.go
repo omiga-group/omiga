@@ -22,6 +22,19 @@ func (f ExchangeFunc) Mutate(ctx context.Context, m repositories.Mutation) (repo
 	return f(ctx, mv)
 }
 
+// The OutboxFunc type is an adapter to allow the use of ordinary
+// function as Outbox mutator.
+type OutboxFunc func(context.Context, *repositories.OutboxMutation) (repositories.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OutboxFunc) Mutate(ctx context.Context, m repositories.Mutation) (repositories.Value, error) {
+	mv, ok := m.(*repositories.OutboxMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *repositories.OutboxMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, repositories.Mutation) bool
 

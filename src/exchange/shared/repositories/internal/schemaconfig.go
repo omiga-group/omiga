@@ -8,6 +8,7 @@ import "context"
 // that can be passed at runtime.
 type SchemaConfig struct {
 	Exchange string // Exchange table.
+	Outbox   string // Outbox table.
 }
 
 type schemaCtxKey struct{}

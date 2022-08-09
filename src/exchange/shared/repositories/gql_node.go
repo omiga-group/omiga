@@ -4,6 +4,7 @@ package repositories
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"sync"
 	"sync/atomic"
@@ -15,6 +16,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/hashicorp/go-multierror"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
 	"golang.org/x/sync/semaphore"
 )
 
@@ -51,6 +53,73 @@ func (e *Exchange) Node(ctx context.Context) (node *Node, err error) {
 		Type:   "Exchange",
 		Fields: make([]*Field, 0),
 		Edges:  make([]*Edge, 0),
+	}
+	return node, nil
+}
+
+func (o *Outbox) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     o.ID,
+		Type:   "Outbox",
+		Fields: make([]*Field, 7),
+		Edges:  make([]*Edge, 0),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(o.Timestamp); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "timestamp",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(o.Topic); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "string",
+		Name:  "topic",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(o.Key); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "key",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(o.Payload); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "[]byte",
+		Name:  "payload",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(o.Headers); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "map[string]string",
+		Name:  "headers",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(o.RetryCount); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "int",
+		Name:  "retry_count",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(o.LastRetry); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "int",
+		Name:  "last_retry",
+		Value: string(buf),
 	}
 	return node, nil
 }
@@ -126,6 +195,18 @@ func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error)
 		query := c.Exchange.Query().
 			Where(exchange.ID(id))
 		query, err := query.CollectFields(ctx, "Exchange")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case outbox.Table:
+		query := c.Outbox.Query().
+			Where(outbox.ID(id))
+		query, err := query.CollectFields(ctx, "Outbox")
 		if err != nil {
 			return nil, err
 		}
@@ -211,6 +292,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 		query := c.Exchange.Query().
 			Where(exchange.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "Exchange")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case outbox.Table:
+		query := c.Outbox.Query().
+			Where(outbox.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Outbox")
 		if err != nil {
 			return nil, err
 		}

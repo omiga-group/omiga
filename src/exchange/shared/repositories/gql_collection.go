@@ -55,6 +55,52 @@ func newExchangePaginateArgs(rv map[string]interface{}) *exchangePaginateArgs {
 	return args
 }
 
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (o *OutboxQuery) CollectFields(ctx context.Context, satisfies ...string) (*OutboxQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return o, nil
+	}
+	if err := o.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return o, nil
+}
+
+func (o *OutboxQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	return nil
+}
+
+type outboxPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []OutboxPaginateOption
+}
+
+func newOutboxPaginateArgs(rv map[string]interface{}) *outboxPaginateArgs {
+	args := &outboxPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*OutboxWhereInput); ok {
+		args.opts = append(args.opts, WithOutboxFilter(v.Filter))
+	}
+	return args
+}
+
 const (
 	afterField     = "after"
 	firstField     = "first"

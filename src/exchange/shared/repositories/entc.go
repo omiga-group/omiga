@@ -9,17 +9,29 @@ package main
 
 import (
 	"log"
+	"path"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
 )
 
 func main() {
-	if err := entc.Generate(
+	ex, err := entgql.NewExtension(
+		entgql.WithWhereFilters(true),
+		entgql.WithSchemaPath(path.Join("..", "..", "..", "..", "api-definitions", "graphql", "omiga", "exchange", "V1", "ent.graphql")),
+		entgql.WithConfigPath(path.Join("..", "gqlgen.yml")),
+	)
+	if err != nil {
+		log.Fatalf("creating entgql extension: %v", err)
+	}
+
+	if err = entc.Generate(
 		"./schema",
 		&gen.Config{
 			Features: gen.AllFeatures,
-		}); err != nil {
+		},
+		entc.Extensions(ex)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}
 }

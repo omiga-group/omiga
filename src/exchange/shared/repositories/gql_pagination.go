@@ -15,6 +15,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"github.com/vmihailenco/msgpack/v5"
 )
@@ -473,5 +474,240 @@ func (e *Exchange) ToEdge(order *ExchangeOrder) *ExchangeEdge {
 	return &ExchangeEdge{
 		Node:   e,
 		Cursor: order.Field.toCursor(e),
+	}
+}
+
+// OutboxEdge is the edge representation of Outbox.
+type OutboxEdge struct {
+	Node   *Outbox `json:"node"`
+	Cursor Cursor  `json:"cursor"`
+}
+
+// OutboxConnection is the connection containing edges to Outbox.
+type OutboxConnection struct {
+	Edges      []*OutboxEdge `json:"edges"`
+	PageInfo   PageInfo      `json:"pageInfo"`
+	TotalCount int           `json:"totalCount"`
+}
+
+func (c *OutboxConnection) build(nodes []*Outbox, pager *outboxPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Outbox
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Outbox {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Outbox {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*OutboxEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &OutboxEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// OutboxPaginateOption enables pagination customization.
+type OutboxPaginateOption func(*outboxPager) error
+
+// WithOutboxOrder configures pagination ordering.
+func WithOutboxOrder(order *OutboxOrder) OutboxPaginateOption {
+	if order == nil {
+		order = DefaultOutboxOrder
+	}
+	o := *order
+	return func(pager *outboxPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultOutboxOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithOutboxFilter configures pagination filter.
+func WithOutboxFilter(filter func(*OutboxQuery) (*OutboxQuery, error)) OutboxPaginateOption {
+	return func(pager *outboxPager) error {
+		if filter == nil {
+			return errors.New("OutboxQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type outboxPager struct {
+	order  *OutboxOrder
+	filter func(*OutboxQuery) (*OutboxQuery, error)
+}
+
+func newOutboxPager(opts []OutboxPaginateOption) (*outboxPager, error) {
+	pager := &outboxPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultOutboxOrder
+	}
+	return pager, nil
+}
+
+func (p *outboxPager) applyFilter(query *OutboxQuery) (*OutboxQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *outboxPager) toCursor(o *Outbox) Cursor {
+	return p.order.Field.toCursor(o)
+}
+
+func (p *outboxPager) applyCursors(query *OutboxQuery, after, before *Cursor) *OutboxQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultOutboxOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *outboxPager) applyOrder(query *OutboxQuery, reverse bool) *OutboxQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultOutboxOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultOutboxOrder.Field.field))
+	}
+	return query
+}
+
+func (p *outboxPager) orderExpr(reverse bool) sql.Querier {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultOutboxOrder.Field {
+			b.Comma().Ident(DefaultOutboxOrder.Field.field).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Outbox.
+func (o *OutboxQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...OutboxPaginateOption,
+) (*OutboxConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newOutboxPager(opts)
+	if err != nil {
+		return nil, err
+	}
+	if o, err = pager.applyFilter(o); err != nil {
+		return nil, err
+	}
+	conn := &OutboxConnection{Edges: []*OutboxEdge{}}
+	if !hasCollectedField(ctx, edgesField) || first != nil && *first == 0 || last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+			if conn.TotalCount, err = o.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) && hasCollectedField(ctx, totalCountField) {
+		count, err := o.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	o = pager.applyCursors(o, after, before)
+	o = pager.applyOrder(o, last != nil)
+	if limit := paginateLimit(first, last); limit != 0 {
+		o.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := o.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+
+	nodes, err := o.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// OutboxOrderField defines the ordering field of Outbox.
+type OutboxOrderField struct {
+	field    string
+	toCursor func(*Outbox) Cursor
+}
+
+// OutboxOrder defines the ordering of Outbox.
+type OutboxOrder struct {
+	Direction OrderDirection    `json:"direction"`
+	Field     *OutboxOrderField `json:"field"`
+}
+
+// DefaultOutboxOrder is the default ordering of Outbox.
+var DefaultOutboxOrder = &OutboxOrder{
+	Direction: OrderDirectionAsc,
+	Field: &OutboxOrderField{
+		field: outbox.FieldID,
+		toCursor: func(o *Outbox) Cursor {
+			return Cursor{ID: o.ID}
+		},
+	},
+}
+
+// ToEdge converts Outbox into OutboxEdge.
+func (o *Outbox) ToEdge(order *OutboxOrder) *OutboxEdge {
+	if order == nil {
+		order = DefaultOutboxOrder
+	}
+	return &OutboxEdge{
+		Node:   o,
+		Cursor: order.Field.toCursor(o),
 	}
 }
