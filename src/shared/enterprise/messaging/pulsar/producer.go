@@ -66,7 +66,6 @@ func (pmp *pulsarMessageProducer) Close(ctx context.Context) {
 
 func (pmp *pulsarMessageProducer) Produce(
 	ctx context.Context,
-	topic string,
 	key string,
 	data []byte) error {
 	_, err := pmp.producer.Send(ctx, &pulsar.ProducerMessage{

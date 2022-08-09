@@ -68,4 +68,3 @@ func (c *consumer) StartAsync(ctx context.Context) error {
 
 	return nil
 }
-

@@ -75,7 +75,6 @@ func (c *consumer) StartAsync(ctx context.Context) error {
 
 	return nil
 }
-
 `;
 
   return <File name="consumer_gen.go">{payloadContent}</File>;
