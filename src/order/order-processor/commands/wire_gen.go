@@ -20,10 +20,10 @@ func NewOrderConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSet
 	if err != nil {
 		return nil, err
 	}
-	messageConsumerService, err := pulsar.NewPulsarMessageConsumerService(logger, pulsarSettings)
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarSettings)
 	if err != nil {
 		return nil, err
 	}
-	consumer := orderv1.NewConsumer(logger, subscriber, messageConsumerService)
+	consumer := orderv1.NewConsumer(logger, subscriber, messageConsumer)
 	return consumer, nil
 }

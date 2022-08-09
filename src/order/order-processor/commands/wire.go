@@ -27,7 +27,7 @@ import (
 )
 
 func NewOrderConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings) (orderv1.Consumer, error) {
-	wire.Build(orderv1.NewConsumer, subscribers.NewOrderSubscriber, pulsar.NewPulsarMessageConsumerService)
+	wire.Build(orderv1.NewConsumer, subscribers.NewOrderSubscriber, pulsar.NewPulsarMessageConsumer)
 
 	return nil, nil
 }

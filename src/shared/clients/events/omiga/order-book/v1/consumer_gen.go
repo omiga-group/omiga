@@ -18,33 +18,33 @@ type Consumer interface {
 type consumer struct {
 	logger                 *zap.SugaredLogger
 	subscriber             Subscriber
-	messageConsumerService messaging.MessageConsumerService
+	messageConsumer messaging.MessageConsumer
 }
 
 func NewConsumer(
 	logger *zap.SugaredLogger,
 	subscriber Subscriber,
-	messageConsumerService messaging.MessageConsumerService) Consumer {
+	messageConsumer messaging.MessageConsumer) Consumer {
 	return &consumer{
 		logger:                 logger,
 		subscriber:             subscriber,
-		messageConsumerService: messageConsumerService,
+		messageConsumer: messageConsumer,
 	}
 }
 
 func (c *consumer) StartAsync(ctx context.Context) error {
 	go func() {
-		if err := c.messageConsumerService.Connect(ctx, TopicName); err != nil {
+		if err := c.messageConsumer.Connect(ctx, TopicName); err != nil {
 			return
 		}
-		defer c.messageConsumerService.Diconnect(ctx)
+		defer c.messageConsumer.Diconnect(ctx)
 
 		for {
 			if ctx.Err() == context.Canceled {
 				return
 			}
 
-			message, messageProcessedCallback, messageFailedCallback, err := c.messageConsumerService.Consume(ctx)
+			message, messageProcessedCallback, messageFailedCallback, err := c.messageConsumer.Consume(ctx)
 			if err != nil && err != context.Canceled {
 				c.logger.Errorf("Failed to consume message. Error: %v", err)
 				return

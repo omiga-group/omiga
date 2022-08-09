@@ -10,24 +10,24 @@ import (
 	"go.uber.org/zap"
 )
 
-type pulsarMessageConsumerService struct {
+type pulsarMessageConsumer struct {
 	logger         *zap.SugaredLogger
 	pulsarSettings PulsarSettings
 	pulsarClient   pulsar.Client
 	consumer       pulsar.Consumer
 }
 
-func NewPulsarMessageConsumerService(
+func NewPulsarMessageConsumer(
 	logger *zap.SugaredLogger,
-	pulsarSettings PulsarSettings) (messaging.MessageConsumerService, error) {
+	pulsarSettings PulsarSettings) (messaging.MessageConsumer, error) {
 
-	return &pulsarMessageConsumerService{
+	return &pulsarMessageConsumer{
 		logger:         logger,
 		pulsarSettings: pulsarSettings,
 	}, nil
 }
 
-func (pmcs *pulsarMessageConsumerService) Connect(ctx context.Context, topic string) error {
+func (pmcs *pulsarMessageConsumer) Connect(ctx context.Context, topic string) error {
 	if pmcs.pulsarClient == nil {
 		pulsarClient, err := pulsar.NewClient(
 			pulsar.ClientOptions{
@@ -58,7 +58,7 @@ func (pmcs *pulsarMessageConsumerService) Connect(ctx context.Context, topic str
 	return nil
 }
 
-func (pmcs *pulsarMessageConsumerService) Diconnect(ctx context.Context) {
+func (pmcs *pulsarMessageConsumer) Diconnect(ctx context.Context) {
 	if pmcs.consumer != nil {
 		if err := pmcs.consumer.Unsubscribe(); err != nil {
 			pmcs.logger.Errorf("Failed to unsubscribe. Error: %v", err)
@@ -74,7 +74,7 @@ func (pmcs *pulsarMessageConsumerService) Diconnect(ctx context.Context) {
 	}
 }
 
-func (pmcs *pulsarMessageConsumerService) Consume(ctx context.Context) (
+func (pmcs *pulsarMessageConsumer) Consume(ctx context.Context) (
 	messaging.Message,
 	messaging.MessageProcessedCallback,
 	messaging.MessageFailedCallback,

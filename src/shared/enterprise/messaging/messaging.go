@@ -17,7 +17,7 @@ type Message struct {
 type MessageProcessedCallback func()
 type MessageFailedCallback func()
 
-type MessageConsumerService interface {
+type MessageConsumer interface {
 	Connect(ctx context.Context, topic string) error
 	Diconnect(ctx context.Context)
 	Consume(ctx context.Context) (
