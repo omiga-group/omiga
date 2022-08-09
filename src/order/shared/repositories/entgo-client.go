@@ -11,8 +11,9 @@ type EntgoClient interface {
 }
 
 type entgoClient struct {
-	logger *zap.SugaredLogger
-	client *Client
+	logger   *zap.SugaredLogger
+	client   *Client
+	database database.Database
 }
 
 func NewEntgoClient(
@@ -25,8 +26,9 @@ func NewEntgoClient(
 	}
 
 	return &entgoClient{
-		logger: logger,
-		client: NewClient(Driver(driver)),
+		logger:   logger,
+		client:   NewClient(Driver(driver)),
+		database: database,
 	}, nil
 }
 
@@ -42,4 +44,6 @@ func (ec *entgoClient) Close() {
 
 		ec.client = nil
 	}
+
+	ec.database.Close()
 }

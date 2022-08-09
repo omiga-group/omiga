@@ -1,7 +1,13 @@
 package database
 
-import "entgo.io/ent/dialect/sql"
+import (
+	"database/sql"
+
+	entsql "entgo.io/ent/dialect/sql"
+)
 
 type Database interface {
-	GetDriver() (*sql.Driver, error)
+	GetDB() (*sql.DB, error)
+	GetDriver() (*entsql.Driver, error)
+	Close()
 }

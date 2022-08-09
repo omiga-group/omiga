@@ -38,6 +38,7 @@ services:
       omiga_network:
         aliases:
           - postgres.localhost
+
   pulsar:
     image: apachepulsar/pulsar:latest
     command: bin/pulsar standalone

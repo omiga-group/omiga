@@ -19,7 +19,7 @@ import (
 // Injectors from wire.go:
 
 func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSettings, postgresSettings postgres.PostgresSettings) (http.HttpServer, error) {
-	database, err := postgres.NewPostgres(postgresSettings)
+	database, err := postgres.NewPostgres(logger, postgresSettings)
 	if err != nil {
 		return nil, err
 	}

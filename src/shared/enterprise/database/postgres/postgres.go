@@ -7,27 +7,44 @@ import (
 	entsql "entgo.io/ent/dialect/sql"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database"
+	"go.uber.org/zap"
 )
 
 type postgres struct {
-	postgresSettings PostgresSettings
+	db     *sql.DB
+	logger *zap.SugaredLogger
 }
 
 func NewPostgres(
+	logger *zap.SugaredLogger,
 	postgresSettings PostgresSettings) (database.Database, error) {
-
-	return &postgres{
-		postgresSettings: postgresSettings,
-	}, nil
-}
-
-func (p *postgres) GetDriver() (*entsql.Driver, error) {
-	db, err := sql.Open("pgx", p.postgresSettings.ConnectionString)
+	db, err := sql.Open("pgx", postgresSettings.ConnectionString)
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(p.postgresSettings.MaxOpenConns)
+	db.SetMaxOpenConns(postgresSettings.MaxOpenConns)
 
-	return entsql.OpenDB(dialect.Postgres, db), nil
+	return &postgres{
+		db:     db,
+		logger: logger,
+	}, nil
+}
+
+func (p *postgres) GetDriver() (*entsql.Driver, error) {
+	return entsql.OpenDB(dialect.Postgres, p.db), nil
+}
+
+func (p *postgres) GetDB() (*sql.DB, error) {
+	return p.db, nil
+}
+
+func (p *postgres) Close() {
+	if p.db != nil {
+		if err := p.db.Close(); err != nil {
+			p.logger.Errorf("Failed to close database. Error: %v", err)
+		}
+
+		p.db = nil
+	}
 }

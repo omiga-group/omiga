@@ -15,7 +15,7 @@ import (
 // Injectors from wire.go:
 
 func NewEntgoClient(logger *zap.SugaredLogger, postgresSettings postgres.PostgresSettings) (repositories.EntgoClient, error) {
-	database, err := postgres.NewPostgres(postgresSettings)
+	database, err := postgres.NewPostgres(logger, postgresSettings)
 	if err != nil {
 		return nil, err
 	}
