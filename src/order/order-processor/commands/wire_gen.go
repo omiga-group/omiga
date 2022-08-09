@@ -9,18 +9,23 @@ package commands
 import (
 	"github.com/omiga-group/omiga/src/order/order-processor/subscribers"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
+	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
-func NewOrderConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings) (orderv1.Consumer, error) {
-	subscriber, err := subscribers.NewOrderSubscriber(logger)
+func NewMessageConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageConsumer, error) {
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarSettings, topic)
 	if err != nil {
 		return nil, err
 	}
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarSettings)
+	return messageConsumer, nil
+}
+
+func NewOrderConsumer(logger *zap.SugaredLogger, messageConsumer messaging.MessageConsumer) (orderv1.Consumer, error) {
+	subscriber, err := subscribers.NewOrderSubscriber(logger)
 	if err != nil {
 		return nil, err
 	}

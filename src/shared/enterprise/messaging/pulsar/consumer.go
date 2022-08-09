@@ -19,43 +19,33 @@ type pulsarMessageConsumer struct {
 
 func NewPulsarMessageConsumer(
 	logger *zap.SugaredLogger,
-	pulsarSettings PulsarSettings) (messaging.MessageConsumer, error) {
+	pulsarSettings PulsarSettings,
+	topic string) (messaging.MessageConsumer, error) {
+	pulsarClient, err := pulsar.NewClient(
+		pulsar.ClientOptions{
+			URL:               pulsarSettings.Url,
+			OperationTimeout:  30 * time.Second,
+			ConnectionTimeout: 30 * time.Second,
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	consumer, err := pulsarClient.Subscribe(
+		pulsar.ConsumerOptions{
+			Topic:            topic,
+			SubscriptionName: pulsarSettings.SubscriptionName,
+		})
+	if err != nil {
+		return nil, err
+	}
 
 	return &pulsarMessageConsumer{
 		logger:         logger,
 		pulsarSettings: pulsarSettings,
+		pulsarClient:   pulsarClient,
+		consumer:       consumer,
 	}, nil
-}
-
-func (pmcs *pulsarMessageConsumer) Connect(ctx context.Context, topic string) error {
-	if pmcs.pulsarClient == nil {
-		pulsarClient, err := pulsar.NewClient(
-			pulsar.ClientOptions{
-				URL:               pmcs.pulsarSettings.Url,
-				OperationTimeout:  30 * time.Second,
-				ConnectionTimeout: 30 * time.Second,
-			})
-		if err != nil {
-			return err
-		}
-
-		pmcs.pulsarClient = pulsarClient
-	}
-
-	if pmcs.consumer == nil {
-		consumer, err := pmcs.pulsarClient.Subscribe(
-			pulsar.ConsumerOptions{
-				Topic:            topic,
-				SubscriptionName: pmcs.pulsarSettings.SubscriptionName,
-			})
-		if err != nil {
-			return err
-		}
-
-		pmcs.consumer = consumer
-	}
-
-	return nil
 }
 
 func (pmcs *pulsarMessageConsumer) Close(ctx context.Context) {

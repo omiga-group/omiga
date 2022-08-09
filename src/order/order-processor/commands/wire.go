@@ -22,12 +22,19 @@ import (
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/order/order-processor/subscribers"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
+	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"go.uber.org/zap"
 )
 
-func NewOrderConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings) (orderv1.Consumer, error) {
-	wire.Build(orderv1.NewConsumer, subscribers.NewOrderSubscriber, pulsar.NewPulsarMessageConsumer)
+func NewMessageConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageConsumer, error) {
+	wire.Build(pulsar.NewPulsarMessageConsumer)
+
+	return nil, nil
+}
+
+func NewOrderConsumer(logger *zap.SugaredLogger, messageConsumer messaging.MessageConsumer) (orderv1.Consumer, error) {
+	wire.Build(orderv1.NewConsumer, subscribers.NewOrderSubscriber)
 
 	return nil, nil
 }

@@ -41,11 +41,6 @@ func NewConsumer(
 
 func (c *consumer) StartAsync(ctx context.Context) error {
 	go func() {
-		if err := c.messageConsumer.Connect(ctx, TopicName); err != nil {
-			return
-		}
-		defer c.messageConsumer.Close(ctx)
-
 		for {
 			if ctx.Err() == context.Canceled {
 				return

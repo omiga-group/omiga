@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/mitchellh/mapstructure"
+	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -46,7 +47,19 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			orderConsumer, err := NewOrderConsumer(sugarLogger, pulsarSettings)
+			messageConsumer, err := NewMessageConsumer(
+				sugarLogger,
+				pulsarSettings,
+				orderv1.TopicName)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer messageConsumer.Close(ctx)
+
+			orderConsumer, err := NewOrderConsumer(
+				sugarLogger,
+				messageConsumer)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
