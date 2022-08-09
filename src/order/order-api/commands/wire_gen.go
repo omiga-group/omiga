@@ -13,10 +13,20 @@ import (
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
+	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
+	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
+
+func NewMessageProducer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageProducer, error) {
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarSettings, topic)
+	if err != nil {
+		return nil, err
+	}
+	return messageProducer, nil
+}
 
 func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSettings, postgresSettings postgres.PostgresSettings) (http.HttpServer, error) {
 	database, err := postgres.NewPostgres(logger, postgresSettings)

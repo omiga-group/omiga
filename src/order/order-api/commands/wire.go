@@ -26,8 +26,16 @@ import (
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
+	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
+	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"go.uber.org/zap"
 )
+
+func NewMessageProducer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageProducer, error) {
+	wire.Build(pulsar.NewPulsarMessageProducer)
+
+	return nil, nil
+}
 
 func NewHttpServer(
 	logger *zap.SugaredLogger,

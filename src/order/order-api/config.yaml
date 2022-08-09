@@ -3,6 +3,7 @@ app:
 
 pulsar:
   url: "pulsar://pulsar.localhost:6650"
+  producerName: "order-api"
 
 postgres:
   connectionString: "postgres://postgres:12345678@postgres.localhost/order"

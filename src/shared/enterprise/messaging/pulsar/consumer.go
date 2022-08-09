@@ -48,23 +48,23 @@ func NewPulsarMessageConsumer(
 	}, nil
 }
 
-func (pmcs *pulsarMessageConsumer) Close(ctx context.Context) {
-	if pmcs.consumer != nil {
-		if err := pmcs.consumer.Unsubscribe(); err != nil {
-			pmcs.logger.Errorf("Failed to unsubscribe. Error: %v", err)
+func (pmc *pulsarMessageConsumer) Close(ctx context.Context) {
+	if pmc.consumer != nil {
+		if err := pmc.consumer.Unsubscribe(); err != nil {
+			pmc.logger.Errorf("Failed to unsubscribe. Error: %v", err)
 		}
 
-		pmcs.consumer.Close()
-		pmcs.consumer = nil
+		pmc.consumer.Close()
+		pmc.consumer = nil
 	}
 
-	if pmcs.pulsarClient == nil {
-		pmcs.pulsarClient.Close()
-		pmcs.pulsarClient = nil
+	if pmc.pulsarClient == nil {
+		pmc.pulsarClient.Close()
+		pmc.pulsarClient = nil
 	}
 }
 
-func (pmcs *pulsarMessageConsumer) Consume(ctx context.Context) (
+func (pmc *pulsarMessageConsumer) Consume(ctx context.Context) (
 	messaging.Message,
 	messaging.MessageProcessedCallback,
 	messaging.MessageFailedCallback,
@@ -79,12 +79,12 @@ func (pmcs *pulsarMessageConsumer) Consume(ctx context.Context) (
 
 		ctxWithTimeout, cancel := context.WithTimeout(ctx, 1*time.Second)
 
-		msg, err := pmcs.consumer.Receive(ctxWithTimeout)
+		msg, err := pmc.consumer.Receive(ctxWithTimeout)
 		if err != nil {
 			cancel()
 
 			if !errors.Is(err, context.DeadlineExceeded) {
-				pmcs.logger.Errorf("Failed to receive message from. Error: %v", err)
+				pmc.logger.Errorf("Failed to receive message from. Error: %v", err)
 			}
 
 			continue
@@ -93,14 +93,14 @@ func (pmcs *pulsarMessageConsumer) Consume(ctx context.Context) (
 		cancel()
 
 		messageProcessedCallback := func() {
-			if pmcs.consumer != nil {
-				pmcs.consumer.Ack(msg)
+			if pmc.consumer != nil {
+				pmc.consumer.Ack(msg)
 			}
 		}
 
 		messageFailedCallback := func() {
-			if pmcs.consumer != nil {
-				pmcs.consumer.Nack(msg)
+			if pmc.consumer != nil {
+				pmc.consumer.Nack(msg)
 			}
 		}
 		return messaging.Message{

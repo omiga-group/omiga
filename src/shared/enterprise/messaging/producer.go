@@ -5,6 +5,7 @@ import (
 )
 
 type MessageProducer interface {
+	Close(ctx context.Context)
 	Produce(
 		ctx context.Context,
 		topic string,
