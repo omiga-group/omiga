@@ -14,6 +14,7 @@ require (
 	github.com/jackc/pgx/v4 v4.17.0
 	github.com/micro-business/go-core v1.0.0
 	github.com/mitchellh/mapstructure v1.5.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/cors v1.8.2
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
