@@ -61,7 +61,7 @@ func (o *Outbox) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     o.ID,
 		Type:   "Outbox",
-		Fields: make([]*Field, 7),
+		Fields: make([]*Field, 8),
 		Edges:  make([]*Edge, 0),
 	}
 	var buf []byte
@@ -113,10 +113,18 @@ func (o *Outbox) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "retry_count",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(o.LastRetry); err != nil {
+	if buf, err = json.Marshal(o.Status); err != nil {
 		return nil, err
 	}
 	node.Fields[6] = &Field{
+		Type:  "outbox.Status",
+		Name:  "status",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(o.LastRetry); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
 		Type:  "int",
 		Name:  "last_retry",
 		Value: string(buf),

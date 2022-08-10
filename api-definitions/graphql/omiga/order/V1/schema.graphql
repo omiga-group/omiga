@@ -132,3 +132,9 @@ type OrderEdge {
   """
   cursor: Cursor!
 }
+
+enum OutboxStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}

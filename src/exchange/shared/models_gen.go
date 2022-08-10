@@ -6,24 +6,7 @@ import (
 	"fmt"
 	"io"
 	"strconv"
-
-	"github.com/omiga-group/omiga/src/order/shared/repositories"
 )
-
-type CancelOrderInput struct {
-	ClientMutationID *string `json:"clientMutationId"`
-	ID               int     `json:"id"`
-}
-
-type OrderPayload struct {
-	ClientMutationID *string             `json:"clientMutationId"`
-	Order            *repositories.Order `json:"order"`
-}
-
-type SubmitOrderInput struct {
-	ClientMutationID *string `json:"clientMutationId"`
-	ID               int     `json:"id"`
-}
 
 type OutboxStatus string
 

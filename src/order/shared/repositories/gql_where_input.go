@@ -203,6 +203,12 @@ type OutboxWhereInput struct {
 	RetryCountLT    *int  `json:"retryCountLT,omitempty"`
 	RetryCountLTE   *int  `json:"retryCountLTE,omitempty"`
 
+	// "status" field predicates.
+	Status      *outbox.Status  `json:"status,omitempty"`
+	StatusNEQ   *outbox.Status  `json:"statusNEQ,omitempty"`
+	StatusIn    []outbox.Status `json:"statusIn,omitempty"`
+	StatusNotIn []outbox.Status `json:"statusNotIn,omitempty"`
+
 	// "last_retry" field predicates.
 	LastRetry       *int  `json:"lastRetry,omitempty"`
 	LastRetryNEQ    *int  `json:"lastRetryNEQ,omitempty"`
@@ -436,6 +442,18 @@ func (i *OutboxWhereInput) P() (predicate.Outbox, error) {
 	}
 	if i.RetryCountLTE != nil {
 		predicates = append(predicates, outbox.RetryCountLTE(*i.RetryCountLTE))
+	}
+	if i.Status != nil {
+		predicates = append(predicates, outbox.StatusEQ(*i.Status))
+	}
+	if i.StatusNEQ != nil {
+		predicates = append(predicates, outbox.StatusNEQ(*i.StatusNEQ))
+	}
+	if len(i.StatusIn) > 0 {
+		predicates = append(predicates, outbox.StatusIn(i.StatusIn...))
+	}
+	if len(i.StatusNotIn) > 0 {
+		predicates = append(predicates, outbox.StatusNotIn(i.StatusNotIn...))
 	}
 	if i.LastRetry != nil {
 		predicates = append(predicates, outbox.LastRetryEQ(*i.LastRetry))

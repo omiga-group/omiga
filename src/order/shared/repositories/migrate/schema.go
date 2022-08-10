@@ -27,6 +27,7 @@ var (
 		{Name: "payload", Type: field.TypeBytes},
 		{Name: "headers", Type: field.TypeJSON},
 		{Name: "retry_count", Type: field.TypeInt},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "SUCCEEDED", "FAILED"}},
 		{Name: "last_retry", Type: field.TypeInt, Nullable: true},
 	}
 	// OutboxesTable holds the schema information for the "outboxes" table.
@@ -37,6 +38,11 @@ var (
 		Indexes: []*schema.Index{
 			{
 				Name:    "outbox_last_retry",
+				Unique:  false,
+				Columns: []*schema.Column{OutboxesColumns[8]},
+			},
+			{
+				Name:    "outbox_status",
 				Unique:  false,
 				Columns: []*schema.Column{OutboxesColumns[7]},
 			},

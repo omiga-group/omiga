@@ -2,8 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/schema/field"
-	"entgo.io/ent/schema/index"
+	"github.com/omiga-group/omiga/src/shared/enterprise/outbox"
 )
 
 // Outbox holds the schema definition for the Outbox entity.
@@ -13,24 +12,14 @@ type Outbox struct {
 
 // Fields of the Outbox.
 func (Outbox) Fields() []ent.Field {
-	return []ent.Field{
-		field.Time("timestamp"),
-		field.String("topic"),
-		field.String("key"),
-		field.Bytes("payload"),
-		field.JSON("headers", map[string]string{}),
-		field.Int("retry_count"),
-		field.Int("last_retry").Optional(),
-	}
+	return outbox.Outbox{}.Fields()
 }
 
 // Edges of the Outbox.
 func (Outbox) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return outbox.Outbox{}.Edges()
 }
 
 func (Outbox) Indexes() []ent.Index {
-	return []ent.Index{
-		index.Fields("last_retry"),
-	}
+	return outbox.Outbox{}.Indexes()
 }

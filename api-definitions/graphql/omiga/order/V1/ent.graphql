@@ -79,6 +79,11 @@ input OutboxWhereInput {
   retryCountGTE: Int
   retryCountLT: Int
   retryCountLTE: Int
+  """status field predicates"""
+  status: OutboxStatus
+  statusNEQ: OutboxStatus
+  statusIn: [OutboxStatus!]
+  statusNotIn: [OutboxStatus!]
   """last_retry field predicates"""
   lastRetry: Int
   lastRetryNEQ: Int

@@ -37,6 +37,7 @@ type Config struct {
 
 type ResolverRoot interface {
 	Query() QueryResolver
+	OutboxWhereInput() OutboxWhereInputResolver
 }
 
 type DirectiveRoot struct {
@@ -74,6 +75,13 @@ type ComplexityRoot struct {
 type QueryResolver interface {
 	Exchange(ctx context.Context, id int) (*repositories.Exchange, error)
 	Exchanges(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, where *repositories.ExchangeWhereInput) (*repositories.ExchangeConnection, error)
+}
+
+type OutboxWhereInputResolver interface {
+	Status(ctx context.Context, obj *repositories.OutboxWhereInput, data *OutboxStatus) error
+	StatusNeq(ctx context.Context, obj *repositories.OutboxWhereInput, data *OutboxStatus) error
+	StatusIn(ctx context.Context, obj *repositories.OutboxWhereInput, data []OutboxStatus) error
+	StatusNotIn(ctx context.Context, obj *repositories.OutboxWhereInput, data []OutboxStatus) error
 }
 
 type executableSchema struct {
@@ -353,6 +361,12 @@ type ExchangeEdge {
   """
   cursor: Cursor!
 }
+
+enum OutboxStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
 `, BuiltIn: false},
 	{Name: "../../../api-definitions/graphql/omiga/exchange/V1/ent.graphql", Input: `"""
 ExchangeWhereInput is used for filtering Exchange objects.
@@ -435,6 +449,11 @@ input OutboxWhereInput {
   retryCountGTE: Int
   retryCountLT: Int
   retryCountLTE: Int
+  """status field predicates"""
+  status: OutboxStatus
+  statusNEQ: OutboxStatus
+  statusIn: [OutboxStatus!]
+  statusNotIn: [OutboxStatus!]
   """last_retry field predicates"""
   lastRetry: Int
   lastRetryNEQ: Int
@@ -3152,7 +3171,7 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "timestamp", "timestampNEQ", "timestampIn", "timestampNotIn", "timestampGT", "timestampGTE", "timestampLT", "timestampLTE", "topic", "topicNEQ", "topicIn", "topicNotIn", "topicGT", "topicGTE", "topicLT", "topicLTE", "topicContains", "topicHasPrefix", "topicHasSuffix", "topicEqualFold", "topicContainsFold", "key", "keyNEQ", "keyIn", "keyNotIn", "keyGT", "keyGTE", "keyLT", "keyLTE", "keyContains", "keyHasPrefix", "keyHasSuffix", "keyEqualFold", "keyContainsFold", "retryCount", "retryCountNEQ", "retryCountIn", "retryCountNotIn", "retryCountGT", "retryCountGTE", "retryCountLT", "retryCountLTE", "lastRetry", "lastRetryNEQ", "lastRetryIn", "lastRetryNotIn", "lastRetryGT", "lastRetryGTE", "lastRetryLT", "lastRetryLTE", "lastRetryIsNil", "lastRetryNotNil"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "timestamp", "timestampNEQ", "timestampIn", "timestampNotIn", "timestampGT", "timestampGTE", "timestampLT", "timestampLTE", "topic", "topicNEQ", "topicIn", "topicNotIn", "topicGT", "topicGTE", "topicLT", "topicLTE", "topicContains", "topicHasPrefix", "topicHasSuffix", "topicEqualFold", "topicContainsFold", "key", "keyNEQ", "keyIn", "keyNotIn", "keyGT", "keyGTE", "keyLT", "keyLTE", "keyContains", "keyHasPrefix", "keyHasSuffix", "keyEqualFold", "keyContainsFold", "retryCount", "retryCountNEQ", "retryCountIn", "retryCountNotIn", "retryCountGT", "retryCountGTE", "retryCountLT", "retryCountLTE", "status", "statusNEQ", "statusIn", "statusNotIn", "lastRetry", "lastRetryNEQ", "lastRetryIn", "lastRetryNotIn", "lastRetryGT", "lastRetryGTE", "lastRetryLT", "lastRetryLTE", "lastRetryIsNil", "lastRetryNotNil"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3581,6 +3600,50 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("retryCountLTE"))
 			it.RetryCountLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
+				return it, err
+			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOOutboxStatus2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚐOutboxStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.OutboxWhereInput().Status(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "statusNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusNEQ"))
+			data, err := ec.unmarshalOOutboxStatus2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚐOutboxStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.OutboxWhereInput().StatusNeq(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "statusIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusIn"))
+			data, err := ec.unmarshalOOutboxStatus2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚐOutboxStatusᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.OutboxWhereInput().StatusIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "statusNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusNotIn"))
+			data, err := ec.unmarshalOOutboxStatus2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚐOutboxStatusᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.OutboxWhereInput().StatusNotIn(ctx, &it, data); err != nil {
 				return it, err
 			}
 		case "lastRetry":
@@ -4290,6 +4353,16 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) unmarshalNOutboxStatus2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚐOutboxStatus(ctx context.Context, v interface{}) (OutboxStatus, error) {
+	var res OutboxStatus
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNOutboxStatus2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚐOutboxStatus(ctx context.Context, sel ast.SelectionSet, v OutboxStatus) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNOutboxWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐOutboxWhereInput(ctx context.Context, v interface{}) (*repositories.OutboxWhereInput, error) {
 	res, err := ec.unmarshalInputOutboxWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -4830,6 +4903,89 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	}
 	res := graphql.MarshalInt(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOOutboxStatus2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚐOutboxStatusᚄ(ctx context.Context, v interface{}) ([]OutboxStatus, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]OutboxStatus, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNOutboxStatus2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚐOutboxStatus(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOOutboxStatus2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚐOutboxStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []OutboxStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNOutboxStatus2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚐOutboxStatus(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOOutboxStatus2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚐOutboxStatus(ctx context.Context, v interface{}) (*OutboxStatus, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(OutboxStatus)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOOutboxStatus2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚐOutboxStatus(ctx context.Context, sel ast.SelectionSet, v *OutboxStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOOutboxWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐOutboxWhereInputᚄ(ctx context.Context, v interface{}) ([]*repositories.OutboxWhereInput, error) {

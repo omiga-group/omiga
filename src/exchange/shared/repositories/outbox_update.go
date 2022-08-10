@@ -72,6 +72,12 @@ func (ou *OutboxUpdate) AddRetryCount(i int) *OutboxUpdate {
 	return ou
 }
 
+// SetStatus sets the "status" field.
+func (ou *OutboxUpdate) SetStatus(o outbox.Status) *OutboxUpdate {
+	ou.mutation.SetStatus(o)
+	return ou
+}
+
 // SetLastRetry sets the "last_retry" field.
 func (ou *OutboxUpdate) SetLastRetry(i int) *OutboxUpdate {
 	ou.mutation.ResetLastRetry()
@@ -111,12 +117,18 @@ func (ou *OutboxUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(ou.hooks) == 0 {
+		if err = ou.check(); err != nil {
+			return 0, err
+		}
 		affected, err = ou.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*OutboxMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ou.check(); err != nil {
+				return 0, err
 			}
 			ou.mutation = mutation
 			affected, err = ou.sqlSave(ctx)
@@ -156,6 +168,16 @@ func (ou *OutboxUpdate) ExecX(ctx context.Context) {
 	if err := ou.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ou *OutboxUpdate) check() error {
+	if v, ok := ou.mutation.Status(); ok {
+		if err := outbox.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`repositories: validator failed for field "Outbox.status": %w`, err)}
+		}
+	}
+	return nil
 }
 
 func (ou *OutboxUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -223,6 +245,13 @@ func (ou *OutboxUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeInt,
 			Value:  value,
 			Column: outbox.FieldRetryCount,
+		})
+	}
+	if value, ok := ou.mutation.Status(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: outbox.FieldStatus,
 		})
 	}
 	if value, ok := ou.mutation.LastRetry(); ok {
@@ -309,6 +338,12 @@ func (ouo *OutboxUpdateOne) AddRetryCount(i int) *OutboxUpdateOne {
 	return ouo
 }
 
+// SetStatus sets the "status" field.
+func (ouo *OutboxUpdateOne) SetStatus(o outbox.Status) *OutboxUpdateOne {
+	ouo.mutation.SetStatus(o)
+	return ouo
+}
+
 // SetLastRetry sets the "last_retry" field.
 func (ouo *OutboxUpdateOne) SetLastRetry(i int) *OutboxUpdateOne {
 	ouo.mutation.ResetLastRetry()
@@ -355,12 +390,18 @@ func (ouo *OutboxUpdateOne) Save(ctx context.Context) (*Outbox, error) {
 		node *Outbox
 	)
 	if len(ouo.hooks) == 0 {
+		if err = ouo.check(); err != nil {
+			return nil, err
+		}
 		node, err = ouo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*OutboxMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ouo.check(); err != nil {
+				return nil, err
 			}
 			ouo.mutation = mutation
 			node, err = ouo.sqlSave(ctx)
@@ -406,6 +447,16 @@ func (ouo *OutboxUpdateOne) ExecX(ctx context.Context) {
 	if err := ouo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ouo *OutboxUpdateOne) check() error {
+	if v, ok := ouo.mutation.Status(); ok {
+		if err := outbox.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`repositories: validator failed for field "Outbox.status": %w`, err)}
+		}
+	}
+	return nil
 }
 
 func (ouo *OutboxUpdateOne) sqlSave(ctx context.Context) (_node *Outbox, err error) {
@@ -490,6 +541,13 @@ func (ouo *OutboxUpdateOne) sqlSave(ctx context.Context) (_node *Outbox, err err
 			Type:   field.TypeInt,
 			Value:  value,
 			Column: outbox.FieldRetryCount,
+		})
+	}
+	if value, ok := ouo.mutation.Status(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: outbox.FieldStatus,
 		})
 	}
 	if value, ok := ouo.mutation.LastRetry(); ok {

@@ -290,6 +290,7 @@ type OutboxMutation struct {
 	headers        *map[string]string
 	retry_count    *int
 	addretry_count *int
+	status         *outbox.Status
 	last_retry     *int
 	addlast_retry  *int
 	clearedFields  map[string]struct{}
@@ -632,6 +633,42 @@ func (m *OutboxMutation) ResetRetryCount() {
 	m.addretry_count = nil
 }
 
+// SetStatus sets the "status" field.
+func (m *OutboxMutation) SetStatus(o outbox.Status) {
+	m.status = &o
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *OutboxMutation) Status() (r outbox.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Outbox entity.
+// If the Outbox object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OutboxMutation) OldStatus(ctx context.Context) (v outbox.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *OutboxMutation) ResetStatus() {
+	m.status = nil
+}
+
 // SetLastRetry sets the "last_retry" field.
 func (m *OutboxMutation) SetLastRetry(i int) {
 	m.last_retry = &i
@@ -721,7 +758,7 @@ func (m *OutboxMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OutboxMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.timestamp != nil {
 		fields = append(fields, outbox.FieldTimestamp)
 	}
@@ -739,6 +776,9 @@ func (m *OutboxMutation) Fields() []string {
 	}
 	if m.retry_count != nil {
 		fields = append(fields, outbox.FieldRetryCount)
+	}
+	if m.status != nil {
+		fields = append(fields, outbox.FieldStatus)
 	}
 	if m.last_retry != nil {
 		fields = append(fields, outbox.FieldLastRetry)
@@ -763,6 +803,8 @@ func (m *OutboxMutation) Field(name string) (ent.Value, bool) {
 		return m.Headers()
 	case outbox.FieldRetryCount:
 		return m.RetryCount()
+	case outbox.FieldStatus:
+		return m.Status()
 	case outbox.FieldLastRetry:
 		return m.LastRetry()
 	}
@@ -786,6 +828,8 @@ func (m *OutboxMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldHeaders(ctx)
 	case outbox.FieldRetryCount:
 		return m.OldRetryCount(ctx)
+	case outbox.FieldStatus:
+		return m.OldStatus(ctx)
 	case outbox.FieldLastRetry:
 		return m.OldLastRetry(ctx)
 	}
@@ -838,6 +882,13 @@ func (m *OutboxMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetRetryCount(v)
+		return nil
+	case outbox.FieldStatus:
+		v, ok := value.(outbox.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
 		return nil
 	case outbox.FieldLastRetry:
 		v, ok := value.(int)
@@ -948,6 +999,9 @@ func (m *OutboxMutation) ResetField(name string) error {
 		return nil
 	case outbox.FieldRetryCount:
 		m.ResetRetryCount()
+		return nil
+	case outbox.FieldStatus:
+		m.ResetStatus()
 		return nil
 	case outbox.FieldLastRetry:
 		m.ResetLastRetry()

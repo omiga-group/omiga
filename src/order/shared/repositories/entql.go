@@ -44,6 +44,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			outbox.FieldPayload:    {Type: field.TypeBytes, Column: outbox.FieldPayload},
 			outbox.FieldHeaders:    {Type: field.TypeJSON, Column: outbox.FieldHeaders},
 			outbox.FieldRetryCount: {Type: field.TypeInt, Column: outbox.FieldRetryCount},
+			outbox.FieldStatus:     {Type: field.TypeEnum, Column: outbox.FieldStatus},
 			outbox.FieldLastRetry:  {Type: field.TypeInt, Column: outbox.FieldLastRetry},
 		},
 	}
@@ -164,6 +165,11 @@ func (f *OutboxFilter) WhereHeaders(p entql.BytesP) {
 // WhereRetryCount applies the entql int predicate on the retry_count field.
 func (f *OutboxFilter) WhereRetryCount(p entql.IntP) {
 	f.Where(p.Field(outbox.FieldRetryCount))
+}
+
+// WhereStatus applies the entql string predicate on the status field.
+func (f *OutboxFilter) WhereStatus(p entql.StringP) {
+	f.Where(p.Field(outbox.FieldStatus))
 }
 
 // WhereLastRetry applies the entql int predicate on the last_retry field.

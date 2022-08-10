@@ -111,3 +111,9 @@ type ExchangeEdge {
   """
   cursor: Cursor!
 }
+
+enum OutboxStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}

@@ -29,6 +29,8 @@ type Outbox struct {
 	Headers map[string]string `json:"headers,omitempty"`
 	// RetryCount holds the value of the "retry_count" field.
 	RetryCount int `json:"retry_count,omitempty"`
+	// Status holds the value of the "status" field.
+	Status outbox.Status `json:"status,omitempty"`
 	// LastRetry holds the value of the "last_retry" field.
 	LastRetry int `json:"last_retry,omitempty"`
 }
@@ -42,7 +44,7 @@ func (*Outbox) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new([]byte)
 		case outbox.FieldID, outbox.FieldRetryCount, outbox.FieldLastRetry:
 			values[i] = new(sql.NullInt64)
-		case outbox.FieldTopic, outbox.FieldKey:
+		case outbox.FieldTopic, outbox.FieldKey, outbox.FieldStatus:
 			values[i] = new(sql.NullString)
 		case outbox.FieldTimestamp:
 			values[i] = new(sql.NullTime)
@@ -105,6 +107,12 @@ func (o *Outbox) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				o.RetryCount = int(value.Int64)
 			}
+		case outbox.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				o.Status = outbox.Status(value.String)
+			}
 		case outbox.FieldLastRetry:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field last_retry", values[i])
@@ -156,6 +164,9 @@ func (o *Outbox) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("retry_count=")
 	builder.WriteString(fmt.Sprintf("%v", o.RetryCount))
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", o.Status))
 	builder.WriteString(", ")
 	builder.WriteString("last_retry=")
 	builder.WriteString(fmt.Sprintf("%v", o.LastRetry))

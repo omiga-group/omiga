@@ -58,6 +58,12 @@ func (oc *OutboxCreate) SetRetryCount(i int) *OutboxCreate {
 	return oc
 }
 
+// SetStatus sets the "status" field.
+func (oc *OutboxCreate) SetStatus(o outbox.Status) *OutboxCreate {
+	oc.mutation.SetStatus(o)
+	return oc
+}
+
 // SetLastRetry sets the "last_retry" field.
 func (oc *OutboxCreate) SetLastRetry(i int) *OutboxCreate {
 	oc.mutation.SetLastRetry(i)
@@ -166,6 +172,14 @@ func (oc *OutboxCreate) check() error {
 	if _, ok := oc.mutation.RetryCount(); !ok {
 		return &ValidationError{Name: "retry_count", err: errors.New(`repositories: missing required field "Outbox.retry_count"`)}
 	}
+	if _, ok := oc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`repositories: missing required field "Outbox.status"`)}
+	}
+	if v, ok := oc.mutation.Status(); ok {
+		if err := outbox.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`repositories: validator failed for field "Outbox.status": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -242,6 +256,14 @@ func (oc *OutboxCreate) createSpec() (*Outbox, *sqlgraph.CreateSpec) {
 			Column: outbox.FieldRetryCount,
 		})
 		_node.RetryCount = value
+	}
+	if value, ok := oc.mutation.Status(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: outbox.FieldStatus,
+		})
+		_node.Status = value
 	}
 	if value, ok := oc.mutation.LastRetry(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -380,6 +402,18 @@ func (u *OutboxUpsert) UpdateRetryCount() *OutboxUpsert {
 // AddRetryCount adds v to the "retry_count" field.
 func (u *OutboxUpsert) AddRetryCount(v int) *OutboxUpsert {
 	u.Add(outbox.FieldRetryCount, v)
+	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *OutboxUpsert) SetStatus(v outbox.Status) *OutboxUpsert {
+	u.Set(outbox.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *OutboxUpsert) UpdateStatus() *OutboxUpsert {
+	u.SetExcluded(outbox.FieldStatus)
 	return u
 }
 
@@ -537,6 +571,20 @@ func (u *OutboxUpsertOne) AddRetryCount(v int) *OutboxUpsertOne {
 func (u *OutboxUpsertOne) UpdateRetryCount() *OutboxUpsertOne {
 	return u.Update(func(s *OutboxUpsert) {
 		s.UpdateRetryCount()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *OutboxUpsertOne) SetStatus(v outbox.Status) *OutboxUpsertOne {
+	return u.Update(func(s *OutboxUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *OutboxUpsertOne) UpdateStatus() *OutboxUpsertOne {
+	return u.Update(func(s *OutboxUpsert) {
+		s.UpdateStatus()
 	})
 }
 
@@ -859,6 +907,20 @@ func (u *OutboxUpsertBulk) AddRetryCount(v int) *OutboxUpsertBulk {
 func (u *OutboxUpsertBulk) UpdateRetryCount() *OutboxUpsertBulk {
 	return u.Update(func(s *OutboxUpsert) {
 		s.UpdateRetryCount()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *OutboxUpsertBulk) SetStatus(v outbox.Status) *OutboxUpsertBulk {
+	return u.Update(func(s *OutboxUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *OutboxUpsertBulk) UpdateStatus() *OutboxUpsertBulk {
+	return u.Update(func(s *OutboxUpsert) {
+		s.UpdateStatus()
 	})
 }
 
