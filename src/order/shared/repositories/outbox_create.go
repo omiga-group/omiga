@@ -65,16 +65,22 @@ func (oc *OutboxCreate) SetStatus(o outbox.Status) *OutboxCreate {
 }
 
 // SetLastRetry sets the "last_retry" field.
-func (oc *OutboxCreate) SetLastRetry(i int) *OutboxCreate {
-	oc.mutation.SetLastRetry(i)
+func (oc *OutboxCreate) SetLastRetry(t time.Time) *OutboxCreate {
+	oc.mutation.SetLastRetry(t)
 	return oc
 }
 
 // SetNillableLastRetry sets the "last_retry" field if the given value is not nil.
-func (oc *OutboxCreate) SetNillableLastRetry(i *int) *OutboxCreate {
-	if i != nil {
-		oc.SetLastRetry(*i)
+func (oc *OutboxCreate) SetNillableLastRetry(t *time.Time) *OutboxCreate {
+	if t != nil {
+		oc.SetLastRetry(*t)
 	}
+	return oc
+}
+
+// SetProcessingErrors sets the "processing_errors" field.
+func (oc *OutboxCreate) SetProcessingErrors(s []string) *OutboxCreate {
+	oc.mutation.SetProcessingErrors(s)
 	return oc
 }
 
@@ -267,11 +273,19 @@ func (oc *OutboxCreate) createSpec() (*Outbox, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := oc.mutation.LastRetry(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: outbox.FieldLastRetry,
 		})
 		_node.LastRetry = value
+	}
+	if value, ok := oc.mutation.ProcessingErrors(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: outbox.FieldProcessingErrors,
+		})
+		_node.ProcessingErrors = value
 	}
 	return _node, _spec
 }
@@ -418,7 +432,7 @@ func (u *OutboxUpsert) UpdateStatus() *OutboxUpsert {
 }
 
 // SetLastRetry sets the "last_retry" field.
-func (u *OutboxUpsert) SetLastRetry(v int) *OutboxUpsert {
+func (u *OutboxUpsert) SetLastRetry(v time.Time) *OutboxUpsert {
 	u.Set(outbox.FieldLastRetry, v)
 	return u
 }
@@ -429,15 +443,27 @@ func (u *OutboxUpsert) UpdateLastRetry() *OutboxUpsert {
 	return u
 }
 
-// AddLastRetry adds v to the "last_retry" field.
-func (u *OutboxUpsert) AddLastRetry(v int) *OutboxUpsert {
-	u.Add(outbox.FieldLastRetry, v)
-	return u
-}
-
 // ClearLastRetry clears the value of the "last_retry" field.
 func (u *OutboxUpsert) ClearLastRetry() *OutboxUpsert {
 	u.SetNull(outbox.FieldLastRetry)
+	return u
+}
+
+// SetProcessingErrors sets the "processing_errors" field.
+func (u *OutboxUpsert) SetProcessingErrors(v []string) *OutboxUpsert {
+	u.Set(outbox.FieldProcessingErrors, v)
+	return u
+}
+
+// UpdateProcessingErrors sets the "processing_errors" field to the value that was provided on create.
+func (u *OutboxUpsert) UpdateProcessingErrors() *OutboxUpsert {
+	u.SetExcluded(outbox.FieldProcessingErrors)
+	return u
+}
+
+// ClearProcessingErrors clears the value of the "processing_errors" field.
+func (u *OutboxUpsert) ClearProcessingErrors() *OutboxUpsert {
+	u.SetNull(outbox.FieldProcessingErrors)
 	return u
 }
 
@@ -589,16 +615,9 @@ func (u *OutboxUpsertOne) UpdateStatus() *OutboxUpsertOne {
 }
 
 // SetLastRetry sets the "last_retry" field.
-func (u *OutboxUpsertOne) SetLastRetry(v int) *OutboxUpsertOne {
+func (u *OutboxUpsertOne) SetLastRetry(v time.Time) *OutboxUpsertOne {
 	return u.Update(func(s *OutboxUpsert) {
 		s.SetLastRetry(v)
-	})
-}
-
-// AddLastRetry adds v to the "last_retry" field.
-func (u *OutboxUpsertOne) AddLastRetry(v int) *OutboxUpsertOne {
-	return u.Update(func(s *OutboxUpsert) {
-		s.AddLastRetry(v)
 	})
 }
 
@@ -613,6 +632,27 @@ func (u *OutboxUpsertOne) UpdateLastRetry() *OutboxUpsertOne {
 func (u *OutboxUpsertOne) ClearLastRetry() *OutboxUpsertOne {
 	return u.Update(func(s *OutboxUpsert) {
 		s.ClearLastRetry()
+	})
+}
+
+// SetProcessingErrors sets the "processing_errors" field.
+func (u *OutboxUpsertOne) SetProcessingErrors(v []string) *OutboxUpsertOne {
+	return u.Update(func(s *OutboxUpsert) {
+		s.SetProcessingErrors(v)
+	})
+}
+
+// UpdateProcessingErrors sets the "processing_errors" field to the value that was provided on create.
+func (u *OutboxUpsertOne) UpdateProcessingErrors() *OutboxUpsertOne {
+	return u.Update(func(s *OutboxUpsert) {
+		s.UpdateProcessingErrors()
+	})
+}
+
+// ClearProcessingErrors clears the value of the "processing_errors" field.
+func (u *OutboxUpsertOne) ClearProcessingErrors() *OutboxUpsertOne {
+	return u.Update(func(s *OutboxUpsert) {
+		s.ClearProcessingErrors()
 	})
 }
 
@@ -925,16 +965,9 @@ func (u *OutboxUpsertBulk) UpdateStatus() *OutboxUpsertBulk {
 }
 
 // SetLastRetry sets the "last_retry" field.
-func (u *OutboxUpsertBulk) SetLastRetry(v int) *OutboxUpsertBulk {
+func (u *OutboxUpsertBulk) SetLastRetry(v time.Time) *OutboxUpsertBulk {
 	return u.Update(func(s *OutboxUpsert) {
 		s.SetLastRetry(v)
-	})
-}
-
-// AddLastRetry adds v to the "last_retry" field.
-func (u *OutboxUpsertBulk) AddLastRetry(v int) *OutboxUpsertBulk {
-	return u.Update(func(s *OutboxUpsert) {
-		s.AddLastRetry(v)
 	})
 }
 
@@ -949,6 +982,27 @@ func (u *OutboxUpsertBulk) UpdateLastRetry() *OutboxUpsertBulk {
 func (u *OutboxUpsertBulk) ClearLastRetry() *OutboxUpsertBulk {
 	return u.Update(func(s *OutboxUpsert) {
 		s.ClearLastRetry()
+	})
+}
+
+// SetProcessingErrors sets the "processing_errors" field.
+func (u *OutboxUpsertBulk) SetProcessingErrors(v []string) *OutboxUpsertBulk {
+	return u.Update(func(s *OutboxUpsert) {
+		s.SetProcessingErrors(v)
+	})
+}
+
+// UpdateProcessingErrors sets the "processing_errors" field to the value that was provided on create.
+func (u *OutboxUpsertBulk) UpdateProcessingErrors() *OutboxUpsertBulk {
+	return u.Update(func(s *OutboxUpsert) {
+		s.UpdateProcessingErrors()
+	})
+}
+
+// ClearProcessingErrors clears the value of the "processing_errors" field.
+func (u *OutboxUpsertBulk) ClearProcessingErrors() *OutboxUpsertBulk {
+	return u.Update(func(s *OutboxUpsert) {
+		s.ClearProcessingErrors()
 	})
 }
 

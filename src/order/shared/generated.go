@@ -546,14 +546,14 @@ input OutboxWhereInput {
   statusIn: [OutboxStatus!]
   statusNotIn: [OutboxStatus!]
   """last_retry field predicates"""
-  lastRetry: Int
-  lastRetryNEQ: Int
-  lastRetryIn: [Int!]
-  lastRetryNotIn: [Int!]
-  lastRetryGT: Int
-  lastRetryGTE: Int
-  lastRetryLT: Int
-  lastRetryLTE: Int
+  lastRetry: Time
+  lastRetryNEQ: Time
+  lastRetryIn: [Time!]
+  lastRetryNotIn: [Time!]
+  lastRetryGT: Time
+  lastRetryGTE: Time
+  lastRetryLT: Time
+  lastRetryLTE: Time
   lastRetryIsNil: Boolean
   lastRetryNotNil: Boolean
 }
@@ -4009,7 +4009,7 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastRetry"))
-			it.LastRetry, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.LastRetry, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4017,7 +4017,7 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastRetryNEQ"))
-			it.LastRetryNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.LastRetryNEQ, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4025,7 +4025,7 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastRetryIn"))
-			it.LastRetryIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			it.LastRetryIn, err = ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4033,7 +4033,7 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastRetryNotIn"))
-			it.LastRetryNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			it.LastRetryNotIn, err = ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4041,7 +4041,7 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastRetryGT"))
-			it.LastRetryGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.LastRetryGT, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4049,7 +4049,7 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastRetryGTE"))
-			it.LastRetryGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.LastRetryGTE, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4057,7 +4057,7 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastRetryLT"))
-			it.LastRetryLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.LastRetryLT, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4065,7 +4065,7 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastRetryLTE"))
-			it.LastRetryLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.LastRetryLTE, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}

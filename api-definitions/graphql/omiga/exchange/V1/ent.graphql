@@ -85,14 +85,14 @@ input OutboxWhereInput {
   statusIn: [OutboxStatus!]
   statusNotIn: [OutboxStatus!]
   """last_retry field predicates"""
-  lastRetry: Int
-  lastRetryNEQ: Int
-  lastRetryIn: [Int!]
-  lastRetryNotIn: [Int!]
-  lastRetryGT: Int
-  lastRetryGTE: Int
-  lastRetryLT: Int
-  lastRetryLTE: Int
+  lastRetry: Time
+  lastRetryNEQ: Time
+  lastRetryIn: [Time!]
+  lastRetryNotIn: [Time!]
+  lastRetryGT: Time
+  lastRetryGTE: Time
+  lastRetryLT: Time
+  lastRetryLTE: Time
   lastRetryIsNil: Boolean
   lastRetryNotNil: Boolean
 }

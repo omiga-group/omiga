@@ -29,6 +29,8 @@ const (
 	FieldStatus = "status"
 	// FieldLastRetry holds the string denoting the last_retry field in the database.
 	FieldLastRetry = "last_retry"
+	// FieldProcessingErrors holds the string denoting the processing_errors field in the database.
+	FieldProcessingErrors = "processing_errors"
 	// Table holds the table name of the outbox in the database.
 	Table = "outboxes"
 )
@@ -44,6 +46,7 @@ var Columns = []string{
 	FieldRetryCount,
 	FieldStatus,
 	FieldLastRetry,
+	FieldProcessingErrors,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

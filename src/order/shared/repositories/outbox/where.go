@@ -116,7 +116,7 @@ func RetryCount(v int) predicate.Outbox {
 }
 
 // LastRetry applies equality check predicate on the "last_retry" field. It's identical to LastRetryEQ.
-func LastRetry(v int) predicate.Outbox {
+func LastRetry(v time.Time) predicate.Outbox {
 	return predicate.Outbox(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldLastRetry), v))
 	})
@@ -621,21 +621,21 @@ func StatusNotIn(vs ...Status) predicate.Outbox {
 }
 
 // LastRetryEQ applies the EQ predicate on the "last_retry" field.
-func LastRetryEQ(v int) predicate.Outbox {
+func LastRetryEQ(v time.Time) predicate.Outbox {
 	return predicate.Outbox(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldLastRetry), v))
 	})
 }
 
 // LastRetryNEQ applies the NEQ predicate on the "last_retry" field.
-func LastRetryNEQ(v int) predicate.Outbox {
+func LastRetryNEQ(v time.Time) predicate.Outbox {
 	return predicate.Outbox(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldLastRetry), v))
 	})
 }
 
 // LastRetryIn applies the In predicate on the "last_retry" field.
-func LastRetryIn(vs ...int) predicate.Outbox {
+func LastRetryIn(vs ...time.Time) predicate.Outbox {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -652,7 +652,7 @@ func LastRetryIn(vs ...int) predicate.Outbox {
 }
 
 // LastRetryNotIn applies the NotIn predicate on the "last_retry" field.
-func LastRetryNotIn(vs ...int) predicate.Outbox {
+func LastRetryNotIn(vs ...time.Time) predicate.Outbox {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -669,28 +669,28 @@ func LastRetryNotIn(vs ...int) predicate.Outbox {
 }
 
 // LastRetryGT applies the GT predicate on the "last_retry" field.
-func LastRetryGT(v int) predicate.Outbox {
+func LastRetryGT(v time.Time) predicate.Outbox {
 	return predicate.Outbox(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldLastRetry), v))
 	})
 }
 
 // LastRetryGTE applies the GTE predicate on the "last_retry" field.
-func LastRetryGTE(v int) predicate.Outbox {
+func LastRetryGTE(v time.Time) predicate.Outbox {
 	return predicate.Outbox(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldLastRetry), v))
 	})
 }
 
 // LastRetryLT applies the LT predicate on the "last_retry" field.
-func LastRetryLT(v int) predicate.Outbox {
+func LastRetryLT(v time.Time) predicate.Outbox {
 	return predicate.Outbox(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldLastRetry), v))
 	})
 }
 
 // LastRetryLTE applies the LTE predicate on the "last_retry" field.
-func LastRetryLTE(v int) predicate.Outbox {
+func LastRetryLTE(v time.Time) predicate.Outbox {
 	return predicate.Outbox(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldLastRetry), v))
 	})
@@ -707,6 +707,20 @@ func LastRetryIsNil() predicate.Outbox {
 func LastRetryNotNil() predicate.Outbox {
 	return predicate.Outbox(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldLastRetry)))
+	})
+}
+
+// ProcessingErrorsIsNil applies the IsNil predicate on the "processing_errors" field.
+func ProcessingErrorsIsNil() predicate.Outbox {
+	return predicate.Outbox(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldProcessingErrors)))
+	})
+}
+
+// ProcessingErrorsNotNil applies the NotNil predicate on the "processing_errors" field.
+func ProcessingErrorsNotNil() predicate.Outbox {
+	return predicate.Outbox(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldProcessingErrors)))
 	})
 }
 

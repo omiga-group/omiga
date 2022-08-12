@@ -28,7 +28,8 @@ var (
 		{Name: "headers", Type: field.TypeJSON},
 		{Name: "retry_count", Type: field.TypeInt},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "SUCCEEDED", "FAILED"}},
-		{Name: "last_retry", Type: field.TypeInt, Nullable: true},
+		{Name: "last_retry", Type: field.TypeTime, Nullable: true},
+		{Name: "processing_errors", Type: field.TypeJSON, Nullable: true},
 	}
 	// OutboxesTable holds the schema information for the "outboxes" table.
 	OutboxesTable = &schema.Table{

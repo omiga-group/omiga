@@ -38,14 +38,15 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Outbox",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			outbox.FieldTimestamp:  {Type: field.TypeTime, Column: outbox.FieldTimestamp},
-			outbox.FieldTopic:      {Type: field.TypeString, Column: outbox.FieldTopic},
-			outbox.FieldKey:        {Type: field.TypeString, Column: outbox.FieldKey},
-			outbox.FieldPayload:    {Type: field.TypeBytes, Column: outbox.FieldPayload},
-			outbox.FieldHeaders:    {Type: field.TypeJSON, Column: outbox.FieldHeaders},
-			outbox.FieldRetryCount: {Type: field.TypeInt, Column: outbox.FieldRetryCount},
-			outbox.FieldStatus:     {Type: field.TypeEnum, Column: outbox.FieldStatus},
-			outbox.FieldLastRetry:  {Type: field.TypeInt, Column: outbox.FieldLastRetry},
+			outbox.FieldTimestamp:        {Type: field.TypeTime, Column: outbox.FieldTimestamp},
+			outbox.FieldTopic:            {Type: field.TypeString, Column: outbox.FieldTopic},
+			outbox.FieldKey:              {Type: field.TypeString, Column: outbox.FieldKey},
+			outbox.FieldPayload:          {Type: field.TypeBytes, Column: outbox.FieldPayload},
+			outbox.FieldHeaders:          {Type: field.TypeJSON, Column: outbox.FieldHeaders},
+			outbox.FieldRetryCount:       {Type: field.TypeInt, Column: outbox.FieldRetryCount},
+			outbox.FieldStatus:           {Type: field.TypeEnum, Column: outbox.FieldStatus},
+			outbox.FieldLastRetry:        {Type: field.TypeTime, Column: outbox.FieldLastRetry},
+			outbox.FieldProcessingErrors: {Type: field.TypeJSON, Column: outbox.FieldProcessingErrors},
 		},
 	}
 	return graph
@@ -172,7 +173,12 @@ func (f *OutboxFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(outbox.FieldStatus))
 }
 
-// WhereLastRetry applies the entql int predicate on the last_retry field.
-func (f *OutboxFilter) WhereLastRetry(p entql.IntP) {
+// WhereLastRetry applies the entql time.Time predicate on the last_retry field.
+func (f *OutboxFilter) WhereLastRetry(p entql.TimeP) {
 	f.Where(p.Field(outbox.FieldLastRetry))
+}
+
+// WhereProcessingErrors applies the entql json.RawMessage predicate on the processing_errors field.
+func (f *OutboxFilter) WhereProcessingErrors(p entql.BytesP) {
+	f.Where(p.Field(outbox.FieldProcessingErrors))
 }

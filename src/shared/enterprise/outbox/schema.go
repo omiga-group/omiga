@@ -25,7 +25,8 @@ func (Outbox) Fields() []ent.Field {
 				"Pending", "PENDING",
 				"Succeeded", "SUCCEEDED",
 				"Failed", "FAILED"),
-		field.Int("last_retry").Optional(),
+		field.Time("last_retry").Optional(),
+		field.Strings("processing_errors").Optional(),
 	}
 }
 

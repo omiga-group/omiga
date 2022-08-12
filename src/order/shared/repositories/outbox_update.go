@@ -79,29 +79,34 @@ func (ou *OutboxUpdate) SetStatus(o outbox.Status) *OutboxUpdate {
 }
 
 // SetLastRetry sets the "last_retry" field.
-func (ou *OutboxUpdate) SetLastRetry(i int) *OutboxUpdate {
-	ou.mutation.ResetLastRetry()
-	ou.mutation.SetLastRetry(i)
+func (ou *OutboxUpdate) SetLastRetry(t time.Time) *OutboxUpdate {
+	ou.mutation.SetLastRetry(t)
 	return ou
 }
 
 // SetNillableLastRetry sets the "last_retry" field if the given value is not nil.
-func (ou *OutboxUpdate) SetNillableLastRetry(i *int) *OutboxUpdate {
-	if i != nil {
-		ou.SetLastRetry(*i)
+func (ou *OutboxUpdate) SetNillableLastRetry(t *time.Time) *OutboxUpdate {
+	if t != nil {
+		ou.SetLastRetry(*t)
 	}
-	return ou
-}
-
-// AddLastRetry adds i to the "last_retry" field.
-func (ou *OutboxUpdate) AddLastRetry(i int) *OutboxUpdate {
-	ou.mutation.AddLastRetry(i)
 	return ou
 }
 
 // ClearLastRetry clears the value of the "last_retry" field.
 func (ou *OutboxUpdate) ClearLastRetry() *OutboxUpdate {
 	ou.mutation.ClearLastRetry()
+	return ou
+}
+
+// SetProcessingErrors sets the "processing_errors" field.
+func (ou *OutboxUpdate) SetProcessingErrors(s []string) *OutboxUpdate {
+	ou.mutation.SetProcessingErrors(s)
+	return ou
+}
+
+// ClearProcessingErrors clears the value of the "processing_errors" field.
+func (ou *OutboxUpdate) ClearProcessingErrors() *OutboxUpdate {
+	ou.mutation.ClearProcessingErrors()
 	return ou
 }
 
@@ -256,22 +261,28 @@ func (ou *OutboxUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := ou.mutation.LastRetry(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: outbox.FieldLastRetry,
-		})
-	}
-	if value, ok := ou.mutation.AddedLastRetry(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: outbox.FieldLastRetry,
 		})
 	}
 	if ou.mutation.LastRetryCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeTime,
 			Column: outbox.FieldLastRetry,
+		})
+	}
+	if value, ok := ou.mutation.ProcessingErrors(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: outbox.FieldProcessingErrors,
+		})
+	}
+	if ou.mutation.ProcessingErrorsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: outbox.FieldProcessingErrors,
 		})
 	}
 	_spec.Node.Schema = ou.schemaConfig.Outbox
@@ -345,29 +356,34 @@ func (ouo *OutboxUpdateOne) SetStatus(o outbox.Status) *OutboxUpdateOne {
 }
 
 // SetLastRetry sets the "last_retry" field.
-func (ouo *OutboxUpdateOne) SetLastRetry(i int) *OutboxUpdateOne {
-	ouo.mutation.ResetLastRetry()
-	ouo.mutation.SetLastRetry(i)
+func (ouo *OutboxUpdateOne) SetLastRetry(t time.Time) *OutboxUpdateOne {
+	ouo.mutation.SetLastRetry(t)
 	return ouo
 }
 
 // SetNillableLastRetry sets the "last_retry" field if the given value is not nil.
-func (ouo *OutboxUpdateOne) SetNillableLastRetry(i *int) *OutboxUpdateOne {
-	if i != nil {
-		ouo.SetLastRetry(*i)
+func (ouo *OutboxUpdateOne) SetNillableLastRetry(t *time.Time) *OutboxUpdateOne {
+	if t != nil {
+		ouo.SetLastRetry(*t)
 	}
-	return ouo
-}
-
-// AddLastRetry adds i to the "last_retry" field.
-func (ouo *OutboxUpdateOne) AddLastRetry(i int) *OutboxUpdateOne {
-	ouo.mutation.AddLastRetry(i)
 	return ouo
 }
 
 // ClearLastRetry clears the value of the "last_retry" field.
 func (ouo *OutboxUpdateOne) ClearLastRetry() *OutboxUpdateOne {
 	ouo.mutation.ClearLastRetry()
+	return ouo
+}
+
+// SetProcessingErrors sets the "processing_errors" field.
+func (ouo *OutboxUpdateOne) SetProcessingErrors(s []string) *OutboxUpdateOne {
+	ouo.mutation.SetProcessingErrors(s)
+	return ouo
+}
+
+// ClearProcessingErrors clears the value of the "processing_errors" field.
+func (ouo *OutboxUpdateOne) ClearProcessingErrors() *OutboxUpdateOne {
+	ouo.mutation.ClearProcessingErrors()
 	return ouo
 }
 
@@ -552,22 +568,28 @@ func (ouo *OutboxUpdateOne) sqlSave(ctx context.Context) (_node *Outbox, err err
 	}
 	if value, ok := ouo.mutation.LastRetry(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: outbox.FieldLastRetry,
-		})
-	}
-	if value, ok := ouo.mutation.AddedLastRetry(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: outbox.FieldLastRetry,
 		})
 	}
 	if ouo.mutation.LastRetryCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeTime,
 			Column: outbox.FieldLastRetry,
+		})
+	}
+	if value, ok := ouo.mutation.ProcessingErrors(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: outbox.FieldProcessingErrors,
+		})
+	}
+	if ouo.mutation.ProcessingErrorsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: outbox.FieldProcessingErrors,
 		})
 	}
 	_spec.Node.Schema = ouo.schemaConfig.Outbox

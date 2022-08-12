@@ -32,7 +32,9 @@ type Outbox struct {
 	// Status holds the value of the "status" field.
 	Status outbox.Status `json:"status,omitempty"`
 	// LastRetry holds the value of the "last_retry" field.
-	LastRetry int `json:"last_retry,omitempty"`
+	LastRetry time.Time `json:"last_retry,omitempty"`
+	// ProcessingErrors holds the value of the "processing_errors" field.
+	ProcessingErrors []string `json:"processing_errors,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -40,13 +42,13 @@ func (*Outbox) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case outbox.FieldPayload, outbox.FieldHeaders:
+		case outbox.FieldPayload, outbox.FieldHeaders, outbox.FieldProcessingErrors:
 			values[i] = new([]byte)
-		case outbox.FieldID, outbox.FieldRetryCount, outbox.FieldLastRetry:
+		case outbox.FieldID, outbox.FieldRetryCount:
 			values[i] = new(sql.NullInt64)
 		case outbox.FieldTopic, outbox.FieldKey, outbox.FieldStatus:
 			values[i] = new(sql.NullString)
-		case outbox.FieldTimestamp:
+		case outbox.FieldTimestamp, outbox.FieldLastRetry:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Outbox", columns[i])
@@ -114,10 +116,18 @@ func (o *Outbox) assignValues(columns []string, values []interface{}) error {
 				o.Status = outbox.Status(value.String)
 			}
 		case outbox.FieldLastRetry:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field last_retry", values[i])
 			} else if value.Valid {
-				o.LastRetry = int(value.Int64)
+				o.LastRetry = value.Time
+			}
+		case outbox.FieldProcessingErrors:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field processing_errors", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &o.ProcessingErrors); err != nil {
+					return fmt.Errorf("unmarshal field processing_errors: %w", err)
+				}
 			}
 		}
 	}
@@ -169,7 +179,10 @@ func (o *Outbox) String() string {
 	builder.WriteString(fmt.Sprintf("%v", o.Status))
 	builder.WriteString(", ")
 	builder.WriteString("last_retry=")
-	builder.WriteString(fmt.Sprintf("%v", o.LastRetry))
+	builder.WriteString(o.LastRetry.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("processing_errors=")
+	builder.WriteString(fmt.Sprintf("%v", o.ProcessingErrors))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -210,16 +210,16 @@ type OutboxWhereInput struct {
 	StatusNotIn []outbox.Status `json:"statusNotIn,omitempty"`
 
 	// "last_retry" field predicates.
-	LastRetry       *int  `json:"lastRetry,omitempty"`
-	LastRetryNEQ    *int  `json:"lastRetryNEQ,omitempty"`
-	LastRetryIn     []int `json:"lastRetryIn,omitempty"`
-	LastRetryNotIn  []int `json:"lastRetryNotIn,omitempty"`
-	LastRetryGT     *int  `json:"lastRetryGT,omitempty"`
-	LastRetryGTE    *int  `json:"lastRetryGTE,omitempty"`
-	LastRetryLT     *int  `json:"lastRetryLT,omitempty"`
-	LastRetryLTE    *int  `json:"lastRetryLTE,omitempty"`
-	LastRetryIsNil  bool  `json:"lastRetryIsNil,omitempty"`
-	LastRetryNotNil bool  `json:"lastRetryNotNil,omitempty"`
+	LastRetry       *time.Time  `json:"lastRetry,omitempty"`
+	LastRetryNEQ    *time.Time  `json:"lastRetryNEQ,omitempty"`
+	LastRetryIn     []time.Time `json:"lastRetryIn,omitempty"`
+	LastRetryNotIn  []time.Time `json:"lastRetryNotIn,omitempty"`
+	LastRetryGT     *time.Time  `json:"lastRetryGT,omitempty"`
+	LastRetryGTE    *time.Time  `json:"lastRetryGTE,omitempty"`
+	LastRetryLT     *time.Time  `json:"lastRetryLT,omitempty"`
+	LastRetryLTE    *time.Time  `json:"lastRetryLTE,omitempty"`
+	LastRetryIsNil  bool        `json:"lastRetryIsNil,omitempty"`
+	LastRetryNotNil bool        `json:"lastRetryNotNil,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.

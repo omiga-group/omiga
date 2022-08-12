@@ -280,23 +280,23 @@ func (m *ExchangeMutation) ResetEdge(name string) error {
 // OutboxMutation represents an operation that mutates the Outbox nodes in the graph.
 type OutboxMutation struct {
 	config
-	op             Op
-	typ            string
-	id             *int
-	timestamp      *time.Time
-	topic          *string
-	key            *string
-	payload        *[]byte
-	headers        *map[string]string
-	retry_count    *int
-	addretry_count *int
-	status         *outbox.Status
-	last_retry     *int
-	addlast_retry  *int
-	clearedFields  map[string]struct{}
-	done           bool
-	oldValue       func(context.Context) (*Outbox, error)
-	predicates     []predicate.Outbox
+	op                Op
+	typ               string
+	id                *int
+	timestamp         *time.Time
+	topic             *string
+	key               *string
+	payload           *[]byte
+	headers           *map[string]string
+	retry_count       *int
+	addretry_count    *int
+	status            *outbox.Status
+	last_retry        *time.Time
+	processing_errors *[]string
+	clearedFields     map[string]struct{}
+	done              bool
+	oldValue          func(context.Context) (*Outbox, error)
+	predicates        []predicate.Outbox
 }
 
 var _ ent.Mutation = (*OutboxMutation)(nil)
@@ -670,13 +670,12 @@ func (m *OutboxMutation) ResetStatus() {
 }
 
 // SetLastRetry sets the "last_retry" field.
-func (m *OutboxMutation) SetLastRetry(i int) {
-	m.last_retry = &i
-	m.addlast_retry = nil
+func (m *OutboxMutation) SetLastRetry(t time.Time) {
+	m.last_retry = &t
 }
 
 // LastRetry returns the value of the "last_retry" field in the mutation.
-func (m *OutboxMutation) LastRetry() (r int, exists bool) {
+func (m *OutboxMutation) LastRetry() (r time.Time, exists bool) {
 	v := m.last_retry
 	if v == nil {
 		return
@@ -687,7 +686,7 @@ func (m *OutboxMutation) LastRetry() (r int, exists bool) {
 // OldLastRetry returns the old "last_retry" field's value of the Outbox entity.
 // If the Outbox object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OutboxMutation) OldLastRetry(ctx context.Context) (v int, err error) {
+func (m *OutboxMutation) OldLastRetry(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldLastRetry is only allowed on UpdateOne operations")
 	}
@@ -701,28 +700,9 @@ func (m *OutboxMutation) OldLastRetry(ctx context.Context) (v int, err error) {
 	return oldValue.LastRetry, nil
 }
 
-// AddLastRetry adds i to the "last_retry" field.
-func (m *OutboxMutation) AddLastRetry(i int) {
-	if m.addlast_retry != nil {
-		*m.addlast_retry += i
-	} else {
-		m.addlast_retry = &i
-	}
-}
-
-// AddedLastRetry returns the value that was added to the "last_retry" field in this mutation.
-func (m *OutboxMutation) AddedLastRetry() (r int, exists bool) {
-	v := m.addlast_retry
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ClearLastRetry clears the value of the "last_retry" field.
 func (m *OutboxMutation) ClearLastRetry() {
 	m.last_retry = nil
-	m.addlast_retry = nil
 	m.clearedFields[outbox.FieldLastRetry] = struct{}{}
 }
 
@@ -735,8 +715,56 @@ func (m *OutboxMutation) LastRetryCleared() bool {
 // ResetLastRetry resets all changes to the "last_retry" field.
 func (m *OutboxMutation) ResetLastRetry() {
 	m.last_retry = nil
-	m.addlast_retry = nil
 	delete(m.clearedFields, outbox.FieldLastRetry)
+}
+
+// SetProcessingErrors sets the "processing_errors" field.
+func (m *OutboxMutation) SetProcessingErrors(s []string) {
+	m.processing_errors = &s
+}
+
+// ProcessingErrors returns the value of the "processing_errors" field in the mutation.
+func (m *OutboxMutation) ProcessingErrors() (r []string, exists bool) {
+	v := m.processing_errors
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProcessingErrors returns the old "processing_errors" field's value of the Outbox entity.
+// If the Outbox object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OutboxMutation) OldProcessingErrors(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProcessingErrors is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProcessingErrors requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProcessingErrors: %w", err)
+	}
+	return oldValue.ProcessingErrors, nil
+}
+
+// ClearProcessingErrors clears the value of the "processing_errors" field.
+func (m *OutboxMutation) ClearProcessingErrors() {
+	m.processing_errors = nil
+	m.clearedFields[outbox.FieldProcessingErrors] = struct{}{}
+}
+
+// ProcessingErrorsCleared returns if the "processing_errors" field was cleared in this mutation.
+func (m *OutboxMutation) ProcessingErrorsCleared() bool {
+	_, ok := m.clearedFields[outbox.FieldProcessingErrors]
+	return ok
+}
+
+// ResetProcessingErrors resets all changes to the "processing_errors" field.
+func (m *OutboxMutation) ResetProcessingErrors() {
+	m.processing_errors = nil
+	delete(m.clearedFields, outbox.FieldProcessingErrors)
 }
 
 // Where appends a list predicates to the OutboxMutation builder.
@@ -758,7 +786,7 @@ func (m *OutboxMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OutboxMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.timestamp != nil {
 		fields = append(fields, outbox.FieldTimestamp)
 	}
@@ -782,6 +810,9 @@ func (m *OutboxMutation) Fields() []string {
 	}
 	if m.last_retry != nil {
 		fields = append(fields, outbox.FieldLastRetry)
+	}
+	if m.processing_errors != nil {
+		fields = append(fields, outbox.FieldProcessingErrors)
 	}
 	return fields
 }
@@ -807,6 +838,8 @@ func (m *OutboxMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case outbox.FieldLastRetry:
 		return m.LastRetry()
+	case outbox.FieldProcessingErrors:
+		return m.ProcessingErrors()
 	}
 	return nil, false
 }
@@ -832,6 +865,8 @@ func (m *OutboxMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldStatus(ctx)
 	case outbox.FieldLastRetry:
 		return m.OldLastRetry(ctx)
+	case outbox.FieldProcessingErrors:
+		return m.OldProcessingErrors(ctx)
 	}
 	return nil, fmt.Errorf("unknown Outbox field %s", name)
 }
@@ -891,11 +926,18 @@ func (m *OutboxMutation) SetField(name string, value ent.Value) error {
 		m.SetStatus(v)
 		return nil
 	case outbox.FieldLastRetry:
-		v, ok := value.(int)
+		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLastRetry(v)
+		return nil
+	case outbox.FieldProcessingErrors:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProcessingErrors(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Outbox field %s", name)
@@ -908,9 +950,6 @@ func (m *OutboxMutation) AddedFields() []string {
 	if m.addretry_count != nil {
 		fields = append(fields, outbox.FieldRetryCount)
 	}
-	if m.addlast_retry != nil {
-		fields = append(fields, outbox.FieldLastRetry)
-	}
 	return fields
 }
 
@@ -921,8 +960,6 @@ func (m *OutboxMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case outbox.FieldRetryCount:
 		return m.AddedRetryCount()
-	case outbox.FieldLastRetry:
-		return m.AddedLastRetry()
 	}
 	return nil, false
 }
@@ -939,13 +976,6 @@ func (m *OutboxMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddRetryCount(v)
 		return nil
-	case outbox.FieldLastRetry:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddLastRetry(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Outbox numeric field %s", name)
 }
@@ -956,6 +986,9 @@ func (m *OutboxMutation) ClearedFields() []string {
 	var fields []string
 	if m.FieldCleared(outbox.FieldLastRetry) {
 		fields = append(fields, outbox.FieldLastRetry)
+	}
+	if m.FieldCleared(outbox.FieldProcessingErrors) {
+		fields = append(fields, outbox.FieldProcessingErrors)
 	}
 	return fields
 }
@@ -973,6 +1006,9 @@ func (m *OutboxMutation) ClearField(name string) error {
 	switch name {
 	case outbox.FieldLastRetry:
 		m.ClearLastRetry()
+		return nil
+	case outbox.FieldProcessingErrors:
+		m.ClearProcessingErrors()
 		return nil
 	}
 	return fmt.Errorf("unknown Outbox nullable field %s", name)
@@ -1005,6 +1041,9 @@ func (m *OutboxMutation) ResetField(name string) error {
 		return nil
 	case outbox.FieldLastRetry:
 		m.ResetLastRetry()
+		return nil
+	case outbox.FieldProcessingErrors:
+		m.ResetProcessingErrors()
 		return nil
 	}
 	return fmt.Errorf("unknown Outbox field %s", name)
