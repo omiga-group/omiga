@@ -14,6 +14,7 @@ import (
 )
 
 type OutboxBackgroundService interface {
+	Run()
 }
 
 type outboxBackgroundService struct {
