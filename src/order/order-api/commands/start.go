@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/google/uuid"
 	"github.com/mitchellh/mapstructure"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
@@ -44,6 +45,8 @@ func startCommand() *cobra.Command {
 			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {
 				sugarLogger.Fatal(err)
 			}
+
+			pulsarSettings.ProducerName = pulsarSettings.ProducerName + uuid.NewString()
 
 			var outboxSettings outbox.OutboxSettings
 			if err := mapstructure.Decode(viper.Get(outbox.ConfigKey), &outboxSettings); err != nil {
