@@ -98,7 +98,10 @@ func (obs *outboxBackgroundService) Run() {
 		go func(record *repositories.Outbox) {
 			defer wg.Done()
 
-			err := obs.messageProducer.Produce(obs.ctx, record.Key, record.Payload)
+			err := obs.messageProducer.Produce(
+				obs.ctx,
+				record.Key,
+				record.Payload)
 
 			mu.Lock()
 			defer mu.Unlock()
