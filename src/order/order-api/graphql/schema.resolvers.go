@@ -21,6 +21,8 @@ func (r *mutationResolver) SubmitOrder(ctx context.Context, input shared.SubmitO
 		return nil, err
 	}
 
+	r.orderOutboxBackgroundService.RunAsync()
+
 	return &shared.OrderPayload{
 		ClientMutationID: input.ClientMutationID,
 		Order: &repositories.Order{

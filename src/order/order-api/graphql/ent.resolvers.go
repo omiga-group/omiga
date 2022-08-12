@@ -83,34 +83,3 @@ func (r *Resolver) OutboxWhereInput() shared.OutboxWhereInputResolver {
 
 type orderWhereInputResolver struct{ *Resolver }
 type outboxWhereInputResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *orderWhereInputResolver) Orderid(ctx context.Context, obj *repositories.OrderWhereInput, data *string) error {
-	panic(fmt.Errorf("not implemented"))
-}
-func (r *orderWhereInputResolver) OrderidNeq(ctx context.Context, obj *repositories.OrderWhereInput, data *string) error {
-	panic(fmt.Errorf("not implemented"))
-}
-func (r *orderWhereInputResolver) OrderidIn(ctx context.Context, obj *repositories.OrderWhereInput, data []string) error {
-	panic(fmt.Errorf("not implemented"))
-}
-func (r *orderWhereInputResolver) OrderidNotIn(ctx context.Context, obj *repositories.OrderWhereInput, data []string) error {
-	panic(fmt.Errorf("not implemented"))
-}
-func (r *orderWhereInputResolver) OrderidGt(ctx context.Context, obj *repositories.OrderWhereInput, data *string) error {
-	panic(fmt.Errorf("not implemented"))
-}
-func (r *orderWhereInputResolver) OrderidGte(ctx context.Context, obj *repositories.OrderWhereInput, data *string) error {
-	panic(fmt.Errorf("not implemented"))
-}
-func (r *orderWhereInputResolver) OrderidLt(ctx context.Context, obj *repositories.OrderWhereInput, data *string) error {
-	panic(fmt.Errorf("not implemented"))
-}
-func (r *orderWhereInputResolver) OrderidLte(ctx context.Context, obj *repositories.OrderWhereInput, data *string) error {
-	panic(fmt.Errorf("not implemented"))
-}

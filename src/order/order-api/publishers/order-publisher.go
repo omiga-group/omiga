@@ -20,12 +20,12 @@ type OrderPublisher interface {
 
 type orderPublisher struct {
 	logger               *zap.SugaredLogger
-	orderOutboxPublisher outbox.OutboxPublisher[orderv1.OrderEvent]
+	orderOutboxPublisher outbox.OutboxPublisher
 }
 
 func NewOrderPublisher(
 	logger *zap.SugaredLogger,
-	orderOutboxPublisher outbox.OutboxPublisher[orderv1.OrderEvent]) (OrderPublisher, error) {
+	orderOutboxPublisher outbox.OutboxPublisher) (OrderPublisher, error) {
 	return &orderPublisher{
 		logger:               logger,
 		orderOutboxPublisher: orderOutboxPublisher,

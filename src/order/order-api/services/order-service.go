@@ -3,37 +3,78 @@ package services
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/omiga-group/omiga/src/order/order-api/models"
+	"github.com/omiga-group/omiga/src/order/order-api/publishers"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
+	"go.uber.org/zap"
 )
 
 type OrderService interface {
-	Submit(context.Context, models.Order) (*models.Order, error)
+	Submit(ctx context.Context, request models.Order) (*models.Order, error)
 }
 
 type orderService struct {
-	client *repositories.Client
+	logger         *zap.SugaredLogger
+	entgoClient    repositories.EntgoClient
+	orderPublisher publishers.OrderPublisher
 }
 
-func NewOrderService(entgoClient repositories.EntgoClient) (OrderService, error) {
+func NewOrderService(
+	logger *zap.SugaredLogger,
+	entgoClient repositories.EntgoClient,
+	orderPublisher publishers.OrderPublisher) (OrderService, error) {
 	return &orderService{
-		client: entgoClient.GetClient(),
+		logger:         logger,
+		entgoClient:    entgoClient,
+		orderPublisher: orderPublisher,
 	}, nil
 }
 
 func (os *orderService) Submit(
 	ctx context.Context,
-	order models.Order) (*models.Order, error) {
-
-	createdOrder, err := os.client.Order.
-		Create().
-		Save(ctx)
+	request models.Order) (*models.Order, error) {
+	tx, err := os.entgoClient.CreateTransaction(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return &models.Order{
+	createdOrder, err := tx.Order.
+		Create().
+		SetOrderID(uuid.New()).
+		Save(ctx)
+	if err != nil {
+		rollbackErr := os.entgoClient.RollbackTransaction(tx)
+		if rollbackErr != nil {
+			os.logger.Errorf("Failed to rollback transaction. Error: %v", rollbackErr)
+		}
+
+		return nil, err
+	}
+
+	order := models.Order{
 		Id:      createdOrder.ID,
 		OrderID: createdOrder.OrderID,
-	}, nil
+	}
+
+	err = os.orderPublisher.Publish(
+		ctx,
+		tx,
+		nil,
+		order)
+	if err != nil {
+		rollbackErr := os.entgoClient.RollbackTransaction(tx)
+		if rollbackErr != nil {
+			os.logger.Errorf("Failed to rollback transaction. Error: %v", rollbackErr)
+		}
+
+		return nil, err
+	}
+
+	err = os.entgoClient.CommitTransaction(tx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &order, nil
 }

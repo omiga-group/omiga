@@ -10,20 +10,20 @@ import (
 	"go.uber.org/zap"
 )
 
-type OutboxPublisher[EventType interface{}] interface {
+type OutboxPublisher interface {
 	PublishWithoutTransaction(
 		ctx context.Context,
 		topic string,
 		key string,
 		headers map[string]string,
-		event EventType) error
+		event interface{}) error
 	Publish(
 		ctx context.Context,
 		transaction *repositories.Tx,
 		topic string,
 		key string,
 		headers map[string]string,
-		event EventType) error
+		event interface{}) error
 }
 
 type outboxPublisher struct {
@@ -33,7 +33,7 @@ type outboxPublisher struct {
 
 func NewOutboxPublisher(
 	logger *zap.SugaredLogger,
-	entgoClient repositories.EntgoClient) (OutboxPublisher[interface{}], error) {
+	entgoClient repositories.EntgoClient) (OutboxPublisher, error) {
 	return &outboxPublisher{
 		logger:      logger,
 		entgoClient: entgoClient,

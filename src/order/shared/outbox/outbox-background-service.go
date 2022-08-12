@@ -73,7 +73,6 @@ func (obs *outboxBackgroundService) Run() {
 					outboxmodel.LastRetryIsNil()),
 			),
 		).
-		Limit(1000).
 		All(obs.ctx)
 	if err != nil {
 		obs.logger.Errorf("Failed to fetch outbox items. Error: %v", err)

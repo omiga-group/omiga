@@ -1,11 +1,15 @@
 package commands
 
 import (
+	"context"
 	"log"
 
 	"github.com/mitchellh/mapstructure"
+	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
+	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/outbox"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -17,6 +21,8 @@ func startCommand() *cobra.Command {
 		Short: "Start order-api",
 		Long:  "Start order-api",
 		Run: func(cmd *cobra.Command, args []string) {
+			ctx := context.Background()
+
 			logger, err := zap.NewDevelopment()
 			if err != nil {
 				log.Fatal(err)
@@ -34,7 +40,48 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			httpServer, err := NewHttpServer(sugarLogger, appSettings, postgresSettings)
+			var pulsarSettings pulsar.PulsarSettings
+			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			var outboxSettings outbox.OutboxSettings
+			if err := mapstructure.Decode(viper.Get(outbox.ConfigKey), &outboxSettings); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			entgoClient, err := NewEntgoClient(
+				sugarLogger,
+				postgresSettings)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			cronService, err := NewCronService(
+				sugarLogger)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer cronService.Close()
+
+			orderOutboxBackgroundService, err := NewOrderOutboxBackgroundService(
+				ctx,
+				sugarLogger,
+				pulsarSettings,
+				outboxSettings,
+				orderv1.TopicName,
+				entgoClient,
+				cronService)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			httpServer, err := NewHttpServer(
+				sugarLogger,
+				appSettings,
+				entgoClient,
+				orderOutboxBackgroundService)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

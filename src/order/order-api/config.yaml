@@ -8,3 +8,7 @@ pulsar:
 postgres:
   connectionString: "postgres://postgres:12345678@postgres.localhost/order"
   maxOpenConns: 10
+
+outbox:
+  maxRetryCount: 30
+  retryDelay: 10s

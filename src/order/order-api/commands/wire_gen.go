@@ -7,28 +7,32 @@
 package commands
 
 import (
+	"context"
 	"github.com/omiga-group/omiga/src/order/order-api/graphql"
 	"github.com/omiga-group/omiga/src/order/order-api/http"
+	"github.com/omiga-group/omiga/src/order/order-api/publishers"
 	"github.com/omiga-group/omiga/src/order/order-api/services"
+	outbox2 "github.com/omiga-group/omiga/src/order/shared/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
-	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/outbox"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
-func NewMessageProducer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageProducer, error) {
-	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarSettings, topic)
+func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
+	cronService, err := cron.NewCronService(logger)
 	if err != nil {
 		return nil, err
 	}
-	return messageProducer, nil
+	return cronService, nil
 }
 
-func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSettings, postgresSettings postgres.PostgresSettings) (http.HttpServer, error) {
+func NewEntgoClient(logger *zap.SugaredLogger, postgresSettings postgres.PostgresSettings) (repositories.EntgoClient, error) {
 	database, err := postgres.NewPostgres(logger, postgresSettings)
 	if err != nil {
 		return nil, err
@@ -37,11 +41,35 @@ func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSetti
 	if err != nil {
 		return nil, err
 	}
-	orderService, err := services.NewOrderService(entgoClient)
+	return entgoClient, nil
+}
+
+func NewOrderOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, outboxSettings outbox.OutboxSettings, topic string, entgoClinet repositories.EntgoClient, cronService cron.CronService) (outbox2.OutboxBackgroundService, error) {
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarSettings, topic)
 	if err != nil {
 		return nil, err
 	}
-	server, err := graphql.NewGraphQLServer(entgoClient, orderService)
+	outboxBackgroundService, err := outbox2.NewOutboxBackgroundService(ctx, logger, outboxSettings, messageProducer, topic, entgoClinet, cronService)
+	if err != nil {
+		return nil, err
+	}
+	return outboxBackgroundService, nil
+}
+
+func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSettings, entgoClinet repositories.EntgoClient, orderOutboxBackgroundService outbox2.OutboxBackgroundService) (http.HttpServer, error) {
+	outboxPublisher, err := outbox2.NewOutboxPublisher(logger, entgoClinet)
+	if err != nil {
+		return nil, err
+	}
+	orderPublisher, err := publishers.NewOrderPublisher(logger, outboxPublisher)
+	if err != nil {
+		return nil, err
+	}
+	orderService, err := services.NewOrderService(logger, entgoClinet, orderPublisher)
+	if err != nil {
+		return nil, err
+	}
+	server, err := graphql.NewGraphQLServer(entgoClinet, orderService, orderOutboxBackgroundService)
 	if err != nil {
 		return nil, err
 	}

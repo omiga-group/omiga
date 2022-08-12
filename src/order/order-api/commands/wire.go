@@ -19,20 +19,52 @@
 package commands
 
 import (
+	"context"
+
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/order/order-api/graphql"
 	"github.com/omiga-group/omiga/src/order/order-api/http"
+	"github.com/omiga-group/omiga/src/order/order-api/publishers"
 	"github.com/omiga-group/omiga/src/order/order-api/services"
+	"github.com/omiga-group/omiga/src/order/shared/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
-	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	enterpriseOutbox "github.com/omiga-group/omiga/src/shared/enterprise/outbox"
 	"go.uber.org/zap"
 )
 
-func NewMessageProducer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageProducer, error) {
-	wire.Build(pulsar.NewPulsarMessageProducer)
+func NewCronService(
+	logger *zap.SugaredLogger) (cron.CronService, error) {
+	wire.Build(
+		cron.NewCronService)
+
+	return nil, nil
+}
+
+func NewEntgoClient(
+	logger *zap.SugaredLogger,
+	postgresSettings postgres.PostgresSettings) (repositories.EntgoClient, error) {
+	wire.Build(
+		postgres.NewPostgres,
+		repositories.NewEntgoClient)
+
+	return nil, nil
+}
+
+func NewOrderOutboxBackgroundService(
+	ctx context.Context,
+	logger *zap.SugaredLogger,
+	pulsarSettings pulsar.PulsarSettings,
+	outboxSettings enterpriseOutbox.OutboxSettings,
+	topic string,
+	entgoClinet repositories.EntgoClient,
+	cronService cron.CronService) (outbox.OutboxBackgroundService, error) {
+	wire.Build(
+		pulsar.NewPulsarMessageProducer,
+		outbox.NewOutboxBackgroundService)
 
 	return nil, nil
 }
@@ -40,8 +72,14 @@ func NewMessageProducer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarS
 func NewHttpServer(
 	logger *zap.SugaredLogger,
 	appSettings configuration.AppSettings,
-	postgresSettings postgres.PostgresSettings) (http.HttpServer, error) {
-	wire.Build(postgres.NewPostgres, repositories.NewEntgoClient, http.NewHttpServer, graphql.NewGraphQLServer, services.NewOrderService)
+	entgoClinet repositories.EntgoClient,
+	orderOutboxBackgroundService outbox.OutboxBackgroundService) (http.HttpServer, error) {
+	wire.Build(
+		http.NewHttpServer,
+		graphql.NewGraphQLServer,
+		services.NewOrderService,
+		publishers.NewOrderPublisher,
+		outbox.NewOutboxPublisher)
 
 	return nil, nil
 }
