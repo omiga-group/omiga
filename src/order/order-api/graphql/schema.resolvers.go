@@ -39,7 +39,7 @@ func (r *mutationResolver) CancelOrder(ctx context.Context, input shared.CancelO
 
 // OrderID is the resolver for the orderId field.
 func (r *orderResolver) OrderID(ctx context.Context, obj *repositories.Order) (string, error) {
-	panic(fmt.Errorf("not implemented"))
+	return obj.OrderID.String(), nil
 }
 
 // Order is the resolver for the order field.
