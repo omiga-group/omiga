@@ -38,10 +38,7 @@ func migrateCommand() *cobra.Command {
 
 			defer entgoClient.Close()
 
-			client, err := entgoClient.GetClient()
-			if err != nil {
-				sugarLogger.Fatal(err)
-			}
+			client := entgoClient.GetClient()
 
 			ctx := context.Background()
 

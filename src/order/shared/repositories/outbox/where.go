@@ -143,12 +143,6 @@ func TimestampIn(vs ...time.Time) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.In(s.C(FieldTimestamp), v...))
 	})
 }
@@ -160,12 +154,6 @@ func TimestampNotIn(vs ...time.Time) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.NotIn(s.C(FieldTimestamp), v...))
 	})
 }
@@ -219,12 +207,6 @@ func TopicIn(vs ...string) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.In(s.C(FieldTopic), v...))
 	})
 }
@@ -236,12 +218,6 @@ func TopicNotIn(vs ...string) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.NotIn(s.C(FieldTopic), v...))
 	})
 }
@@ -330,12 +306,6 @@ func KeyIn(vs ...string) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.In(s.C(FieldKey), v...))
 	})
 }
@@ -347,12 +317,6 @@ func KeyNotIn(vs ...string) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.NotIn(s.C(FieldKey), v...))
 	})
 }
@@ -441,12 +405,6 @@ func PayloadIn(vs ...[]byte) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.In(s.C(FieldPayload), v...))
 	})
 }
@@ -458,12 +416,6 @@ func PayloadNotIn(vs ...[]byte) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.NotIn(s.C(FieldPayload), v...))
 	})
 }
@@ -517,12 +469,6 @@ func RetryCountIn(vs ...int) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.In(s.C(FieldRetryCount), v...))
 	})
 }
@@ -534,12 +480,6 @@ func RetryCountNotIn(vs ...int) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.NotIn(s.C(FieldRetryCount), v...))
 	})
 }
@@ -593,12 +533,6 @@ func StatusIn(vs ...Status) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.In(s.C(FieldStatus), v...))
 	})
 }
@@ -610,12 +544,6 @@ func StatusNotIn(vs ...Status) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.NotIn(s.C(FieldStatus), v...))
 	})
 }
@@ -641,12 +569,6 @@ func LastRetryIn(vs ...time.Time) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.In(s.C(FieldLastRetry), v...))
 	})
 }
@@ -658,12 +580,6 @@ func LastRetryNotIn(vs ...time.Time) predicate.Outbox {
 		v[i] = vs[i]
 	}
 	return predicate.Outbox(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
 		s.Where(sql.NotIn(s.C(FieldLastRetry), v...))
 	})
 }

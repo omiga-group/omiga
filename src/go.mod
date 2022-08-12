@@ -3,8 +3,8 @@ module github.com/omiga-group/omiga/src
 go 1.18
 
 require (
-	entgo.io/contrib v0.3.0
-	entgo.io/ent v0.11.1
+	entgo.io/contrib v0.3.1
+	entgo.io/ent v0.11.2-0.20220724154107-b60e0f9eac27
 	github.com/99designs/gqlgen v0.17.13
 	github.com/apache/pulsar-client-go v0.8.1
 	github.com/google/uuid v1.3.0
@@ -25,7 +25,7 @@ require (
 )
 
 require (
-	ariga.io/atlas v0.5.0 // indirect
+	ariga.io/atlas v0.5.1-0.20220724111820-d9260fa9f065 // indirect
 	github.com/99designs/keyring v1.1.6 // indirect
 	github.com/AthenZ/athenz v1.10.39 // indirect
 	github.com/DataDog/zstd v1.5.0 // indirect

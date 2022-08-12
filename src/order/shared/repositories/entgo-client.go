@@ -6,7 +6,7 @@ import (
 )
 
 type EntgoClient interface {
-	GetClient() (*Client, error)
+	GetClient() *Client
 	Close()
 }
 
@@ -32,8 +32,8 @@ func NewEntgoClient(
 	}, nil
 }
 
-func (ec *entgoClient) GetClient() (*Client, error) {
-	return ec.client, nil
+func (ec *entgoClient) GetClient() *Client {
+	return ec.client
 }
 
 func (ec *entgoClient) Close() {

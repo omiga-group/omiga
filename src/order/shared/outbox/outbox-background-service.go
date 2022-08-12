@@ -61,12 +61,7 @@ func (obs *outboxBackgroundService) RunAsync() {
 }
 
 func (obs *outboxBackgroundService) Run() {
-	client, err := obs.entgoClient.GetClient()
-	if err != nil {
-		obs.logger.Errorf("Failed to get client. Error: %v", err)
-
-		return
-	}
+	client := obs.entgoClient.GetClient()
 
 	records, err := client.Outbox.Query().
 		Where(

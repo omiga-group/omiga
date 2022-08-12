@@ -11,6 +11,12 @@ import (
 )
 
 type OutboxPublisher[EventType interface{}] interface {
+	PublishWithoutTransaction(
+		ctx context.Context,
+		topic string,
+		key string,
+		headers map[string]string,
+		event EventType) error
 	Publish(
 		ctx context.Context,
 		transaction *repositories.Tx,
@@ -21,17 +27,53 @@ type OutboxPublisher[EventType interface{}] interface {
 }
 
 type outboxPublisher struct {
-	logger                  *zap.SugaredLogger
-	outboxBackgroundService OutboxBackgroundService
+	logger      *zap.SugaredLogger
+	entgoClient repositories.EntgoClient
 }
 
 func NewOutboxPublisher(
 	logger *zap.SugaredLogger,
-	outboxBackgroundService OutboxBackgroundService) (OutboxPublisher[interface{}], error) {
+	entgoClient repositories.EntgoClient) (OutboxPublisher[interface{}], error) {
 	return &outboxPublisher{
-		logger:                  logger,
-		outboxBackgroundService: outboxBackgroundService,
+		logger:      logger,
+		entgoClient: entgoClient,
 	}, nil
+}
+
+func (op *outboxPublisher) PublishWithoutTransaction(
+	ctx context.Context,
+	topic string,
+	key string,
+	headers map[string]string,
+	event interface{}) error {
+	payload, err := json.Marshal(event)
+	if err != nil {
+		op.logger.Errorf(
+			"Failed to serialize event to json. Error: %v",
+			err)
+
+		return err
+	}
+
+	if _, err := op.entgoClient.GetClient().Outbox.
+		Create().
+		SetTimestamp(time.Now()).
+		SetTopic(topic).
+		SetKey(key).
+		SetPayload(payload).
+		SetHeaders(headers).
+		SetRetryCount(0).
+		SetStatus(outbox.StatusPending).
+		SetNillableLastRetry(nil).
+		Save(ctx); err != nil {
+		op.logger.Errorf(
+			"Failed to save outbox item. Error: %v",
+			err)
+
+		return err
+	}
+
+	return nil
 }
 
 func (op *outboxPublisher) Publish(
@@ -67,8 +109,6 @@ func (op *outboxPublisher) Publish(
 
 		return err
 	}
-
-	op.outboxBackgroundService.RunAsync()
 
 	return nil
 }

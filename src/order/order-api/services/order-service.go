@@ -16,13 +16,8 @@ type orderService struct {
 }
 
 func NewOrderService(entgoClient repositories.EntgoClient) (OrderService, error) {
-	client, err := entgoClient.GetClient()
-	if err != nil {
-		return nil, err
-	}
-
 	return &orderService{
-		client: client,
+		client: entgoClient.GetClient(),
 	}, nil
 }
 
@@ -38,6 +33,6 @@ func (os *orderService) Submit(
 	}
 
 	return &models.Order{
-		ID: createdOrder.ID,
+		Id: createdOrder.ID,
 	}, nil
 }

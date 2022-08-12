@@ -23,7 +23,7 @@ func (r *mutationResolver) SubmitOrder(ctx context.Context, input shared.SubmitO
 	return &shared.OrderPayload{
 		ClientMutationID: input.ClientMutationID,
 		Order: &repositories.Order{
-			ID: order.ID,
+			ID: order.Id,
 		},
 	}, nil
 }

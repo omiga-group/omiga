@@ -5,6 +5,6 @@ package runtime
 // The schema-stitching logic is generated in github.com/omiga-group/omiga/src/order/shared/repositories/runtime.go
 
 const (
-	Version = "v0.11.1"                                         // Version of ent codegen.
-	Sum     = "h1:im67R+2W3Nee2bNS2YnoYz8oAF0Qz4AOlIvKRIAEISY=" // Sum of ent codegen.
+	Version = "v0.11.2-0.20220724154107-b60e0f9eac27"           // Version of ent codegen.
+	Sum     = "h1:cN+6ASqjhlcEToswhP9onQJLhK1auXJNPuKrDKGRDFE=" // Sum of ent codegen.
 )

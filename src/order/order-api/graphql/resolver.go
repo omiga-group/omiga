@@ -18,14 +18,9 @@ type GraphQLServer interface {
 func NewGraphQLServer(
 	entgoClient repositories.EntgoClient,
 	orderService services.OrderService) (*handler.Server, error) {
-	client, err := entgoClient.GetClient()
-	if err != nil {
-		return nil, err
-	}
-
 	executableSchema := shared.NewExecutableSchema(shared.Config{
 		Resolvers: &Resolver{
-			client:       client,
+			client:       entgoClient.GetClient(),
 			orderService: orderService,
 		},
 	})
