@@ -51,23 +51,23 @@ type Query {
 }
 
 type Mutation {
-    submitOrder(input: SubmitOrderInput!): OrderPayload
-    cancelOrder(input: CancelOrderInput!): OrderPayload
+  submitOrder(input: SubmitOrderInput!): OrderPayload
+  cancelOrder(input: CancelOrderInput!): OrderPayload
 }
 
 input SubmitOrderInput {
-    clientMutationId: String
-    id: ID!
+  clientMutationId: String
+  orderDetails: OrderDetailsInput!
 }
 
 input CancelOrderInput {
-    clientMutationId: String
-    id: ID!
+  clientMutationId: String
+  id: ID!
 }
 
 type OrderPayload {
-    clientMutationId: String
-    order: Order
+  clientMutationId: String
+  order: Order
 }
 
 """
@@ -139,4 +139,24 @@ enum OutboxStatus {
   PENDING
   SUCCEEDED
   FAILED
+}
+
+input OrderDetailsInput {
+  baseCurrency: CurrencyInput
+  counterCurrency: CurrencyInput
+  quantity: MoneyInput
+  price: MoneyInput
+}
+
+input MoneyInput {
+  amount: Int!
+  scale: Int!
+  currency: CurrencyInput!
+}
+
+input CurrencyInput {
+  name: String!
+  code: String!
+  maxPrecision: Int!
+  digital: Boolean!
 }

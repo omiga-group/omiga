@@ -1,5 +1,5 @@
 app:
-  listeningInterface: ":8080"
+  listeningInterface: ":10000"
 
 pulsar:
   url: "pulsar://pulsar.localhost:6650"

@@ -59,11 +59,6 @@ func (cs *cronService) Close() {
 }
 
 func (cs *cronService) Info(msg string, keysAndValues ...interface{}) {
-	keysAndValues = formatTimes(keysAndValues)
-
-	cs.logger.Infof(
-		formatString(len(keysAndValues)),
-		append([]interface{}{msg}, keysAndValues...)...)
 }
 
 func (cs *cronService) Error(err error, msg string, keysAndValues ...interface{}) {

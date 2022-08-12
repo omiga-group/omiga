@@ -45,11 +45,12 @@ func NewOutboxBackgroundService(
 		logger:          logger,
 		outboxSettings:  outboxSettings,
 		messageProducer: messageProducer,
+		topic:           topic,
 		entgoClient:     entgoClient,
 		retryDelay:      retryDelay,
 	}
 
-	if _, err := cronService.GetCron().AddJob("0/5 * * * * *", instance); err != nil {
+	if _, err := cronService.GetCron().AddJob("0/1 * * * * *", instance); err != nil {
 		return nil, err
 	}
 
