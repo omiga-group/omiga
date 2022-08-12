@@ -14,7 +14,7 @@ import (
 )
 
 type OutboxBackgroundService interface {
-	Run()
+	RunAsync()
 }
 
 type outboxBackgroundService struct {
@@ -54,6 +54,10 @@ func NewOutboxBackgroundService(
 	}
 
 	return instance, nil
+}
+
+func (obs *outboxBackgroundService) RunAsync() {
+	go obs.Run()
 }
 
 func (obs *outboxBackgroundService) Run() {

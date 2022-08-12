@@ -21,13 +21,16 @@ type OutboxPublisher[EventType interface{}] interface {
 }
 
 type outboxPublisher struct {
-	logger *zap.SugaredLogger
+	logger                  *zap.SugaredLogger
+	outboxBackgroundService OutboxBackgroundService
 }
 
 func NewOutboxPublisher(
-	logger *zap.SugaredLogger) (OutboxPublisher[interface{}], error) {
+	logger *zap.SugaredLogger,
+	outboxBackgroundService OutboxBackgroundService) (OutboxPublisher[interface{}], error) {
 	return &outboxPublisher{
-		logger: logger,
+		logger:                  logger,
+		outboxBackgroundService: outboxBackgroundService,
 	}, nil
 }
 
@@ -64,6 +67,8 @@ func (op *outboxPublisher) Publish(
 
 		return err
 	}
+
+	op.outboxBackgroundService.RunAsync()
 
 	return nil
 }
