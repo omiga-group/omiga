@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/predicate"
@@ -28,6 +29,16 @@ type OrderWhereInput struct {
 	IDGTE   *int  `json:"idGTE,omitempty"`
 	IDLT    *int  `json:"idLT,omitempty"`
 	IDLTE   *int  `json:"idLTE,omitempty"`
+
+	// "order_id" field predicates.
+	OrderID      *uuid.UUID  `json:"orderID,omitempty"`
+	OrderIDNEQ   *uuid.UUID  `json:"orderIDNEQ,omitempty"`
+	OrderIDIn    []uuid.UUID `json:"orderIDIn,omitempty"`
+	OrderIDNotIn []uuid.UUID `json:"orderIDNotIn,omitempty"`
+	OrderIDGT    *uuid.UUID  `json:"orderIDGT,omitempty"`
+	OrderIDGTE   *uuid.UUID  `json:"orderIDGTE,omitempty"`
+	OrderIDLT    *uuid.UUID  `json:"orderIDLT,omitempty"`
+	OrderIDLTE   *uuid.UUID  `json:"orderIDLTE,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -124,6 +135,30 @@ func (i *OrderWhereInput) P() (predicate.Order, error) {
 	}
 	if i.IDLTE != nil {
 		predicates = append(predicates, order.IDLTE(*i.IDLTE))
+	}
+	if i.OrderID != nil {
+		predicates = append(predicates, order.OrderIDEQ(*i.OrderID))
+	}
+	if i.OrderIDNEQ != nil {
+		predicates = append(predicates, order.OrderIDNEQ(*i.OrderIDNEQ))
+	}
+	if len(i.OrderIDIn) > 0 {
+		predicates = append(predicates, order.OrderIDIn(i.OrderIDIn...))
+	}
+	if len(i.OrderIDNotIn) > 0 {
+		predicates = append(predicates, order.OrderIDNotIn(i.OrderIDNotIn...))
+	}
+	if i.OrderIDGT != nil {
+		predicates = append(predicates, order.OrderIDGT(*i.OrderIDGT))
+	}
+	if i.OrderIDGTE != nil {
+		predicates = append(predicates, order.OrderIDGTE(*i.OrderIDGTE))
+	}
+	if i.OrderIDLT != nil {
+		predicates = append(predicates, order.OrderIDLT(*i.OrderIDLT))
+	}
+	if i.OrderIDLTE != nil {
+		predicates = append(predicates, order.OrderIDLTE(*i.OrderIDLTE))
 	}
 
 	switch len(predicates) {

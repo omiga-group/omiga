@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
 )
 
@@ -19,6 +20,12 @@ type OrderCreate struct {
 	mutation *OrderMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetOrderID sets the "order_id" field.
+func (oc *OrderCreate) SetOrderID(u uuid.UUID) *OrderCreate {
+	oc.mutation.SetOrderID(u)
+	return oc
 }
 
 // Mutation returns the OrderMutation object of the builder.
@@ -97,6 +104,9 @@ func (oc *OrderCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (oc *OrderCreate) check() error {
+	if _, ok := oc.mutation.OrderID(); !ok {
+		return &ValidationError{Name: "order_id", err: errors.New(`repositories: missing required field "Order.order_id"`)}
+	}
 	return nil
 }
 
@@ -126,6 +136,14 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 	)
 	_spec.Schema = oc.schemaConfig.Order
 	_spec.OnConflict = oc.conflict
+	if value, ok := oc.mutation.OrderID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldOrderID,
+		})
+		_node.OrderID = value
+	}
 	return _node, _spec
 }
 
@@ -133,11 +151,17 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Order.Create().
+//		SetOrderID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.OrderUpsert) {
+//			SetOrderID(v+v).
+//		}).
 //		Exec(ctx)
 //
 func (oc *OrderCreate) OnConflict(opts ...sql.ConflictOption) *OrderUpsertOne {
@@ -173,6 +197,18 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetOrderID sets the "order_id" field.
+func (u *OrderUpsert) SetOrderID(v uuid.UUID) *OrderUpsert {
+	u.Set(order.FieldOrderID, v)
+	return u
+}
+
+// UpdateOrderID sets the "order_id" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateOrderID() *OrderUpsert {
+	u.SetExcluded(order.FieldOrderID)
+	return u
+}
 
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
@@ -214,6 +250,20 @@ func (u *OrderUpsertOne) Update(set func(*OrderUpsert)) *OrderUpsertOne {
 		set(&OrderUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetOrderID sets the "order_id" field.
+func (u *OrderUpsertOne) SetOrderID(v uuid.UUID) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetOrderID(v)
+	})
+}
+
+// UpdateOrderID sets the "order_id" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateOrderID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateOrderID()
+	})
 }
 
 // Exec executes the query.
@@ -343,6 +393,11 @@ func (ocb *OrderCreateBulk) ExecX(ctx context.Context) {
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.OrderUpsert) {
+//			SetOrderID(v+v).
+//		}).
 //		Exec(ctx)
 //
 func (ocb *OrderCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderUpsertBulk {
@@ -412,6 +467,20 @@ func (u *OrderUpsertBulk) Update(set func(*OrderUpsert)) *OrderUpsertBulk {
 		set(&OrderUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetOrderID sets the "order_id" field.
+func (u *OrderUpsertBulk) SetOrderID(v uuid.UUID) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetOrderID(v)
+	})
+}
+
+// UpdateOrderID sets the "order_id" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateOrderID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateOrderID()
+	})
 }
 
 // Exec executes the query.

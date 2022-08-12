@@ -7,14 +7,17 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
 )
 
 // Order is the model entity for the Order schema.
 type Order struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// OrderID holds the value of the "order_id" field.
+	OrderID uuid.UUID `json:"order_id,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -24,6 +27,8 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case order.FieldID:
 			values[i] = new(sql.NullInt64)
+		case order.FieldOrderID:
+			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Order", columns[i])
 		}
@@ -45,6 +50,12 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			o.ID = int(value.Int64)
+		case order.FieldOrderID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field order_id", values[i])
+			} else if value != nil {
+				o.OrderID = *value
+			}
 		}
 	}
 	return nil
@@ -72,7 +83,9 @@ func (o *Order) Unwrap() *Order {
 func (o *Order) String() string {
 	var builder strings.Builder
 	builder.WriteString("Order(")
-	builder.WriteString(fmt.Sprintf("id=%v", o.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", o.ID))
+	builder.WriteString("order_id=")
+	builder.WriteString(fmt.Sprintf("%v", o.OrderID))
 	builder.WriteByte(')')
 	return builder.String()
 }

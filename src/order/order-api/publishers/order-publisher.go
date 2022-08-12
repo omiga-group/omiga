@@ -11,7 +11,11 @@ import (
 )
 
 type OrderPublisher interface {
-	Publish(ctx context.Context, tx *repositories.Tx, order models.Order) error
+	Publish(
+		ctx context.Context,
+		tx *repositories.Tx,
+		orderBeforeState *models.Order,
+		orderAfterState models.Order) error
 }
 
 type orderPublisher struct {
@@ -28,13 +32,24 @@ func NewOrderPublisher(
 	}, nil
 }
 
-func (op *orderPublisher) Publish(ctx context.Context, tx *repositories.Tx, order models.Order) error {
+func (op *orderPublisher) Publish(
+	ctx context.Context,
+	tx *repositories.Tx,
+	orderBeforeState *models.Order,
+	orderAfterState models.Order) error {
+
 	orderEvent := orderv1.OrderEvent{
-		Data: orderv1.Data{
-			AfterState: orderv1.Order{
-				Id: order.OrderId,
-			},
-		},
+		Data: orderv1.Data{},
+	}
+
+	if orderBeforeState != nil {
+		orderEvent.Data.BeforeState = &orderv1.Order{
+			Id: orderv1.ID(orderBeforeState.OrderID),
+		}
+	}
+
+	orderEvent.Data.AfterState = orderv1.Order{
+		Id: orderv1.ID(orderAfterState.OrderID),
 	}
 
 	return op.orderOutboxPublisher.Publish(

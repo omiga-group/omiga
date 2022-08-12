@@ -33,6 +33,7 @@ func (os *orderService) Submit(
 	}
 
 	return &models.Order{
-		Id: createdOrder.ID,
+		Id:      createdOrder.ID,
+		OrderID: createdOrder.OrderID,
 	}, nil
 }

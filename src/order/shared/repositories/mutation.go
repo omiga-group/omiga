@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
+	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/predicate"
 
@@ -34,6 +36,7 @@ type OrderMutation struct {
 	op            Op
 	typ           string
 	id            *int
+	order_id      *uuid.UUID
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Order, error)
@@ -138,6 +141,42 @@ func (m *OrderMutation) IDs(ctx context.Context) ([]int, error) {
 	}
 }
 
+// SetOrderID sets the "order_id" field.
+func (m *OrderMutation) SetOrderID(u uuid.UUID) {
+	m.order_id = &u
+}
+
+// OrderID returns the value of the "order_id" field in the mutation.
+func (m *OrderMutation) OrderID() (r uuid.UUID, exists bool) {
+	v := m.order_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOrderID returns the old "order_id" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldOrderID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOrderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOrderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOrderID: %w", err)
+	}
+	return oldValue.OrderID, nil
+}
+
+// ResetOrderID resets all changes to the "order_id" field.
+func (m *OrderMutation) ResetOrderID() {
+	m.order_id = nil
+}
+
 // Where appends a list predicates to the OrderMutation builder.
 func (m *OrderMutation) Where(ps ...predicate.Order) {
 	m.predicates = append(m.predicates, ps...)
@@ -157,7 +196,10 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-	fields := make([]string, 0, 0)
+	fields := make([]string, 0, 1)
+	if m.order_id != nil {
+		fields = append(fields, order.FieldOrderID)
+	}
 	return fields
 }
 
@@ -165,6 +207,10 @@ func (m *OrderMutation) Fields() []string {
 // return value indicates that this field was not set, or was not defined in the
 // schema.
 func (m *OrderMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case order.FieldOrderID:
+		return m.OrderID()
+	}
 	return nil, false
 }
 
@@ -172,6 +218,10 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
 func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case order.FieldOrderID:
+		return m.OldOrderID(ctx)
+	}
 	return nil, fmt.Errorf("unknown Order field %s", name)
 }
 
@@ -180,6 +230,13 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 // type.
 func (m *OrderMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case order.FieldOrderID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOrderID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Order field %s", name)
 }
@@ -201,6 +258,8 @@ func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
 func (m *OrderMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Order numeric field %s", name)
 }
 
@@ -226,6 +285,11 @@ func (m *OrderMutation) ClearField(name string) error {
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
 func (m *OrderMutation) ResetField(name string) error {
+	switch name {
+	case order.FieldOrderID:
+		m.ResetOrderID()
+		return nil
+	}
 	return fmt.Errorf("unknown Order field %s", name)
 }
 

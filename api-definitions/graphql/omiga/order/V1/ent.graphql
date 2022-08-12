@@ -15,6 +15,15 @@ input OrderWhereInput {
   idGTE: ID
   idLT: ID
   idLTE: ID
+  """order_id field predicates"""
+  orderID: UUID
+  orderIDNEQ: UUID
+  orderIDIn: [UUID!]
+  orderIDNotIn: [UUID!]
+  orderIDGT: UUID
+  orderIDGTE: UUID
+  orderIDLT: UUID
+  orderIDLTE: UUID
 }
 """
 OutboxWhereInput is used for filtering Outbox objects.

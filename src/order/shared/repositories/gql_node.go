@@ -51,8 +51,17 @@ func (o *Order) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     o.ID,
 		Type:   "Order",
-		Fields: make([]*Field, 0),
+		Fields: make([]*Field, 1),
 		Edges:  make([]*Edge, 0),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(o.OrderID); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "uuid.UUID",
+		Name:  "order_id",
+		Value: string(buf),
 	}
 	return node, nil
 }

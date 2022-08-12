@@ -10,9 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type ID struct {
-  UUID uuid.UUID
-}
+type ID uuid.UUID
 
     
     // OrderBookEvent represents a OrderBookEvent model.
@@ -85,7 +83,7 @@ type AnonymousSchema15 struct {
     
 func (i *ID) UnmarshalJSON(b []byte) error {
   if parsedUuid, err := uuid.Parse(strings.Trim(string(b), "\"")); err == nil {
-    i.UUID = parsedUuid
+    i = (*ID)(&parsedUuid)
   } else {
     return err
   }
