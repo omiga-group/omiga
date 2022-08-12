@@ -25,6 +25,7 @@ type outboxBackgroundService struct {
 	messageProducer messaging.MessageProducer
 	entgoClient     repositories.EntgoClient
 	retryDelay      time.Duration
+	globalMutex     sync.Mutex
 }
 
 func NewOutboxBackgroundService(
@@ -48,6 +49,7 @@ func NewOutboxBackgroundService(
 		topic:           topic,
 		entgoClient:     entgoClient,
 		retryDelay:      retryDelay,
+		globalMutex:     sync.Mutex{},
 	}
 
 	if _, err := cronService.GetCron().AddJob("0/1 * * * * *", instance); err != nil {
@@ -62,6 +64,9 @@ func (obs *outboxBackgroundService) RunAsync() {
 }
 
 func (obs *outboxBackgroundService) Run() {
+	obs.globalMutex.Lock()
+	defer obs.globalMutex.Unlock()
+
 	client := obs.entgoClient.GetClient()
 
 	records, err := client.Outbox.Query().
