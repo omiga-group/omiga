@@ -55,7 +55,6 @@ export default async function ({ asyncapi, params }) {
 package ${params.packageName}
 
 import (
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -64,26 +63,12 @@ import (
 type ID uuid.UUID
 `;
 
-  const payloadUtils = `
-func (i *ID) UnmarshalJSON(b []byte) error {
-  if parsedUuid, err := uuid.Parse(strings.Trim(string(b), "\\"")); err == nil {
-    i = (*ID)(&parsedUuid)
-  } else {
-    return err
-  }
-
-  return nil
-}
-`;
-
   models.forEach((model) => {
     payloadContent += `
     ${model.dependencies.join("\n")}
     ${model.result}
     `;
   });
-
-  payloadContent += payloadUtils;
 
   return <File name="payloads_gen.go">{payloadContent}</File>;
 }

@@ -4,7 +4,6 @@
 package orderbookv1
 
 import (
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -81,12 +80,3 @@ type AnonymousSchema15 struct {
   Price *AnonymousSchema16 `json:"price",omitempty`
 }
     
-func (i *ID) UnmarshalJSON(b []byte) error {
-  if parsedUuid, err := uuid.Parse(strings.Trim(string(b), "\"")); err == nil {
-    i = (*ID)(&parsedUuid)
-  } else {
-    return err
-  }
-
-  return nil
-}

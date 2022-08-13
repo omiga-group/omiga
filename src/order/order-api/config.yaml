@@ -1,5 +1,6 @@
 app:
   listeningInterface: ":10000"
+  source: "urn::omiga::order-api"
 
 pulsar:
   url: "pulsar://pulsar.localhost:6650"

@@ -4,7 +4,6 @@
 package orderv1
 
 import (
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -133,12 +132,3 @@ type AnonymousSchema23 struct {
   Id *string `json:"id",omitempty` // The unique ID of the supported exchange
 }
     
-func (i *ID) UnmarshalJSON(b []byte) error {
-  if parsedUuid, err := uuid.Parse(strings.Trim(string(b), "\"")); err == nil {
-    i = (*ID)(&parsedUuid)
-  } else {
-    return err
-  }
-
-  return nil
-}

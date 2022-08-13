@@ -61,7 +61,7 @@ func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSetti
 	if err != nil {
 		return nil, err
 	}
-	orderPublisher, err := publishers.NewOrderPublisher(logger, outboxPublisher)
+	orderPublisher, err := publishers.NewOrderPublisher(logger, appSettings, outboxPublisher)
 	if err != nil {
 		return nil, err
 	}

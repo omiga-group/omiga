@@ -4,7 +4,6 @@
 package syntheticorderv1
 
 import (
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -113,12 +112,3 @@ type AnonymousSchema19 struct {
   Currency AnonymousSchema12 `json:"currency"`
 }
     
-func (i *ID) UnmarshalJSON(b []byte) error {
-  if parsedUuid, err := uuid.Parse(strings.Trim(string(b), "\"")); err == nil {
-    i = (*ID)(&parsedUuid)
-  } else {
-    return err
-  }
-
-  return nil
-}
