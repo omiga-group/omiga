@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/omiga-group/omiga/src/order/order-api/models"
 	"github.com/omiga-group/omiga/src/order/shared/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
@@ -45,7 +46,7 @@ func (op *orderPublisher) Publish(
 
 	orderEvent := orderv1.OrderEvent{
 		Metadata: orderv1.Metadata{
-			Id:     orderv1.ID(orderAfterState.OrderID),
+			Id:     orderv1.ID(uuid.New()),
 			Time:   time.Now(),
 			Source: op.appSettings.Source,
 			Type:   orderv1.AnonymousSchema3OrderSubmitted,
