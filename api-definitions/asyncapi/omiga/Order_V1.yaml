@@ -101,9 +101,8 @@ components:
         - orderDetails
       properties:
         id:
-          type: string
+          type: integer
           description: The unique order ID
-          format: uuid
         orderDetails:
           $ref: "./Common_V1.yaml#/components/schemas/orderDetails"
         user:

@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/internal"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/predicate"
@@ -26,12 +25,6 @@ type OrderUpdate struct {
 // Where appends a list predicates to the OrderUpdate builder.
 func (ou *OrderUpdate) Where(ps ...predicate.Order) *OrderUpdate {
 	ou.mutation.Where(ps...)
-	return ou
-}
-
-// SetOrderID sets the "order_id" field.
-func (ou *OrderUpdate) SetOrderID(u uuid.UUID) *OrderUpdate {
-	ou.mutation.SetOrderID(u)
 	return ou
 }
 
@@ -112,13 +105,6 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := ou.mutation.OrderID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldOrderID,
-		})
-	}
 	_spec.Node.Schema = ou.schemaConfig.Order
 	ctx = internal.NewSchemaConfigContext(ctx, ou.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, ou.driver, _spec); err != nil {
@@ -138,12 +124,6 @@ type OrderUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *OrderMutation
-}
-
-// SetOrderID sets the "order_id" field.
-func (ouo *OrderUpdateOne) SetOrderID(u uuid.UUID) *OrderUpdateOne {
-	ouo.mutation.SetOrderID(u)
-	return ouo
 }
 
 // Mutation returns the OrderMutation object of the builder.
@@ -252,13 +232,6 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := ouo.mutation.OrderID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldOrderID,
-		})
 	}
 	_spec.Node.Schema = ouo.schemaConfig.Order
 	ctx = internal.NewSchemaConfigContext(ctx, ouo.schemaConfig)

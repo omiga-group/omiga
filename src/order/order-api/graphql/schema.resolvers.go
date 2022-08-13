@@ -7,7 +7,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/omiga-group/omiga/src/order/order-api/models"
 	"github.com/omiga-group/omiga/src/order/shared"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
@@ -26,8 +25,7 @@ func (r *mutationResolver) SubmitOrder(ctx context.Context, input shared.SubmitO
 	return &shared.OrderPayload{
 		ClientMutationID: input.ClientMutationID,
 		Order: &repositories.Order{
-			ID:      order.Id,
-			OrderID: order.OrderID,
+			ID: order.Id,
 		},
 	}, nil
 }
@@ -37,20 +35,10 @@ func (r *mutationResolver) CancelOrder(ctx context.Context, input shared.CancelO
 	return nil, fmt.Errorf("not implemented")
 }
 
-// OrderID is the resolver for the orderId field.
-func (r *orderResolver) OrderID(ctx context.Context, obj *repositories.Order) (string, error) {
-	return obj.OrderID.String(), nil
-}
-
 // Order is the resolver for the order field.
-func (r *queryResolver) Order(ctx context.Context, orderID string) (*repositories.Order, error) {
-	orderUUID, err := uuid.Parse(orderID)
-	if err != nil {
-		return nil, err
-	}
-
+func (r *queryResolver) Order(ctx context.Context, id int) (*repositories.Order, error) {
 	query := r.client.Order.Query()
-	query = query.Where(order.OrderID(orderUUID))
+	query = query.Where(order.IDEQ(id))
 
 	result, err := query.First(ctx)
 	if _, ok := err.(*repositories.NotFoundError); ok {
@@ -78,12 +66,8 @@ func (r *queryResolver) Orders(ctx context.Context, after *repositories.Cursor, 
 // Mutation returns shared.MutationResolver implementation.
 func (r *Resolver) Mutation() shared.MutationResolver { return &mutationResolver{r} }
 
-// Order returns shared.OrderResolver implementation.
-func (r *Resolver) Order() shared.OrderResolver { return &orderResolver{r} }
-
 // Query returns shared.QueryResolver implementation.
 func (r *Resolver) Query() shared.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
-type orderResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

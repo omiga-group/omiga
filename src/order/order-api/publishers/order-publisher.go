@@ -56,12 +56,12 @@ func (op *orderPublisher) Publish(
 
 	if orderBeforeState != nil {
 		orderEvent.Data.BeforeState = &orderv1.Order{
-			Id: orderv1.ID(orderBeforeState.OrderID),
+			Id: orderBeforeState.Id,
 		}
 	}
 
 	orderEvent.Data.AfterState = orderv1.Order{
-		Id: orderv1.ID(orderAfterState.OrderID),
+		Id: orderAfterState.Id,
 	}
 
 	return op.orderOutboxPublisher.Publish(

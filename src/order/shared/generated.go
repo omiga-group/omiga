@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -38,9 +37,7 @@ type Config struct {
 
 type ResolverRoot interface {
 	Mutation() MutationResolver
-	Order() OrderResolver
 	Query() QueryResolver
-	OrderWhereInput() OrderWhereInputResolver
 	OutboxWhereInput() OutboxWhereInputResolver
 }
 
@@ -54,8 +51,7 @@ type ComplexityRoot struct {
 	}
 
 	Order struct {
-		ID      func(childComplexity int) int
-		OrderID func(childComplexity int) int
+		ID func(childComplexity int) int
 	}
 
 	OrderConnection struct {
@@ -82,7 +78,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Order  func(childComplexity int, orderID string) int
+		Order  func(childComplexity int, id int) int
 		Orders func(childComplexity int, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, where *repositories.OrderWhereInput) int
 	}
 }
@@ -91,24 +87,11 @@ type MutationResolver interface {
 	SubmitOrder(ctx context.Context, input SubmitOrderInput) (*OrderPayload, error)
 	CancelOrder(ctx context.Context, input CancelOrderInput) (*OrderPayload, error)
 }
-type OrderResolver interface {
-	OrderID(ctx context.Context, obj *repositories.Order) (string, error)
-}
 type QueryResolver interface {
-	Order(ctx context.Context, orderID string) (*repositories.Order, error)
+	Order(ctx context.Context, id int) (*repositories.Order, error)
 	Orders(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, where *repositories.OrderWhereInput) (*repositories.OrderConnection, error)
 }
 
-type OrderWhereInputResolver interface {
-	OrderID(ctx context.Context, obj *repositories.OrderWhereInput, data *string) error
-	OrderIDNeq(ctx context.Context, obj *repositories.OrderWhereInput, data *string) error
-	OrderIDIn(ctx context.Context, obj *repositories.OrderWhereInput, data []string) error
-	OrderIDNotIn(ctx context.Context, obj *repositories.OrderWhereInput, data []string) error
-	OrderIDGt(ctx context.Context, obj *repositories.OrderWhereInput, data *string) error
-	OrderIDGte(ctx context.Context, obj *repositories.OrderWhereInput, data *string) error
-	OrderIDLt(ctx context.Context, obj *repositories.OrderWhereInput, data *string) error
-	OrderIDLte(ctx context.Context, obj *repositories.OrderWhereInput, data *string) error
-}
 type OutboxWhereInputResolver interface {
 	Status(ctx context.Context, obj *repositories.OutboxWhereInput, data *OutboxStatus) error
 	StatusNeq(ctx context.Context, obj *repositories.OutboxWhereInput, data *OutboxStatus) error
@@ -161,13 +144,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Order.ID(childComplexity), true
-
-	case "Order.orderId":
-		if e.complexity.Order.OrderID == nil {
-			break
-		}
-
-		return e.complexity.Order.OrderID(childComplexity), true
 
 	case "OrderConnection.edges":
 		if e.complexity.OrderConnection.Edges == nil {
@@ -256,7 +232,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Order(childComplexity, args["orderId"].(string)), true
+		return e.complexity.Query.Order(childComplexity, args["id"].(int)), true
 
 	case "Query.orders":
 		if e.complexity.Query.Orders == nil {
@@ -369,7 +345,7 @@ type Query {
     """
     ID
     """
-    orderId: UUID!
+    id: ID!
   ): Order
 
   orders(
@@ -444,7 +420,6 @@ type PageInfo {
 
 type Order implements Node {
   id: ID!
-  orderId: String!
 }
 
 """
@@ -525,15 +500,6 @@ input OrderWhereInput {
   idGTE: ID
   idLT: ID
   idLTE: ID
-  """order_id field predicates"""
-  orderID: UUID
-  orderIDNEQ: UUID
-  orderIDIn: [UUID!]
-  orderIDNotIn: [UUID!]
-  orderIDGT: UUID
-  orderIDGTE: UUID
-  orderIDLT: UUID
-  orderIDLTE: UUID
 }
 """
 OutboxWhereInput is used for filtering Outbox objects.
@@ -671,15 +637,15 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_order_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["orderId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderId"))
-		arg0, err = ec.unmarshalNUUID2string(ctx, tmp)
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["orderId"] = arg0
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -932,50 +898,6 @@ func (ec *executionContext) fieldContext_Order_id(ctx context.Context, field gra
 	return fc, nil
 }
 
-func (ec *executionContext) _Order_orderId(ctx context.Context, field graphql.CollectedField, obj *repositories.Order) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Order_orderId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Order().OrderID(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Order_orderId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Order",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _OrderConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *repositories.OrderConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrderConnection_pageInfo(ctx, field)
 	if err != nil {
@@ -1156,8 +1078,6 @@ func (ec *executionContext) fieldContext_OrderEdge_node(ctx context.Context, fie
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Order_id(ctx, field)
-			case "orderId":
-				return ec.fieldContext_Order_orderId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Order", field.Name)
 		},
@@ -1288,8 +1208,6 @@ func (ec *executionContext) fieldContext_OrderPayload_order(ctx context.Context,
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Order_id(ctx, field)
-			case "orderId":
-				return ec.fieldContext_Order_orderId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Order", field.Name)
 		},
@@ -1481,7 +1399,7 @@ func (ec *executionContext) _Query_order(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Order(rctx, fc.Args["orderId"].(string))
+		return ec.resolvers.Query().Order(rctx, fc.Args["id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1505,8 +1423,6 @@ func (ec *executionContext) fieldContext_Query_order(ctx context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Order_id(ctx, field)
-			case "orderId":
-				return ec.fieldContext_Order_orderId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Order", field.Name)
 		},
@@ -3678,7 +3594,7 @@ func (ec *executionContext) unmarshalInputOrderWhereInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "orderID", "orderIDNEQ", "orderIDIn", "orderIDNotIn", "orderIDGT", "orderIDGTE", "orderIDLT", "orderIDLTE"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3771,94 +3687,6 @@ func (ec *executionContext) unmarshalInputOrderWhereInput(ctx context.Context, o
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
 			it.IDLTE, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
-				return it, err
-			}
-		case "orderID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderID"))
-			data, err := ec.unmarshalOUUID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.OrderWhereInput().OrderID(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "orderIDNEQ":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderIDNEQ"))
-			data, err := ec.unmarshalOUUID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.OrderWhereInput().OrderIDNeq(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "orderIDIn":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderIDIn"))
-			data, err := ec.unmarshalOUUID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.OrderWhereInput().OrderIDIn(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "orderIDNotIn":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderIDNotIn"))
-			data, err := ec.unmarshalOUUID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.OrderWhereInput().OrderIDNotIn(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "orderIDGT":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderIDGT"))
-			data, err := ec.unmarshalOUUID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.OrderWhereInput().OrderIDGt(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "orderIDGTE":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderIDGTE"))
-			data, err := ec.unmarshalOUUID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.OrderWhereInput().OrderIDGte(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "orderIDLT":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderIDLT"))
-			data, err := ec.unmarshalOUUID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.OrderWhereInput().OrderIDLt(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "orderIDLTE":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderIDLTE"))
-			data, err := ec.unmarshalOUUID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.OrderWhereInput().OrderIDLte(ctx, &it, data); err != nil {
 				return it, err
 			}
 		}
@@ -4550,28 +4378,8 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Order_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
-		case "orderId":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Order_orderId(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5244,21 +5052,6 @@ func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v in
 
 func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
 	res := graphql.MarshalTime(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) unmarshalNUUID2string(ctx context.Context, v interface{}) (string, error) {
-	res, err := graphql.UnmarshalString(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNUUID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	res := graphql.MarshalString(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6009,60 +5802,6 @@ func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel
 		return graphql.Null
 	}
 	res := graphql.MarshalTime(*v)
-	return res
-}
-
-func (ec *executionContext) unmarshalOUUID2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNUUID2string(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOUUID2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalNUUID2string(ctx, sel, v[i])
-	}
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) unmarshalOUUID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalString(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOUUID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	res := graphql.MarshalString(*v)
 	return res
 }
 

@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/omiga-group/omiga/src/order/order-api/models"
 	"github.com/omiga-group/omiga/src/order/order-api/publishers"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
@@ -41,7 +40,6 @@ func (os *orderService) Submit(
 
 	createdOrder, err := tx.Order.
 		Create().
-		SetOrderID(uuid.New()).
 		Save(ctx)
 	if err != nil {
 		rollbackErr := os.entgoClient.RollbackTransaction(tx)
@@ -53,8 +51,7 @@ func (os *orderService) Submit(
 	}
 
 	order := models.Order{
-		Id:      createdOrder.ID,
-		OrderID: createdOrder.OrderID,
+		Id: createdOrder.ID,
 	}
 
 	err = os.orderPublisher.Publish(

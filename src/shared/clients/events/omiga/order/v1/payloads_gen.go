@@ -49,7 +49,7 @@ type Data struct {
     
     // Order represents a Order model.
 type Order struct {
-  Id ID `json:"id"` // The unique order ID
+  Id int `json:"id"` // The unique order ID
   OrderDetails OrderDetails `json:"orderDetails"`
   User *User `json:"user",omitempty`
   PreferredExchanges *AnonymousSchema23 `json:"preferredExchanges",omitempty`

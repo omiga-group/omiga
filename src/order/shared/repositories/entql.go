@@ -24,10 +24,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 				Column: order.FieldID,
 			},
 		},
-		Type: "Order",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			order.FieldOrderID: {Type: field.TypeUUID, Column: order.FieldOrderID},
-		},
+		Type:   "Order",
+		Fields: map[string]*sqlgraph.FieldSpec{},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
@@ -98,11 +96,6 @@ func (f *OrderFilter) Where(p entql.P) {
 // WhereID applies the entql int predicate on the id field.
 func (f *OrderFilter) WhereID(p entql.IntP) {
 	f.Where(p.Field(order.FieldID))
-}
-
-// WhereOrderID applies the entql [16]byte predicate on the order_id field.
-func (f *OrderFilter) WhereOrderID(p entql.ValueP) {
-	f.Where(p.Field(order.FieldOrderID))
 }
 
 // addPredicate implements the predicateAdder interface.

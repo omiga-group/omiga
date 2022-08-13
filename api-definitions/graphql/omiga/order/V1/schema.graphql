@@ -22,7 +22,7 @@ type Query {
     """
     ID
     """
-    orderId: UUID!
+    id: ID!
   ): Order
 
   orders(
@@ -97,7 +97,6 @@ type PageInfo {
 
 type Order implements Node {
   id: ID!
-  orderId: String!
 }
 
 """

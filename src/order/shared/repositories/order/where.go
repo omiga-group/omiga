@@ -4,7 +4,6 @@ package order
 
 import (
 	"entgo.io/ent/dialect/sql"
-	"github.com/google/uuid"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/predicate"
 )
 
@@ -76,77 +75,6 @@ func IDLT(id int) predicate.Order {
 func IDLTE(id int) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldID), id))
-	})
-}
-
-// OrderID applies equality check predicate on the "order_id" field. It's identical to OrderIDEQ.
-func OrderID(v uuid.UUID) predicate.Order {
-	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDEQ applies the EQ predicate on the "order_id" field.
-func OrderIDEQ(v uuid.UUID) predicate.Order {
-	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDNEQ applies the NEQ predicate on the "order_id" field.
-func OrderIDNEQ(v uuid.UUID) predicate.Order {
-	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDIn applies the In predicate on the "order_id" field.
-func OrderIDIn(vs ...uuid.UUID) predicate.Order {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldOrderID), v...))
-	})
-}
-
-// OrderIDNotIn applies the NotIn predicate on the "order_id" field.
-func OrderIDNotIn(vs ...uuid.UUID) predicate.Order {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldOrderID), v...))
-	})
-}
-
-// OrderIDGT applies the GT predicate on the "order_id" field.
-func OrderIDGT(v uuid.UUID) predicate.Order {
-	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDGTE applies the GTE predicate on the "order_id" field.
-func OrderIDGTE(v uuid.UUID) predicate.Order {
-	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDLT applies the LT predicate on the "order_id" field.
-func OrderIDLT(v uuid.UUID) predicate.Order {
-	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDLTE applies the LTE predicate on the "order_id" field.
-func OrderIDLTE(v uuid.UUID) predicate.Order {
-	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldOrderID), v))
 	})
 }
 
