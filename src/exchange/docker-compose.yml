@@ -3,7 +3,6 @@
 services:
   postgres-exchange-database-initializer:
     image: postgres:14.4-alpine
-    hostname: postgres
     restart: on-failure
     command: psql -h postgres -U postgres -c "CREATE DATABASE \"exchange\";"
     environment:

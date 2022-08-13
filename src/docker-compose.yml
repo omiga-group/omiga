@@ -21,7 +21,6 @@ services:
 
   postgres:
     image: postgres:14.4-alpine
-    hostname: postgres
     restart: unless-stopped
     volumes:
       - omiga_postgres_data:/var/lib/postgresql/data
