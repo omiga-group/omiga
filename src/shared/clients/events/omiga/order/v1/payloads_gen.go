@@ -14,20 +14,20 @@ type ID uuid.UUID
     
     // OrderEvent represents a OrderEvent model.
 type OrderEvent struct {
-  Metadata Metadata `json:"metadata"`
-  Data Data `json:"data"`
+  Metadata Metadata `json:"metadata"` 
+  Data Data `json:"data"` 
 }
     
     
     // Metadata represents a Metadata model.
 type Metadata struct {
-  Id ID `json:"id"` // The unique message ID
-  Source string `json:"source"` // undefined
-  Type Type `json:"type"`
-  Subject string `json:"subject"` // undefined
-  Time time.Time `json:"time"` // undefined
-  CorrelationId ID `json:"correlationId"` // undefined
-  Actor string `json:"actor"` // undefined
+  Id ID `json:"id"`  // The unique message ID
+  Source string `json:"source"`  // undefined
+  Type Type `json:"type"` 
+  Subject string `json:"subject"`  // undefined
+  Time time.Time `json:"time"`  // undefined
+  CorrelationId ID `json:"correlationId"`  // undefined
+  Actor string `json:"actor"`  // undefined
 }
     
     
@@ -42,39 +42,39 @@ const (
     
     // Data represents a Data model.
 type Data struct {
-  BeforeState *Order `json:"beforeState",omitempty`
-  AfterState Order `json:"afterState"`
+  BeforeState *Order `json:"beforeState,omitempty"` 
+  AfterState Order `json:"afterState"` 
 }
     
     
     // Order represents a Order model.
 type Order struct {
-  Id int `json:"id"` // The unique order ID
-  OrderDetails OrderDetails `json:"orderDetails"`
-  User *User `json:"user",omitempty`
-  PreferredExchanges *[]*Exchange `json:"preferredExchanges",omitempty` // the preferred list of the supportef exchanged by the user
-  AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
+  Id int `json:"id"`  // The unique order ID
+  OrderDetails OrderDetails `json:"orderDetails"` 
+  User *User `json:"user,omitempty"` 
+  PreferredExchanges *[]*Exchange `json:"preferredExchanges,omitempty"`  // the preferred list of the supportef exchanged by the user
+  AdditionalProperties *[]interface{} `json:"additionalProperties,omitempty"`  // undefined
 }
     
     
     // OrderDetails represents a OrderDetails model.
 type OrderDetails struct {
-  BaseCurrency Currency `json:"baseCurrency"`
-  CounterCurrency Currency `json:"counterCurrency"`
-  Type OrderType `json:"type"`
-  Side OrderSide `json:"side"`
-  Quantity Money `json:"quantity"`
-  Price Money `json:"price"`
-  AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
+  BaseCurrency Currency `json:"baseCurrency"` 
+  CounterCurrency Currency `json:"counterCurrency"` 
+  Type OrderType `json:"type"` 
+  Side OrderSide `json:"side"` 
+  Quantity Money `json:"quantity"` 
+  Price Money `json:"price"` 
+  AdditionalProperties *[]interface{} `json:"additionalProperties,omitempty"`  // undefined
 }
     
     
     // Currency represents a Currency model.
 type Currency struct {
-  Name string `json:"name"` // undefined
-  Code string `json:"code"` // undefined
-  MaxPrecision int `json:"maxPrecision"` // undefined
-  Digital bool `json:"digital"` // undefined
+  Name string `json:"name"`  // undefined
+  Code string `json:"code"`  // undefined
+  MaxPrecision int `json:"maxPrecision"`  // undefined
+  Digital bool `json:"digital"`  // undefined
 }
     
     
@@ -101,19 +101,19 @@ const (
     
     // Money represents a Money model.
 type Money struct {
-  Amount int `json:"amount"` // undefined
-  Scale int `json:"scale"` // undefined
-  Currency Currency `json:"currency"`
+  Amount int `json:"amount"`  // undefined
+  Scale int `json:"scale"`  // undefined
+  Currency Currency `json:"currency"` 
 }
     
     
     // User represents a User model.
 type User struct {
-  Id ID `json:"id"` // undefined
-  Created *time.Time `json:"created",omitempty` // undefined
-  Updated *time.Time `json:"updated",omitempty` // undefined
-  Type *UserType `json:"type",omitempty`
-  AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
+  Id ID `json:"id"`  // undefined
+  Created *time.Time `json:"created,omitempty"`  // undefined
+  Updated *time.Time `json:"updated,omitempty"`  // undefined
+  Type *UserType `json:"type,omitempty"` 
+  AdditionalProperties *[]interface{} `json:"additionalProperties,omitempty"`  // undefined
 }
     
     
@@ -128,6 +128,6 @@ const (
     
     // Exchange represents a Exchange model.
 type Exchange struct {
-  Id int `json:"id"` // The unique ID of the supported exchange
+  Id int `json:"id"`  // The unique ID of the supported exchange
 }
     

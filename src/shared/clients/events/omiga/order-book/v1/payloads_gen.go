@@ -14,20 +14,20 @@ type ID uuid.UUID
     
     // OrderBookEvent represents a OrderBookEvent model.
 type OrderBookEvent struct {
-  Metadata Metadata `json:"metadata"`
-  Data OrderBook `json:"data"`
+  Metadata Metadata `json:"metadata"` 
+  Data OrderBook `json:"data"` 
 }
     
     
     // Metadata represents a Metadata model.
 type Metadata struct {
-  Id ID `json:"id"` // The unique message ID
-  Source string `json:"source"` // undefined
-  Type Type `json:"type"`
-  Subject string `json:"subject"` // undefined
-  Time time.Time `json:"time"` // undefined
-  CorrelationId ID `json:"correlationId"` // undefined
-  Actor string `json:"actor"` // undefined
+  Id ID `json:"id"`  // The unique message ID
+  Source string `json:"source"`  // undefined
+  Type Type `json:"type"` 
+  Subject string `json:"subject"`  // undefined
+  Time time.Time `json:"time"`  // undefined
+  CorrelationId ID `json:"correlationId"`  // undefined
+  Actor string `json:"actor"`  // undefined
 }
     
     
@@ -41,35 +41,35 @@ const (
     
     // OrderBook represents a OrderBook model.
 type OrderBook struct {
-  Id string `json:"id"` // undefined
-  BaseCurrency *Currency `json:"baseCurrency",omitempty`
-  CounterCurrency *Currency `json:"counterCurrency",omitempty`
-  Bids *[]*OrderBookEntry `json:"bids",omitempty` // undefined
-  Asks *[]*OrderBookEntry `json:"asks",omitempty` // undefined
-  AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
+  Id string `json:"id"`  // undefined
+  BaseCurrency *Currency `json:"baseCurrency,omitempty"` 
+  CounterCurrency *Currency `json:"counterCurrency,omitempty"` 
+  Bids *[]*OrderBookEntry `json:"bids,omitempty"`  // undefined
+  Asks *[]*OrderBookEntry `json:"asks,omitempty"`  // undefined
+  AdditionalProperties *[]interface{} `json:"additionalProperties,omitempty"`  // undefined
 }
     
     
     // Currency represents a Currency model.
 type Currency struct {
-  Name string `json:"name"` // undefined
-  Code string `json:"code"` // undefined
-  MaxPrecision int `json:"maxPrecision"` // undefined
-  Digital bool `json:"digital"` // undefined
+  Name string `json:"name"`  // undefined
+  Code string `json:"code"`  // undefined
+  MaxPrecision int `json:"maxPrecision"`  // undefined
+  Digital bool `json:"digital"`  // undefined
 }
     
     
     // OrderBookEntry represents a OrderBookEntry model.
 type OrderBookEntry struct {
-  Quantity *Money `json:"quantity",omitempty`
-  Price *Money `json:"price",omitempty`
+  Quantity *Money `json:"quantity,omitempty"` 
+  Price *Money `json:"price,omitempty"` 
 }
     
     
     // Money represents a Money model.
 type Money struct {
-  Amount int `json:"amount"` // undefined
-  Scale int `json:"scale"` // undefined
-  Currency Currency `json:"currency"`
+  Amount int `json:"amount"`  // undefined
+  Scale int `json:"scale"`  // undefined
+  Currency Currency `json:"currency"` 
 }
     

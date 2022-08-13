@@ -39,9 +39,12 @@ export default async function ({ asyncapi, params }) {
                 break;
             }
 
-            return `${formattedFieldName} ${unrequiredMark}${finalFieldType} \`json:"${fieldName}"${
-              !isRequired ? ",omitempty" : ""
-            }\`${description}`;
+            const tag =
+              isRequired
+                ? `\`json:"${fieldName}"\``
+                : `\`json:"${fieldName},omitempty"\``
+
+            return `${formattedFieldName} ${unrequiredMark}${finalFieldType} ${tag} ${description}`;
           },
         },
       },
