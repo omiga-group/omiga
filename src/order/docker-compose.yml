@@ -32,10 +32,8 @@ services:
       dockerfile: order/order-api/Dockerfile
       target: local
     restart: unless-stopped
-    environment:
-      OMIGA_APP_LISTENINGINTERFACE: "80"
     ports:
-      - "10000:80"
+      - "10000:10000"
     depends_on:
       - postgresdb
       - order-database-migration
