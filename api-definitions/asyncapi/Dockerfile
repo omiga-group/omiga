@@ -8,18 +8,17 @@ WORKDIR /go-omiga-template
 RUN --mount=type=cache,target=~/.yarn YARN_CACHE_FOLDER=~/.yarn yarn install --frozen-lockfile
 
 COPY api-definitions/asyncapi /asyncapi
+
 RUN ag /asyncapi/omiga/Order_V1.yaml /go-omiga-template \
     --output /generated-src/events/omiga/order/v1 \
     --force-write \
     -p packageName=orderv1
 
-COPY api-definitions/asyncapi /asyncapi
 RUN ag /asyncapi/omiga/SyntheticOrder_V1.yaml /go-omiga-template \
     --output /generated-src/events/omiga/synthetic-order/v1 \
     --force-write \
     -p packageName=syntheticorderv1
 
-COPY api-definitions/asyncapi /asyncapi
 RUN ag /asyncapi/omiga/OrderBook_V1.yaml /go-omiga-template \
     --output /generated-src/events/omiga/order-book/v1 \
     --force-write \
