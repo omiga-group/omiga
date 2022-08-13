@@ -10,9 +10,6 @@ volumes:
 
 
 services:
-  # Dozzle Docker Log Viewer - https://dozzle.dev/
-  # Local: http://dozzle.localhost:9999
-  # Repo: https://github.com/amir20/dozzle
   dozzle:
     image: amir20/dozzle:latest
     volumes:
@@ -20,13 +17,11 @@ services:
     ports:
       - 9999:8080
     networks:
-      omiga_network:
-        aliases:
-          - dozzle.localhost
+      - omiga_network
 
-  postgresdb:
+  postgres:
     image: postgres:14.4-alpine
-    hostname: postgresdb
+    hostname: postgres
     restart: unless-stopped
     volumes:
       - omiga_postgres_data:/var/lib/postgresql/data
@@ -35,9 +30,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      omiga_network:
-        aliases:
-          - postgres.localhost
+      - omiga_network
 
   pulsar:
     image: apachepulsar/pulsar:latest
@@ -50,9 +43,7 @@ services:
     volumes:
       - omiga_pulsar_data:/pulsar/data
     networks:
-      omiga_network:
-        aliases:
-          - pulsar.localhost
+      - omiga_network
 
   pulsar-dashboard:
     image: apachepulsar/pulsar-manager:latest
@@ -66,6 +57,4 @@ services:
     environment:
       SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties
     networks:
-      omiga_network:
-        aliases:
-          - pulsar-dashboard.localhost
+      - omiga_network

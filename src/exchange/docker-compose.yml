@@ -1,15 +1,15 @@
 ﻿version: "3.8"
 
 services:
-  postgresdb-exchange-database-initializer:
+  postgres-exchange-database-initializer:
     image: postgres:14.4-alpine
-    hostname: postgresdb
+    hostname: postgres
     restart: on-failure
     command: psql -h postgres.localhost -U postgres -c "CREATE DATABASE \"exchange\";"
     environment:
       PGPASSWORD: 12345678
     depends_on:
-      - postgresdb
+      - postgres
     networks:
       - omiga_network
 
@@ -21,7 +21,7 @@ services:
       target: local
     restart: on-failure
     depends_on:
-      - postgresdb-exchange-database-initializer
+      - postgres-exchange-database-initializer
     networks:
       - omiga_network
 
@@ -32,8 +32,10 @@ services:
       dockerfile: exchange/binance-processor/Dockerfile
       target: local
     restart: unless-stopped
+    environment:
+      OMIGA_ENVIRONMENT: container
     depends_on:
-      - postgresdb
+      - postgres
       - exchange-database-migration
       - pulsar
     networks:
@@ -46,8 +48,10 @@ services:
       dockerfile: exchange/ftx-processor/Dockerfile
       target: local
     restart: unless-stopped
+    environment:
+      OMIGA_ENVIRONMENT: container
     depends_on:
-      - postgresdb
+      - postgres
       - exchange-database-migration
       - pulsar
     networks:

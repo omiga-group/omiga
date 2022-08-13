@@ -9,4 +9,4 @@ command=${@:-up -d --build}
 
 cd "$(dirname "${0}")/.."
 
-docker-compose -p $project -f $dcpath $command
+docker compose -p $project -f $dcpath $command

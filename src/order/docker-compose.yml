@@ -1,15 +1,15 @@
 ﻿version: "3.8"
 
 services:
-  postgresdb-order-database-initializer:
+  postgres-order-database-initializer:
     image: postgres:14.4-alpine
-    hostname: postgresdb
+    hostname: postgres
     restart: on-failure
     command: psql -h postgres.localhost -U postgres -c "CREATE DATABASE \"order\";"
     environment:
       PGPASSWORD: 12345678
     depends_on:
-      - postgresdb
+      - postgres
     networks:
       - omiga_network
 
@@ -21,7 +21,7 @@ services:
       target: local
     restart: on-failure
     depends_on:
-      - postgresdb-order-database-initializer
+      - postgres-order-database-initializer
     networks:
       - omiga_network
 
@@ -32,10 +32,12 @@ services:
       dockerfile: order/order-api/Dockerfile
       target: local
     restart: unless-stopped
+    environment:
+      OMIGA_ENVIRONMENT: container
     ports:
-      - "10000:10000"
+      - "10000:80"
     depends_on:
-      - postgresdb
+      - postgres
       - order-database-migration
       - pulsar
     networks:
@@ -48,8 +50,10 @@ services:
       dockerfile: order/order-processor/Dockerfile
       target: local
     restart: unless-stopped
+    environment:
+      OMIGA_ENVIRONMENT: container
     depends_on:
-      - postgresdb
+      - postgres
       - order-database-migration
       - pulsar
     networks:

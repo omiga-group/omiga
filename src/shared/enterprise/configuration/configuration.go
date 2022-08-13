@@ -8,33 +8,33 @@ import (
 )
 
 func SetupConfigReader(path string) (*viper.Viper, error) {
-	viper := viper.NewWithOptions(viper.KeyDelimiter("_"))
+	viperInstance := viper.NewWithOptions(viper.KeyDelimiter("_"))
 
-	env := strings.Trim(os.Getenv("ENVIRONMENT"), " ")
+	omigaEnv := strings.Trim(os.Getenv("OMIGA_ENVIRONMENT"), " ")
 
-	if len(env) > 0 {
-		viper.SetConfigName("config." + env)
+	if len(omigaEnv) > 0 {
+		viperInstance.SetConfigName("config." + omigaEnv)
 	} else {
-		viper.SetConfigName("config")
+		viperInstance.SetConfigName("config")
 	}
 
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
+	viperInstance.SetConfigType("yaml")
+	viperInstance.AddConfigPath(".")
 
 	trimmedPath := strings.Trim(path, " ")
 	if len(trimmedPath) > 0 {
 		if _, err := os.Stat(trimmedPath); !os.IsNotExist(err) {
-			viper.AddConfigPath(trimmedPath)
+			viperInstance.AddConfigPath(trimmedPath)
 		}
 	}
 
-	err := viper.ReadInConfig()
+	err := viperInstance.ReadInConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	viper.SetEnvPrefix("OMIGA")
-	viper.AutomaticEnv()
+	viperInstance.SetEnvPrefix("OMIGA")
+	viperInstance.AutomaticEnv()
 
-	return viper, nil
+	return viperInstance, nil
 }
