@@ -7,15 +7,17 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/omiga-group/omiga/src/order/order-api/models"
 	"github.com/omiga-group/omiga/src/order/shared"
+	"github.com/omiga-group/omiga/src/order/shared/models"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
 )
 
 // SubmitOrder is the resolver for the submitOrder field.
 func (r *mutationResolver) SubmitOrder(ctx context.Context, input shared.SubmitOrderInput) (*shared.OrderPayload, error) {
-	order, err := r.orderService.Submit(ctx, models.Order{})
+	order, err := r.orderService.Submit(ctx, models.Order{
+		OrderDetails: models.OrderDetails{},
+	})
 	if err != nil {
 		return nil, err
 	}

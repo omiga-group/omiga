@@ -113,7 +113,8 @@ components:
         preferredExchanges:
           type: array
           description: the preferred list of the supportef exchanged by the user
-          $ref: "./Common_V1.yaml#/components/schemas/exchange"
+          items:
+            $ref: "./Common_V1.yaml#/components/schemas/exchange"
 
     user:
       $id: user
@@ -136,5 +137,5 @@ components:
 
     userType:
       enum:
-        - retail
-        - institution
+        - RETAIL
+        - INSTITUTION

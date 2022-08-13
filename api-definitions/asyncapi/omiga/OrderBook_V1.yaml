@@ -98,10 +98,12 @@ components:
           $ref: "./Common_V1.yaml#/components/schemas/currency"
         bids:
           type: array
-          $ref: "#/components/schemas/orderBookEntry"
+          items:
+            $ref: "#/components/schemas/orderBookEntry"
         asks:
           type: array
-          $ref: "#/components/schemas/orderBookEntry"
+          items:
+            $ref: "#/components/schemas/orderBookEntry"
 
     orderBookEntry:
       $id: orderBookEntry

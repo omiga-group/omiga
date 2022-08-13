@@ -105,9 +105,8 @@ components:
         - orderDetails
       properties:
         id:
-          type: string
+          type: integer
           description: The unique synthetic order ID
-          format: uuid
         exchange:
           $ref: "./Common_V1.yaml#/components/schemas/exchange"
           description: The destination order for this given synthetic order

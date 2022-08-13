@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/omiga-group/omiga/src/order/order-api/models"
+	"github.com/omiga-group/omiga/src/order/shared/models"
 	"github.com/omiga-group/omiga/src/order/shared/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"

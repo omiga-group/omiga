@@ -3,8 +3,8 @@ package services
 import (
 	"context"
 
-	"github.com/omiga-group/omiga/src/order/order-api/models"
 	"github.com/omiga-group/omiga/src/order/order-api/publishers"
+	"github.com/omiga-group/omiga/src/order/shared/models"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"go.uber.org/zap"
 )

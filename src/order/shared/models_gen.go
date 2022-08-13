@@ -22,6 +22,10 @@ type CurrencyInput struct {
 	Digital      bool   `json:"digital"`
 }
 
+type ExchangeInput struct {
+	ID int `json:"id"`
+}
+
 type MoneyInput struct {
 	Amount   int            `json:"amount"`
 	Scale    int            `json:"scale"`
@@ -31,6 +35,8 @@ type MoneyInput struct {
 type OrderDetailsInput struct {
 	BaseCurrency    *CurrencyInput `json:"baseCurrency"`
 	CounterCurrency *CurrencyInput `json:"counterCurrency"`
+	Type            *OrderType     `json:"type"`
+	Side            *OrderSide     `json:"side"`
 	Quantity        *MoneyInput    `json:"quantity"`
 	Price           *MoneyInput    `json:"price"`
 }
@@ -41,8 +47,97 @@ type OrderPayload struct {
 }
 
 type SubmitOrderInput struct {
-	ClientMutationID *string            `json:"clientMutationId"`
-	OrderDetails     *OrderDetailsInput `json:"orderDetails"`
+	ClientMutationID   *string              `json:"clientMutationId"`
+	OrderDetails       *OrderDetailsInput   `json:"orderDetails"`
+	PreferredExchanges []*OrderDetailsInput `json:"preferredExchanges"`
+}
+
+type OrderSide string
+
+const (
+	OrderSideBid OrderSide = "BID"
+	OrderSideAsk OrderSide = "ASK"
+)
+
+var AllOrderSide = []OrderSide{
+	OrderSideBid,
+	OrderSideAsk,
+}
+
+func (e OrderSide) IsValid() bool {
+	switch e {
+	case OrderSideBid, OrderSideAsk:
+		return true
+	}
+	return false
+}
+
+func (e OrderSide) String() string {
+	return string(e)
+}
+
+func (e *OrderSide) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = OrderSide(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid OrderSide", str)
+	}
+	return nil
+}
+
+func (e OrderSide) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type OrderType string
+
+const (
+	OrderTypeInstant      OrderType = "INSTANT"
+	OrderTypeMarket       OrderType = "MARKET"
+	OrderTypeLimit        OrderType = "LIMIT"
+	OrderTypeStop         OrderType = "STOP"
+	OrderTypeTrailingStop OrderType = "TRAILING_STOP"
+)
+
+var AllOrderType = []OrderType{
+	OrderTypeInstant,
+	OrderTypeMarket,
+	OrderTypeLimit,
+	OrderTypeStop,
+	OrderTypeTrailingStop,
+}
+
+func (e OrderType) IsValid() bool {
+	switch e {
+	case OrderTypeInstant, OrderTypeMarket, OrderTypeLimit, OrderTypeStop, OrderTypeTrailingStop:
+		return true
+	}
+	return false
+}
+
+func (e OrderType) String() string {
+	return string(e)
+}
+
+func (e *OrderType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = OrderType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid OrderType", str)
+	}
+	return nil
+}
+
+func (e OrderType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type OutboxStatus string

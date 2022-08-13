@@ -58,6 +58,7 @@ type Mutation {
 input SubmitOrderInput {
   clientMutationId: String
   orderDetails: OrderDetailsInput!
+  preferredExchanges: [OrderDetailsInput!]
 }
 
 input CancelOrderInput {
@@ -143,6 +144,8 @@ enum OutboxStatus {
 input OrderDetailsInput {
   baseCurrency: CurrencyInput
   counterCurrency: CurrencyInput
+  type: OrderType
+  side: OrderSide
   quantity: MoneyInput
   price: MoneyInput
 }
@@ -158,4 +161,21 @@ input CurrencyInput {
   code: String!
   maxPrecision: Int!
   digital: Boolean!
+}
+
+enum OrderType {
+  INSTANT
+  MARKET
+  LIMIT
+  STOP
+  TRAILING_STOP
+}
+
+enum OrderSide {
+  BID
+  ASK
+}
+
+input ExchangeInput {
+  id: ID!
 }

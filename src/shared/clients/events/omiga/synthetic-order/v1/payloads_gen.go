@@ -49,7 +49,7 @@ type Data struct {
     
     // Order represents a Order model.
 type Order struct {
-  Id ID `json:"id"` // The unique synthetic order ID
+  Id int `json:"id"` // The unique synthetic order ID
   Exchange *Exchange `json:"exchange",omitempty`
   OrderDetails OrderDetails `json:"orderDetails"`
   AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
@@ -64,13 +64,12 @@ type Exchange struct {
     
     // OrderDetails represents a OrderDetails model.
 type OrderDetails struct {
-  Id ID `json:"id"` // The unique order ID
-  BaseCurrency *Currency `json:"baseCurrency",omitempty`
-  CounterCurrency *Currency `json:"counterCurrency",omitempty`
-  Type *OrderType `json:"type",omitempty`
-  Side *OrderSide `json:"side",omitempty`
-  Quantity *Money `json:"quantity",omitempty`
-  Price *Money `json:"price",omitempty`
+  BaseCurrency Currency `json:"baseCurrency"`
+  CounterCurrency Currency `json:"counterCurrency"`
+  Type OrderType `json:"type"`
+  Side OrderSide `json:"side"`
+  Quantity Money `json:"quantity"`
+  Price Money `json:"price"`
   AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
 }
     
@@ -88,11 +87,11 @@ type Currency struct {
 type OrderType string
 
 const (
-  OrderTypeInstant OrderType = "instant"
-  OrderTypeMarket = "market"
-  OrderTypeLimit = "limit"
-  OrderTypeStop = "stop"
-  OrderTypeTrailingStop = "trailing_stop"
+  OrderTypeInstant OrderType = "INSTANT"
+  OrderTypeMarket = "MARKET"
+  OrderTypeLimit = "LIMIT"
+  OrderTypeStop = "STOP"
+  OrderTypeTrailingStop = "TRAILING_STOP"
 )
     
     
@@ -100,8 +99,8 @@ const (
 type OrderSide string
 
 const (
-  OrderSideBid OrderSide = "bid"
-  OrderSideAsk = "ask"
+  OrderSideBid OrderSide = "BID"
+  OrderSideAsk = "ASK"
 )
     
     

@@ -52,20 +52,19 @@ type Order struct {
   Id int `json:"id"` // The unique order ID
   OrderDetails OrderDetails `json:"orderDetails"`
   User *User `json:"user",omitempty`
-  PreferredExchanges *Exchange `json:"preferredExchanges",omitempty`
+  PreferredExchanges *[]*Exchange `json:"preferredExchanges",omitempty` // the preferred list of the supportef exchanged by the user
   AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
 }
     
     
     // OrderDetails represents a OrderDetails model.
 type OrderDetails struct {
-  Id ID `json:"id"` // The unique order ID
-  BaseCurrency *Currency `json:"baseCurrency",omitempty`
-  CounterCurrency *Currency `json:"counterCurrency",omitempty`
-  Type *OrderType `json:"type",omitempty`
-  Side *OrderSide `json:"side",omitempty`
-  Quantity *Money `json:"quantity",omitempty`
-  Price *Money `json:"price",omitempty`
+  BaseCurrency Currency `json:"baseCurrency"`
+  CounterCurrency Currency `json:"counterCurrency"`
+  Type OrderType `json:"type"`
+  Side OrderSide `json:"side"`
+  Quantity Money `json:"quantity"`
+  Price Money `json:"price"`
   AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
 }
     
@@ -83,11 +82,11 @@ type Currency struct {
 type OrderType string
 
 const (
-  OrderTypeInstant OrderType = "instant"
-  OrderTypeMarket = "market"
-  OrderTypeLimit = "limit"
-  OrderTypeStop = "stop"
-  OrderTypeTrailingStop = "trailing_stop"
+  OrderTypeInstant OrderType = "INSTANT"
+  OrderTypeMarket = "MARKET"
+  OrderTypeLimit = "LIMIT"
+  OrderTypeStop = "STOP"
+  OrderTypeTrailingStop = "TRAILING_STOP"
 )
     
     
@@ -95,8 +94,8 @@ const (
 type OrderSide string
 
 const (
-  OrderSideBid OrderSide = "bid"
-  OrderSideAsk = "ask"
+  OrderSideBid OrderSide = "BID"
+  OrderSideAsk = "ASK"
 )
     
     
@@ -122,8 +121,8 @@ type User struct {
 type UserType string
 
 const (
-  UserTypeRetail UserType = "retail"
-  UserTypeInstitution = "institution"
+  UserTypeRetail UserType = "RETAIL"
+  UserTypeInstitution = "INSTITUTION"
 )
     
     

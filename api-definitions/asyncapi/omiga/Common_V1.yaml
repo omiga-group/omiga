@@ -7,12 +7,13 @@ components:
       type: object
       additionalProperties: true
       required:
-        - id
+        - baseCurrency
+        - counterCurrency
+        - type
+        - side
+        - quantity
+        - price
       properties:
-        id:
-          type: string
-          description: The unique order ID
-          format: uuid
         baseCurrency:
           $ref: "#/components/schemas/currency"
         counterCurrency:
@@ -67,17 +68,17 @@ components:
     orderType:
       $id: orderType
       enum:
-        - instant
-        - market
-        - limit
-        - stop
-        - trailing_stop
+        - INSTANT
+        - MARKET
+        - LIMIT
+        - STOP
+        - TRAILING_STOP
 
     orderSide:
       $id: orderSide
       enum:
-        - bid
-        - ask
+        - BID
+        - ASK
 
     exchange:
       $id: exchange
