@@ -382,7 +382,7 @@ type Mutation {
 input SubmitOrderInput {
   clientMutationId: String
   orderDetails: OrderDetailsInput!
-  preferredExchanges: [OrderDetailsInput!]
+  preferredExchanges: [ExchangeInput!]
 }
 
 input CancelOrderInput {
@@ -4362,7 +4362,7 @@ func (ec *executionContext) unmarshalInputSubmitOrderInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("preferredExchanges"))
-			it.PreferredExchanges, err = ec.unmarshalOOrderDetailsInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderDetailsInputᚄ(ctx, v)
+			it.PreferredExchanges, err = ec.unmarshalOExchangeInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐExchangeInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5039,6 +5039,11 @@ func (ec *executionContext) marshalNCursor2githubᚗcomᚋomigaᚑgroupᚋomiga�
 	return v
 }
 
+func (ec *executionContext) unmarshalNExchangeInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐExchangeInput(ctx context.Context, v interface{}) (*ExchangeInput, error) {
+	res, err := ec.unmarshalInputExchangeInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNID2int(ctx context.Context, v interface{}) (int, error) {
 	res, err := graphql.UnmarshalIntID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -5436,6 +5441,26 @@ func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomi
 	return v
 }
 
+func (ec *executionContext) unmarshalOExchangeInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐExchangeInputᚄ(ctx context.Context, v interface{}) ([]*ExchangeInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*ExchangeInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNExchangeInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐExchangeInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalOID2ᚕintᚄ(ctx context.Context, v interface{}) ([]int, error) {
 	if v == nil {
 		return nil, nil
@@ -5574,26 +5599,6 @@ func (ec *executionContext) marshalOOrderConnection2ᚖgithubᚗcomᚋomigaᚑgr
 		return graphql.Null
 	}
 	return ec._OrderConnection(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOOrderDetailsInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderDetailsInputᚄ(ctx context.Context, v interface{}) ([]*OrderDetailsInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*OrderDetailsInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNOrderDetailsInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderDetailsInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
 }
 
 func (ec *executionContext) marshalOOrderEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderEdge(ctx context.Context, sel ast.SelectionSet, v []*repositories.OrderEdge) graphql.Marshaler {

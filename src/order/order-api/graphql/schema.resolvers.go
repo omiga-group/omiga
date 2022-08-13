@@ -54,6 +54,14 @@ func (r *mutationResolver) SubmitOrder(ctx context.Context, input shared.SubmitO
 		},
 	}
 
+	order.PreferredExchanges = make([]*models.Exchange, 0)
+	for _, preferredExchange := range input.PreferredExchanges {
+		order.PreferredExchanges = append(order.PreferredExchanges, &models.Exchange{
+			Id: preferredExchange.ID,
+		})
+
+	}
+
 	submittedOrder, err := r.orderService.Submit(ctx, order)
 	if err != nil {
 		return nil, err

@@ -47,9 +47,9 @@ type OrderPayload struct {
 }
 
 type SubmitOrderInput struct {
-	ClientMutationID   *string              `json:"clientMutationId"`
-	OrderDetails       *OrderDetailsInput   `json:"orderDetails"`
-	PreferredExchanges []*OrderDetailsInput `json:"preferredExchanges"`
+	ClientMutationID   *string            `json:"clientMutationId"`
+	OrderDetails       *OrderDetailsInput `json:"orderDetails"`
+	PreferredExchanges []*ExchangeInput   `json:"preferredExchanges"`
 }
 
 type OrderSide string

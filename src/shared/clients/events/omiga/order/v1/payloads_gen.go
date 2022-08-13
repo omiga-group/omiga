@@ -128,6 +128,6 @@ const (
     
     // Exchange represents a Exchange model.
 type Exchange struct {
-  Id *string `json:"id",omitempty` // The unique ID of the supported exchange
+  Id int `json:"id"` // The unique ID of the supported exchange
 }
     

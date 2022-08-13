@@ -62,7 +62,7 @@ type User struct {
 }
 
 type Exchange struct {
-	Id *string
+	Id int
 }
 
 type Order struct {

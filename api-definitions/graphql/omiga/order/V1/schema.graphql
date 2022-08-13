@@ -58,7 +58,7 @@ type Mutation {
 input SubmitOrderInput {
   clientMutationId: String
   orderDetails: OrderDetailsInput!
-  preferredExchanges: [OrderDetailsInput!]
+  preferredExchanges: [ExchangeInput!]
 }
 
 input CancelOrderInput {
