@@ -18,5 +18,7 @@ func NewOrderSubscriber(logger *zap.SugaredLogger) (orderv1.Subscriber, error) {
 }
 
 func (os *orderSubscriber) Handle(ctx context.Context, event orderv1.OrderEvent) error {
+	os.logger.Infof("Processing OrderEvent event: %v", event)
+
 	return nil
 }
