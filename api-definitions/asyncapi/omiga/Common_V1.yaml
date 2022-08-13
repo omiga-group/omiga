@@ -27,6 +27,7 @@ components:
           $ref: "#/components/schemas/money"
 
     money:
+      $id: money
       type: object
       additionalProperties: false
       required:
@@ -44,6 +45,7 @@ components:
           $ref: "#/components/schemas/currency"
 
     currency:
+      $id: currency
       type: object
       additionalProperties: false
       required:
@@ -63,6 +65,7 @@ components:
           type: boolean
 
     orderType:
+      $id: orderType
       enum:
         - instant
         - market
@@ -71,11 +74,13 @@ components:
         - trailing_stop
 
     orderSide:
+      $id: orderSide
       enum:
         - bid
         - ask
 
     exchange:
+      $id: exchange
       type: object
       additionalProperties: false
       properties:

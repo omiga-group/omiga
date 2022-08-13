@@ -23,7 +23,7 @@ type OrderBookEvent struct {
 type Metadata struct {
   Id ID `json:"id"` // The unique message ID
   Source string `json:"source"` // undefined
-  Type AnonymousSchema3 `json:"type"`
+  Type Type `json:"type"`
   Subject string `json:"subject"` // undefined
   Time time.Time `json:"time"` // undefined
   CorrelationId ID `json:"correlationId"` // undefined
@@ -31,27 +31,27 @@ type Metadata struct {
 }
     
     
-    // AnonymousSchema3 represents an enum of string.
-type AnonymousSchema3 string
+    // Type represents an enum of string.
+type Type string
 
 const (
-  AnonymousSchema3OrderBookUpdated AnonymousSchema3 = "orderBookUpdated"
+  TypeOrderBookUpdated Type = "orderBookUpdated"
 )
     
     
     // OrderBook represents a OrderBook model.
 type OrderBook struct {
   Id string `json:"id"` // undefined
-  BaseCurrency *AnonymousSchema9 `json:"baseCurrency",omitempty`
-  CounterCurrency *AnonymousSchema9 `json:"counterCurrency",omitempty`
-  Bids *AnonymousSchema14 `json:"bids",omitempty`
-  Asks *AnonymousSchema15 `json:"asks",omitempty`
+  BaseCurrency *Currency `json:"baseCurrency",omitempty`
+  CounterCurrency *Currency `json:"counterCurrency",omitempty`
+  Bids *OrderBookEntry `json:"bids",omitempty`
+  Asks *OrderBookEntry `json:"asks",omitempty`
   AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
 }
     
     
-    // AnonymousSchema9 represents a AnonymousSchema9 model.
-type AnonymousSchema9 struct {
+    // Currency represents a Currency model.
+type Currency struct {
   Name string `json:"name"` // undefined
   Code string `json:"code"` // undefined
   MaxPrecision int `json:"maxPrecision"` // undefined
@@ -59,24 +59,17 @@ type AnonymousSchema9 struct {
 }
     
     
-    // AnonymousSchema14 represents a AnonymousSchema14 model.
-type AnonymousSchema14 struct {
-  Quantity *AnonymousSchema16 `json:"quantity",omitempty`
-  Price *AnonymousSchema16 `json:"price",omitempty`
+    // OrderBookEntry represents a OrderBookEntry model.
+type OrderBookEntry struct {
+  Quantity *Money `json:"quantity",omitempty`
+  Price *Money `json:"price",omitempty`
 }
     
     
-    // AnonymousSchema16 represents a AnonymousSchema16 model.
-type AnonymousSchema16 struct {
+    // Money represents a Money model.
+type Money struct {
   Amount int `json:"amount"` // undefined
   Scale int `json:"scale"` // undefined
-  Currency AnonymousSchema9 `json:"currency"`
-}
-    
-    
-    // AnonymousSchema15 represents a AnonymousSchema15 model.
-type AnonymousSchema15 struct {
-  Quantity *AnonymousSchema16 `json:"quantity",omitempty`
-  Price *AnonymousSchema16 `json:"price",omitempty`
+  Currency Currency `json:"currency"`
 }
     

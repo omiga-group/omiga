@@ -31,6 +31,7 @@ components:
 
   schemas:
     orderBookEvent:
+      $id: orderBookEvent
       type: object
       additionalProperties: false
       required:
@@ -43,6 +44,7 @@ components:
           $ref: "#/components/schemas/orderBook"
 
     metadata:
+      $id: metadata
       type: object
       additionalProperties: false
       required:
@@ -63,6 +65,7 @@ components:
           format: urn
           example: urn:nz:co:omiga:example
         type:
+          $id: type
           type: string
           enum:
             - orderBookUpdated
@@ -81,6 +84,7 @@ components:
           example: TBD
 
     orderBook:
+      $id: orderBook
       type: object
       additionalProperties: true
       required:
@@ -100,6 +104,7 @@ components:
           $ref: "#/components/schemas/orderBookEntry"
 
     orderBookEntry:
+      $id: orderBookEntry
       type: object
       additionalProperties: false
       required:

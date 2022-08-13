@@ -31,6 +31,7 @@ components:
 
   schemas:
     syntheticOrderEvent:
+      $id: syntheticOrderEvent
       type: object
       additionalProperties: false
       required:
@@ -43,6 +44,7 @@ components:
           $ref: "#/components/schemas/data"
 
     metadata:
+      $id: metadata
       type: object
       additionalProperties: false
       required:
@@ -63,6 +65,7 @@ components:
           format: urn
           example: urn:nz:co:omiga:example
         type:
+          $id: type
           type: string
           enum:
             - orderSubmitted
@@ -82,6 +85,7 @@ components:
           example: TBD
 
     data:
+      $id: data
       type: object
       additionalProperties: false
       required:

@@ -23,7 +23,7 @@ type SyntheticOrderEvent struct {
 type Metadata struct {
   Id ID `json:"id"` // The unique message ID
   Source string `json:"source"` // undefined
-  Type AnonymousSchema3 `json:"type"`
+  Type Type `json:"type"`
   Subject string `json:"subject"` // undefined
   Time time.Time `json:"time"` // undefined
   CorrelationId ID `json:"correlationId"` // undefined
@@ -31,12 +31,12 @@ type Metadata struct {
 }
     
     
-    // AnonymousSchema3 represents an enum of string.
-type AnonymousSchema3 string
+    // Type represents an enum of string.
+type Type string
 
 const (
-  AnonymousSchema3OrderSubmitted AnonymousSchema3 = "orderSubmitted"
-  AnonymousSchema3OrderCancel = "orderCancel"
+  TypeOrderSubmitted Type = "orderSubmitted"
+  TypeOrderCancel = "orderCancel"
 )
     
     
@@ -50,14 +50,14 @@ type Data struct {
     // Order represents a Order model.
 type Order struct {
   Id ID `json:"id"` // The unique synthetic order ID
-  Exchange *AnonymousSchema9 `json:"exchange",omitempty`
+  Exchange *Exchange `json:"exchange",omitempty`
   OrderDetails OrderDetails `json:"orderDetails"`
   AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
 }
     
     
-    // AnonymousSchema9 represents a AnonymousSchema9 model.
-type AnonymousSchema9 struct {
+    // Exchange represents a Exchange model.
+type Exchange struct {
   Id *string `json:"id",omitempty` // The unique ID of the supported exchange
 }
     
@@ -65,18 +65,18 @@ type AnonymousSchema9 struct {
     // OrderDetails represents a OrderDetails model.
 type OrderDetails struct {
   Id ID `json:"id"` // The unique order ID
-  BaseCurrency *AnonymousSchema12 `json:"baseCurrency",omitempty`
-  CounterCurrency *AnonymousSchema12 `json:"counterCurrency",omitempty`
-  Type *AnonymousSchema17 `json:"type",omitempty`
-  Side *AnonymousSchema18 `json:"side",omitempty`
-  Quantity *AnonymousSchema19 `json:"quantity",omitempty`
-  Price *AnonymousSchema19 `json:"price",omitempty`
+  BaseCurrency *Currency `json:"baseCurrency",omitempty`
+  CounterCurrency *Currency `json:"counterCurrency",omitempty`
+  Type *OrderType `json:"type",omitempty`
+  Side *OrderSide `json:"side",omitempty`
+  Quantity *Money `json:"quantity",omitempty`
+  Price *Money `json:"price",omitempty`
   AdditionalProperties *[]interface{} `json:"additionalProperties",omitempty` // undefined
 }
     
     
-    // AnonymousSchema12 represents a AnonymousSchema12 model.
-type AnonymousSchema12 struct {
+    // Currency represents a Currency model.
+type Currency struct {
   Name string `json:"name"` // undefined
   Code string `json:"code"` // undefined
   MaxPrecision int `json:"maxPrecision"` // undefined
@@ -84,31 +84,31 @@ type AnonymousSchema12 struct {
 }
     
     
-    // AnonymousSchema17 represents an enum of string.
-type AnonymousSchema17 string
+    // OrderType represents an enum of string.
+type OrderType string
 
 const (
-  AnonymousSchema17Instant AnonymousSchema17 = "instant"
-  AnonymousSchema17Market = "market"
-  AnonymousSchema17Limit = "limit"
-  AnonymousSchema17Stop = "stop"
-  AnonymousSchema17TrailingStop = "trailing_stop"
+  OrderTypeInstant OrderType = "instant"
+  OrderTypeMarket = "market"
+  OrderTypeLimit = "limit"
+  OrderTypeStop = "stop"
+  OrderTypeTrailingStop = "trailing_stop"
 )
     
     
-    // AnonymousSchema18 represents an enum of string.
-type AnonymousSchema18 string
+    // OrderSide represents an enum of string.
+type OrderSide string
 
 const (
-  AnonymousSchema18Bid AnonymousSchema18 = "bid"
-  AnonymousSchema18Ask = "ask"
+  OrderSideBid OrderSide = "bid"
+  OrderSideAsk = "ask"
 )
     
     
-    // AnonymousSchema19 represents a AnonymousSchema19 model.
-type AnonymousSchema19 struct {
+    // Money represents a Money model.
+type Money struct {
   Amount int `json:"amount"` // undefined
   Scale int `json:"scale"` // undefined
-  Currency AnonymousSchema12 `json:"currency"`
+  Currency Currency `json:"currency"`
 }
     

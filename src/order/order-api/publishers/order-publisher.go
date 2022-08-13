@@ -49,7 +49,7 @@ func (op *orderPublisher) Publish(
 			Id:     orderv1.ID(uuid.New()),
 			Time:   time.Now(),
 			Source: op.appSettings.Source,
-			Type:   orderv1.AnonymousSchema3OrderSubmitted,
+			Type:   orderv1.TypeOrderSubmitted,
 		},
 		Data: orderv1.Data{},
 	}
