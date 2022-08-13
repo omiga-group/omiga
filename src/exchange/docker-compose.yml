@@ -33,7 +33,7 @@ services:
       target: local
     restart: unless-stopped
     environment:
-      OMIGA_ENVIRONMENT: container
+      OMIGA_ENVIRONMENT: dockercompose
     depends_on:
       - postgres
       - exchange-database-migration
@@ -49,7 +49,7 @@ services:
       target: local
     restart: unless-stopped
     environment:
-      OMIGA_ENVIRONMENT: container
+      OMIGA_ENVIRONMENT: dockercompose
     depends_on:
       - postgres
       - exchange-database-migration

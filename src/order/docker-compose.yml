@@ -33,7 +33,7 @@ services:
       target: local
     restart: unless-stopped
     environment:
-      OMIGA_ENVIRONMENT: container
+      OMIGA_ENVIRONMENT: dockercompose
     ports:
       - "10000:80"
     depends_on:
@@ -51,7 +51,7 @@ services:
       target: local
     restart: unless-stopped
     environment:
-      OMIGA_ENVIRONMENT: container
+      OMIGA_ENVIRONMENT: dockercompose
     depends_on:
       - postgres
       - order-database-migration
