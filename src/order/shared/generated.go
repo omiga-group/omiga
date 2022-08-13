@@ -466,12 +466,12 @@ enum OutboxStatus {
 }
 
 input OrderDetailsInput {
-  baseCurrency: CurrencyInput
-  counterCurrency: CurrencyInput
-  type: OrderType
-  side: OrderSide
-  quantity: MoneyInput
-  price: MoneyInput
+  baseCurrency: CurrencyInput!
+  counterCurrency: CurrencyInput!
+  type: OrderType!
+  side: OrderSide!
+  quantity: MoneyInput!
+  price: MoneyInput!
 }
 
 input MoneyInput {
@@ -3602,7 +3602,7 @@ func (ec *executionContext) unmarshalInputOrderDetailsInput(ctx context.Context,
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseCurrency"))
-			it.BaseCurrency, err = ec.unmarshalOCurrencyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐCurrencyInput(ctx, v)
+			it.BaseCurrency, err = ec.unmarshalNCurrencyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐCurrencyInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3610,7 +3610,7 @@ func (ec *executionContext) unmarshalInputOrderDetailsInput(ctx context.Context,
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterCurrency"))
-			it.CounterCurrency, err = ec.unmarshalOCurrencyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐCurrencyInput(ctx, v)
+			it.CounterCurrency, err = ec.unmarshalNCurrencyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐCurrencyInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3618,7 +3618,7 @@ func (ec *executionContext) unmarshalInputOrderDetailsInput(ctx context.Context,
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			it.Type, err = ec.unmarshalOOrderType2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderType(ctx, v)
+			it.Type, err = ec.unmarshalNOrderType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3626,7 +3626,7 @@ func (ec *executionContext) unmarshalInputOrderDetailsInput(ctx context.Context,
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("side"))
-			it.Side, err = ec.unmarshalOOrderSide2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderSide(ctx, v)
+			it.Side, err = ec.unmarshalNOrderSide2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderSide(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3634,7 +3634,7 @@ func (ec *executionContext) unmarshalInputOrderDetailsInput(ctx context.Context,
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("quantity"))
-			it.Quantity, err = ec.unmarshalOMoneyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐMoneyInput(ctx, v)
+			it.Quantity, err = ec.unmarshalNMoneyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐMoneyInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3642,7 +3642,7 @@ func (ec *executionContext) unmarshalInputOrderDetailsInput(ctx context.Context,
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("price"))
-			it.Price, err = ec.unmarshalOMoneyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐMoneyInput(ctx, v)
+			it.Price, err = ec.unmarshalNMoneyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐMoneyInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5074,9 +5074,34 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) unmarshalNMoneyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐMoneyInput(ctx context.Context, v interface{}) (*MoneyInput, error) {
+	res, err := ec.unmarshalInputMoneyInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNOrderDetailsInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderDetailsInput(ctx context.Context, v interface{}) (*OrderDetailsInput, error) {
 	res, err := ec.unmarshalInputOrderDetailsInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNOrderSide2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderSide(ctx context.Context, v interface{}) (OrderSide, error) {
+	var res OrderSide
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNOrderSide2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderSide(ctx context.Context, sel ast.SelectionSet, v OrderSide) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNOrderType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderType(ctx context.Context, v interface{}) (OrderType, error) {
+	var res OrderType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNOrderType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderType(ctx context.Context, sel ast.SelectionSet, v OrderType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderWhereInput(ctx context.Context, v interface{}) (*repositories.OrderWhereInput, error) {
@@ -5417,14 +5442,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalOCurrencyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐCurrencyInput(ctx context.Context, v interface{}) (*CurrencyInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputCurrencyInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐCursor(ctx context.Context, v interface{}) (*repositories.Cursor, error) {
 	if v == nil {
 		return nil, nil
@@ -5579,14 +5596,6 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
-func (ec *executionContext) unmarshalOMoneyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐMoneyInput(ctx context.Context, v interface{}) (*MoneyInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputMoneyInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalOOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrder(ctx context.Context, sel ast.SelectionSet, v *repositories.Order) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -5654,38 +5663,6 @@ func (ec *executionContext) marshalOOrderPayload2ᚖgithubᚗcomᚋomigaᚑgroup
 		return graphql.Null
 	}
 	return ec._OrderPayload(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOOrderSide2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderSide(ctx context.Context, v interface{}) (*OrderSide, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(OrderSide)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOOrderSide2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderSide(ctx context.Context, sel ast.SelectionSet, v *OrderSide) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
-}
-
-func (ec *executionContext) unmarshalOOrderType2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderType(ctx context.Context, v interface{}) (*OrderType, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(OrderType)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOOrderType2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚐOrderType(ctx context.Context, sel ast.SelectionSet, v *OrderType) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
 }
 
 func (ec *executionContext) unmarshalOOrderWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderWhereInputᚄ(ctx context.Context, v interface{}) ([]*repositories.OrderWhereInput, error) {

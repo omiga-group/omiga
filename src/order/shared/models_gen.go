@@ -35,8 +35,8 @@ type MoneyInput struct {
 type OrderDetailsInput struct {
 	BaseCurrency    *CurrencyInput `json:"baseCurrency"`
 	CounterCurrency *CurrencyInput `json:"counterCurrency"`
-	Type            *OrderType     `json:"type"`
-	Side            *OrderSide     `json:"side"`
+	Type            OrderType      `json:"type"`
+	Side            OrderSide      `json:"side"`
 	Quantity        *MoneyInput    `json:"quantity"`
 	Price           *MoneyInput    `json:"price"`
 }

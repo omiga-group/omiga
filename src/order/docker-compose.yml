@@ -5,7 +5,7 @@ services:
     image: postgres:14.4-alpine
     hostname: postgres
     restart: on-failure
-    command: psql -h postgres.localhost -U postgres -c "CREATE DATABASE \"order\";"
+    command: psql -h postgres -U postgres -c "CREATE DATABASE \"order\";"
     environment:
       PGPASSWORD: 12345678
     depends_on:
@@ -20,6 +20,8 @@ services:
       dockerfile: order/shared/repositories/cli/Dockerfile
       target: local
     restart: on-failure
+    environment:
+      OMIGA_ENVIRONMENT: dockercompose
     depends_on:
       - postgres-order-database-initializer
     networks:

@@ -142,12 +142,12 @@ enum OutboxStatus {
 }
 
 input OrderDetailsInput {
-  baseCurrency: CurrencyInput
-  counterCurrency: CurrencyInput
-  type: OrderType
-  side: OrderSide
-  quantity: MoneyInput
-  price: MoneyInput
+  baseCurrency: CurrencyInput!
+  counterCurrency: CurrencyInput!
+  type: OrderType!
+  side: OrderSide!
+  quantity: MoneyInput!
+  price: MoneyInput!
 }
 
 input MoneyInput {

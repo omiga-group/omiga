@@ -1,0 +1,3 @@
+postgres:
+  connectionString: "postgres://postgres:12345678@postgres/exchange"
+  maxOpenConns: 1

@@ -29,8 +29,8 @@ func (r *mutationResolver) SubmitOrder(ctx context.Context, input shared.SubmitO
 				MaxPrecision: input.OrderDetails.CounterCurrency.MaxPrecision,
 				Digital:      input.OrderDetails.CounterCurrency.Digital,
 			},
-			Type: models.OrderType(*input.OrderDetails.Type),
-			Side: models.OrderSide(*input.OrderDetails.Side),
+			Type: models.OrderType(input.OrderDetails.Type),
+			Side: models.OrderSide(input.OrderDetails.Side),
 			Quantity: models.Money{
 				Amount: input.OrderDetails.Quantity.Amount,
 				Scale:  input.OrderDetails.Quantity.Scale,
