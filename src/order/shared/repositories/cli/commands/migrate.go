@@ -7,9 +7,9 @@ import (
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/migrate"
+	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
@@ -25,6 +25,11 @@ func migrateCommand() *cobra.Command {
 			}
 
 			sugarLogger := logger.Sugar()
+
+			viper, err := configuration.SetupConfigReader(".")
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
 
 			var postgresSettings postgres.PostgresSettings
 			if err := mapstructure.Decode(viper.Get(postgres.ConfigKey), &postgresSettings); err != nil {

@@ -10,9 +10,9 @@ import (
 
 	"github.com/mitchellh/mapstructure"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
+	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
@@ -28,6 +28,11 @@ func startCommand() *cobra.Command {
 			}
 
 			sugarLogger := logger.Sugar()
+
+			viper, err := configuration.SetupConfigReader(".")
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
 
 			var pulsarSettings pulsar.PulsarSettings
 			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {

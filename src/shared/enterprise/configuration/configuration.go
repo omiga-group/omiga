@@ -7,7 +7,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-func SetupConfigReader(path string) error {
+func SetupConfigReader(path string) (*viper.Viper, error) {
+	viper := viper.NewWithOptions(viper.KeyDelimiter("_"))
+
 	env := strings.Trim(os.Getenv("ENVIRONMENT"), " ")
 
 	if len(env) > 0 {
@@ -28,8 +30,11 @@ func SetupConfigReader(path string) error {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	viper.SetEnvPrefix("OMIGA")
+	viper.AutomaticEnv()
+
+	return viper, nil
 }
