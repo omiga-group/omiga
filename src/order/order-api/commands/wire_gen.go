@@ -73,7 +73,7 @@ func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSetti
 	if err != nil {
 		return nil, err
 	}
-	httpServer, err := http.NewHttpServer(appSettings, server)
+	httpServer, err := http.NewHttpServer(logger, appSettings, server)
 	if err != nil {
 		return nil, err
 	}

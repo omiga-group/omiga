@@ -8,6 +8,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/rs/cors"
+	"go.uber.org/zap"
 )
 
 type HttpServer interface {
@@ -15,16 +16,19 @@ type HttpServer interface {
 }
 
 type httpServer struct {
+	logger        *zap.SugaredLogger
 	appSettings   configuration.AppSettings
 	graphQLServer *handler.Server
 }
 
 func NewHttpServer(
+	logger *zap.SugaredLogger,
 	appSettings configuration.AppSettings,
 	graphQLServer *handler.Server) (HttpServer, error) {
 	return &httpServer{
 		appSettings:   appSettings,
 		graphQLServer: graphQLServer,
+		logger:        logger,
 	}, nil
 }
 
@@ -36,6 +40,8 @@ func (hs *httpServer) ListenAndServe() error {
 	mux.HandleFunc("/health", hs.healthHandler)
 
 	handler := cors.AllowAll().Handler(mux)
+
+	hs.logger.Infof("Listening on: %s", hs.appSettings.ListeningInterface)
 
 	return http.ListenAndServe(hs.appSettings.ListeningInterface, handler)
 }
