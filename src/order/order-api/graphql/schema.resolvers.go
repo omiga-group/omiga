@@ -15,9 +15,46 @@ import (
 
 // SubmitOrder is the resolver for the submitOrder field.
 func (r *mutationResolver) SubmitOrder(ctx context.Context, input shared.SubmitOrderInput) (*shared.OrderPayload, error) {
-	order, err := r.orderService.Submit(ctx, models.Order{
-		OrderDetails: models.OrderDetails{},
-	})
+	order := models.Order{
+		OrderDetails: models.OrderDetails{
+			BaseCurrency: models.Currency{
+				Name:         input.OrderDetails.BaseCurrency.Name,
+				Code:         input.OrderDetails.BaseCurrency.Code,
+				MaxPrecision: input.OrderDetails.BaseCurrency.MaxPrecision,
+				Digital:      input.OrderDetails.BaseCurrency.Digital,
+			},
+			CounterCurrency: models.Currency{
+				Name:         input.OrderDetails.CounterCurrency.Name,
+				Code:         input.OrderDetails.CounterCurrency.Code,
+				MaxPrecision: input.OrderDetails.CounterCurrency.MaxPrecision,
+				Digital:      input.OrderDetails.CounterCurrency.Digital,
+			},
+			Type: models.OrderType(*input.OrderDetails.Type),
+			Side: models.OrderSide(*input.OrderDetails.Side),
+			Quantity: models.Money{
+				Amount: input.OrderDetails.Quantity.Amount,
+				Scale:  input.OrderDetails.Quantity.Scale,
+				Currency: models.Currency{
+					Name:         input.OrderDetails.Quantity.Currency.Name,
+					Code:         input.OrderDetails.Quantity.Currency.Code,
+					MaxPrecision: input.OrderDetails.Quantity.Currency.MaxPrecision,
+					Digital:      input.OrderDetails.Quantity.Currency.Digital,
+				},
+			},
+			Price: models.Money{
+				Amount: input.OrderDetails.Price.Amount,
+				Scale:  input.OrderDetails.Price.Scale,
+				Currency: models.Currency{
+					Name:         input.OrderDetails.Price.Currency.Name,
+					Code:         input.OrderDetails.Price.Currency.Code,
+					MaxPrecision: input.OrderDetails.Price.Currency.MaxPrecision,
+					Digital:      input.OrderDetails.Price.Currency.Digital,
+				},
+			},
+		},
+	}
+
+	submittedOrder, err := r.orderService.Submit(ctx, order)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +64,7 @@ func (r *mutationResolver) SubmitOrder(ctx context.Context, input shared.SubmitO
 	return &shared.OrderPayload{
 		ClientMutationID: input.ClientMutationID,
 		Order: &repositories.Order{
-			ID: order.Id,
+			ID: submittedOrder.Id,
 		},
 	}, nil
 }
