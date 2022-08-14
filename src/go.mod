@@ -7,6 +7,7 @@ require (
 	entgo.io/ent v0.11.2-0.20220724154107-b60e0f9eac27
 	github.com/99designs/gqlgen v0.17.13
 	github.com/apache/pulsar-client-go v0.8.1
+	github.com/golang/mock v1.5.0
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
 	github.com/gorilla/websocket v1.5.0
