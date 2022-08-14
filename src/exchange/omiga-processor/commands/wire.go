@@ -58,7 +58,7 @@ func NewOrderBookSimulator(
 	appSettings configuration.AppSettings,
 	pulsarSettings pulsar.PulsarSettings,
 	topic string,
-	orderBookPublisherSettings publishers.OrderBookPublisherSettings) (simulators.OrderBookSimulator, error) {
+	orderBookSimulatorSettings simulators.OrderBookSimulatorSettings) (simulators.OrderBookSimulator, error) {
 	wire.Build(
 		simulators.NewOrderBookSimulator,
 		orderbookv1.NewProducer,

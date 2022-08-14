@@ -39,7 +39,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	return consumer, nil
 }
 
-func NewOrderBookSimulator(ctx context.Context, logger *zap.SugaredLogger, appSettings configuration.AppSettings, pulsarSettings pulsar.PulsarSettings, topic string, orderBookPublisherSettings publishers.OrderBookPublisherSettings) (simulators.OrderBookSimulator, error) {
+func NewOrderBookSimulator(ctx context.Context, logger *zap.SugaredLogger, appSettings configuration.AppSettings, pulsarSettings pulsar.PulsarSettings, topic string, orderBookSimulatorSettings simulators.OrderBookSimulatorSettings) (simulators.OrderBookSimulator, error) {
 	cronService, err := cron.NewCronService(logger)
 	if err != nil {
 		return nil, err
@@ -49,11 +49,11 @@ func NewOrderBookSimulator(ctx context.Context, logger *zap.SugaredLogger, appSe
 		return nil, err
 	}
 	producer := orderbookv1.NewProducer(logger, messageProducer)
-	orderBookPublisher, err := publishers.NewOrderBookPublisher(logger, appSettings, orderBookPublisherSettings, producer)
+	orderBookPublisher, err := publishers.NewOrderBookPublisher(logger, appSettings, producer)
 	if err != nil {
 		return nil, err
 	}
-	orderBookSimulator, err := simulators.NewOrderBookSimulator(ctx, logger, cronService, orderBookPublisher)
+	orderBookSimulator, err := simulators.NewOrderBookSimulator(ctx, logger, cronService, orderBookPublisher, orderBookSimulatorSettings)
 	if err != nil {
 		return nil, err
 	}

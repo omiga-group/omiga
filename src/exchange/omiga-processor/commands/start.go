@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/omiga-group/omiga/src/exchange/omiga-processor/publishers"
+	"github.com/omiga-group/omiga/src/exchange/omiga-processor/simulators"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
@@ -46,6 +46,8 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
+			appSettings.Source = appSettings.Source + "::" + opt.name
+
 			var pulsarSettings pulsar.PulsarSettings
 			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {
 				sugarLogger.Fatal(err)
@@ -73,8 +75,8 @@ func startCommand() *cobra.Command {
 				appSettings,
 				pulsarSettings,
 				orderbookv1.TopicName,
-				publishers.OrderBookPublisherSettings{
-					Name: opt.name,
+				simulators.OrderBookSimulatorSettings{
+					ExchangeName: opt.name,
 				})
 			if err != nil {
 				sugarLogger.Fatal(err)

@@ -5,7 +5,7 @@ import (
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 )
 
-func FromOrderToEventOrder(src models.OrderBook) orderbookv1.OrderBook {
+func FromOrderBookToEventOrderBook(src models.OrderBook) orderbookv1.OrderBook {
 	order := orderbookv1.OrderBook{
 		ExchangeId:      src.ExchangeId,
 		BaseCurrency:    fromCurrencyToEventCurrency(src.BaseCurrency),

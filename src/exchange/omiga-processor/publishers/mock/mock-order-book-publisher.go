@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	models "github.com/omiga-group/omiga/src/exchange/shared/models"
 )
 
 // MockOrderBookPublisher is a mock of OrderBookPublisher interface.
@@ -35,15 +36,15 @@ func (m *MockOrderBookPublisher) EXPECT() *MockOrderBookPublisherMockRecorder {
 }
 
 // Publish mocks base method.
-func (m *MockOrderBookPublisher) Publish(ctx context.Context) error {
+func (m *MockOrderBookPublisher) Publish(ctx context.Context, orderBook models.OrderBook) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Publish", ctx)
+	ret := m.ctrl.Call(m, "Publish", ctx, orderBook)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Publish indicates an expected call of Publish.
-func (mr *MockOrderBookPublisherMockRecorder) Publish(ctx interface{}) *gomock.Call {
+func (mr *MockOrderBookPublisherMockRecorder) Publish(ctx, orderBook interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockOrderBookPublisher)(nil).Publish), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockOrderBookPublisher)(nil).Publish), ctx, orderBook)
 }
