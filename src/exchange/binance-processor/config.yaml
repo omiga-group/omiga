@@ -1,0 +1,4 @@
+pulsar:
+  url: "pulsar://localhost:6650"
+  SubscriptionName: "binance-processor"
+  producerName: "binance-processor"
