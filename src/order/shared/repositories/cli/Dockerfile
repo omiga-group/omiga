@@ -21,14 +21,12 @@ COPY order/shared/repositories/cli /src/order/shared/repositories/cli
 
 WORKDIR /src/order/shared/repositories/cli
 
-RUN --mount=type=cache,target=/go go mod tidy
 RUN --mount=type=cache,target=/go go build -v -o /bin/order-database-migration main.go
 
 FROM build AS local
 CMD ["/bin/order-database-migration", "migrate"]
 
 FROM build AS test
-RUN --mount=type=cache,target=/go go mod tidy
 RUN --mount=type=cache,target=/go go test ./...
 
 FROM base AS final

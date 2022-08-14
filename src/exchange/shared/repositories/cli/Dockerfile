@@ -21,14 +21,12 @@ COPY exchange/shared/repositories/cli /src/exchange/shared/repositories/cli
 
 WORKDIR /src/exchange/shared/repositories/cli
 
-RUN --mount=type=cache,target=/go go mod tidy
 RUN --mount=type=cache,target=/go go build -v -o /bin/exchange-database-migration main.go
 
 FROM build AS local
 CMD ["/bin/exchange-database-migration", "migrate"]
 
 FROM build AS test
-RUN --mount=type=cache,target=/go go mod tidy
 RUN --mount=type=cache,target=/go go test ./...
 
 FROM base AS final

@@ -23,14 +23,12 @@ COPY order/order-api /src/order/order-api
 
 WORKDIR /src/order/order-api
 
-RUN --mount=type=cache,target=/go go mod tidy
 RUN --mount=type=cache,target=/go go build -v -o /bin/order-api main.go
 
 FROM build AS local
 CMD ["/bin/order-api", "start"]
 
 FROM build AS test
-RUN --mount=type=cache,target=/go go mod tidy
 RUN --mount=type=cache,target=/go go test ./...
 
 FROM base AS final
