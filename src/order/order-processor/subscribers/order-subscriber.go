@@ -2,6 +2,7 @@ package subscribers
 
 import (
 	"context"
+	"encoding/json"
 
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"go.uber.org/zap"
@@ -18,7 +19,12 @@ func NewOrderSubscriber(logger *zap.SugaredLogger) (orderv1.Subscriber, error) {
 }
 
 func (os *orderSubscriber) Handle(ctx context.Context, event orderv1.OrderEvent) error {
-	os.logger.Infof("Processing OrderEvent event: %v", event)
+	data, err := json.Marshal(event)
+	if err != nil {
+		return err
+	}
+
+	os.logger.Infof("Processing OrderEvent event: %s", string(data))
 
 	return nil
 }
