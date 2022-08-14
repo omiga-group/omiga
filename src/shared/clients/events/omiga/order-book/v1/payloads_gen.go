@@ -3,14 +3,16 @@
 
 package orderbookv1
 
-import (
-	"time"
 
-	"github.com/google/uuid"
-)
+    import (
+      "time"
+    
+      "github.com/google/uuid"
+    )
+    
+    type ID uuid.UUID
 
-type ID uuid.UUID
-
+    
     
     // OrderBookEvent represents a OrderBookEvent model.
 type OrderBookEvent struct {

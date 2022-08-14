@@ -2,6 +2,9 @@ const { GoGenerator } = require("@asyncapi/modelina");
 const { File } = require("@asyncapi/generator-react-sdk");
 
 export default async function ({ asyncapi, params }) {
+  let foundTimeTypeField = false;
+  let foundIDTypeField = false;
+
   const generator = new GoGenerator({
     presets: [
       {
@@ -29,10 +32,14 @@ export default async function ({ asyncapi, params }) {
             switch (format) {
               case "date-time":
                 finalFieldType = "time.Time";
+                foundTimeTypeField = true;
+
                 break;
 
               case "uuid":
                 finalFieldType = "ID";
+                foundIDTypeField = true;
+
                 break;
 
               default:
@@ -60,14 +67,38 @@ export default async function ({ asyncapi, params }) {
 
 package ${params.packageName}
 
-import (
-	"time"
-
-	"github.com/google/uuid"
-)
-
-type ID uuid.UUID
 `;
+
+  if (foundTimeTypeField && foundIDTypeField) {
+    payloadContent =
+      payloadContent +
+      `
+    import (
+      "time"
+    
+      "github.com/google/uuid"
+    )
+    
+    type ID uuid.UUID
+
+    `;
+  } else if (foundTimeTypeField && !foundIDTypeField) {
+    payloadContent =
+      payloadContent +
+      `
+    import "time"
+
+    `;
+  } else if (!foundTimeTypeField && foundIDTypeField) {
+    payloadContent =
+      payloadContent +
+      `
+    import "github.com/google/uuid"
+    
+    type ID uuid.UUID
+
+    `;
+  }
 
   models.forEach((model) => {
     let result = model.result;
