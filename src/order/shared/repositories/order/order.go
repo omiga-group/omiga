@@ -7,6 +7,10 @@ const (
 	Label = "order"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldOrderDetails holds the string denoting the order_details field in the database.
+	FieldOrderDetails = "order_details"
+	// FieldPreferredExchanges holds the string denoting the preferred_exchanges field in the database.
+	FieldPreferredExchanges = "preferred_exchanges"
 	// Table holds the table name of the order in the database.
 	Table = "orders"
 )
@@ -14,6 +18,8 @@ const (
 // Columns holds all SQL columns for order fields.
 var Columns = []string{
 	FieldID,
+	FieldOrderDetails,
+	FieldPreferredExchanges,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

@@ -24,8 +24,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 				Column: order.FieldID,
 			},
 		},
-		Type:   "Order",
-		Fields: map[string]*sqlgraph.FieldSpec{},
+		Type: "Order",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			order.FieldOrderDetails:       {Type: field.TypeJSON, Column: order.FieldOrderDetails},
+			order.FieldPreferredExchanges: {Type: field.TypeJSON, Column: order.FieldPreferredExchanges},
+		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
@@ -96,6 +99,16 @@ func (f *OrderFilter) Where(p entql.P) {
 // WhereID applies the entql int predicate on the id field.
 func (f *OrderFilter) WhereID(p entql.IntP) {
 	f.Where(p.Field(order.FieldID))
+}
+
+// WhereOrderDetails applies the entql json.RawMessage predicate on the order_details field.
+func (f *OrderFilter) WhereOrderDetails(p entql.BytesP) {
+	f.Where(p.Field(order.FieldOrderDetails))
+}
+
+// WherePreferredExchanges applies the entql json.RawMessage predicate on the preferred_exchanges field.
+func (f *OrderFilter) WherePreferredExchanges(p entql.BytesP) {
+	f.Where(p.Field(order.FieldPreferredExchanges))
 }
 
 // addPredicate implements the predicateAdder interface.

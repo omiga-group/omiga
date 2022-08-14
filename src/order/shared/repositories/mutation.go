@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/omiga-group/omiga/src/order/shared/models"
+	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/predicate"
 
@@ -31,13 +33,15 @@ const (
 // OrderMutation represents an operation that mutates the Order nodes in the graph.
 type OrderMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Order, error)
-	predicates    []predicate.Order
+	op                  Op
+	typ                 string
+	id                  *int
+	order_details       *models.OrderDetails
+	preferred_exchanges *[]models.Exchange
+	clearedFields       map[string]struct{}
+	done                bool
+	oldValue            func(context.Context) (*Order, error)
+	predicates          []predicate.Order
 }
 
 var _ ent.Mutation = (*OrderMutation)(nil)
@@ -138,6 +142,78 @@ func (m *OrderMutation) IDs(ctx context.Context) ([]int, error) {
 	}
 }
 
+// SetOrderDetails sets the "order_details" field.
+func (m *OrderMutation) SetOrderDetails(md models.OrderDetails) {
+	m.order_details = &md
+}
+
+// OrderDetails returns the value of the "order_details" field in the mutation.
+func (m *OrderMutation) OrderDetails() (r models.OrderDetails, exists bool) {
+	v := m.order_details
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOrderDetails returns the old "order_details" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldOrderDetails(ctx context.Context) (v models.OrderDetails, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOrderDetails is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOrderDetails requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOrderDetails: %w", err)
+	}
+	return oldValue.OrderDetails, nil
+}
+
+// ResetOrderDetails resets all changes to the "order_details" field.
+func (m *OrderMutation) ResetOrderDetails() {
+	m.order_details = nil
+}
+
+// SetPreferredExchanges sets the "preferred_exchanges" field.
+func (m *OrderMutation) SetPreferredExchanges(value []models.Exchange) {
+	m.preferred_exchanges = &value
+}
+
+// PreferredExchanges returns the value of the "preferred_exchanges" field in the mutation.
+func (m *OrderMutation) PreferredExchanges() (r []models.Exchange, exists bool) {
+	v := m.preferred_exchanges
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPreferredExchanges returns the old "preferred_exchanges" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldPreferredExchanges(ctx context.Context) (v []models.Exchange, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPreferredExchanges is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPreferredExchanges requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPreferredExchanges: %w", err)
+	}
+	return oldValue.PreferredExchanges, nil
+}
+
+// ResetPreferredExchanges resets all changes to the "preferred_exchanges" field.
+func (m *OrderMutation) ResetPreferredExchanges() {
+	m.preferred_exchanges = nil
+}
+
 // Where appends a list predicates to the OrderMutation builder.
 func (m *OrderMutation) Where(ps ...predicate.Order) {
 	m.predicates = append(m.predicates, ps...)
@@ -157,7 +233,13 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-	fields := make([]string, 0, 0)
+	fields := make([]string, 0, 2)
+	if m.order_details != nil {
+		fields = append(fields, order.FieldOrderDetails)
+	}
+	if m.preferred_exchanges != nil {
+		fields = append(fields, order.FieldPreferredExchanges)
+	}
 	return fields
 }
 
@@ -165,6 +247,12 @@ func (m *OrderMutation) Fields() []string {
 // return value indicates that this field was not set, or was not defined in the
 // schema.
 func (m *OrderMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case order.FieldOrderDetails:
+		return m.OrderDetails()
+	case order.FieldPreferredExchanges:
+		return m.PreferredExchanges()
+	}
 	return nil, false
 }
 
@@ -172,6 +260,12 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
 func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case order.FieldOrderDetails:
+		return m.OldOrderDetails(ctx)
+	case order.FieldPreferredExchanges:
+		return m.OldPreferredExchanges(ctx)
+	}
 	return nil, fmt.Errorf("unknown Order field %s", name)
 }
 
@@ -180,6 +274,20 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 // type.
 func (m *OrderMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case order.FieldOrderDetails:
+		v, ok := value.(models.OrderDetails)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOrderDetails(v)
+		return nil
+	case order.FieldPreferredExchanges:
+		v, ok := value.([]models.Exchange)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPreferredExchanges(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Order field %s", name)
 }
@@ -201,6 +309,8 @@ func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
 func (m *OrderMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Order numeric field %s", name)
 }
 
@@ -226,6 +336,14 @@ func (m *OrderMutation) ClearField(name string) error {
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
 func (m *OrderMutation) ResetField(name string) error {
+	switch name {
+	case order.FieldOrderDetails:
+		m.ResetOrderDetails()
+		return nil
+	case order.FieldPreferredExchanges:
+		m.ResetPreferredExchanges()
+		return nil
+	}
 	return fmt.Errorf("unknown Order field %s", name)
 }
 

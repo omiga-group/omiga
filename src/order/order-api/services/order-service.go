@@ -32,14 +32,16 @@ func NewOrderService(
 
 func (os *orderService) Submit(
 	ctx context.Context,
-	request models.Order) (*models.Order, error) {
+	order models.Order) (*models.Order, error) {
 	tx, err := os.entgoClient.CreateTransaction(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	createdOrder, err := tx.Order.
+	savedOrder, err := tx.Order.
 		Create().
+		SetOrderDetails(order.OrderDetails).
+		SetPreferredExchanges(order.PreferredExchanges).
 		Save(ctx)
 	if err != nil {
 		rollbackErr := os.entgoClient.RollbackTransaction(tx)
@@ -50,9 +52,7 @@ func (os *orderService) Submit(
 		return nil, err
 	}
 
-	order := models.Order{
-		Id: createdOrder.ID,
-	}
+	order.Id = savedOrder.ID
 
 	err = os.orderPublisher.Publish(
 		ctx,

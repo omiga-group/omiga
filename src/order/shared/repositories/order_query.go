@@ -253,6 +253,19 @@ func (oq *OrderQuery) Clone() *OrderQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		OrderDetails models.OrderDetails `json:"order_details,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Order.Query().
+//		GroupBy(order.FieldOrderDetails).
+//		Aggregate(repositories.Count()).
+//		Scan(ctx, &v)
+//
 func (oq *OrderQuery) GroupBy(field string, fields ...string) *OrderGroupBy {
 	grbuild := &OrderGroupBy{config: oq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -269,6 +282,17 @@ func (oq *OrderQuery) GroupBy(field string, fields ...string) *OrderGroupBy {
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		OrderDetails models.OrderDetails `json:"order_details,omitempty"`
+//	}
+//
+//	client.Order.Query().
+//		Select(order.FieldOrderDetails).
+//		Scan(ctx, &v)
+//
 func (oq *OrderQuery) Select(fields ...string) *OrderSelect {
 	oq.fields = append(oq.fields, fields...)
 	selbuild := &OrderSelect{OrderQuery: oq}

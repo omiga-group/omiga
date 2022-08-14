@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/omiga-group/omiga/src/order/shared/models"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
 )
 
@@ -19,6 +20,18 @@ type OrderCreate struct {
 	mutation *OrderMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetOrderDetails sets the "order_details" field.
+func (oc *OrderCreate) SetOrderDetails(md models.OrderDetails) *OrderCreate {
+	oc.mutation.SetOrderDetails(md)
+	return oc
+}
+
+// SetPreferredExchanges sets the "preferred_exchanges" field.
+func (oc *OrderCreate) SetPreferredExchanges(m []models.Exchange) *OrderCreate {
+	oc.mutation.SetPreferredExchanges(m)
+	return oc
 }
 
 // Mutation returns the OrderMutation object of the builder.
@@ -97,6 +110,12 @@ func (oc *OrderCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (oc *OrderCreate) check() error {
+	if _, ok := oc.mutation.OrderDetails(); !ok {
+		return &ValidationError{Name: "order_details", err: errors.New(`repositories: missing required field "Order.order_details"`)}
+	}
+	if _, ok := oc.mutation.PreferredExchanges(); !ok {
+		return &ValidationError{Name: "preferred_exchanges", err: errors.New(`repositories: missing required field "Order.preferred_exchanges"`)}
+	}
 	return nil
 }
 
@@ -126,6 +145,22 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 	)
 	_spec.Schema = oc.schemaConfig.Order
 	_spec.OnConflict = oc.conflict
+	if value, ok := oc.mutation.OrderDetails(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: order.FieldOrderDetails,
+		})
+		_node.OrderDetails = value
+	}
+	if value, ok := oc.mutation.PreferredExchanges(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: order.FieldPreferredExchanges,
+		})
+		_node.PreferredExchanges = value
+	}
 	return _node, _spec
 }
 
@@ -133,11 +168,17 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Order.Create().
+//		SetOrderDetails(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.OrderUpsert) {
+//			SetOrderDetails(v+v).
+//		}).
 //		Exec(ctx)
 //
 func (oc *OrderCreate) OnConflict(opts ...sql.ConflictOption) *OrderUpsertOne {
@@ -173,6 +214,30 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetOrderDetails sets the "order_details" field.
+func (u *OrderUpsert) SetOrderDetails(v models.OrderDetails) *OrderUpsert {
+	u.Set(order.FieldOrderDetails, v)
+	return u
+}
+
+// UpdateOrderDetails sets the "order_details" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateOrderDetails() *OrderUpsert {
+	u.SetExcluded(order.FieldOrderDetails)
+	return u
+}
+
+// SetPreferredExchanges sets the "preferred_exchanges" field.
+func (u *OrderUpsert) SetPreferredExchanges(v []models.Exchange) *OrderUpsert {
+	u.Set(order.FieldPreferredExchanges, v)
+	return u
+}
+
+// UpdatePreferredExchanges sets the "preferred_exchanges" field to the value that was provided on create.
+func (u *OrderUpsert) UpdatePreferredExchanges() *OrderUpsert {
+	u.SetExcluded(order.FieldPreferredExchanges)
+	return u
+}
 
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
@@ -214,6 +279,34 @@ func (u *OrderUpsertOne) Update(set func(*OrderUpsert)) *OrderUpsertOne {
 		set(&OrderUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetOrderDetails sets the "order_details" field.
+func (u *OrderUpsertOne) SetOrderDetails(v models.OrderDetails) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetOrderDetails(v)
+	})
+}
+
+// UpdateOrderDetails sets the "order_details" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateOrderDetails() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateOrderDetails()
+	})
+}
+
+// SetPreferredExchanges sets the "preferred_exchanges" field.
+func (u *OrderUpsertOne) SetPreferredExchanges(v []models.Exchange) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetPreferredExchanges(v)
+	})
+}
+
+// UpdatePreferredExchanges sets the "preferred_exchanges" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdatePreferredExchanges() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdatePreferredExchanges()
+	})
 }
 
 // Exec executes the query.
@@ -343,6 +436,11 @@ func (ocb *OrderCreateBulk) ExecX(ctx context.Context) {
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.OrderUpsert) {
+//			SetOrderDetails(v+v).
+//		}).
 //		Exec(ctx)
 //
 func (ocb *OrderCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderUpsertBulk {
@@ -412,6 +510,34 @@ func (u *OrderUpsertBulk) Update(set func(*OrderUpsert)) *OrderUpsertBulk {
 		set(&OrderUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetOrderDetails sets the "order_details" field.
+func (u *OrderUpsertBulk) SetOrderDetails(v models.OrderDetails) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetOrderDetails(v)
+	})
+}
+
+// UpdateOrderDetails sets the "order_details" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateOrderDetails() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateOrderDetails()
+	})
+}
+
+// SetPreferredExchanges sets the "preferred_exchanges" field.
+func (u *OrderUpsertBulk) SetPreferredExchanges(v []models.Exchange) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetPreferredExchanges(v)
+	})
+}
+
+// UpdatePreferredExchanges sets the "preferred_exchanges" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdatePreferredExchanges() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdatePreferredExchanges()
+	})
 }
 
 // Exec executes the query.

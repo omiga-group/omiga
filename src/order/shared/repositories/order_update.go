@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/omiga-group/omiga/src/order/shared/models"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/internal"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/predicate"
@@ -25,6 +26,18 @@ type OrderUpdate struct {
 // Where appends a list predicates to the OrderUpdate builder.
 func (ou *OrderUpdate) Where(ps ...predicate.Order) *OrderUpdate {
 	ou.mutation.Where(ps...)
+	return ou
+}
+
+// SetOrderDetails sets the "order_details" field.
+func (ou *OrderUpdate) SetOrderDetails(md models.OrderDetails) *OrderUpdate {
+	ou.mutation.SetOrderDetails(md)
+	return ou
+}
+
+// SetPreferredExchanges sets the "preferred_exchanges" field.
+func (ou *OrderUpdate) SetPreferredExchanges(m []models.Exchange) *OrderUpdate {
+	ou.mutation.SetPreferredExchanges(m)
 	return ou
 }
 
@@ -105,6 +118,20 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := ou.mutation.OrderDetails(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: order.FieldOrderDetails,
+		})
+	}
+	if value, ok := ou.mutation.PreferredExchanges(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: order.FieldPreferredExchanges,
+		})
+	}
 	_spec.Node.Schema = ou.schemaConfig.Order
 	ctx = internal.NewSchemaConfigContext(ctx, ou.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, ou.driver, _spec); err != nil {
@@ -124,6 +151,18 @@ type OrderUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *OrderMutation
+}
+
+// SetOrderDetails sets the "order_details" field.
+func (ouo *OrderUpdateOne) SetOrderDetails(md models.OrderDetails) *OrderUpdateOne {
+	ouo.mutation.SetOrderDetails(md)
+	return ouo
+}
+
+// SetPreferredExchanges sets the "preferred_exchanges" field.
+func (ouo *OrderUpdateOne) SetPreferredExchanges(m []models.Exchange) *OrderUpdateOne {
+	ouo.mutation.SetPreferredExchanges(m)
+	return ouo
 }
 
 // Mutation returns the OrderMutation object of the builder.
@@ -232,6 +271,20 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := ouo.mutation.OrderDetails(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: order.FieldOrderDetails,
+		})
+	}
+	if value, ok := ouo.mutation.PreferredExchanges(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: order.FieldPreferredExchanges,
+		})
 	}
 	_spec.Node.Schema = ouo.schemaConfig.Order
 	ctx = internal.NewSchemaConfigContext(ctx, ouo.schemaConfig)

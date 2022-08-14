@@ -11,6 +11,8 @@ var (
 	// OrdersColumns holds the columns for the "orders" table.
 	OrdersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "order_details", Type: field.TypeJSON},
+		{Name: "preferred_exchanges", Type: field.TypeJSON},
 	}
 	// OrdersTable holds the schema information for the "orders" table.
 	OrdersTable = &schema.Table{

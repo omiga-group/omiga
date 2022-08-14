@@ -3,18 +3,24 @@
 package repositories
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/omiga-group/omiga/src/order/shared/models"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
 )
 
 // Order is the model entity for the Order schema.
 type Order struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// OrderDetails holds the value of the "order_details" field.
+	OrderDetails models.OrderDetails `json:"order_details,omitempty"`
+	// PreferredExchanges holds the value of the "preferred_exchanges" field.
+	PreferredExchanges []models.Exchange `json:"preferred_exchanges,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -22,6 +28,8 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case order.FieldOrderDetails, order.FieldPreferredExchanges:
+			values[i] = new([]byte)
 		case order.FieldID:
 			values[i] = new(sql.NullInt64)
 		default:
@@ -45,6 +53,22 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			o.ID = int(value.Int64)
+		case order.FieldOrderDetails:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field order_details", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &o.OrderDetails); err != nil {
+					return fmt.Errorf("unmarshal field order_details: %w", err)
+				}
+			}
+		case order.FieldPreferredExchanges:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field preferred_exchanges", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &o.PreferredExchanges); err != nil {
+					return fmt.Errorf("unmarshal field preferred_exchanges: %w", err)
+				}
+			}
 		}
 	}
 	return nil
@@ -72,7 +96,12 @@ func (o *Order) Unwrap() *Order {
 func (o *Order) String() string {
 	var builder strings.Builder
 	builder.WriteString("Order(")
-	builder.WriteString(fmt.Sprintf("id=%v", o.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", o.ID))
+	builder.WriteString("order_details=")
+	builder.WriteString(fmt.Sprintf("%v", o.OrderDetails))
+	builder.WriteString(", ")
+	builder.WriteString("preferred_exchanges=")
+	builder.WriteString(fmt.Sprintf("%v", o.PreferredExchanges))
 	builder.WriteByte(')')
 	return builder.String()
 }

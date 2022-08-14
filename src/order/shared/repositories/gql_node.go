@@ -51,8 +51,25 @@ func (o *Order) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     o.ID,
 		Type:   "Order",
-		Fields: make([]*Field, 0),
+		Fields: make([]*Field, 2),
 		Edges:  make([]*Edge, 0),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(o.OrderDetails); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "models.OrderDetails",
+		Name:  "order_details",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(o.PreferredExchanges); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "[]models.Exchange",
+		Name:  "preferred_exchanges",
+		Value: string(buf),
 	}
 	return node, nil
 }
