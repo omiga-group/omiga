@@ -2,6 +2,14 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Exchange Database Migration",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/github.com/omiga-group/omiga/src/exchange/shared/repositories/cli/main.go",
+      "args": ["migrate"]
+    },
+    {
       "name": "Binance Processor",
       "type": "go",
       "request": "launch",
@@ -16,6 +24,14 @@
       "mode": "debug",
       "program": "${workspaceFolder}/src/exchange/ftx-processor/main.go",
       "args": ["start"]
+    },
+    {
+      "name": "Order Database Migration",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/github.com/omiga-group/omiga/src/order/shared/repositories/cli/main.go",
+      "args": ["migrate"]
     },
     {
       "name": "Order API",
