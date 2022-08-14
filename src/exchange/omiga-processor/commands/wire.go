@@ -21,9 +21,9 @@ package commands
 import (
 	"context"
 	"github.com/google/wire"
-	"github.com/omiga-group/omiga/src/exchange/omiga-processor/publishers"
 	"github.com/omiga-group/omiga/src/exchange/omiga-processor/simulators"
 	"github.com/omiga-group/omiga/src/exchange/omiga-processor/subscribers"
+	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"

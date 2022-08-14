@@ -3,8 +3,8 @@ package simulators
 import (
 	"context"
 
-	"github.com/omiga-group/omiga/src/exchange/omiga-processor/publishers"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
+	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"go.uber.org/zap"
 )
