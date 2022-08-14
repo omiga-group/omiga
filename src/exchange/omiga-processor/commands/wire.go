@@ -57,7 +57,8 @@ func NewOrderBookSimulator(
 	logger *zap.SugaredLogger,
 	appSettings configuration.AppSettings,
 	pulsarSettings pulsar.PulsarSettings,
-	topic string) (simulators.OrderBookSimulator, error) {
+	topic string,
+	orderBookPublisherSettings publishers.OrderBookPublisherSettings) (simulators.OrderBookSimulator, error) {
 	wire.Build(
 		simulators.NewOrderBookSimulator,
 		orderbookv1.NewProducer,
