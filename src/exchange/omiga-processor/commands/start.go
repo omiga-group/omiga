@@ -46,6 +46,7 @@ func startCommand() *cobra.Command {
 			}
 
 			pulsarSettings.SubscriptionName = pulsarSettings.SubscriptionName + "-" + opt.name
+			pulsarSettings.ProducerName = pulsarSettings.ProducerName + opt.name
 
 			ctx, cancelFunc := context.WithCancel(context.Background())
 

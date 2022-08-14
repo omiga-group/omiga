@@ -33,6 +33,7 @@ services:
       dockerfile: exchange/omiga-processor/Dockerfile
       target: local
     restart: unless-stopped
+    command: /bin/omiga-processor start --name omiga-exchange1
     environment:
       OMIGA_ENVIRONMENT: dockercompose
     depends_on:
