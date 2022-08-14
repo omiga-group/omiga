@@ -69,5 +69,5 @@ type Order struct {
 	Id                 int
 	OrderDetails       OrderDetails
 	User               *User
-	PreferredExchanges []*Exchange
+	PreferredExchanges []Exchange
 }
