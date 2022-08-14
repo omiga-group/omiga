@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/omiga-group/omiga/src/order/shared/mappers"
 	"github.com/omiga-group/omiga/src/order/shared/models"
 	"github.com/omiga-group/omiga/src/order/shared/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
@@ -55,14 +56,11 @@ func (op *orderPublisher) Publish(
 	}
 
 	if orderBeforeState != nil {
-		orderEvent.Data.BeforeState = &orderv1.Order{
-			Id: orderBeforeState.Id,
-		}
+		mappedBeforeState := mappers.FromOrderToEventOrder(*orderBeforeState)
+		orderEvent.Data.BeforeState = &mappedBeforeState
 	}
 
-	orderEvent.Data.AfterState = orderv1.Order{
-		Id: orderAfterState.Id,
-	}
+	orderEvent.Data.AfterState = mappers.FromOrderToEventOrder(orderAfterState)
 
 	return op.orderOutboxPublisher.Publish(
 		ctx,

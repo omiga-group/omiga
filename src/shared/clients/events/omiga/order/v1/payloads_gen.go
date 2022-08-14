@@ -53,7 +53,7 @@ type Order struct {
   Id int `json:"id"`  // The unique order ID
   OrderDetails OrderDetails `json:"orderDetails"` 
   User *User `json:"user,omitempty"` 
-  PreferredExchanges *[]*Exchange `json:"preferredExchanges,omitempty"`  // the preferred list of the supportef exchanged by the user
+  PreferredExchanges []*Exchange `json:"preferredExchanges"`  // the preferred list of the supportef exchanged by the user
   AdditionalProperties *[]interface{} `json:"additionalProperties,omitempty"`  // undefined
 }
     
