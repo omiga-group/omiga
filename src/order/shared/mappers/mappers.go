@@ -55,7 +55,7 @@ func FromOrderToEventOrder(src models.Order) orderv1.Order {
 		OrderDetails: fromOrderDetailsToEventOrderDetails(src.OrderDetails),
 	}
 
-	order.PreferredExchanges = make([]*orderv1.Exchange, 0)
+	order.PreferredExchanges = make([]orderv1.Exchange, 0)
 	for _, preferredExchange := range src.PreferredExchanges {
 		order.PreferredExchanges = append(order.PreferredExchanges, fromExchangeToEventExchange(preferredExchange))
 	}
@@ -91,8 +91,8 @@ func fromCurrencyToEventCurrency(src models.Currency) orderv1.Currency {
 	}
 }
 
-func fromExchangeToEventExchange(src models.Exchange) *orderv1.Exchange {
-	return &orderv1.Exchange{
+func fromExchangeToEventExchange(src models.Exchange) orderv1.Exchange {
+	return orderv1.Exchange{
 		Id: src.Id,
 	}
 }

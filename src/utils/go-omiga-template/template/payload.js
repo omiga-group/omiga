@@ -6,7 +6,7 @@ export default async function ({ asyncapi, params }) {
     presets: [
       {
         struct: {
-          field({ fieldName, field, renderer, type, model: { required } }) {
+          field({ fieldName, field, renderer, model: { required } }) {
             const formattedFieldName = renderer.nameField(fieldName, field);
             const fieldType = renderer.renderType(field);
 
@@ -42,6 +42,10 @@ export default async function ({ asyncapi, params }) {
             const tag = isRequired
               ? `\`json:"${fieldName}"\``
               : `\`json:"${fieldName},omitempty"\``;
+
+            if (field.type === "array") {
+              finalFieldType = "[]" + finalFieldType.substring("[]*".length);
+            }
 
             return `${formattedFieldName} ${unrequiredMark}${finalFieldType} ${tag} ${description}`;
           },

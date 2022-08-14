@@ -45,8 +45,8 @@ type OrderBook struct {
   Id string `json:"id"`  // undefined
   BaseCurrency *Currency `json:"baseCurrency,omitempty"` 
   CounterCurrency *Currency `json:"counterCurrency,omitempty"` 
-  Bids *[]*OrderBookEntry `json:"bids,omitempty"`  // undefined
-  Asks *[]*OrderBookEntry `json:"asks,omitempty"`  // undefined
+  Bids *[]OrderBookEntry `json:"bids,omitempty"`  // undefined
+  Asks *[]OrderBookEntry `json:"asks,omitempty"`  // undefined
   AdditionalProperties *[]interface{} `json:"additionalProperties,omitempty"`  // undefined
 }
     
