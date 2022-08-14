@@ -61,7 +61,7 @@ type Order struct {
     
     // Exchange represents a Exchange model.
 type Exchange struct {
-  Id int `json:"id"`  // The unique ID of the supported exchange
+  Id string `json:"id"`  // The unique ID of the supported exchange
 }
     
     

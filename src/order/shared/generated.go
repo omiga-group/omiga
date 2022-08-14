@@ -501,7 +501,7 @@ enum OrderSide {
 }
 
 input ExchangeInput {
-  id: ID!
+  id: String!
 }
 `, BuiltIn: false},
 	{Name: "../../../api-definitions/graphql/omiga/order/V1/ent.graphql", Input: `"""
@@ -3530,7 +3530,7 @@ func (ec *executionContext) unmarshalInputExchangeInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			it.ID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

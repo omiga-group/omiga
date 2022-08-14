@@ -44,11 +44,11 @@ const (
     
     // OrderBook represents a OrderBook model.
 type OrderBook struct {
-  Id string `json:"id"`  // undefined
-  BaseCurrency *Currency `json:"baseCurrency,omitempty"` 
-  CounterCurrency *Currency `json:"counterCurrency,omitempty"` 
-  Bids *[]OrderBookEntry `json:"bids,omitempty"`  // undefined
-  Asks *[]OrderBookEntry `json:"asks,omitempty"`  // undefined
+  ExchangeId string `json:"exchangeId"`  // The unique ID of the exchange
+  BaseCurrency Currency `json:"baseCurrency"` 
+  CounterCurrency Currency `json:"counterCurrency"` 
+  Bids []OrderBookEntry `json:"bids"`  // undefined
+  Asks []OrderBookEntry `json:"asks"`  // undefined
   AdditionalProperties *[]interface{} `json:"additionalProperties,omitempty"`  // undefined
 }
     
@@ -64,8 +64,8 @@ type Currency struct {
     
     // OrderBookEntry represents a OrderBookEntry model.
 type OrderBookEntry struct {
-  Quantity *Money `json:"quantity,omitempty"` 
-  Price *Money `json:"price,omitempty"` 
+  Quantity Money `json:"quantity"` 
+  Price Money `json:"price"` 
 }
     
     

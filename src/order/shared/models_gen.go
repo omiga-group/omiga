@@ -23,7 +23,7 @@ type CurrencyInput struct {
 }
 
 type ExchangeInput struct {
-	ID int `json:"id"`
+	ID string `json:"id"`
 }
 
 type MoneyInput struct {

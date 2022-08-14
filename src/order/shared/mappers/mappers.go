@@ -69,12 +69,12 @@ func fromOrderDetailsToEventOrderDetails(src models.OrderDetails) orderv1.OrderD
 		CounterCurrency: fromCurrencyToEventCurrency(src.CounterCurrency),
 		Type:            orderv1.OrderType(src.Type),
 		Side:            orderv1.OrderSide(src.Side),
-		Quantity:        fromMoneyToCurrency(src.Quantity),
-		Price:           fromMoneyToCurrency(src.Price),
+		Quantity:        fromMoneyToEventMoney(src.Quantity),
+		Price:           fromMoneyToEventMoney(src.Price),
 	}
 }
 
-func fromMoneyToCurrency(src models.Money) orderv1.Money {
+func fromMoneyToEventMoney(src models.Money) orderv1.Money {
 	return orderv1.Money{
 		Amount:   src.Amount,
 		Scale:    src.Scale,

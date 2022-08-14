@@ -88,10 +88,15 @@ components:
       type: object
       additionalProperties: true
       required:
-        - id
+        - exchangeId
+        - baseCurrency
+        - counterCurrency
+        - bids
+        - asks
       properties:
-        id:
+        exchangeId:
           type: string
+          description: The unique ID of the exchange
         baseCurrency:
           $ref: "./Common_V1.yaml#/components/schemas/currency"
         counterCurrency:
@@ -110,7 +115,8 @@ components:
       type: object
       additionalProperties: false
       required:
-        - id
+        - quantity
+        - price
       properties:
         quantity:
           $ref: "./Common_V1.yaml#/components/schemas/money"

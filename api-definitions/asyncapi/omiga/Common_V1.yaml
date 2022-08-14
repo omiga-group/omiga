@@ -88,5 +88,5 @@ components:
         - id
       properties:
         id:
-          type: integer
+          type: string
           description: The unique ID of the supported exchange

@@ -177,5 +177,5 @@ enum OrderSide {
 }
 
 input ExchangeInput {
-  id: ID!
+  id: String!
 }
