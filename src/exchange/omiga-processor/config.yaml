@@ -1,0 +1,4 @@
+pulsar:
+  url: "pulsar://localhost:6650"
+  SubscriptionName: "omiga-processor"
+  producerName: "omiga-processor"
