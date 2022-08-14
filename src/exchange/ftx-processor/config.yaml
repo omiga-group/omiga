@@ -1,0 +1,10 @@
+pulsar:
+  url: "pulsar://localhost:6650"
+  SubscriptionName: "ftx-processor"
+  producerName: "ftx-processor"
+
+integration:
+  api-key: "prod api key"
+service:
+  name: ""
+  port: 98760

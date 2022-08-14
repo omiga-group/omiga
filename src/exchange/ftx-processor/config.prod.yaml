@@ -1,5 +1,0 @@
-integration:
-  api-key: "prod api key"
-service:
-  name: ""
-  port: 98760
