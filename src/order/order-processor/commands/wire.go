@@ -21,6 +21,7 @@ package commands
 import (
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/order/order-processor/subscribers"
+	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
@@ -35,6 +36,12 @@ func NewMessageConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarS
 
 func NewOrderConsumer(logger *zap.SugaredLogger, messageConsumer messaging.MessageConsumer) (orderv1.Consumer, error) {
 	wire.Build(orderv1.NewConsumer, subscribers.NewOrderSubscriber)
+
+	return nil, nil
+}
+
+func NewOrderBookConsumer(logger *zap.SugaredLogger, messageConsumer messaging.MessageConsumer) (orderbookv1.Consumer, error) {
+	wire.Build(orderbookv1.NewConsumer, subscribers.NewOrderBookSubscriber)
 
 	return nil, nil
 }

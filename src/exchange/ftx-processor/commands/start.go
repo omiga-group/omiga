@@ -52,7 +52,7 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			messageConsumer, err := NewMessageConsumer(
+			syntheticMessageConsumer, err := NewMessageConsumer(
 				sugarLogger,
 				pulsarSettings,
 				syntheticorderv1.TopicName)
@@ -60,11 +60,11 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			defer messageConsumer.Close(ctx)
+			defer syntheticMessageConsumer.Close(ctx)
 
 			syntheticOrderConsumer, err := NewSyntheticOrderConsumer(
 				sugarLogger,
-				messageConsumer)
+				syntheticMessageConsumer)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

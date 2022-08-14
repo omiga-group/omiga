@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/mitchellh/mapstructure"
+	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
@@ -52,7 +53,7 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			messageConsumer, err := NewMessageConsumer(
+			orderMessageConsumer, err := NewMessageConsumer(
 				sugarLogger,
 				pulsarSettings,
 				orderv1.TopicName)
@@ -60,16 +61,38 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			defer messageConsumer.Close(ctx)
+			defer orderMessageConsumer.Close(ctx)
 
 			orderConsumer, err := NewOrderConsumer(
 				sugarLogger,
-				messageConsumer)
+				orderMessageConsumer)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			err = orderConsumer.StartAsync(ctx)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			orderBookMessageConsumer, err := NewMessageConsumer(
+				sugarLogger,
+				pulsarSettings,
+				orderbookv1.TopicName)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer orderMessageConsumer.Close(ctx)
+
+			orderBookConsumer, err := NewOrderBookConsumer(
+				sugarLogger,
+				orderBookMessageConsumer)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			err = orderBookConsumer.StartAsync(ctx)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

@@ -8,6 +8,7 @@ package commands
 
 import (
 	"github.com/omiga-group/omiga/src/order/order-processor/subscribers"
+	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
@@ -30,5 +31,14 @@ func NewOrderConsumer(logger *zap.SugaredLogger, messageConsumer messaging.Messa
 		return nil, err
 	}
 	consumer := orderv1.NewConsumer(logger, subscriber, messageConsumer)
+	return consumer, nil
+}
+
+func NewOrderBookConsumer(logger *zap.SugaredLogger, messageConsumer messaging.MessageConsumer) (orderbookv1.Consumer, error) {
+	subscriber, err := subscribers.NewOrderBookSubscriber(logger)
+	if err != nil {
+		return nil, err
+	}
+	consumer := orderbookv1.NewConsumer(logger, subscriber, messageConsumer)
 	return consumer, nil
 }
