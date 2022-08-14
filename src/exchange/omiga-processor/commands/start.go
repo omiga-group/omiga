@@ -40,6 +40,11 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
+			var appSettings configuration.AppSettings
+			if err := mapstructure.Decode(viper.Get(configuration.AppSettingsConfigKey), &appSettings); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
 			var pulsarSettings pulsar.PulsarSettings
 			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {
 				sugarLogger.Fatal(err)
@@ -64,6 +69,7 @@ func startCommand() *cobra.Command {
 			_, err = NewOrderBookSimulator(
 				ctx,
 				sugarLogger,
+				appSettings,
 				pulsarSettings,
 				orderbookv1.TopicName)
 			if err != nil {

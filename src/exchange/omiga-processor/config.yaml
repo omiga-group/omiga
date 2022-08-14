@@ -1,3 +1,6 @@
+app:
+  source: "urn::omiga::omiga-exchange"
+
 pulsar:
   url: "pulsar://localhost:6650"
   SubscriptionName: "omiga-processor"
