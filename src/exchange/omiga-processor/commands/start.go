@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/mitchellh/mapstructure"
+	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
@@ -16,7 +17,12 @@ import (
 	"go.uber.org/zap"
 )
 
+type startOptions struct {
+	name string
+}
+
 func startCommand() *cobra.Command {
+	opt := startOptions{}
 	cmd := &cobra.Command{
 		Use:   "start",
 		Short: "Start omiga-processor",
@@ -39,6 +45,8 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
+			pulsarSettings.SubscriptionName = pulsarSettings.SubscriptionName + "-" + opt.name
+
 			ctx, cancelFunc := context.WithCancel(context.Background())
 
 			sigc := make(chan os.Signal, 1)
@@ -51,6 +59,15 @@ func startCommand() *cobra.Command {
 				<-sigc
 				cancelFunc()
 			}()
+
+			_, err = NewOrderBookSimulator(
+				ctx,
+				sugarLogger,
+				pulsarSettings,
+				orderbookv1.TopicName)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
 
 			messageConsumer, err := NewMessageConsumer(
 				sugarLogger,
@@ -86,6 +103,8 @@ func startCommand() *cobra.Command {
 			}
 		},
 	}
+
+	cmd.Flags().StringVar(&opt.name, "name", "", "The omiga-processor instance name")
 
 	return cmd
 }

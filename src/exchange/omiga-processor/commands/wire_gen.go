@@ -7,8 +7,12 @@
 package commands
 
 import (
+	"context"
+	"github.com/omiga-group/omiga/src/exchange/omiga-processor/simulators"
 	"github.com/omiga-group/omiga/src/exchange/omiga-processor/subscribers"
+	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
+	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"go.uber.org/zap"
@@ -31,4 +35,21 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	}
 	consumer := syntheticorderv1.NewConsumer(logger, subscriber, messageConsumer)
 	return consumer, nil
+}
+
+func NewOrderBookSimulator(ctx context.Context, logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (simulators.OrderBookSimulator, error) {
+	cronService, err := cron.NewCronService(logger)
+	if err != nil {
+		return nil, err
+	}
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarSettings, topic)
+	if err != nil {
+		return nil, err
+	}
+	producer := orderbookv1.NewProducer(logger, messageProducer)
+	orderBookSimulator, err := simulators.NewOrderBookSimulator(ctx, logger, cronService, producer)
+	if err != nil {
+		return nil, err
+	}
+	return orderBookSimulator, nil
 }
