@@ -31,12 +31,13 @@ type Metadata struct {
 }
     
     
-    // Type represents an enum of string.
+    
+// Type represents an enum of string.
 type Type string
 
 const (
   TypeOrderSubmitted Type = "orderSubmitted"
-  TypeOrderCancel = "orderCancel"
+  TypeOrderCancel Type = "orderCancel"
 )
     
     
@@ -83,24 +84,26 @@ type Currency struct {
 }
     
     
-    // OrderType represents an enum of string.
+    
+// OrderType represents an enum of string.
 type OrderType string
 
 const (
   OrderTypeInstant OrderType = "INSTANT"
-  OrderTypeMarket = "MARKET"
-  OrderTypeLimit = "LIMIT"
-  OrderTypeStop = "STOP"
-  OrderTypeTrailingStop = "TRAILING_STOP"
+  OrderTypeMarket OrderType = "MARKET"
+  OrderTypeLimit OrderType = "LIMIT"
+  OrderTypeStop OrderType = "STOP"
+  OrderTypeTrailingStop OrderType = "TRAILING_STOP"
 )
     
     
-    // OrderSide represents an enum of string.
+    
+// OrderSide represents an enum of string.
 type OrderSide string
 
 const (
   OrderSideBid OrderSide = "BID"
-  OrderSideAsk = "ASK"
+  OrderSideAsk OrderSide = "ASK"
 )
     
     

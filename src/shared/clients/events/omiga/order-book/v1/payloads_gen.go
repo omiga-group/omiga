@@ -31,7 +31,8 @@ type Metadata struct {
 }
     
     
-    // Type represents an enum of string.
+    
+// Type represents an enum of string.
 type Type string
 
 const (

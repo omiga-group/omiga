@@ -39,10 +39,9 @@ export default async function ({ asyncapi, params }) {
                 break;
             }
 
-            const tag =
-              isRequired
-                ? `\`json:"${fieldName}"\``
-                : `\`json:"${fieldName},omitempty"\``
+            const tag = isRequired
+              ? `\`json:"${fieldName}"\``
+              : `\`json:"${fieldName},omitempty"\``;
 
             return `${formattedFieldName} ${unrequiredMark}${finalFieldType} ${tag} ${description}`;
           },
@@ -67,9 +66,27 @@ type ID uuid.UUID
 `;
 
   models.forEach((model) => {
+    let result = model.result;
+
+    if (model.model.type === "string" && model.model.enum) {
+      result = result.split("\n").reduce((reduction, line) => {
+        if (line.indexOf(` = \"`) === -1) {
+          return `${reduction}\n${line}`;
+        }
+
+        if (line.indexOf(` ${model.modelName} = \"`) !== -1) {
+          return `${reduction}\n${line}`;
+        }
+
+        const updatedLine = line.replace(' = "', ` ${model.modelName} = \"`);
+
+        return `${reduction}\n${updatedLine}`;
+      }, "");
+    }
+
     payloadContent += `
     ${model.dependencies.join("\n")}
-    ${model.result}
+    ${result}
     `;
   });
 
