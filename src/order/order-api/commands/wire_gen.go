@@ -44,20 +44,20 @@ func NewEntgoClient(logger *zap.SugaredLogger, postgresSettings postgres.Postgre
 	return entgoClient, nil
 }
 
-func NewOrderOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, outboxSettings outbox.OutboxSettings, topic string, entgoClinet repositories.EntgoClient, cronService cron.CronService) (outbox2.OutboxBackgroundService, error) {
+func NewOrderOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, outboxSettings outbox.OutboxSettings, topic string, entgoClient repositories.EntgoClient, cronService cron.CronService) (outbox2.OutboxBackgroundService, error) {
 	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarSettings, topic)
 	if err != nil {
 		return nil, err
 	}
-	outboxBackgroundService, err := outbox2.NewOutboxBackgroundService(ctx, logger, outboxSettings, messageProducer, topic, entgoClinet, cronService)
+	outboxBackgroundService, err := outbox2.NewOutboxBackgroundService(ctx, logger, outboxSettings, messageProducer, topic, entgoClient, cronService)
 	if err != nil {
 		return nil, err
 	}
 	return outboxBackgroundService, nil
 }
 
-func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSettings, entgoClinet repositories.EntgoClient, orderOutboxBackgroundService outbox2.OutboxBackgroundService) (http.HttpServer, error) {
-	outboxPublisher, err := outbox2.NewOutboxPublisher(logger, entgoClinet)
+func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSettings, entgoClient repositories.EntgoClient, orderOutboxBackgroundService outbox2.OutboxBackgroundService) (http.HttpServer, error) {
+	outboxPublisher, err := outbox2.NewOutboxPublisher(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}
@@ -65,11 +65,11 @@ func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSetti
 	if err != nil {
 		return nil, err
 	}
-	orderService, err := services.NewOrderService(logger, entgoClinet, orderPublisher)
+	orderService, err := services.NewOrderService(logger, entgoClient, orderPublisher)
 	if err != nil {
 		return nil, err
 	}
-	server, err := graphql.NewGraphQLServer(entgoClinet, orderService, orderOutboxBackgroundService)
+	server, err := graphql.NewGraphQLServer(entgoClient, orderService, orderOutboxBackgroundService)
 	if err != nil {
 		return nil, err
 	}

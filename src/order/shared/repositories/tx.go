@@ -16,6 +16,8 @@ type Tx struct {
 	config
 	// Order is the client for interacting with the Order builders.
 	Order *OrderClient
+	// OrderBook is the client for interacting with the OrderBook builders.
+	OrderBook *OrderBookClient
 	// Outbox is the client for interacting with the Outbox builders.
 	Outbox *OutboxClient
 
@@ -154,6 +156,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Order = NewOrderClient(tx.config)
+	tx.OrderBook = NewOrderBookClient(tx.config)
 	tx.Outbox = NewOutboxClient(tx.config)
 }
 

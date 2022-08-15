@@ -7,15 +7,30 @@
 package commands
 
 import (
+	"github.com/omiga-group/omiga/src/order/order-processor/services"
 	"github.com/omiga-group/omiga/src/order/order-processor/subscribers"
+	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
+
+func NewEntgoClient(logger *zap.SugaredLogger, postgresSettings postgres.PostgresSettings) (repositories.EntgoClient, error) {
+	database, err := postgres.NewPostgres(logger, postgresSettings)
+	if err != nil {
+		return nil, err
+	}
+	entgoClient, err := repositories.NewEntgoClient(logger, database)
+	if err != nil {
+		return nil, err
+	}
+	return entgoClient, nil
+}
 
 func NewMessageConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageConsumer, error) {
 	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarSettings, topic)
@@ -34,8 +49,12 @@ func NewOrderConsumer(logger *zap.SugaredLogger, messageConsumer messaging.Messa
 	return consumer, nil
 }
 
-func NewOrderBookConsumer(logger *zap.SugaredLogger, messageConsumer messaging.MessageConsumer) (orderbookv1.Consumer, error) {
-	subscriber, err := subscribers.NewOrderBookSubscriber(logger)
+func NewOrderBookConsumer(logger *zap.SugaredLogger, messageConsumer messaging.MessageConsumer, entgoClient repositories.EntgoClient) (orderbookv1.Consumer, error) {
+	orderBookService, err := services.NewOrderBookService(logger, entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	subscriber, err := subscribers.NewOrderBookSubscriber(logger, orderBookService)
 	if err != nil {
 		return nil, err
 	}

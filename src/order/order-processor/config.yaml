@@ -2,3 +2,7 @@ pulsar:
   url: "pulsar://localhost:6650"
   SubscriptionName: "order-processor"
   producerName: "order-processor"
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/order"
+  maxOpenConns: 10

@@ -2,29 +2,31 @@ package subscribers
 
 import (
 	"context"
-	"encoding/json"
 
+	"github.com/omiga-group/omiga/src/order/order-processor/services"
+	"github.com/omiga-group/omiga/src/order/shared/models"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"go.uber.org/zap"
 )
 
 type orderBookSubscriber struct {
-	logger *zap.SugaredLogger
+	logger           *zap.SugaredLogger
+	orderBookService services.OrderBookService
 }
 
-func NewOrderBookSubscriber(logger *zap.SugaredLogger) (orderbookv1.Subscriber, error) {
+func NewOrderBookSubscriber(
+	logger *zap.SugaredLogger,
+	orderBookService services.OrderBookService) (orderbookv1.Subscriber, error) {
 	return &orderBookSubscriber{
-		logger: logger,
+		logger:           logger,
+		orderBookService: orderBookService,
 	}, nil
 }
 
-func (os *orderBookSubscriber) Handle(ctx context.Context, event orderbookv1.OrderBookEvent) error {
-	data, err := json.Marshal(event)
-	if err != nil {
-		return err
-	}
-
-	os.logger.Infof("Processing OrderBookEvent event: %s", string(data))
-
-	return nil
+func (obs *orderBookSubscriber) Handle(ctx context.Context, event orderbookv1.OrderBookEvent) error {
+	return obs.orderBookService.Handle(
+		ctx,
+		event.Data.ExchangeId,
+		event.Metadata.Time,
+		models.OrderBook{})
 }

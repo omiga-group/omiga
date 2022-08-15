@@ -16,6 +16,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/hashicorp/go-multierror"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
+	"github.com/omiga-group/omiga/src/order/shared/repositories/orderbook"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/outbox"
 	"golang.org/x/sync/semaphore"
 )
@@ -69,6 +70,41 @@ func (o *Order) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[1] = &Field{
 		Type:  "[]models.Exchange",
 		Name:  "preferred_exchanges",
+		Value: string(buf),
+	}
+	return node, nil
+}
+
+func (ob *OrderBook) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ob.ID,
+		Type:   "OrderBook",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 0),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ob.ExchangeID); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "string",
+		Name:  "exchange_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ob.LastUpdated); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "last_updated",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ob.OrderBook); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "models.OrderBook",
+		Name:  "order_book",
 		Value: string(buf),
 	}
 	return node, nil
@@ -236,6 +272,18 @@ func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error)
 			return nil, err
 		}
 		return n, nil
+	case orderbook.Table:
+		query := c.OrderBook.Query().
+			Where(orderbook.ID(id))
+		query, err := query.CollectFields(ctx, "OrderBook")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case outbox.Table:
 		query := c.Outbox.Query().
 			Where(outbox.ID(id))
@@ -325,6 +373,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 		query := c.Order.Query().
 			Where(order.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "Order")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case orderbook.Table:
+		query := c.OrderBook.Query().
+			Where(orderbook.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "OrderBook")
 		if err != nil {
 			return nil, err
 		}

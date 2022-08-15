@@ -7,8 +7,9 @@ import "context"
 // SchemaConfig represents alternative schema names for all tables
 // that can be passed at runtime.
 type SchemaConfig struct {
-	Order  string // Order table.
-	Outbox string // Outbox table.
+	Order     string // Order table.
+	OrderBook string // OrderBook table.
+	Outbox    string // Outbox table.
 }
 
 type schemaCtxKey struct{}

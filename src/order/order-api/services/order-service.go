@@ -10,7 +10,7 @@ import (
 )
 
 type OrderService interface {
-	Submit(ctx context.Context, request models.Order) (*models.Order, error)
+	Submit(ctx context.Context, order models.Order) (*models.Order, error)
 }
 
 type orderService struct {

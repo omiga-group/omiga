@@ -12,6 +12,7 @@ import (
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -35,6 +36,11 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
+			var postgresSettings postgres.PostgresSettings
+			if err := mapstructure.Decode(viper.Get(postgres.ConfigKey), &postgresSettings); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
 			var pulsarSettings pulsar.PulsarSettings
 			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {
 				sugarLogger.Fatal(err)
@@ -52,6 +58,13 @@ func startCommand() *cobra.Command {
 				<-sigc
 				cancelFunc()
 			}()
+
+			entgoClient, err := NewEntgoClient(
+				sugarLogger,
+				postgresSettings)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
 
 			orderMessageConsumer, err := NewMessageConsumer(
 				sugarLogger,
@@ -87,7 +100,8 @@ func startCommand() *cobra.Command {
 
 			orderBookConsumer, err := NewOrderBookConsumer(
 				sugarLogger,
-				orderBookMessageConsumer)
+				orderBookMessageConsumer,
+				entgoClient)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

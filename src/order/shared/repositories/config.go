@@ -31,8 +31,9 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
-	Order  []ent.Hook
-	Outbox []ent.Hook
+	Order     []ent.Hook
+	OrderBook []ent.Hook
+	Outbox    []ent.Hook
 }
 
 // Options applies the options on the config object.

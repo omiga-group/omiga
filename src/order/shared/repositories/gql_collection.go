@@ -56,6 +56,52 @@ func newOrderPaginateArgs(rv map[string]interface{}) *orderPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ob *OrderBookQuery) CollectFields(ctx context.Context, satisfies ...string) (*OrderBookQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return ob, nil
+	}
+	if err := ob.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return ob, nil
+}
+
+func (ob *OrderBookQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	return nil
+}
+
+type orderbookPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []OrderBookPaginateOption
+}
+
+func newOrderBookPaginateArgs(rv map[string]interface{}) *orderbookPaginateArgs {
+	args := &orderbookPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*OrderBookWhereInput); ok {
+		args.opts = append(args.opts, WithOrderBookFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (o *OutboxQuery) CollectFields(ctx context.Context, satisfies ...string) (*OutboxQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {

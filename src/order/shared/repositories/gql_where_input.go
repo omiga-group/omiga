@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
+	"github.com/omiga-group/omiga/src/order/shared/repositories/orderbook"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/predicate"
 )
@@ -133,6 +134,218 @@ func (i *OrderWhereInput) P() (predicate.Order, error) {
 		return predicates[0], nil
 	default:
 		return order.And(predicates...), nil
+	}
+}
+
+// OrderBookWhereInput represents a where input for filtering OrderBook queries.
+type OrderBookWhereInput struct {
+	Predicates []predicate.OrderBook  `json:"-"`
+	Not        *OrderBookWhereInput   `json:"not,omitempty"`
+	Or         []*OrderBookWhereInput `json:"or,omitempty"`
+	And        []*OrderBookWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *int  `json:"id,omitempty"`
+	IDNEQ   *int  `json:"idNEQ,omitempty"`
+	IDIn    []int `json:"idIn,omitempty"`
+	IDNotIn []int `json:"idNotIn,omitempty"`
+	IDGT    *int  `json:"idGT,omitempty"`
+	IDGTE   *int  `json:"idGTE,omitempty"`
+	IDLT    *int  `json:"idLT,omitempty"`
+	IDLTE   *int  `json:"idLTE,omitempty"`
+
+	// "exchange_id" field predicates.
+	ExchangeID             *string  `json:"exchangeID,omitempty"`
+	ExchangeIDNEQ          *string  `json:"exchangeIDNEQ,omitempty"`
+	ExchangeIDIn           []string `json:"exchangeIDIn,omitempty"`
+	ExchangeIDNotIn        []string `json:"exchangeIDNotIn,omitempty"`
+	ExchangeIDGT           *string  `json:"exchangeIDGT,omitempty"`
+	ExchangeIDGTE          *string  `json:"exchangeIDGTE,omitempty"`
+	ExchangeIDLT           *string  `json:"exchangeIDLT,omitempty"`
+	ExchangeIDLTE          *string  `json:"exchangeIDLTE,omitempty"`
+	ExchangeIDContains     *string  `json:"exchangeIDContains,omitempty"`
+	ExchangeIDHasPrefix    *string  `json:"exchangeIDHasPrefix,omitempty"`
+	ExchangeIDHasSuffix    *string  `json:"exchangeIDHasSuffix,omitempty"`
+	ExchangeIDEqualFold    *string  `json:"exchangeIDEqualFold,omitempty"`
+	ExchangeIDContainsFold *string  `json:"exchangeIDContainsFold,omitempty"`
+
+	// "last_updated" field predicates.
+	LastUpdated      *time.Time  `json:"lastUpdated,omitempty"`
+	LastUpdatedNEQ   *time.Time  `json:"lastUpdatedNEQ,omitempty"`
+	LastUpdatedIn    []time.Time `json:"lastUpdatedIn,omitempty"`
+	LastUpdatedNotIn []time.Time `json:"lastUpdatedNotIn,omitempty"`
+	LastUpdatedGT    *time.Time  `json:"lastUpdatedGT,omitempty"`
+	LastUpdatedGTE   *time.Time  `json:"lastUpdatedGTE,omitempty"`
+	LastUpdatedLT    *time.Time  `json:"lastUpdatedLT,omitempty"`
+	LastUpdatedLTE   *time.Time  `json:"lastUpdatedLTE,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *OrderBookWhereInput) AddPredicates(predicates ...predicate.OrderBook) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the OrderBookWhereInput filter on the OrderBookQuery builder.
+func (i *OrderBookWhereInput) Filter(q *OrderBookQuery) (*OrderBookQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyOrderBookWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyOrderBookWhereInput is returned in case the OrderBookWhereInput is empty.
+var ErrEmptyOrderBookWhereInput = errors.New("repositories: empty predicate OrderBookWhereInput")
+
+// P returns a predicate for filtering orderbooks.
+// An error is returned if the input is empty or invalid.
+func (i *OrderBookWhereInput) P() (predicate.OrderBook, error) {
+	var predicates []predicate.OrderBook
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, orderbook.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.OrderBook, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, orderbook.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.OrderBook, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, orderbook.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, orderbook.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, orderbook.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, orderbook.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, orderbook.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, orderbook.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, orderbook.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, orderbook.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, orderbook.IDLTE(*i.IDLTE))
+	}
+	if i.ExchangeID != nil {
+		predicates = append(predicates, orderbook.ExchangeIDEQ(*i.ExchangeID))
+	}
+	if i.ExchangeIDNEQ != nil {
+		predicates = append(predicates, orderbook.ExchangeIDNEQ(*i.ExchangeIDNEQ))
+	}
+	if len(i.ExchangeIDIn) > 0 {
+		predicates = append(predicates, orderbook.ExchangeIDIn(i.ExchangeIDIn...))
+	}
+	if len(i.ExchangeIDNotIn) > 0 {
+		predicates = append(predicates, orderbook.ExchangeIDNotIn(i.ExchangeIDNotIn...))
+	}
+	if i.ExchangeIDGT != nil {
+		predicates = append(predicates, orderbook.ExchangeIDGT(*i.ExchangeIDGT))
+	}
+	if i.ExchangeIDGTE != nil {
+		predicates = append(predicates, orderbook.ExchangeIDGTE(*i.ExchangeIDGTE))
+	}
+	if i.ExchangeIDLT != nil {
+		predicates = append(predicates, orderbook.ExchangeIDLT(*i.ExchangeIDLT))
+	}
+	if i.ExchangeIDLTE != nil {
+		predicates = append(predicates, orderbook.ExchangeIDLTE(*i.ExchangeIDLTE))
+	}
+	if i.ExchangeIDContains != nil {
+		predicates = append(predicates, orderbook.ExchangeIDContains(*i.ExchangeIDContains))
+	}
+	if i.ExchangeIDHasPrefix != nil {
+		predicates = append(predicates, orderbook.ExchangeIDHasPrefix(*i.ExchangeIDHasPrefix))
+	}
+	if i.ExchangeIDHasSuffix != nil {
+		predicates = append(predicates, orderbook.ExchangeIDHasSuffix(*i.ExchangeIDHasSuffix))
+	}
+	if i.ExchangeIDEqualFold != nil {
+		predicates = append(predicates, orderbook.ExchangeIDEqualFold(*i.ExchangeIDEqualFold))
+	}
+	if i.ExchangeIDContainsFold != nil {
+		predicates = append(predicates, orderbook.ExchangeIDContainsFold(*i.ExchangeIDContainsFold))
+	}
+	if i.LastUpdated != nil {
+		predicates = append(predicates, orderbook.LastUpdatedEQ(*i.LastUpdated))
+	}
+	if i.LastUpdatedNEQ != nil {
+		predicates = append(predicates, orderbook.LastUpdatedNEQ(*i.LastUpdatedNEQ))
+	}
+	if len(i.LastUpdatedIn) > 0 {
+		predicates = append(predicates, orderbook.LastUpdatedIn(i.LastUpdatedIn...))
+	}
+	if len(i.LastUpdatedNotIn) > 0 {
+		predicates = append(predicates, orderbook.LastUpdatedNotIn(i.LastUpdatedNotIn...))
+	}
+	if i.LastUpdatedGT != nil {
+		predicates = append(predicates, orderbook.LastUpdatedGT(*i.LastUpdatedGT))
+	}
+	if i.LastUpdatedGTE != nil {
+		predicates = append(predicates, orderbook.LastUpdatedGTE(*i.LastUpdatedGTE))
+	}
+	if i.LastUpdatedLT != nil {
+		predicates = append(predicates, orderbook.LastUpdatedLT(*i.LastUpdatedLT))
+	}
+	if i.LastUpdatedLTE != nil {
+		predicates = append(predicates, orderbook.LastUpdatedLTE(*i.LastUpdatedLTE))
+	}
+
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyOrderBookWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return orderbook.And(predicates...), nil
 	}
 }
 

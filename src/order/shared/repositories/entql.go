@@ -4,6 +4,7 @@ package repositories
 
 import (
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
+	"github.com/omiga-group/omiga/src/order/shared/repositories/orderbook"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/outbox"
 
 	"entgo.io/ent/dialect/sql"
@@ -14,7 +15,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 2)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 3)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   order.Table,
@@ -31,6 +32,22 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   orderbook.Table,
+			Columns: orderbook.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt,
+				Column: orderbook.FieldID,
+			},
+		},
+		Type: "OrderBook",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			orderbook.FieldExchangeID:  {Type: field.TypeString, Column: orderbook.FieldExchangeID},
+			orderbook.FieldLastUpdated: {Type: field.TypeTime, Column: orderbook.FieldLastUpdated},
+			orderbook.FieldOrderBook:   {Type: field.TypeJSON, Column: orderbook.FieldOrderBook},
+		},
+	}
+	graph.Nodes[2] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   outbox.Table,
 			Columns: outbox.Columns,
@@ -112,6 +129,61 @@ func (f *OrderFilter) WherePreferredExchanges(p entql.BytesP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (obq *OrderBookQuery) addPredicate(pred func(s *sql.Selector)) {
+	obq.predicates = append(obq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OrderBookQuery builder.
+func (obq *OrderBookQuery) Filter() *OrderBookFilter {
+	return &OrderBookFilter{config: obq.config, predicateAdder: obq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OrderBookMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OrderBookMutation builder.
+func (m *OrderBookMutation) Filter() *OrderBookFilter {
+	return &OrderBookFilter{config: m.config, predicateAdder: m}
+}
+
+// OrderBookFilter provides a generic filtering capability at runtime for OrderBookQuery.
+type OrderBookFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OrderBookFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int predicate on the id field.
+func (f *OrderBookFilter) WhereID(p entql.IntP) {
+	f.Where(p.Field(orderbook.FieldID))
+}
+
+// WhereExchangeID applies the entql string predicate on the exchange_id field.
+func (f *OrderBookFilter) WhereExchangeID(p entql.StringP) {
+	f.Where(p.Field(orderbook.FieldExchangeID))
+}
+
+// WhereLastUpdated applies the entql time.Time predicate on the last_updated field.
+func (f *OrderBookFilter) WhereLastUpdated(p entql.TimeP) {
+	f.Where(p.Field(orderbook.FieldLastUpdated))
+}
+
+// WhereOrderBook applies the entql json.RawMessage predicate on the order_book field.
+func (f *OrderBookFilter) WhereOrderBook(p entql.BytesP) {
+	f.Where(p.Field(orderbook.FieldOrderBook))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (oq *OutboxQuery) addPredicate(pred func(s *sql.Selector)) {
 	oq.predicates = append(oq.predicates, pred)
 }
@@ -140,7 +212,7 @@ type OutboxFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OutboxFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

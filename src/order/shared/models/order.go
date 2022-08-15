@@ -71,3 +71,15 @@ type Order struct {
 	User               User
 	PreferredExchanges []Exchange
 }
+
+type OrderBookEntry struct {
+	Quantity Money
+	Price    Money
+}
+
+type OrderBook struct {
+	BaseCurrency    Currency
+	CounterCurrency Currency
+	Bids            []OrderBookEntry
+	Asks            []OrderBookEntry
+}

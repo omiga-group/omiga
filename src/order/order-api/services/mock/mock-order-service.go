@@ -36,16 +36,16 @@ func (m *MockOrderService) EXPECT() *MockOrderServiceMockRecorder {
 }
 
 // Submit mocks base method.
-func (m *MockOrderService) Submit(ctx context.Context, request models.Order) (*models.Order, error) {
+func (m *MockOrderService) Submit(ctx context.Context, order models.Order) (*models.Order, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Submit", ctx, request)
+	ret := m.ctrl.Call(m, "Submit", ctx, order)
 	ret0, _ := ret[0].(*models.Order)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Submit indicates an expected call of Submit.
-func (mr *MockOrderServiceMockRecorder) Submit(ctx, request interface{}) *gomock.Call {
+func (mr *MockOrderServiceMockRecorder) Submit(ctx, order interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Submit", reflect.TypeOf((*MockOrderService)(nil).Submit), ctx, request)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Submit", reflect.TypeOf((*MockOrderService)(nil).Submit), ctx, order)
 }

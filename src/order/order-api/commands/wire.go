@@ -60,7 +60,7 @@ func NewOrderOutboxBackgroundService(
 	pulsarSettings pulsar.PulsarSettings,
 	outboxSettings enterpriseOutbox.OutboxSettings,
 	topic string,
-	entgoClinet repositories.EntgoClient,
+	entgoClient repositories.EntgoClient,
 	cronService cron.CronService) (outbox.OutboxBackgroundService, error) {
 	wire.Build(
 		pulsar.NewPulsarMessageProducer,
@@ -72,7 +72,7 @@ func NewOrderOutboxBackgroundService(
 func NewHttpServer(
 	logger *zap.SugaredLogger,
 	appSettings configuration.AppSettings,
-	entgoClinet repositories.EntgoClient,
+	entgoClient repositories.EntgoClient,
 	orderOutboxBackgroundService outbox.OutboxBackgroundService) (http.HttpServer, error) {
 	wire.Build(
 		http.NewHttpServer,
