@@ -41,9 +41,8 @@ func (obp *orderBookPublisher) Publish(ctx context.Context, key string, orderBoo
 			Source: obp.appSettings.Source,
 			Type:   orderbookv1.TypeOrderBookUpdated,
 		},
+		Data: mappers.FromOrderBookToEventOrderBook(orderBook),
 	}
-
-	orderBookEvent.Data = mappers.FromOrderBookToEventOrderBook(orderBook)
 
 	return obp.orderBookProducer.Produce(
 		ctx,
