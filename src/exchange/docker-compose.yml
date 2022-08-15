@@ -26,8 +26,8 @@ services:
     networks:
       - omiga_network
 
-  omiga1-processor:
-    image: ${DOCKER_REGISTRY-}omiga1processor
+  omiga-processor1:
+    image: ${DOCKER_REGISTRY-}omigaprocessor1
     build:
       context: .
       dockerfile: exchange/omiga-processor/Dockerfile
