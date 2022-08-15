@@ -36,15 +36,15 @@ func (m *MockOrderBookPublisher) EXPECT() *MockOrderBookPublisherMockRecorder {
 }
 
 // Publish mocks base method.
-func (m *MockOrderBookPublisher) Publish(ctx context.Context, orderBook models.OrderBook) error {
+func (m *MockOrderBookPublisher) Publish(ctx context.Context, key string, orderBook models.OrderBook) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Publish", ctx, orderBook)
+	ret := m.ctrl.Call(m, "Publish", ctx, key, orderBook)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Publish indicates an expected call of Publish.
-func (mr *MockOrderBookPublisherMockRecorder) Publish(ctx, orderBook interface{}) *gomock.Call {
+func (mr *MockOrderBookPublisherMockRecorder) Publish(ctx, key, orderBook interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockOrderBookPublisher)(nil).Publish), ctx, orderBook)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockOrderBookPublisher)(nil).Publish), ctx, key, orderBook)
 }

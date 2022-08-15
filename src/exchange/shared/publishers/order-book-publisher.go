@@ -13,7 +13,7 @@ import (
 )
 
 type OrderBookPublisher interface {
-	Publish(ctx context.Context, orderBook models.OrderBook) error
+	Publish(ctx context.Context, key string, orderBook models.OrderBook) error
 }
 
 type orderBookPublisher struct {
@@ -33,7 +33,7 @@ func NewOrderBookPublisher(
 	}, nil
 }
 
-func (obp *orderBookPublisher) Publish(ctx context.Context, orderBook models.OrderBook) error {
+func (obp *orderBookPublisher) Publish(ctx context.Context, key string, orderBook models.OrderBook) error {
 	orderBookEvent := orderbookv1.OrderBookEvent{
 		Metadata: orderbookv1.Metadata{
 			Id:     orderbookv1.ID(uuid.New()),
@@ -47,6 +47,6 @@ func (obp *orderBookPublisher) Publish(ctx context.Context, orderBook models.Ord
 
 	return obp.orderBookProducer.Produce(
 		ctx,
-		"",
+		key,
 		orderBookEvent)
 }

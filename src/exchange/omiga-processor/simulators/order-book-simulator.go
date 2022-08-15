@@ -154,6 +154,7 @@ func (obs *orderBookSimulator) Run() {
 
 	if err := obs.orderBookPublisher.Publish(
 		obs.ctx,
+		obs.orderBookSimulatorSettings.ExchangeName,
 		orderBook); err != nil {
 		obs.logger.Errorf("Failed to publish order book. Error: %v", err)
 	}
