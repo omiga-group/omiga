@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/omiga-group/omiga/src/order/order-processor/services"
-	"github.com/omiga-group/omiga/src/order/shared/models"
+	"github.com/omiga-group/omiga/src/order/shared/mappers"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"go.uber.org/zap"
 )
@@ -28,5 +28,5 @@ func (obs *orderBookSubscriber) Handle(ctx context.Context, event orderbookv1.Or
 		ctx,
 		event.Data.ExchangeId,
 		event.Metadata.Time,
-		models.OrderBook{})
+		mappers.FromEventOrderBookToOrderBook(event.Data))
 }
