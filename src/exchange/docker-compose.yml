@@ -43,6 +43,40 @@ services:
     networks:
       - omiga_network
 
+  omiga-processor2:
+    image: ${DOCKER_REGISTRY-}omigaprocessor2
+    build:
+      context: .
+      dockerfile: exchange/omiga-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    command: /bin/omiga-processor start --name omiga-exchange2
+    environment:
+      OMIGA_ENVIRONMENT: dockercompose
+    depends_on:
+      - postgres
+      - exchange-database-migration
+      - pulsar
+    networks:
+      - omiga_network
+
+  omiga-processor3:
+    image: ${DOCKER_REGISTRY-}omigaprocessor3
+    build:
+      context: .
+      dockerfile: exchange/omiga-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    command: /bin/omiga-processor start --name omiga-exchange3
+    environment:
+      OMIGA_ENVIRONMENT: dockercompose
+    depends_on:
+      - postgres
+      - exchange-database-migration
+      - pulsar
+    networks:
+      - omiga_network
+
   binance-processor:
     image: ${DOCKER_REGISTRY-}binanceprocessor
     build:
