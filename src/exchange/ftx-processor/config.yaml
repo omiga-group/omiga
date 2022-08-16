@@ -3,6 +3,9 @@ pulsar:
   SubscriptionName: "ftx-processor"
   producerName: "ftx-processor"
 
+ftx:
+  websocketUrl: "wss://ftx.com/ws/"
+
 integration:
   api-key: "prod api key"
 service:

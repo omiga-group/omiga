@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/mitchellh/mapstructure"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configurations"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
@@ -31,6 +32,11 @@ func startCommand() *cobra.Command {
 
 			viper, err := configuration.SetupConfigReader(".")
 			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			var ftxSettings configurations.FtxSettings
+			if err := mapstructure.Decode(viper.Get(configurations.ConfigKey), &ftxSettings); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
@@ -70,6 +76,15 @@ func startCommand() *cobra.Command {
 			}
 
 			err = syntheticOrderConsumer.StartAsync(ctx)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			_, err = NewFtxOrderBookSubscriber(
+				ctx,
+				sugarLogger,
+				ftxSettings,
+				"ETH-PERP")
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

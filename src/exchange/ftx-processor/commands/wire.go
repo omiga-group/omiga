@@ -19,7 +19,9 @@
 package commands
 
 import (
+	"context"
 	"github.com/google/wire"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configurations"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/subscribers"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
@@ -27,14 +29,29 @@ import (
 	"go.uber.org/zap"
 )
 
-func NewMessageConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageConsumer, error) {
+func NewMessageConsumer(
+	logger *zap.SugaredLogger,
+	pulsarSettings pulsar.PulsarSettings,
+	topic string) (messaging.MessageConsumer, error) {
 	wire.Build(pulsar.NewPulsarMessageConsumer)
 
 	return nil, nil
 }
 
-func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messaging.MessageConsumer) (syntheticorderv1.Consumer, error) {
+func NewSyntheticOrderConsumer(
+	logger *zap.SugaredLogger,
+	messageConsumer messaging.MessageConsumer) (syntheticorderv1.Consumer, error) {
 	wire.Build(syntheticorderv1.NewConsumer, subscribers.NewSyntheticOrderSubscriber)
+
+	return nil, nil
+}
+
+func NewFtxOrderBookSubscriber(
+	ctx context.Context,
+	logger *zap.SugaredLogger,
+	ftxSettings configurations.FtxSettings,
+	market string) (subscribers.FtxOrderBookSubscriber, error) {
+	wire.Build(subscribers.NewFtxOrderBookSubscriber)
 
 	return nil, nil
 }

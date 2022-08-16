@@ -1,37 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"os"
-
-	"github.com/omiga-group/omiga/src/exchange/ftx-processor/business"
-	"github.com/omiga-group/omiga/src/exchange/ftx-processor/config"
+	"github.com/micro-business/go-core/pkg/util"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/commands"
 )
-
-const (
-	configPath = "config.yaml"
-)
-
-var (
-	environment = os.Getenv("OMIGA-ENV")
-)
-
-func init() {
-	if environment == "" {
-		environment = "prod"
-	}
-}
 
 func main() {
-	config.Intialize(configPath, environment)
-
-	business.Foo()
-
-	wait := make(chan bool)
-	select {
-	case done := <-wait:
-		fmt.Println(done)
-	}
-	// rootCmd := commands.Root()
-	// util.PrintIfError(rootCmd.Execute())
+	rootCmd := commands.Root()
+	util.PrintIfError(rootCmd.Execute())
 }

@@ -7,6 +7,8 @@
 package commands
 
 import (
+	"context"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configurations"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/subscribers"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
@@ -31,4 +33,12 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	}
 	consumer := syntheticorderv1.NewConsumer(logger, subscriber, messageConsumer)
 	return consumer, nil
+}
+
+func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, ftxSettings configurations.FtxSettings, market string) (subscribers.FtxOrderBookSubscriber, error) {
+	ftxOrderBookSubscriber, err := subscribers.NewFtxOrderBookSubscriber(ctx, logger, ftxSettings, market)
+	if err != nil {
+		return nil, err
+	}
+	return ftxOrderBookSubscriber, nil
 }
