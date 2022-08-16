@@ -29,16 +29,34 @@ func (p *FtxTime) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type operationType string
+
+const (
+	OperationTypeSubscribe   operationType = "subscribe"
+	OperationTypeUnsubscribe operationType = "unsubscribe"
+)
+
 type ftxRequest struct {
-	Op      string  `json:"op"`
-	Channel *string `json:"channel,omitempty"`
-	Market  *string `json:"market,omitempty"`
+	Op      operationType `json:"op"`
+	Channel *string       `json:"channel,omitempty"`
+	Market  *string       `json:"market,omitempty"`
 }
+
+type responseType string
+
+const (
+	ResponseTypeError        responseType = "error"
+	ResponseTypeSubscribed   responseType = "subscribed"
+	ResponseTypeUnsubscribed responseType = "unsubscribed"
+	ResponseTypeInfo         responseType = "info"
+	ResponseTypePartial      responseType = "partial"
+	ResponseTypeUpdate       responseType = "update"
+)
 
 type ftxOrderBook struct {
 	Channel string            `json:"channel"`
 	Market  string            `json:"market"`
-	Type    string            `json:"type"`
+	Type    responseType      `json:"type"`
 	Data    *ftxOrderBookData `json:"data,omitempty"`
 }
 
@@ -107,7 +125,7 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
 
 	channel := "orderbook"
 	if err := connection.WriteJSON(&ftxRequest{
-		Op:      "subscribe",
+		Op:      OperationTypeSubscribe,
 		Channel: &channel,
 		Market:  &fobs.market,
 	}); err != nil {
