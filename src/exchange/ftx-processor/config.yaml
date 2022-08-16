@@ -5,6 +5,9 @@ pulsar:
 
 ftx:
   websocketUrl: "wss://ftx.com/ws/"
+  orderBook:
+    markets:
+      - ETH-PERP
 
 integration:
   api-key: "prod api key"

@@ -80,13 +80,15 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			_, err = NewFtxOrderBookSubscriber(
-				ctx,
-				sugarLogger,
-				ftxSettings,
-				"ETH-PERP")
-			if err != nil {
-				sugarLogger.Fatal(err)
+			for _, market := range ftxSettings.OrderBook.Markets {
+				_, err = NewFtxOrderBookSubscriber(
+					ctx,
+					sugarLogger,
+					ftxSettings,
+					market)
+				if err != nil {
+					sugarLogger.Fatal(err)
+				}
 			}
 
 			for {
