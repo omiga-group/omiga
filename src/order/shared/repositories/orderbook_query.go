@@ -265,7 +265,6 @@ func (obq *OrderBookQuery) Clone() *OrderBookQuery {
 //		GroupBy(orderbook.FieldExchangeID).
 //		Aggregate(repositories.Count()).
 //		Scan(ctx, &v)
-//
 func (obq *OrderBookQuery) GroupBy(field string, fields ...string) *OrderBookGroupBy {
 	grbuild := &OrderBookGroupBy{config: obq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -292,7 +291,6 @@ func (obq *OrderBookQuery) GroupBy(field string, fields ...string) *OrderBookGro
 //	client.OrderBook.Query().
 //		Select(orderbook.FieldExchangeID).
 //		Scan(ctx, &v)
-//
 func (obq *OrderBookQuery) Select(fields ...string) *OrderBookSelect {
 	obq.fields = append(obq.fields, fields...)
 	selbuild := &OrderBookSelect{OrderBookQuery: obq}

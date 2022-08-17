@@ -198,7 +198,6 @@ func (obc *OrderBookCreate) createSpec() (*OrderBook, *sqlgraph.CreateSpec) {
 //			SetExchangeID(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (obc *OrderBookCreate) OnConflict(opts ...sql.ConflictOption) *OrderBookUpsertOne {
 	obc.conflict = opts
 	return &OrderBookUpsertOne{
@@ -212,7 +211,6 @@ func (obc *OrderBookCreate) OnConflict(opts ...sql.ConflictOption) *OrderBookUps
 //	client.OrderBook.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (obc *OrderBookCreate) OnConflictColumns(columns ...string) *OrderBookUpsertOne {
 	obc.conflict = append(obc.conflict, sql.ConflictColumns(columns...))
 	return &OrderBookUpsertOne{
@@ -277,7 +275,6 @@ func (u *OrderBookUpsert) UpdateOrderBook() *OrderBookUpsert {
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
-//
 func (u *OrderBookUpsertOne) UpdateNewValues() *OrderBookUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
@@ -286,10 +283,9 @@ func (u *OrderBookUpsertOne) UpdateNewValues() *OrderBookUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.OrderBook.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.OrderBook.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *OrderBookUpsertOne) Ignore() *OrderBookUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -486,7 +482,6 @@ func (obcb *OrderBookCreateBulk) ExecX(ctx context.Context) {
 //			SetExchangeID(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (obcb *OrderBookCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderBookUpsertBulk {
 	obcb.conflict = opts
 	return &OrderBookUpsertBulk{
@@ -500,7 +495,6 @@ func (obcb *OrderBookCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderBo
 //	client.OrderBook.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (obcb *OrderBookCreateBulk) OnConflictColumns(columns ...string) *OrderBookUpsertBulk {
 	obcb.conflict = append(obcb.conflict, sql.ConflictColumns(columns...))
 	return &OrderBookUpsertBulk{
@@ -522,7 +516,6 @@ type OrderBookUpsertBulk struct {
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
-//
 func (u *OrderBookUpsertBulk) UpdateNewValues() *OrderBookUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
@@ -534,7 +527,6 @@ func (u *OrderBookUpsertBulk) UpdateNewValues() *OrderBookUpsertBulk {
 //	client.OrderBook.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *OrderBookUpsertBulk) Ignore() *OrderBookUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
