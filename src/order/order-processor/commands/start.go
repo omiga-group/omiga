@@ -8,7 +8,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/mitchellh/mapstructure"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
@@ -36,15 +35,8 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			var postgresSettings postgres.PostgresSettings
-			if err := mapstructure.Decode(viper.Get(postgres.ConfigKey), &postgresSettings); err != nil {
-				sugarLogger.Fatal(err)
-			}
-
-			var pulsarSettings pulsar.PulsarSettings
-			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {
-				sugarLogger.Fatal(err)
-			}
+			postgresSettings := postgres.GetPostgresSettings(viper)
+			pulsarSettings := pulsar.GetPulsarSettings(viper)
 
 			ctx, cancelFunc := context.WithCancel(context.Background())
 

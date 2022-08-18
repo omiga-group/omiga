@@ -20,7 +20,7 @@ services:
       target: local
     restart: on-failure
     environment:
-      OMIGA_ENVIRONMENT: dockercompose
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
     depends_on:
       - postgres-exchange-database-initializer
     networks:
@@ -35,7 +35,7 @@ services:
     restart: unless-stopped
     command: /bin/omiga-processor start --name omiga-exchange1
     environment:
-      OMIGA_ENVIRONMENT: dockercompose
+      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
     depends_on:
       - postgres
       - exchange-database-migration
@@ -52,7 +52,7 @@ services:
     restart: unless-stopped
     command: /bin/omiga-processor start --name omiga-exchange2
     environment:
-      OMIGA_ENVIRONMENT: dockercompose
+      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
     depends_on:
       - postgres
       - exchange-database-migration
@@ -69,7 +69,7 @@ services:
     restart: unless-stopped
     command: /bin/omiga-processor start --name omiga-exchange3
     environment:
-      OMIGA_ENVIRONMENT: dockercompose
+      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
     depends_on:
       - postgres
       - exchange-database-migration
@@ -85,7 +85,7 @@ services:
       target: local
     restart: unless-stopped
     environment:
-      OMIGA_ENVIRONMENT: dockercompose
+      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
     depends_on:
       - postgres
       - exchange-database-migration
@@ -101,7 +101,7 @@ services:
       target: local
     restart: unless-stopped
     environment:
-      OMIGA_ENVIRONMENT: dockercompose
+      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
     depends_on:
       - postgres
       - exchange-database-migration

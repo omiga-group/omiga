@@ -7,8 +7,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+const KeyDelimiter = "_"
+
 func SetupConfigReader(path string) (*viper.Viper, error) {
-	viperInstance := viper.NewWithOptions(viper.KeyDelimiter("_"))
+	viperInstance := viper.NewWithOptions(viper.KeyDelimiter(KeyDelimiter))
 
 	omigaEnv := strings.Trim(os.Getenv("OMIGA_ENVIRONMENT"), " ")
 

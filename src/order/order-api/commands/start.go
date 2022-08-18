@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/google/uuid"
-	"github.com/mitchellh/mapstructure"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
@@ -35,27 +34,14 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			var appSettings configuration.AppSettings
-			if err := mapstructure.Decode(viper.Get(configuration.AppSettingsConfigKey), &appSettings); err != nil {
-				sugarLogger.Fatal(err)
-			}
+			appSettings := configuration.GetAppSettings(viper)
 
-			var postgresSettings postgres.PostgresSettings
-			if err := mapstructure.Decode(viper.Get(postgres.ConfigKey), &postgresSettings); err != nil {
-				sugarLogger.Fatal(err)
-			}
+			postgresSettings := postgres.GetPostgresSettings(viper)
 
-			var pulsarSettings pulsar.PulsarSettings
-			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {
-				sugarLogger.Fatal(err)
-			}
-
+			pulsarSettings := pulsar.GetPulsarSettings(viper)
 			pulsarSettings.ProducerName = pulsarSettings.ProducerName + uuid.NewString()
 
-			var outboxSettings outbox.OutboxSettings
-			if err := mapstructure.Decode(viper.Get(outbox.ConfigKey), &outboxSettings); err != nil {
-				sugarLogger.Fatal(err)
-			}
+			outboxSettings := outbox.GetOutboxSettings(viper)
 
 			entgoClient, err := NewEntgoClient(
 				sugarLogger,
