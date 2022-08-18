@@ -21,7 +21,7 @@ package commands
 import (
 	"context"
 	"github.com/google/wire"
-	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configurations"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/subscribers"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
@@ -31,7 +31,7 @@ import (
 
 func NewMessageConsumer(
 	logger *zap.SugaredLogger,
-	pulsarSettings pulsar.PulsarSettings,
+	pulsarConfig pulsar.PulsarConfig,
 	topic string) (messaging.MessageConsumer, error) {
 	wire.Build(pulsar.NewPulsarMessageConsumer)
 
@@ -49,7 +49,7 @@ func NewSyntheticOrderConsumer(
 func NewFtxOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	ftxSettings configurations.FtxSettings,
+	ftxSettings configuration.FtxSettings,
 	market string) (subscribers.FtxOrderBookSubscriber, error) {
 	wire.Build(subscribers.NewFtxOrderBookSubscriber)
 

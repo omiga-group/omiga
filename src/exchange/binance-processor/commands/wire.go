@@ -27,7 +27,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func NewMessageConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageConsumer, error) {
+func NewMessageConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, topic string) (messaging.MessageConsumer, error) {
 	wire.Build(pulsar.NewPulsarMessageConsumer)
 
 	return nil, nil

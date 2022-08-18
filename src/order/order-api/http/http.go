@@ -17,16 +17,16 @@ type HttpServer interface {
 
 type httpServer struct {
 	logger        *zap.SugaredLogger
-	appSettings   configuration.AppSettings
+	appConfig     configuration.AppConfig
 	graphQLServer *handler.Server
 }
 
 func NewHttpServer(
 	logger *zap.SugaredLogger,
-	appSettings configuration.AppSettings,
+	appConfig configuration.AppConfig,
 	graphQLServer *handler.Server) (HttpServer, error) {
 	return &httpServer{
-		appSettings:   appSettings,
+		appConfig:     appConfig,
 		graphQLServer: graphQLServer,
 		logger:        logger,
 	}, nil
@@ -41,9 +41,9 @@ func (hs *httpServer) ListenAndServe() error {
 
 	handler := cors.AllowAll().Handler(mux)
 
-	hs.logger.Infof("Listening on: %s", hs.appSettings.ListeningInterface)
+	hs.logger.Infof("Listening on: %s", hs.appConfig.ListeningInterface)
 
-	return http.ListenAndServe(hs.appSettings.ListeningInterface, handler)
+	return http.ListenAndServe(hs.appConfig.ListeningInterface, handler)
 }
 
 func (hs *httpServer) healthHandler(w http.ResponseWriter, req *http.Request) {

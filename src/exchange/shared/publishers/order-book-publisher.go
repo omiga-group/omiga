@@ -18,17 +18,17 @@ type OrderBookPublisher interface {
 
 type orderBookPublisher struct {
 	logger            *zap.SugaredLogger
-	appSettings       configuration.AppSettings
+	appConfig         configuration.AppConfig
 	orderBookProducer orderbookv1.Producer
 }
 
 func NewOrderBookPublisher(
 	logger *zap.SugaredLogger,
-	appSettings configuration.AppSettings,
+	appConfig configuration.AppConfig,
 	orderBookProducer orderbookv1.Producer) (OrderBookPublisher, error) {
 	return &orderBookPublisher{
 		logger:            logger,
-		appSettings:       appSettings,
+		appConfig:         appConfig,
 		orderBookProducer: orderBookProducer,
 	}, nil
 }
@@ -38,7 +38,7 @@ func (obp *orderBookPublisher) Publish(ctx context.Context, key string, orderBoo
 		Metadata: orderbookv1.Metadata{
 			Id:     orderbookv1.ID(uuid.New()),
 			Time:   time.Now(),
-			Source: obp.appSettings.Source,
+			Source: obp.appConfig.Source,
 			Type:   orderbookv1.TypeOrderBookUpdated,
 		},
 		Data: mappers.FromOrderBookToEventOrderBook(orderBook),

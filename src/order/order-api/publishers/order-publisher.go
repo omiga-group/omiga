@@ -24,18 +24,18 @@ type OrderPublisher interface {
 
 type orderPublisher struct {
 	logger               *zap.SugaredLogger
-	appSettings          configuration.AppSettings
+	appConfig            configuration.AppConfig
 	orderOutboxPublisher outbox.OutboxPublisher
 }
 
 func NewOrderPublisher(
 	logger *zap.SugaredLogger,
-	appSettings configuration.AppSettings,
+	appConfig configuration.AppConfig,
 	orderOutboxPublisher outbox.OutboxPublisher) (OrderPublisher, error) {
 	return &orderPublisher{
 		logger:               logger,
 		orderOutboxPublisher: orderOutboxPublisher,
-		appSettings:          appSettings,
+		appConfig:            appConfig,
 	}, nil
 }
 
@@ -49,7 +49,7 @@ func (op *orderPublisher) Publish(
 		Metadata: orderv1.Metadata{
 			Id:     orderv1.ID(uuid.New()),
 			Time:   time.Now(),
-			Source: op.appSettings.Source,
+			Source: op.appConfig.Source,
 			Type:   orderv1.TypeOrderSubmitted,
 		},
 		Data: orderv1.Data{},

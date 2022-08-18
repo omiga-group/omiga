@@ -20,8 +20,9 @@ import (
 // OrderBookUpdate is the builder for updating OrderBook entities.
 type OrderBookUpdate struct {
 	config
-	hooks    []Hook
-	mutation *OrderBookMutation
+	hooks     []Hook
+	mutation  *OrderBookMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the OrderBookUpdate builder.
@@ -107,6 +108,12 @@ func (obu *OrderBookUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (obu *OrderBookUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *OrderBookUpdate {
+	obu.modifiers = append(obu.modifiers, modifiers...)
+	return obu
+}
+
 func (obu *OrderBookUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -148,6 +155,7 @@ func (obu *OrderBookUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	_spec.Node.Schema = obu.schemaConfig.OrderBook
 	ctx = internal.NewSchemaConfigContext(ctx, obu.schemaConfig)
+	_spec.Modifiers = obu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, obu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{orderbook.Label}
@@ -162,9 +170,10 @@ func (obu *OrderBookUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // OrderBookUpdateOne is the builder for updating a single OrderBook entity.
 type OrderBookUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *OrderBookMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *OrderBookMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetExchangeID sets the "exchange_id" field.
@@ -257,6 +266,12 @@ func (obuo *OrderBookUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (obuo *OrderBookUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *OrderBookUpdateOne {
+	obuo.modifiers = append(obuo.modifiers, modifiers...)
+	return obuo
+}
+
 func (obuo *OrderBookUpdateOne) sqlSave(ctx context.Context) (_node *OrderBook, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -315,6 +330,7 @@ func (obuo *OrderBookUpdateOne) sqlSave(ctx context.Context) (_node *OrderBook, 
 	}
 	_spec.Node.Schema = obuo.schemaConfig.OrderBook
 	ctx = internal.NewSchemaConfigContext(ctx, obuo.schemaConfig)
+	_spec.Modifiers = obuo.modifiers
 	_node = &OrderBook{config: obuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

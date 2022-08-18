@@ -33,7 +33,7 @@ import (
 
 func NewEntgoClient(
 	logger *zap.SugaredLogger,
-	postgresSettings postgres.PostgresSettings) (repositories.EntgoClient, error) {
+	postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
 	wire.Build(
 		postgres.NewPostgres,
 		repositories.NewEntgoClient)
@@ -43,7 +43,7 @@ func NewEntgoClient(
 
 func NewMessageConsumer(
 	logger *zap.SugaredLogger,
-	pulsarSettings pulsar.PulsarSettings,
+	pulsarConfig pulsar.PulsarConfig,
 	topic string) (messaging.MessageConsumer, error) {
 	wire.Build(pulsar.NewPulsarMessageConsumer)
 

@@ -17,13 +17,13 @@ type postgres struct {
 
 func NewPostgres(
 	logger *zap.SugaredLogger,
-	postgresSettings PostgresSettings) (database.Database, error) {
-	db, err := sql.Open("pgx", postgresSettings.ConnectionString)
+	postgresConfig PostgresConfig) (database.Database, error) {
+	db, err := sql.Open("pgx", postgresConfig.ConnectionString)
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(postgresSettings.MaxOpenConns)
+	db.SetMaxOpenConns(postgresConfig.MaxOpenConns)
 
 	return &postgres{
 		db:     db,

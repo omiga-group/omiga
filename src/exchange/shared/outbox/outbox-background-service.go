@@ -20,7 +20,7 @@ type OutboxBackgroundService interface {
 type outboxBackgroundService struct {
 	ctx             context.Context
 	logger          *zap.SugaredLogger
-	outboxSettings  outbox.OutboxSettings
+	outboxConfig    outbox.OutboxConfig
 	topic           string
 	messageProducer messaging.MessageProducer
 	entgoClient     repositories.EntgoClient
@@ -30,7 +30,7 @@ type outboxBackgroundService struct {
 func NewOutboxBackgroundService(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	outboxSettings outbox.OutboxSettings,
+	outboxConfig outbox.OutboxConfig,
 	messageProducer messaging.MessageProducer,
 	topic string,
 	entgoClient repositories.EntgoClient,
@@ -39,7 +39,7 @@ func NewOutboxBackgroundService(
 	instance := &outboxBackgroundService{
 		ctx:             ctx,
 		logger:          logger,
-		outboxSettings:  outboxSettings,
+		outboxConfig:    outboxConfig,
 		messageProducer: messageProducer,
 		topic:           topic,
 		entgoClient:     entgoClient,
@@ -69,7 +69,7 @@ func (obs *outboxBackgroundService) Run() {
 				outboxmodel.TopicEQ(obs.topic),
 				outboxmodel.StatusEQ(outboxmodel.StatusPending),
 				outboxmodel.Or(
-					outboxmodel.LastRetryLTE(time.Now().Add(-1*obs.outboxSettings.RetryDelay)),
+					outboxmodel.LastRetryLTE(time.Now().Add(-1*obs.outboxConfig.RetryDelay)),
 					outboxmodel.LastRetryIsNil()),
 			),
 		).
@@ -125,7 +125,7 @@ func (obs *outboxBackgroundService) Run() {
 	for _, failedRecord := range failedRecords {
 		record := failedRecord.record
 
-		if record.RetryCount == obs.outboxSettings.MaxRetryCount {
+		if record.RetryCount == obs.outboxConfig.MaxRetryCount {
 			_, err := client.Outbox.
 				UpdateOne(record).
 				SetStatus(outboxmodel.StatusFailed).

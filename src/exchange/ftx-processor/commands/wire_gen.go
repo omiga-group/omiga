@@ -8,7 +8,7 @@ package commands
 
 import (
 	"context"
-	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configurations"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/subscribers"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
@@ -18,8 +18,8 @@ import (
 
 // Injectors from wire.go:
 
-func NewMessageConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageConsumer, error) {
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarSettings, topic)
+func NewMessageConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, topic string) (messaging.MessageConsumer, error) {
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarConfig, topic)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	return consumer, nil
 }
 
-func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, ftxSettings configurations.FtxSettings, market string) (subscribers.FtxOrderBookSubscriber, error) {
+func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, ftxSettings configuration.FtxSettings, market string) (subscribers.FtxOrderBookSubscriber, error) {
 	ftxOrderBookSubscriber, err := subscribers.NewFtxOrderBookSubscriber(ctx, logger, ftxSettings, market)
 	if err != nil {
 		return nil, err

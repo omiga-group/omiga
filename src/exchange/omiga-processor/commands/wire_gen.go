@@ -22,8 +22,8 @@ import (
 
 // Injectors from wire.go:
 
-func NewMessageConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageConsumer, error) {
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarSettings, topic)
+func NewMessageConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, topic string) (messaging.MessageConsumer, error) {
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarConfig, topic)
 	if err != nil {
 		return nil, err
 	}
@@ -39,17 +39,17 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	return consumer, nil
 }
 
-func NewOrderBookSimulator(ctx context.Context, logger *zap.SugaredLogger, appSettings configuration.AppSettings, pulsarSettings pulsar.PulsarSettings, topic string, orderBookSimulatorSettings simulators.OrderBookSimulatorSettings) (simulators.OrderBookSimulator, error) {
+func NewOrderBookSimulator(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, pulsarConfig pulsar.PulsarConfig, topic string, orderBookSimulatorSettings simulators.OrderBookSimulatorSettings) (simulators.OrderBookSimulator, error) {
 	cronService, err := cron.NewCronService(logger)
 	if err != nil {
 		return nil, err
 	}
-	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarSettings, topic)
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, topic)
 	if err != nil {
 		return nil, err
 	}
 	producer := orderbookv1.NewProducer(logger, messageProducer)
-	orderBookPublisher, err := publishers.NewOrderBookPublisher(logger, appSettings, producer)
+	orderBookPublisher, err := publishers.NewOrderBookPublisher(logger, appConfig, producer)
 	if err != nil {
 		return nil, err
 	}

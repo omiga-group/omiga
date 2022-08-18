@@ -27,7 +27,7 @@ import (
 
 func NewEntgoClient(
 	logger *zap.SugaredLogger,
-	postgresSettings postgres.PostgresSettings) (repositories.EntgoClient, error) {
+	postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
 	wire.Build(postgres.NewPostgres, repositories.NewEntgoClient)
 
 	return nil, nil

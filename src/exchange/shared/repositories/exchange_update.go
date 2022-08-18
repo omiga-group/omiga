@@ -18,8 +18,9 @@ import (
 // ExchangeUpdate is the builder for updating Exchange entities.
 type ExchangeUpdate struct {
 	config
-	hooks    []Hook
-	mutation *ExchangeMutation
+	hooks     []Hook
+	mutation  *ExchangeMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the ExchangeUpdate builder.
@@ -87,6 +88,12 @@ func (eu *ExchangeUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (eu *ExchangeUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ExchangeUpdate {
+	eu.modifiers = append(eu.modifiers, modifiers...)
+	return eu
+}
+
 func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -107,6 +114,7 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	_spec.Node.Schema = eu.schemaConfig.Exchange
 	ctx = internal.NewSchemaConfigContext(ctx, eu.schemaConfig)
+	_spec.Modifiers = eu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, eu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{exchange.Label}
@@ -121,9 +129,10 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // ExchangeUpdateOne is the builder for updating a single Exchange entity.
 type ExchangeUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *ExchangeMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *ExchangeMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Mutation returns the ExchangeMutation object of the builder.
@@ -198,6 +207,12 @@ func (euo *ExchangeUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (euo *ExchangeUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ExchangeUpdateOne {
+	euo.modifiers = append(euo.modifiers, modifiers...)
+	return euo
+}
+
 func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -235,6 +250,7 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 	}
 	_spec.Node.Schema = euo.schemaConfig.Exchange
 	ctx = internal.NewSchemaConfigContext(ctx, euo.schemaConfig)
+	_spec.Modifiers = euo.modifiers
 	_node = &Exchange{config: euo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -5,9 +5,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/omiga-group/omiga/src/order/shared/repositories/cli/configuration"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/migrate"
-	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
+	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -25,14 +25,14 @@ func migrateCommand() *cobra.Command {
 
 			sugarLogger := logger.Sugar()
 
-			viper, err := configuration.SetupConfigReader(".")
-			if err != nil {
+			var config configuration.Config
+			if err := entconfiguration.LoadConfig("config.yaml", &config); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
-			postgresSettings := postgres.GetPostgresSettings(viper)
-
-			entgoClient, err := NewEntgoClient(sugarLogger, postgresSettings)
+			entgoClient, err := NewEntgoClient(
+				sugarLogger,
+				config.Postgres)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
