@@ -8,7 +8,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/mitchellh/mapstructure"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configurations"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
@@ -35,15 +34,8 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			var ftxSettings configurations.FtxSettings
-			if err := mapstructure.Decode(viper.Get(configurations.ConfigKey), &ftxSettings); err != nil {
-				sugarLogger.Fatal(err)
-			}
-
-			var pulsarSettings pulsar.PulsarSettings
-			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {
-				sugarLogger.Fatal(err)
-			}
+			ftxSettings := configurations.GetFtxSettings(viper)
+			pulsarSettings := pulsar.GetPulsarSettings(viper)
 
 			ctx, cancelFunc := context.WithCancel(context.Background())
 

@@ -8,7 +8,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/mitchellh/mapstructure"
 	"github.com/omiga-group/omiga/src/exchange/omiga-processor/simulators"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
@@ -41,18 +40,10 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			var appSettings configuration.AppSettings
-			if err := mapstructure.Decode(viper.Get(configuration.AppSettingsConfigKey), &appSettings); err != nil {
-				sugarLogger.Fatal(err)
-			}
-
+			appSettings := configuration.GetAppSettings(viper)
 			appSettings.Source = appSettings.Source + "::" + opt.name
 
-			var pulsarSettings pulsar.PulsarSettings
-			if err := mapstructure.Decode(viper.Get(pulsar.ConfigKey), &pulsarSettings); err != nil {
-				sugarLogger.Fatal(err)
-			}
-
+			pulsarSettings := pulsar.GetPulsarSettings(viper)
 			pulsarSettings.SubscriptionName = pulsarSettings.SubscriptionName + "-" + opt.name
 			pulsarSettings.ProducerName = pulsarSettings.ProducerName + opt.name
 

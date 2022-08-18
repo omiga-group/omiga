@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/mitchellh/mapstructure"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/migrate"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
@@ -31,10 +30,7 @@ func migrateCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			var postgresSettings postgres.PostgresSettings
-			if err := mapstructure.Decode(viper.Get(postgres.ConfigKey), &postgresSettings); err != nil {
-				sugarLogger.Fatal(err)
-			}
+			postgresSettings := postgres.GetPostgresSettings(viper)
 
 			entgoClient, err := NewEntgoClient(sugarLogger, postgresSettings)
 			if err != nil {

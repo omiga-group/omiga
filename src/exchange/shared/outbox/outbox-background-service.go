@@ -24,7 +24,6 @@ type outboxBackgroundService struct {
 	topic           string
 	messageProducer messaging.MessageProducer
 	entgoClient     repositories.EntgoClient
-	retryDelay      time.Duration
 	globalMutex     sync.Mutex
 }
 
@@ -36,10 +35,6 @@ func NewOutboxBackgroundService(
 	topic string,
 	entgoClient repositories.EntgoClient,
 	cronService cron.CronService) (OutboxBackgroundService, error) {
-	retryDelay, err := time.ParseDuration(outboxSettings.RetryDelay)
-	if err != nil {
-		return nil, err
-	}
 
 	instance := &outboxBackgroundService{
 		ctx:             ctx,
@@ -48,7 +43,6 @@ func NewOutboxBackgroundService(
 		messageProducer: messageProducer,
 		topic:           topic,
 		entgoClient:     entgoClient,
-		retryDelay:      retryDelay,
 		globalMutex:     sync.Mutex{},
 	}
 
@@ -75,7 +69,7 @@ func (obs *outboxBackgroundService) Run() {
 				outboxmodel.TopicEQ(obs.topic),
 				outboxmodel.StatusEQ(outboxmodel.StatusPending),
 				outboxmodel.Or(
-					outboxmodel.LastRetryLTE(time.Now().Add(-1*obs.retryDelay)),
+					outboxmodel.LastRetryLTE(time.Now().Add(-1*obs.outboxSettings.RetryDelay)),
 					outboxmodel.LastRetryIsNil()),
 			),
 		).
