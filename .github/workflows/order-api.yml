@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build, test, tag
+    name: "Build - Order API"
     runs-on: ubuntu-latest
     env:
       DOCKER_BUILDKIT: 1
@@ -26,8 +26,10 @@ jobs:
           filters: |
             relevant_directories_changed:
               - '.github/workflows/codeql-analysis.yml'
-              - '.github/workflows/golangci-lint.yml'
+              - '.github/workflows/lint.yml'
               - '.github/workflows/order-api.yml'
+              - 'src/go.mod'
+              - 'src/go.sum'
               - 'src/shared/**'
               - 'src/order/shared/**'
               - 'src/order/order-api/**'
@@ -52,3 +54,12 @@ jobs:
             --tag omiga/order-api:$GitVersion_SemVer \
             --file ./src/order/order-api/Dockerfile \
             ./src
+
+  success:
+    name: "Success - Order API"
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Success
+        run: |
+          echo "Completed"
