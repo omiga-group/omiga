@@ -49,6 +49,6 @@ jobs:
       if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
       run: |
         DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build --pull \
-          --tag omiga/order-processor":$GitVersion_SemVer \
+          --tag omiga/order-processor:$GitVersion_SemVer \
           --file ./src/order/order-processor/Dockerfile \
           ./src
