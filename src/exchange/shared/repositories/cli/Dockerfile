@@ -27,10 +27,11 @@ FROM build AS local
 CMD ["/bin/exchange-database-migration", "migrate"]
 
 FROM build AS test
-RUN --mount=type=cache,target=/go go test ./...
+RUN --mount=type=cache,target=/go go test ./... -v
 
 FROM base AS final
 
 WORKDIR /
-COPY --from=build /bin/exchange-database-migration .
+COPY --from=test /bin/exchange-database-migration .
+COPY --from=test /src/exchange/shared/repositories/cli/config.yaml .
 CMD ["/bin/exchange-database-migration", "migrate"]

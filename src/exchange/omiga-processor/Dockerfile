@@ -29,10 +29,11 @@ FROM build AS local
 CMD ["/bin/omiga-processor", "start"]
 
 FROM build AS test
-RUN --mount=type=cache,target=/go go test ./...
+RUN --mount=type=cache,target=/go go test ./... -v
 
 FROM base AS final
 
 WORKDIR /
-COPY --from=build /bin/omiga-processor .
+COPY --from=test /bin/omiga-processor .
+COPY --from=test /src/exchange/omiga-processor/config.yaml .
 CMD ["/bin/omiga-processor", "start"]
