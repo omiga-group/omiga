@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build, test, tag
+    name: "Build - Binance Processor"
     runs-on: ubuntu-latest
     env:
       DOCKER_BUILDKIT: 1
@@ -26,8 +26,10 @@ jobs:
           filters: |
             relevant_directories_changed:
               - '.github/workflows/codeql-analysis.yml'
-              - '.github/workflows/golangci-lint.yml'
+              - '.github/workflows/lint.yml'
               - '.github/workflows/binance-processor.yml'
+              - 'src/go.mod'
+              - 'src/go.sum'
               - 'src/shared/**'
               - 'src/exchange/shared/**'
               - 'src/exchange/binance-processor/**'
@@ -52,3 +54,12 @@ jobs:
             --tag omiga/binance-processor:$GitVersion_SemVer \
             --file ./src/exchange/binance-processor/Dockerfile \
             ./src
+
+  success:
+    name: "Success - Binance Processor"
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Success
+        run: |
+          echo "Completed"
