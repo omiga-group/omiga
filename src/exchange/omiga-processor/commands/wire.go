@@ -20,6 +20,7 @@ package commands
 
 import (
 	"context"
+
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/exchange/omiga-processor/simulators"
 	"github.com/omiga-group/omiga/src/exchange/omiga-processor/subscribers"

@@ -2,7 +2,7 @@ SHELL = /bin/bash
 CURRENT_DIRECTORY = $(shell pwd)
 
 # Go variables
-GOFILES = $(shell find . -type f -name '*.go' -not -path "*/mock/*.go" -not -path "*.pb.go")
+GOFILES = $(shell find . -type f -name '*.go' -not -path "*/mock/*.go" -not -path "*.pb.go" -not -path "*_gen.go")
 
 .PHONY: all
 all: dep generate ## Runs dep generate

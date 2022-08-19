@@ -20,6 +20,7 @@ package commands
 
 import (
 	"context"
+
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/subscribers"
