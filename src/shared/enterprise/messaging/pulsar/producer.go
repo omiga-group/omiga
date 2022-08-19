@@ -10,20 +10,20 @@ import (
 )
 
 type pulsarMessageProducer struct {
-	logger         *zap.SugaredLogger
-	pulsarSettings PulsarSettings
-	pulsarClient   pulsar.Client
-	producer       pulsar.Producer
-	topic          string
+	logger       *zap.SugaredLogger
+	pulsarConfig PulsarConfig
+	pulsarClient pulsar.Client
+	producer     pulsar.Producer
+	topic        string
 }
 
 func NewPulsarMessageProducer(
 	logger *zap.SugaredLogger,
-	pulsarSettings PulsarSettings,
+	pulsarConfig PulsarConfig,
 	topic string) (messaging.MessageProducer, error) {
 	pulsarClient, err := pulsar.NewClient(
 		pulsar.ClientOptions{
-			URL:               pulsarSettings.Url,
+			URL:               pulsarConfig.Url,
 			OperationTimeout:  30 * time.Second,
 			ConnectionTimeout: 30 * time.Second,
 		})
@@ -34,17 +34,17 @@ func NewPulsarMessageProducer(
 	producer, err := pulsarClient.CreateProducer(
 		pulsar.ProducerOptions{
 			Topic: topic,
-			Name:  pulsarSettings.ProducerName,
+			Name:  pulsarConfig.ProducerName,
 		})
 	if err != nil {
 		return nil, err
 	}
 
 	return &pulsarMessageProducer{
-		logger:         logger,
-		pulsarSettings: pulsarSettings,
-		pulsarClient:   pulsarClient,
-		producer:       producer,
+		logger:       logger,
+		pulsarConfig: pulsarConfig,
+		pulsarClient: pulsarClient,
+		producer:     producer,
 	}, nil
 }
 

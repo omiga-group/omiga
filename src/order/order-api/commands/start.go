@@ -4,12 +4,9 @@ import (
 	"context"
 	"log"
 
-	"github.com/google/uuid"
+	"github.com/omiga-group/omiga/src/order/order-api/configuration"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
-	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
-	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	"github.com/omiga-group/omiga/src/shared/enterprise/outbox"
+	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -29,23 +26,14 @@ func startCommand() *cobra.Command {
 
 			sugarLogger := logger.Sugar()
 
-			viper, err := configuration.SetupConfigReader(".")
-			if err != nil {
+			var config configuration.Config
+			if err := entconfiguration.LoadConfig("config.yaml", &config); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
-			appSettings := configuration.GetAppSettings(viper)
-
-			postgresSettings := postgres.GetPostgresSettings(viper)
-
-			pulsarSettings := pulsar.GetPulsarSettings(viper)
-			pulsarSettings.ProducerName = pulsarSettings.ProducerName + uuid.NewString()
-
-			outboxSettings := outbox.GetOutboxSettings(viper)
-
 			entgoClient, err := NewEntgoClient(
 				sugarLogger,
-				postgresSettings)
+				config.Postgres)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -61,8 +49,8 @@ func startCommand() *cobra.Command {
 			orderOutboxBackgroundService, err := NewOrderOutboxBackgroundService(
 				ctx,
 				sugarLogger,
-				pulsarSettings,
-				outboxSettings,
+				config.Pulsar,
+				config.Outbox,
 				orderv1.TopicName,
 				entgoClient,
 				cronService)
@@ -72,7 +60,7 @@ func startCommand() *cobra.Command {
 
 			httpServer, err := NewHttpServer(
 				sugarLogger,
-				appSettings,
+				config.App,
 				entgoClient,
 				orderOutboxBackgroundService)
 			if err != nil {

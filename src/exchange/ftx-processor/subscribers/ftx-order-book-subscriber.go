@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configurations"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
 	"go.uber.org/zap"
 )
 
@@ -71,13 +71,13 @@ type ftxOrderBookData struct {
 type ftxOrderBookSubscriber struct {
 	logger      *zap.SugaredLogger
 	market      string
-	ftxSettings configurations.FtxSettings
+	ftxSettings configuration.FtxSettings
 }
 
 func NewFtxOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	ftxSettings configurations.FtxSettings,
+	ftxSettings configuration.FtxSettings,
 	market string) (FtxOrderBookSubscriber, error) {
 	instance := &ftxOrderBookSubscriber{
 		logger:      logger,

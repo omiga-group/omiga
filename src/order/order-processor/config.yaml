@@ -1,6 +1,6 @@
 pulsar:
   url: "pulsar://localhost:6650"
-  SubscriptionName: "order-processor"
+  subscriptionName: "order-processor"
   producerName: "order-processor"
 
 postgres:

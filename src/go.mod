@@ -1,28 +1,28 @@
 module github.com/omiga-group/omiga/src
 
-go 1.18
+go 1.19
 
 require (
 	entgo.io/contrib v0.3.1
-	entgo.io/ent v0.11.2-0.20220724154107-b60e0f9eac27
-	github.com/99designs/gqlgen v0.17.13
+	entgo.io/ent v0.11.2
+	github.com/99designs/gqlgen v0.17.14
 	github.com/apache/pulsar-client-go v0.8.1
-	github.com/golang/mock v1.5.0
+	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/jackc/pgx/v4 v4.17.0
 	github.com/micro-business/go-core v1.0.0
-	github.com/mitchellh/mapstructure v1.5.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/cors v1.8.2
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
-	github.com/vektah/gqlparser/v2 v2.4.7
+	github.com/vektah/gqlparser/v2 v2.4.8
 	github.com/vmihailenco/msgpack/v5 v5.3.5
-	go.uber.org/zap v1.21.0
+	go.uber.org/zap v1.22.0
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -69,6 +69,7 @@ require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
+	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mtibben/percent v0.2.1 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
@@ -98,10 +99,9 @@ require (
 	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.12 // indirect
+	golang.org/x/tools v0.1.13-0.20220804200503-81c7dc4e4efa // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

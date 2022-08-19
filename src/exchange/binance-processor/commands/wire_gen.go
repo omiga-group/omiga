@@ -16,8 +16,8 @@ import (
 
 // Injectors from wire.go:
 
-func NewMessageConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageConsumer, error) {
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarSettings, topic)
+func NewMessageConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, topic string) (messaging.MessageConsumer, error) {
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarConfig, topic)
 	if err != nil {
 		return nil, err
 	}

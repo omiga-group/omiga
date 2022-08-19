@@ -20,8 +20,8 @@ import (
 
 // Injectors from wire.go:
 
-func NewEntgoClient(logger *zap.SugaredLogger, postgresSettings postgres.PostgresSettings) (repositories.EntgoClient, error) {
-	database, err := postgres.NewPostgres(logger, postgresSettings)
+func NewEntgoClient(logger *zap.SugaredLogger, postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
+	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -32,8 +32,8 @@ func NewEntgoClient(logger *zap.SugaredLogger, postgresSettings postgres.Postgre
 	return entgoClient, nil
 }
 
-func NewMessageConsumer(logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, topic string) (messaging.MessageConsumer, error) {
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarSettings, topic)
+func NewMessageConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, topic string) (messaging.MessageConsumer, error) {
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarConfig, topic)
 	if err != nil {
 		return nil, err
 	}

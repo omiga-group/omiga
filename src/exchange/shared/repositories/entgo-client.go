@@ -23,10 +23,7 @@ func NewEntgoClient(
 	logger *zap.SugaredLogger,
 	database database.Database) (EntgoClient, error) {
 
-	driver, err := database.GetDriver()
-	if err != nil {
-		return nil, err
-	}
+	driver := database.GetDriver()
 
 	return &entgoClient{
 		logger:   logger,

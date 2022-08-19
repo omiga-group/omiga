@@ -21,13 +21,22 @@ package commands
 import (
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"go.uber.org/zap"
 )
 
+func NewDatabase(
+	logger *zap.SugaredLogger,
+	postgresConfig postgres.PostgresConfig) (database.Database, error) {
+	wire.Build(postgres.NewPostgres)
+
+	return nil, nil
+}
+
 func NewEntgoClient(
 	logger *zap.SugaredLogger,
-	postgresSettings postgres.PostgresSettings) (repositories.EntgoClient, error) {
+	postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
 	wire.Build(postgres.NewPostgres, repositories.NewEntgoClient)
 
 	return nil, nil

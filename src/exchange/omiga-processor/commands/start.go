@@ -8,11 +8,11 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/omiga-group/omiga/src/exchange/omiga-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/omiga-processor/simulators"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
-	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -35,17 +35,15 @@ func startCommand() *cobra.Command {
 
 			sugarLogger := logger.Sugar()
 
-			viper, err := configuration.SetupConfigReader(".")
-			if err != nil {
+			var config configuration.Config
+			if err := entconfiguration.LoadConfig("config.yaml", &config); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
-			appSettings := configuration.GetAppSettings(viper)
-			appSettings.Source = appSettings.Source + "::" + opt.name
+			config.App.Source = config.App.Source + "::" + opt.name
 
-			pulsarSettings := pulsar.GetPulsarSettings(viper)
-			pulsarSettings.SubscriptionName = pulsarSettings.SubscriptionName + "-" + opt.name
-			pulsarSettings.ProducerName = pulsarSettings.ProducerName + opt.name
+			config.Pulsar.SubscriptionName = config.Pulsar.SubscriptionName + "-" + opt.name
+			config.Pulsar.ProducerName = config.Pulsar.ProducerName + opt.name
 
 			ctx, cancelFunc := context.WithCancel(context.Background())
 
@@ -63,8 +61,8 @@ func startCommand() *cobra.Command {
 			_, err = NewOrderBookSimulator(
 				ctx,
 				sugarLogger,
-				appSettings,
-				pulsarSettings,
+				config.App,
+				config.Pulsar,
 				orderbookv1.TopicName,
 				simulators.OrderBookSimulatorSettings{
 					ExchangeName: opt.name,
@@ -75,7 +73,7 @@ func startCommand() *cobra.Command {
 
 			syntheticMessageConsumer, err := NewMessageConsumer(
 				sugarLogger,
-				pulsarSettings,
+				config.Pulsar,
 				syntheticorderv1.TopicName)
 			if err != nil {
 				sugarLogger.Fatal(err)

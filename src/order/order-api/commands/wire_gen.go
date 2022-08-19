@@ -32,8 +32,8 @@ func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
 	return cronService, nil
 }
 
-func NewEntgoClient(logger *zap.SugaredLogger, postgresSettings postgres.PostgresSettings) (repositories.EntgoClient, error) {
-	database, err := postgres.NewPostgres(logger, postgresSettings)
+func NewEntgoClient(logger *zap.SugaredLogger, postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
+	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -44,24 +44,24 @@ func NewEntgoClient(logger *zap.SugaredLogger, postgresSettings postgres.Postgre
 	return entgoClient, nil
 }
 
-func NewOrderOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarSettings pulsar.PulsarSettings, outboxSettings outbox.OutboxSettings, topic string, entgoClient repositories.EntgoClient, cronService cron.CronService) (outbox2.OutboxBackgroundService, error) {
-	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarSettings, topic)
+func NewOrderOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, outboxConfig outbox.OutboxConfig, topic string, entgoClient repositories.EntgoClient, cronService cron.CronService) (outbox2.OutboxBackgroundService, error) {
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, topic)
 	if err != nil {
 		return nil, err
 	}
-	outboxBackgroundService, err := outbox2.NewOutboxBackgroundService(ctx, logger, outboxSettings, messageProducer, topic, entgoClient, cronService)
+	outboxBackgroundService, err := outbox2.NewOutboxBackgroundService(ctx, logger, outboxConfig, messageProducer, topic, entgoClient, cronService)
 	if err != nil {
 		return nil, err
 	}
 	return outboxBackgroundService, nil
 }
 
-func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSettings, entgoClient repositories.EntgoClient, orderOutboxBackgroundService outbox2.OutboxBackgroundService) (http.HttpServer, error) {
+func NewHttpServer(logger *zap.SugaredLogger, appConfig configuration.AppConfig, entgoClient repositories.EntgoClient, orderOutboxBackgroundService outbox2.OutboxBackgroundService) (http.HttpServer, error) {
 	outboxPublisher, err := outbox2.NewOutboxPublisher(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}
-	orderPublisher, err := publishers.NewOrderPublisher(logger, appSettings, outboxPublisher)
+	orderPublisher, err := publishers.NewOrderPublisher(logger, appConfig, outboxPublisher)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func NewHttpServer(logger *zap.SugaredLogger, appSettings configuration.AppSetti
 	if err != nil {
 		return nil, err
 	}
-	httpServer, err := http.NewHttpServer(logger, appSettings, server)
+	httpServer, err := http.NewHttpServer(logger, appConfig, server)
 	if err != nil {
 		return nil, err
 	}

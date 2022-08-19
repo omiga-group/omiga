@@ -3,5 +3,5 @@ app:
 
 pulsar:
   url: "pulsar://localhost:6650"
-  SubscriptionName: "omiga-processor"
+  subscriptionName: "omiga-processor"
   producerName: "omiga-processor"

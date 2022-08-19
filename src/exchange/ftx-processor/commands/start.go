@@ -8,10 +8,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configurations"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
-	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -29,13 +28,10 @@ func startCommand() *cobra.Command {
 
 			sugarLogger := logger.Sugar()
 
-			viper, err := configuration.SetupConfigReader(".")
-			if err != nil {
+			var config configuration.Config
+			if err := entconfiguration.LoadConfig("config.yaml", &config); err != nil {
 				sugarLogger.Fatal(err)
 			}
-
-			ftxSettings := configurations.GetFtxSettings(viper)
-			pulsarSettings := pulsar.GetPulsarSettings(viper)
 
 			ctx, cancelFunc := context.WithCancel(context.Background())
 
@@ -52,7 +48,7 @@ func startCommand() *cobra.Command {
 
 			syntheticMessageConsumer, err := NewMessageConsumer(
 				sugarLogger,
-				pulsarSettings,
+				config.Pulsar,
 				syntheticorderv1.TopicName)
 			if err != nil {
 				sugarLogger.Fatal(err)
@@ -72,11 +68,11 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			for _, market := range ftxSettings.OrderBook.Markets {
+			for _, market := range config.Ftx.OrderBook.Markets {
 				_, err = NewFtxOrderBookSubscriber(
 					ctx,
 					sugarLogger,
-					ftxSettings,
+					config.Ftx,
 					market)
 				if err != nil {
 					sugarLogger.Fatal(err)

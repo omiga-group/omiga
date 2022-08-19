@@ -19,8 +19,9 @@ import (
 // OutboxUpdate is the builder for updating Outbox entities.
 type OutboxUpdate struct {
 	config
-	hooks    []Hook
-	mutation *OutboxMutation
+	hooks     []Hook
+	mutation  *OutboxMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the OutboxUpdate builder.
@@ -185,6 +186,12 @@ func (ou *OutboxUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ou *OutboxUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *OutboxUpdate {
+	ou.modifiers = append(ou.modifiers, modifiers...)
+	return ou
+}
+
 func (ou *OutboxUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -287,6 +294,7 @@ func (ou *OutboxUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	_spec.Node.Schema = ou.schemaConfig.Outbox
 	ctx = internal.NewSchemaConfigContext(ctx, ou.schemaConfig)
+	_spec.Modifiers = ou.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, ou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{outbox.Label}
@@ -301,9 +309,10 @@ func (ou *OutboxUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // OutboxUpdateOne is the builder for updating a single Outbox entity.
 type OutboxUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *OutboxMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *OutboxMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetTimestamp sets the "timestamp" field.
@@ -475,6 +484,12 @@ func (ouo *OutboxUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ouo *OutboxUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *OutboxUpdateOne {
+	ouo.modifiers = append(ouo.modifiers, modifiers...)
+	return ouo
+}
+
 func (ouo *OutboxUpdateOne) sqlSave(ctx context.Context) (_node *Outbox, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -594,6 +609,7 @@ func (ouo *OutboxUpdateOne) sqlSave(ctx context.Context) (_node *Outbox, err err
 	}
 	_spec.Node.Schema = ouo.schemaConfig.Outbox
 	ctx = internal.NewSchemaConfigContext(ctx, ouo.schemaConfig)
+	_spec.Modifiers = ouo.modifiers
 	_node = &Outbox{config: ouo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

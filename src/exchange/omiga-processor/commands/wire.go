@@ -20,6 +20,7 @@ package commands
 
 import (
 	"context"
+
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/exchange/omiga-processor/simulators"
 	"github.com/omiga-group/omiga/src/exchange/omiga-processor/subscribers"
@@ -35,7 +36,7 @@ import (
 
 func NewMessageConsumer(
 	logger *zap.SugaredLogger,
-	pulsarSettings pulsar.PulsarSettings,
+	pulsarConfig pulsar.PulsarConfig,
 	topic string) (messaging.MessageConsumer, error) {
 	wire.Build(pulsar.NewPulsarMessageConsumer)
 
@@ -55,8 +56,8 @@ func NewSyntheticOrderConsumer(
 func NewOrderBookSimulator(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	appSettings configuration.AppSettings,
-	pulsarSettings pulsar.PulsarSettings,
+	appConfig configuration.AppConfig,
+	pulsarConfig pulsar.PulsarConfig,
 	topic string,
 	orderBookSimulatorSettings simulators.OrderBookSimulatorSettings) (simulators.OrderBookSimulator, error) {
 	wire.Build(

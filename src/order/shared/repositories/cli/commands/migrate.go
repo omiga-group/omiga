@@ -2,11 +2,15 @@ package commands
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 	"log"
 	"os"
+	"strings"
 
+	"github.com/omiga-group/omiga/src/order/shared/repositories/cli/configuration"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/migrate"
-	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -18,6 +22,8 @@ func migrateCommand() *cobra.Command {
 		Short: "Migrate database to the latest version",
 		Long:  "Migrate database to the latest version",
 		Run: func(cmd *cobra.Command, args []string) {
+			ctx := context.Background()
+
 			logger, err := zap.NewDevelopment()
 			if err != nil {
 				log.Fatal(err)
@@ -25,14 +31,48 @@ func migrateCommand() *cobra.Command {
 
 			sugarLogger := logger.Sugar()
 
-			viper, err := configuration.SetupConfigReader(".")
+			var config configuration.Config
+			if err := entconfiguration.LoadConfig("config.yaml", &config); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			index := strings.LastIndex(config.Postgres.ConnectionString, "/")
+			connectionStringWithoutDatabase := config.Postgres.ConnectionString[:index]
+			databaseName := config.Postgres.ConnectionString[index+1:]
+
+			database, err := NewDatabase(
+				sugarLogger,
+				postgres.PostgresConfig{
+					ConnectionString: connectionStringWithoutDatabase,
+					MaxOpenConns:     config.Postgres.MaxOpenConns,
+				})
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
 
-			postgresSettings := postgres.GetPostgresSettings(viper)
+			defer database.Close()
 
-			entgoClient, err := NewEntgoClient(sugarLogger, postgresSettings)
+			var found int
+
+			db := database.GetDB()
+			if err := db.QueryRowContext(
+				ctx,
+				fmt.Sprintf(
+					"SELECT 1 FROM pg_database WHERE datname = '%s'",
+					databaseName)).
+				Scan(&found); err == sql.ErrNoRows {
+				if _, err = db.ExecContext(
+					ctx,
+					fmt.Sprintf("CREATE DATABASE \"%s\"", databaseName)); err != nil {
+					sugarLogger.Fatal(err)
+				}
+			} else if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			entgoClient, err := NewEntgoClient(
+				sugarLogger,
+				config.Postgres)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -40,8 +80,6 @@ func migrateCommand() *cobra.Command {
 			defer entgoClient.Close()
 
 			client := entgoClient.GetClient()
-
-			ctx := context.Background()
 
 			if err = client.Schema.WriteTo(
 				ctx,

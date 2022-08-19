@@ -8,11 +8,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/omiga-group/omiga/src/order/order-processor/configuration"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
-	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
-	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -30,13 +29,10 @@ func startCommand() *cobra.Command {
 
 			sugarLogger := logger.Sugar()
 
-			viper, err := configuration.SetupConfigReader(".")
-			if err != nil {
+			var config configuration.Config
+			if err := entconfiguration.LoadConfig("config.yaml", &config); err != nil {
 				sugarLogger.Fatal(err)
 			}
-
-			postgresSettings := postgres.GetPostgresSettings(viper)
-			pulsarSettings := pulsar.GetPulsarSettings(viper)
 
 			ctx, cancelFunc := context.WithCancel(context.Background())
 
@@ -53,14 +49,14 @@ func startCommand() *cobra.Command {
 
 			entgoClient, err := NewEntgoClient(
 				sugarLogger,
-				postgresSettings)
+				config.Postgres)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			orderMessageConsumer, err := NewMessageConsumer(
 				sugarLogger,
-				pulsarSettings,
+				config.Pulsar,
 				orderv1.TopicName)
 			if err != nil {
 				sugarLogger.Fatal(err)
@@ -82,7 +78,7 @@ func startCommand() *cobra.Command {
 
 			orderBookMessageConsumer, err := NewMessageConsumer(
 				sugarLogger,
-				pulsarSettings,
+				config.Pulsar,
 				orderbookv1.TopicName)
 			if err != nil {
 				sugarLogger.Fatal(err)

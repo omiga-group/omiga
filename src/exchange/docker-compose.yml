@@ -1,17 +1,6 @@
 ﻿version: "3.8"
 
 services:
-  postgres-exchange-database-initializer:
-    image: postgres:14.4-alpine
-    restart: on-failure
-    command: psql -h postgres -U postgres -c "CREATE DATABASE \"exchange\";"
-    environment:
-      PGPASSWORD: 12345678
-    depends_on:
-      - postgres
-    networks:
-      - omiga_network
-
   exchange-database-migration:
     image: ${DOCKER_REGISTRY-}exchangedatabasemigration
     build:
@@ -22,7 +11,7 @@ services:
     environment:
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
     depends_on:
-      - postgres-exchange-database-initializer
+      - postgres
     networks:
       - omiga_network
 

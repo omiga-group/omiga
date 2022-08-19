@@ -11,19 +11,19 @@ import (
 )
 
 type pulsarMessageConsumer struct {
-	logger         *zap.SugaredLogger
-	pulsarSettings PulsarSettings
-	pulsarClient   pulsar.Client
-	consumer       pulsar.Consumer
+	logger       *zap.SugaredLogger
+	pulsarConfig PulsarConfig
+	pulsarClient pulsar.Client
+	consumer     pulsar.Consumer
 }
 
 func NewPulsarMessageConsumer(
 	logger *zap.SugaredLogger,
-	pulsarSettings PulsarSettings,
+	pulsarConfig PulsarConfig,
 	topic string) (messaging.MessageConsumer, error) {
 	pulsarClient, err := pulsar.NewClient(
 		pulsar.ClientOptions{
-			URL:               pulsarSettings.Url,
+			URL:               pulsarConfig.Url,
 			OperationTimeout:  30 * time.Second,
 			ConnectionTimeout: 30 * time.Second,
 		})
@@ -34,7 +34,7 @@ func NewPulsarMessageConsumer(
 	consumer, err := pulsarClient.Subscribe(
 		pulsar.ConsumerOptions{
 			Topic:            topic,
-			SubscriptionName: pulsarSettings.SubscriptionName,
+			SubscriptionName: pulsarConfig.SubscriptionName,
 			Type:             pulsar.Shared,
 		})
 	if err != nil {
@@ -42,10 +42,10 @@ func NewPulsarMessageConsumer(
 	}
 
 	return &pulsarMessageConsumer{
-		logger:         logger,
-		pulsarSettings: pulsarSettings,
-		pulsarClient:   pulsarClient,
-		consumer:       consumer,
+		logger:       logger,
+		pulsarConfig: pulsarConfig,
+		pulsarClient: pulsarClient,
+		consumer:     consumer,
 	}, nil
 }
 

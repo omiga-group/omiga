@@ -46,7 +46,7 @@ func NewCronService(
 
 func NewEntgoClient(
 	logger *zap.SugaredLogger,
-	postgresSettings postgres.PostgresSettings) (repositories.EntgoClient, error) {
+	postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
 	wire.Build(
 		postgres.NewPostgres,
 		repositories.NewEntgoClient)
@@ -57,8 +57,8 @@ func NewEntgoClient(
 func NewOrderOutboxBackgroundService(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	pulsarSettings pulsar.PulsarSettings,
-	outboxSettings enterpriseOutbox.OutboxSettings,
+	pulsarConfig pulsar.PulsarConfig,
+	outboxConfig enterpriseOutbox.OutboxConfig,
 	topic string,
 	entgoClient repositories.EntgoClient,
 	cronService cron.CronService) (outbox.OutboxBackgroundService, error) {
@@ -71,7 +71,7 @@ func NewOrderOutboxBackgroundService(
 
 func NewHttpServer(
 	logger *zap.SugaredLogger,
-	appSettings configuration.AppSettings,
+	appConfig configuration.AppConfig,
 	entgoClient repositories.EntgoClient,
 	orderOutboxBackgroundService outbox.OutboxBackgroundService) (http.HttpServer, error) {
 	wire.Build(
