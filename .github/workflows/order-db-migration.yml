@@ -2,52 +2,52 @@ name: "Order Database Migration"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-    name: Build, test, tag
+    name: Build, test and tag
     runs-on: ubuntu-latest
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
 
     steps:
-    - name: Checkout code with full history
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+      - name: Checkout code with full history
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    - uses: dorny/paths-filter@v2.10.2
-      id: filter
-      with:
-        filters: |
-          relevant_directories_changed:
-            - '.github/workflows/codeql-analysis.yml'
-            - '.github/workflows/golangci-lint.yml'
-            - '.github/workflows/order-db-migration.yml'
-            - 'src/shared'
-            - 'src/order/shared'
+      - uses: dorny/paths-filter@v2.10.2
+        id: filter
+        with:
+          filters: |
+            relevant_directories_changed:
+              - '.github/workflows/codeql-analysis.yml'
+              - '.github/workflows/golangci-lint.yml'
+              - '.github/workflows/order-db-migration.yml'
+              - 'src/shared'
+              - 'src/order/shared'
 
-    - name: Install GitVersion
-      if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
-      uses: gittools/actions/gitversion/setup@v0.9.13
-      with:
-        versionSpec: "5.x"
+      - name: Install GitVersion
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
+        uses: gittools/actions/gitversion/setup@v0.9.13
+        with:
+          versionSpec: "5.x"
 
-    - name: Determine Version
-      if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
-      uses: gittools/actions/gitversion/execute@v0.9.13
-      with:
-        useConfigFile: true
-        configFilePath: GitVersion.yml
+      - name: Determine Version
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
+        uses: gittools/actions/gitversion/execute@v0.9.13
+        with:
+          useConfigFile: true
+          configFilePath: GitVersion.yml
 
-    - name: Build, test and tag the Docker image
-      if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
-      run: |
-        DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build --pull \
-          --tag omiga/order-db-migration:$GitVersion_SemVer \
-          --file ./src/order/shared/repositories/cli/Dockerfile \
-          ./src
+      - name: Build, test and tag the Docker image
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
+        run: |
+          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build --pull \
+            --tag omiga/order-db-migration:$GitVersion_SemVer \
+            --file ./src/order/shared/repositories/cli/Dockerfile \
+            ./src
