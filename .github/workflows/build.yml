@@ -83,7 +83,6 @@ jobs:
   build:
     name: Build, test and tag
     runs-on: ubuntu-latest
-    needs: lint
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
@@ -191,3 +190,12 @@ jobs:
             --tag ${{ matrix.registry }}/${{ matrix.repository }}:$GitVersion_SemVer \
             --file ${{ matrix.dockerfile }} \
             ${{ matrix.context }}
+
+  success:
+    name: Success
+    runs-on: ubuntu-latest
+    needs: [analyze, lint, build]
+    steps:
+      - name: Success
+        run: |
+          echo "Successfully built"
