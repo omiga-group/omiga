@@ -168,7 +168,8 @@ jobs:
         id: filter
         with:
           filters: |
-            relevant_directories_changed: ${{ matrix.relevance }}
+            relevant_directories_changed:
+              ${{ matrix.relevance }}
 
       - name: Install GitVersion
         if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
