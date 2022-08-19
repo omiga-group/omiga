@@ -29,10 +29,11 @@ FROM build AS local
 CMD ["/bin/binance-processor", "start"]
 
 FROM build AS test
-RUN --mount=type=cache,target=/go go test ./...
+RUN --mount=type=cache,target=/go go test ./... -v
 
 FROM base AS final
 
 WORKDIR /
-COPY --from=build /bin/binance-processor .
+COPY --from=test /bin/binance-processor .
+COPY --from=test /src/exchange/binance-processor/config.yaml .
 CMD ["/bin/binance-processor", "start"]

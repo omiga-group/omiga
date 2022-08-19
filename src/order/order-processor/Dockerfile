@@ -29,10 +29,11 @@ FROM build AS local
 CMD ["/bin/order-processor", "start"]
 
 FROM build AS test
-RUN --mount=type=cache,target=/go go test ./...
+RUN --mount=type=cache,target=/go go test ./... -v
 
 FROM base AS final
 
 WORKDIR /
-COPY --from=build /bin/order-processor .
+COPY --from=test /bin/order-processor .
+COPY --from=test /src/order/order-processor/config.yaml .
 CMD ["/bin/order-processor", "start"]

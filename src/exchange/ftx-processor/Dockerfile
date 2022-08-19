@@ -29,10 +29,11 @@ FROM build AS local
 CMD ["/bin/ftx-processor", "start"]
 
 FROM build AS test
-RUN --mount=type=cache,target=/go go test ./...
+RUN --mount=type=cache,target=/go go test ./... -v
 
 FROM base AS final
 
 WORKDIR /
-COPY --from=build /bin/ftx-processor .
+COPY --from=test /bin/ftx-processor .
+COPY --from=test /src/exchange/ftx-processor/config.yaml .
 CMD ["/bin/ftx-processor", "start"]

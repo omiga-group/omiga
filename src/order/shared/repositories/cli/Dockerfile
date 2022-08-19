@@ -27,10 +27,11 @@ FROM build AS local
 CMD ["/bin/order-database-migration", "migrate"]
 
 FROM build AS test
-RUN --mount=type=cache,target=/go go test ./...
+RUN --mount=type=cache,target=/go go test ./... -v
 
 FROM base AS final
 
 WORKDIR /
-COPY --from=build /bin/order-database-migration .
+COPY --from=test /bin/order-database-migration .
+COPY --from=test /src/order/shared/repositories/cli/config.yaml .
 CMD ["/bin/order-database-migration", "migrate"]
