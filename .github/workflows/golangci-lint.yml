@@ -8,7 +8,7 @@ on:
 
 jobs:
   golangci:
-    name: Go Lint
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
