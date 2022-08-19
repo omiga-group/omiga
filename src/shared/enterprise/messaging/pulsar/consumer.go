@@ -34,7 +34,7 @@ func NewPulsarMessageConsumer(
 	consumer, err := pulsarClient.Subscribe(
 		pulsar.ConsumerOptions{
 			Topic:            topic,
-			SubscriptionName: pulsarConfig.SubscriptionName,
+			subscriptionName: pulsarConfig.SubscriptionName,
 			Type:             pulsar.Shared,
 		})
 	if err != nil {
