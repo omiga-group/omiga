@@ -158,7 +158,7 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
 
 func (fobs *ftxOrderBookSubscriber) ping(
 	ctx context.Context,
-	connection *websocket.Conn) error {
+	connection *websocket.Conn) {
 	ticker := time.NewTicker(15 * time.Second)
 	defer ticker.Stop()
 
@@ -170,7 +170,7 @@ func (fobs *ftxOrderBookSubscriber) ping(
 			}); err != nil {
 				fobs.logger.Errorf("Failed to send ping request. Error: %v", err)
 
-				return err
+				return
 			}
 		case <-ctx.Done():
 		}
@@ -179,6 +179,4 @@ func (fobs *ftxOrderBookSubscriber) ping(
 			break
 		}
 	}
-
-	return nil
 }

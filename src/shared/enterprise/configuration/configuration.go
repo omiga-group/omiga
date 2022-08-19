@@ -1,7 +1,6 @@
 package configuration
 
 import (
-	"io/ioutil"
 	"os"
 	"reflect"
 	"strconv"
@@ -13,7 +12,7 @@ import (
 type Unmarshaller func([]byte, interface{}) error
 
 func LoadConfig(configFilePath string, config interface{}) error {
-	data, err := ioutil.ReadFile(configFilePath)
+	data, err := os.ReadFile(configFilePath)
 	if err != nil {
 		return err
 	}
