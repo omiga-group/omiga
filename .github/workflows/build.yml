@@ -1,0 +1,133 @@
+name: "Build"
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    name: Build, test and tag
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 1
+      COMPOSE_DOCKER_CLI_BUILD: 1
+
+    strategy:
+      matrix:
+        include:
+          - repository: order-db-migrator
+            registry: omiga
+            dockerfile: ./src/order/shared/repositories/cli/Dockerfile
+            context: ./src
+            relevance:
+              - ".github/workflows/codeql-analysis.yml"
+              - ".github/workflows/golangci-lint.yml"
+              - ".github/workflows/build.yml"
+              - "src/shared"
+              - "src/order/shared"
+
+          - repository: order-api
+            registry: omiga
+            dockerfile: ./src/order/order-api/Dockerfile
+            context: ./src
+            relevance:
+              - ".github/workflows/codeql-analysis.yml"
+              - ".github/workflows/golangci-lint.yml"
+              - ".github/workflows/build.yml"
+              - "src/shared"
+              - "src/order/shared"
+              - "src/order/order-api"
+
+          - repository: order-processor
+            registry: omiga
+            dockerfile: ./src/order/order-processor/Dockerfile
+            context: ./src
+            relevance:
+              - ".github/workflows/codeql-analysis.yml"
+              - ".github/workflows/golangci-lint.yml"
+              - ".github/workflows/build.yml"
+              - "src/shared"
+              - "src/order/shared"
+              - "src/order/order-processor"
+
+          - repository: exchange-db-migrator
+            registry: omiga
+            dockerfile: ./src/exchange/shared/repositories/cli/Dockerfile
+            context: ./src
+            relevance:
+              - ".github/workflows/codeql-analysis.yml"
+              - ".github/workflows/golangci-lint.yml"
+              - ".github/workflows/build.yml"
+              - "src/shared"
+              - "src/exchange/shared"
+
+          - repository: binance-processor
+            registry: omiga
+            dockerfile: ./src/exchange/binance-processor/Dockerfile
+            context: ./src
+            relevance:
+              - ".github/workflows/codeql-analysis.yml"
+              - ".github/workflows/golangci-lint.yml"
+              - ".github/workflows/build.yml"
+              - "src/shared"
+              - "src/exchange/shared"
+              - "src/exchange/binance-processor"
+
+          - repository: ftx-processor
+            registry: omiga
+            dockerfile: ./src/exchange/ftx-processor/Dockerfile
+            context: ./src
+            relevance:
+              - ".github/workflows/codeql-analysis.yml"
+              - ".github/workflows/golangci-lint.yml"
+              - ".github/workflows/build.yml"
+              - "src/shared"
+              - "src/exchange/shared"
+              - "src/exchange/ftx-processor"
+
+          - repository: omiga-processor
+            registry: omiga
+            dockerfile: ./src/exchange/omiga-processor/Dockerfile
+            context: ./src
+            relevance:
+              - ".github/workflows/codeql-analysis.yml"
+              - ".github/workflows/golangci-lint.yml"
+              - ".github/workflows/build.yml"
+              - "src/shared"
+              - "src/exchange/shared"
+              - "src/exchange/omiga-processor"
+
+    steps:
+      - name: Checkout code with full history
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: dorny/paths-filter@v2.10.2
+        id: filter
+        with:
+          filters: |
+            relevant_directories_changed: ${{ matrix.relevance }}
+
+      - name: Install GitVersion
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
+        uses: gittools/actions/gitversion/setup@v0.9.13
+        with:
+          versionSpec: "5.x"
+
+      - name: Determine Version
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
+        uses: gittools/actions/gitversion/execute@v0.9.13
+        with:
+          useConfigFile: true
+          configFilePath: GitVersion.yml
+
+      - name: Build, test and tag the Docker image
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
+        run: |
+          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build --pull \
+            --tag ${{ matrix.registry }}/${{ matrix.repository }}:$GitVersion_SemVer \
+            --file ${{ matrix.dockerfile }} \
+            ${{ matrix.context }}
