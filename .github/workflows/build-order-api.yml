@@ -1,4 +1,4 @@
-name: "Build Order API"
+name: "Order API"
 
 on:
   push:
