@@ -7,7 +7,7 @@ import (
 )
 
 type Database interface {
-	GetDB() (*sql.DB, error)
-	GetDriver() (*entsql.Driver, error)
+	GetDB() *sql.DB
+	GetDriver() *entsql.Driver
 	Close()
 }

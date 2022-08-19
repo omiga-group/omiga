@@ -31,12 +31,12 @@ func NewPostgres(
 	}, nil
 }
 
-func (p *postgres) GetDriver() (*entsql.Driver, error) {
-	return entsql.OpenDB(dialect.Postgres, p.db), nil
+func (p *postgres) GetDriver() *entsql.Driver {
+	return entsql.OpenDB(dialect.Postgres, p.db)
 }
 
-func (p *postgres) GetDB() (*sql.DB, error) {
-	return p.db, nil
+func (p *postgres) GetDB() *sql.DB {
+	return p.db
 }
 
 func (p *postgres) Close() {

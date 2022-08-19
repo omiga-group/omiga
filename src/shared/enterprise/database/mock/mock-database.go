@@ -48,12 +48,11 @@ func (mr *MockDatabaseMockRecorder) Close() *gomock.Call {
 }
 
 // GetDB mocks base method.
-func (m *MockDatabase) GetDB() (*sql.DB, error) {
+func (m *MockDatabase) GetDB() *sql.DB {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetDB")
 	ret0, _ := ret[0].(*sql.DB)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
 // GetDB indicates an expected call of GetDB.
@@ -63,12 +62,11 @@ func (mr *MockDatabaseMockRecorder) GetDB() *gomock.Call {
 }
 
 // GetDriver mocks base method.
-func (m *MockDatabase) GetDriver() (*sql0.Driver, error) {
+func (m *MockDatabase) GetDriver() *sql0.Driver {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetDriver")
 	ret0, _ := ret[0].(*sql0.Driver)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
 // GetDriver indicates an expected call of GetDriver.
