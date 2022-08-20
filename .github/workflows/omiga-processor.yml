@@ -55,6 +55,48 @@ jobs:
             --file ./src/exchange/omiga-processor/Dockerfile \
             ./src
 
+      - name: Build
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
+        run: |
+          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+             --pull \
+             --target build \
+            --file ./src/exchange/omiga-processor/Dockerfile \
+            ./src
+
+      - name: Unit Tests
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
+        run: |
+          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+             --pull \
+             --target test \
+            --tag omiga/omiga-processor-unittests:$GitVersion_SemVer \
+            --file ./src/exchange/omiga-processor/Dockerfile \
+            ./src
+          mkdir -p ./coverage/reports
+          docker create --name extract-container omiga/omiga-processor-unittests:$GitVersion_SemVer
+          docker cp extract-container:/coverage/reports/. "./coverage/reports/"
+
+      - name: Upload coverage to Codecov
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' && github.ref == 'refs/heads/main' }}
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage/reports/
+          flags: unittests,omiga-processor
+          fail_ci_if_error: true
+          verbose: true
+
+      - name: Publish
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
+        run: |
+          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+             --pull \
+             --target final \
+            --tag omiga/omiga-processor:$GitVersion_SemVer \
+            --file ./src/exchange/omiga-processor/Dockerfile \
+            ./src
+
   success:
     name: "Success - Omiga Processor"
     runs-on: ubuntu-latest

@@ -1,13 +1,11 @@
 # syntax=docker/dockerfile:1.4.1
-ARG FINAL_IMAGE=alpine/git:latest
+ARG FINAL_IMAGE=alpine:3
 ARG BUILD_IMAGE=golang:1.18
 
 FROM $FINAL_IMAGE as base
 LABEL maintainer="morteza@omiga.com.au"
 
 FROM $BUILD_IMAGE as build
-
-ENV CGO_ENABLED = 0
 
 RUN mkdir -p /src/shared/enterprise \
     mkdir -p /src/shared/clients \
@@ -23,17 +21,19 @@ COPY order/order-processor /src/order/order-processor
 
 WORKDIR /src/order/order-processor
 
-RUN --mount=type=cache,target=/go go build -v -o /bin/order-processor main.go
+RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/order-processor main.go
 
 FROM build AS local
 CMD ["/bin/order-processor", "start"]
 
 FROM build AS test
-RUN --mount=type=cache,target=/go go test ./... -v
+
+RUN mkdir -p /coverage/reports
+RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -v -covermode=count -coverprofile="/coverage/reports/coverage.out" ./...
 
 FROM base AS final
 
-WORKDIR /
-COPY --from=test /bin/order-processor .
-COPY --from=test /src/order/order-processor/config.yaml .
-CMD ["/bin/order-processor", "start"]
+WORKDIR /omiga
+COPY --from=test /bin/order-processor /omiga
+COPY --from=test /src/order/order-processor/config.yaml /omiga
+CMD ["/omiga/order-processor", "start"]

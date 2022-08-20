@@ -11,6 +11,7 @@ import (
 	"github.com/omiga-group/omiga/src/order/order-api/graphql"
 	"github.com/omiga-group/omiga/src/order/order-api/http"
 	"github.com/omiga-group/omiga/src/order/order-api/publishers"
+	repositories2 "github.com/omiga-group/omiga/src/order/order-api/repositories"
 	"github.com/omiga-group/omiga/src/order/order-api/services"
 	outbox2 "github.com/omiga-group/omiga/src/order/shared/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
@@ -57,6 +58,10 @@ func NewOrderOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLog
 }
 
 func NewHttpServer(logger *zap.SugaredLogger, appConfig configuration.AppConfig, entgoClient repositories.EntgoClient, orderOutboxBackgroundService outbox2.OutboxBackgroundService) (http.HttpServer, error) {
+	orderRepository, err := repositories2.NewOrderRepository()
+	if err != nil {
+		return nil, err
+	}
 	outboxPublisher, err := outbox2.NewOutboxPublisher(logger, entgoClient)
 	if err != nil {
 		return nil, err
@@ -65,7 +70,7 @@ func NewHttpServer(logger *zap.SugaredLogger, appConfig configuration.AppConfig,
 	if err != nil {
 		return nil, err
 	}
-	orderService, err := services.NewOrderService(logger, entgoClient, orderPublisher)
+	orderService, err := services.NewOrderService(logger, entgoClient, orderRepository, orderPublisher)
 	if err != nil {
 		return nil, err
 	}

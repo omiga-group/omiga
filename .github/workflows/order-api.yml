@@ -47,10 +47,44 @@ jobs:
           useConfigFile: true
           configFilePath: GitVersion.yml
 
-      - name: Build, test and tag the Docker image
+      - name: Build
         if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         run: |
-          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build --pull \
+          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+             --pull \
+             --target build \
+            --file ./src/order/order-api/Dockerfile \
+            ./src
+
+      - name: Unit Tests
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
+        run: |
+          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+             --pull \
+             --target test \
+            --tag omiga/order-api-unittests:$GitVersion_SemVer \
+            --file ./src/order/order-api/Dockerfile \
+            ./src
+          mkdir -p ./coverage/reports
+          docker create --name extract-container omiga/order-api-unittests:$GitVersion_SemVer
+          docker cp extract-container:/coverage/reports/. "./coverage/reports/"
+
+      - name: Upload coverage to Codecov
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' && github.ref == 'refs/heads/main' }}
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage/reports/
+          flags: unittests,order-api
+          fail_ci_if_error: true
+          verbose: true
+
+      - name: Publish
+        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
+        run: |
+          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+             --pull \
+             --target final \
             --tag omiga/order-api:$GitVersion_SemVer \
             --file ./src/order/order-api/Dockerfile \
             ./src
