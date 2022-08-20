@@ -25,6 +25,7 @@ import (
 	"github.com/omiga-group/omiga/src/order/order-api/graphql"
 	"github.com/omiga-group/omiga/src/order/order-api/http"
 	"github.com/omiga-group/omiga/src/order/order-api/publishers"
+	orderrepositories "github.com/omiga-group/omiga/src/order/order-api/repositories"
 	"github.com/omiga-group/omiga/src/order/order-api/services"
 	"github.com/omiga-group/omiga/src/order/shared/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
@@ -79,7 +80,8 @@ func NewHttpServer(
 		graphql.NewGraphQLServer,
 		services.NewOrderService,
 		publishers.NewOrderPublisher,
-		outbox.NewOutboxPublisher)
+		outbox.NewOutboxPublisher,
+		orderrepositories.NewOrderRepository)
 
 	return nil, nil
 }

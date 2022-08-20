@@ -10,8 +10,6 @@ all: dep generate ## Runs dep generate
 .PHONY: dep
 dep: ## Install dependencies
 	@go install github.com/golang/mock/mockgen@v1.6.0
-	@go get -d golang.org/x/tools/cmd/cover
-	@go get -d github.com/mattn/goveralls
 	@go mod tidy
 
 .PHONY: generate
