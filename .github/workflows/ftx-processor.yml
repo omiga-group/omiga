@@ -47,14 +47,6 @@ jobs:
           useConfigFile: true
           configFilePath: GitVersion.yml
 
-      - name: Build, test and tag the Docker image
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
-        run: |
-          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build --pull \
-            --tag omiga/ftx-processor:$GitVersion_SemVer \
-            --file ./src/exchange/ftx-processor/Dockerfile \
-            ./src
-
       - name: Build
         if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         run: |
