@@ -13,6 +13,7 @@ exec:
 federation:
   filename: ../../order-api/graphql/generated/federation.go
   package: generated
+  version: 2
 
 model:
   filename: ../../order-api/graphql/models/models_gen.go

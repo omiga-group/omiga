@@ -13,6 +13,7 @@ exec:
 federation:
   filename: ../../exchange-api/graphql/generated/federation.go
   package: generated
+  version: 2
 
 model:
   filename: ../../exchange-api/graphql/models/models_gen.go
