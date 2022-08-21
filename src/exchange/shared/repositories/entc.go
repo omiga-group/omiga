@@ -20,7 +20,7 @@ func main() {
 	ex, err := entgql.NewExtension(
 		entgql.WithWhereFilters(true),
 		entgql.WithSchemaPath(path.Join("..", "..", "..", "..", "api-definitions", "graphql", "omiga", "exchange", "V1", "ent.graphql")),
-		entgql.WithConfigPath(path.Join("..", "gqlgen.yml")),
+		entgql.WithConfigPath(path.Join("..", "graphql", "gqlgen.yml")),
 	)
 	if err != nil {
 		log.Fatalf("creating entgql extension: %v", err)
