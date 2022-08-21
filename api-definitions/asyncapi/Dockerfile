@@ -1,4 +1,4 @@
-﻿FROM node:latest
+﻿FROM node:16-alpine
 LABEL maintainer="morteza@omiga.com.au"
 
 RUN npm install -g @asyncapi/generator

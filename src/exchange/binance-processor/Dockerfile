@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4.1
 ARG FINAL_IMAGE=alpine:3
-ARG BUILD_IMAGE=golang:1.18
+ARG BUILD_IMAGE=golang:1.19
 
 FROM $FINAL_IMAGE as base
 LABEL maintainer="morteza@omiga.com.au"
