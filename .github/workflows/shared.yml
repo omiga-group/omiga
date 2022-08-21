@@ -1,4 +1,4 @@
-name: "Order Processor"
+name: "Shared"
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: "Build - Order Processor"
+    name: "Build - Shared"
     runs-on: ubuntu-latest
     env:
       DOCKER_BUILDKIT: 1
@@ -27,12 +27,10 @@ jobs:
             relevant_directories_changed:
               - '.github/workflows/codeql-analysis.yml'
               - '.github/workflows/lint.yml'
-              - '.github/workflows/order-processor.yml'
+              - '.github/workflows/shared.yml'
               - 'src/go.mod'
               - 'src/go.sum'
               - 'src/shared/**'
-              - 'src/order/shared/**'
-              - 'src/order/order-processor/**'
 
       - name: Install GitVersion
         if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
@@ -47,26 +45,17 @@ jobs:
           useConfigFile: true
           configFilePath: GitVersion.yml
 
-      - name: Build
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
-        run: |
-          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
-             --pull \
-             --target build \
-            --file ./src/order/order-processor/Dockerfile \
-            ./src
-
       - name: Unit Tests
         if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         run: |
           DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
              --pull \
              --target test \
-            --tag omiga/order-processor-unittests:$GitVersion_SemVer \
-            --file ./src/order/order-processor/Dockerfile \
+            --tag omiga/shared-unittests:$GitVersion_SemVer \
+            --file ./src/shared/Dockerfile \
             ./src
           mkdir -p ./coverage/reports
-          docker create --name extract-container omiga/order-processor-unittests:$GitVersion_SemVer
+          docker create --name extract-container omiga/shared-unittests:$GitVersion_SemVer
           docker cp extract-container:/coverage/reports/. "./coverage/reports/"
 
       - name: Upload coverage to Codecov
@@ -75,22 +64,12 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ./coverage/reports/
-          flags: unittests,order-processor
+          flags: unittests,shared
           fail_ci_if_error: true
           verbose: true
 
-      - name: Publish
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
-        run: |
-          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
-             --pull \
-             --target final \
-            --tag omiga/order-processor:$GitVersion_SemVer \
-            --file ./src/order/order-processor/Dockerfile \
-            ./src
-
   success:
-    name: "Success - Order Processor"
+    name: "Success - Shared"
     runs-on: ubuntu-latest
     needs: [build]
     steps:
