@@ -7,7 +7,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/omiga-group/omiga/src/exchange/shared"
+	"github.com/omiga-group/omiga/src/exchange/exchange-api/graphql/generated"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 )
 
@@ -21,7 +21,7 @@ func (r *queryResolver) Exchanges(ctx context.Context, after *repositories.Curso
 	panic(fmt.Errorf("not implemented"))
 }
 
-// Query returns shared.QueryResolver implementation.
-func (r *Resolver) Query() shared.QueryResolver { return &queryResolver{r} }
+// Query returns generated.QueryResolver implementation.
+func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }

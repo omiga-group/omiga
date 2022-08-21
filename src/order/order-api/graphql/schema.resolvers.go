@@ -7,14 +7,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/omiga-group/omiga/src/order/shared"
-	"github.com/omiga-group/omiga/src/order/shared/mappers"
+	"github.com/omiga-group/omiga/src/order/order-api/graphql/generated"
+	"github.com/omiga-group/omiga/src/order/order-api/graphql/models"
+	"github.com/omiga-group/omiga/src/order/order-api/mappers"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
 )
 
 // SubmitOrder is the resolver for the submitOrder field.
-func (r *mutationResolver) SubmitOrder(ctx context.Context, input shared.SubmitOrderInput) (*shared.OrderPayload, error) {
+func (r *mutationResolver) SubmitOrder(ctx context.Context, input models.SubmitOrderInput) (*models.OrderPayload, error) {
 	order := mappers.FromSubmitOrderInputToOrder(input)
 
 	submittedOrder, err := r.orderService.Submit(ctx, order)
@@ -24,7 +25,7 @@ func (r *mutationResolver) SubmitOrder(ctx context.Context, input shared.SubmitO
 
 	r.orderOutboxBackgroundService.RunAsync()
 
-	return &shared.OrderPayload{
+	return &models.OrderPayload{
 		ClientMutationID: input.ClientMutationID,
 		Order: &repositories.Order{
 			ID: submittedOrder.Id,
@@ -33,7 +34,7 @@ func (r *mutationResolver) SubmitOrder(ctx context.Context, input shared.SubmitO
 }
 
 // CancelOrder is the resolver for the cancelOrder field.
-func (r *mutationResolver) CancelOrder(ctx context.Context, input shared.CancelOrderInput) (*shared.OrderPayload, error) {
+func (r *mutationResolver) CancelOrder(ctx context.Context, input models.CancelOrderInput) (*models.OrderPayload, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
@@ -65,11 +66,11 @@ func (r *queryResolver) Orders(ctx context.Context, after *repositories.Cursor, 
 			repositories.WithOrderFilter(where.Filter))
 }
 
-// Mutation returns shared.MutationResolver implementation.
-func (r *Resolver) Mutation() shared.MutationResolver { return &mutationResolver{r} }
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
-// Query returns shared.QueryResolver implementation.
-func (r *Resolver) Query() shared.QueryResolver { return &queryResolver{r} }
+// Query returns generated.QueryResolver implementation.
+func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
