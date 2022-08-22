@@ -6,6 +6,7 @@ networks:
 
 volumes:
   omiga_pulsar_data:
+  omiga_pulsar_conf:
   omiga_postgres_data:
 
 
@@ -40,6 +41,7 @@ services:
     restart: unless-stopped
     volumes:
       - omiga_pulsar_data:/pulsar/data
+      - omiga_pulsar_conf:/pulsar/conf
     networks:
       - omiga_network
 
