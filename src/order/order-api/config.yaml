@@ -1,14 +1,14 @@
 app:
   listeningInterface: ":10000"
-  source: "urn::omiga::order-api"
-
-pulsar:
-  url: "pulsar://localhost:6650"
-  producerName: "order-api"
+  source: "urn::omiga::order::order-api"
 
 postgres:
   connectionString: "postgres://postgres:12345678@localhost/order"
   maxOpenConns: 10
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  producerName: "order-api"
 
 outbox:
   maxRetryCount: 30

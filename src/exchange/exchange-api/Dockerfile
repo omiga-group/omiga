@@ -9,22 +9,22 @@ FROM $BUILD_IMAGE as build
 
 RUN mkdir -p /src/shared/enterprise \
     mkdir -p /src/shared/clients \
-    mkdir -p /src/order/shared \
-    mkdir -p /src/order/order-api
+    mkdir -p /src/exchange/shared \
+    mkdir -p /src/exchange/exchange-api
 
 COPY go.mod /src/
 COPY go.sum /src/
 COPY shared/enterprise /src/shared/enterprise
 COPY shared/clients /src/shared/clients
-COPY order/shared /src/order/shared
-COPY order/order-api /src/order/order-api
+COPY exchange/shared /src/exchange/shared
+COPY exchange/exchange-api /src/exchange/exchange-api
 
-WORKDIR /src/order/order-api
+WORKDIR /src/exchange/exchange-api
 
-RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/order-api main.go
+RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/exchange-api main.go
 
 FROM build AS local
-CMD ["/bin/order-api", "start"]
+CMD ["/bin/exchange-api", "start"]
 
 FROM build AS test
 
@@ -34,6 +34,6 @@ RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -v -covermode=count -cov
 FROM base AS final
 
 WORKDIR /omiga
-COPY --from=build /bin/order-api /omiga
-COPY --from=build /src/order/order-api/config.yaml /omiga
-CMD ["/omiga/order-api", "start"]
+COPY --from=build /bin/exchange-api /omiga
+COPY --from=build /src/exchange/exchange-api/config.yaml /omiga
+CMD ["/omiga/exchange-api", "start"]

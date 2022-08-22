@@ -15,6 +15,24 @@ services:
     networks:
       - omiga_network
 
+  exchange-api:
+    image: ${DOCKER_REGISTRY-}exchangeapi
+    build:
+      context: .
+      dockerfile: exchange/exchange-api/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_APP_LISTENINGINTERFACE: ":80"
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
+    ports:
+      - "11000:80"
+    depends_on:
+      - postgres
+      - exchange-database-migration
+    networks:
+      - omiga_network
+
   omiga-processor1:
     image: ${DOCKER_REGISTRY-}omigaprocessor1
     build:

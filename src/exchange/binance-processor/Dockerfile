@@ -34,6 +34,6 @@ RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -v -covermode=count -cov
 FROM base AS final
 
 WORKDIR /omiga
-COPY --from=test /bin/binance-processor /omiga
-COPY --from=test /src/exchange/binance-processor/config.yaml /omiga
+COPY --from=build /bin/binance-processor /omiga
+COPY --from=build /src/exchange/binance-processor/config.yaml /omiga
 CMD ["/omiga/binance-processor", "start"]
