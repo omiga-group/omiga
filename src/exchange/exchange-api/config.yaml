@@ -1,0 +1,7 @@
+app:
+  listeningInterface: ":11000"
+  source: "urn::omiga::exchange::exchange-api"
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/exchange"
+  maxOpenConns: 10
