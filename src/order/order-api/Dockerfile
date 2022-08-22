@@ -34,6 +34,6 @@ RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -v -covermode=count -cov
 FROM base AS final
 
 WORKDIR /omiga
-COPY --from=test /bin/order-api /omiga
-COPY --from=test /src/order/order-api/config.yaml /omiga
+COPY --from=build /bin/order-api /omiga
+COPY --from=build /src/order/order-api/config.yaml /omiga
 CMD ["/omiga/order-api", "start"]

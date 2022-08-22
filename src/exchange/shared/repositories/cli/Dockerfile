@@ -32,6 +32,6 @@ RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -v -covermode=count -cov
 FROM base AS final
 
 WORKDIR /omiga
-COPY --from=test /bin/exchange-database-migration /omiga
-COPY --from=test /src/exchange/shared/repositories/cli/config.yaml /omiga
+COPY --from=build /bin/exchange-database-migration /omiga
+COPY --from=build /src/exchange/shared/repositories/cli/config.yaml /omiga
 CMD ["/omiga/exchange-database-migration", "migrate"]
