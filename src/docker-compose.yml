@@ -73,3 +73,16 @@ services:
       EXCHANGE_GRAPHQL_API: http://exchange-api/graphql
     networks:
       - omiga_network
+
+  web:
+    image: ${DOCKER_REGISTRY-}web
+    build:
+      context: ..
+      dockerfile: src/web/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      GRAPHQL_API_ENDPOINT: http://localhost:4343
+    networks:
+      - omiga_network
