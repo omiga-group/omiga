@@ -3,6 +3,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 import { enNZTranslation as enNZOrderList } from '../components/pages/order/OrderList';
 import { enNZTranslation as enNZOrderDetails } from '../components/pages/order/OrderDetails';
+import { enNZTranslation as enNZSubmitOrder } from '../components/pages/order/SubmitOrder';
 
 i18next.use(LanguageDetector).init({
   interpolation: {
@@ -16,6 +17,7 @@ i18next.use(LanguageDetector).init({
 
         orderList: enNZOrderList,
         orderDetails: enNZOrderDetails,
+        submitOrder: enNZSubmitOrder,
       },
     },
   },

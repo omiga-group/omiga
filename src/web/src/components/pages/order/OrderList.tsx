@@ -70,16 +70,10 @@ interface OrderRowProps {
 }
 
 const OrderRow = React.memo<OrderRowProps>(({ order: { id }, onOrderClick }) => {
-  const url = `${window.location.href}/${id}`;
-
   return (
     <TableRow>
-      <TableCell>{id}</TableCell>
       <TableCell>
         <Link onClick={() => onOrderClick(id)}>{id}</Link>
-      </TableCell>
-      <TableCell>
-        <a href={url}>{url}</a>
       </TableCell>
     </TableRow>
   );
@@ -177,6 +171,10 @@ const OrderListContainer = React.memo<OrderListContainerProps>(({ response, rela
   const navigate = useNavigate();
   const fabStyle = getFabStyle(theme);
 
+  const submitOrder = () => {
+    navigate(`/submitOrder`);
+  };
+
   const handleOrderClick = (code: string) => {
     navigate(code);
   };
@@ -185,7 +183,7 @@ const OrderListContainer = React.memo<OrderListContainerProps>(({ response, rela
     <React.Fragment>
       <OrdersTableRelayed response={response} onOrderClick={handleOrderClick} />
 
-      <Fab color="primary" aria-label="add" sx={fabStyle} size="medium">
+      <Fab color="primary" aria-label="add" sx={fabStyle} size="medium" onClick={submitOrder}>
         <AddIcon />
       </Fab>
     </React.Fragment>

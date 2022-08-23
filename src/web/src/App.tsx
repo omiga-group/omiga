@@ -4,12 +4,16 @@ import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
+import { RelayEnvironmentProvider } from 'react-relay';
 
 import './App.css';
 import i18n from './i18n';
 import { store } from './framework/redux/Store';
 import theme from './theme';
 import AppRoutes from './AppRoutes';
+import { default as createEnvironment } from './framework/relay/Environment';
+
+const Environment = createEnvironment();
 
 let baseUrl = '/';
 const base = document.getElementsByTagName('base');
@@ -24,10 +28,12 @@ const App = () => {
       <Provider store={store}>
         <BrowserRouter basename={baseUrl}>
           <ThemeProvider theme={theme}>
-            <SnackbarProvider maxSnack={5}>
-              <CssBaseline />
-              <AppRoutes />
-            </SnackbarProvider>
+            <RelayEnvironmentProvider environment={Environment}>
+              <SnackbarProvider maxSnack={5}>
+                <CssBaseline />
+                <AppRoutes />
+              </SnackbarProvider>
+            </RelayEnvironmentProvider>
           </ThemeProvider>
         </BrowserRouter>
       </Provider>
