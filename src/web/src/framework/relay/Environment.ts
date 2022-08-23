@@ -2,14 +2,13 @@ import { Environment, Network, RecordSource, Store, RequestParameters, Variables
 
 // Create a network layer from the fetch function
 
-const createEnvironment = (appToken: string) => {
+const createEnvironment = () => {
   return new Environment({
     network: Network.create(async (request: RequestParameters, variables: Variables) => {
       const requestHeaders: HeadersInit = new Headers();
 
       requestHeaders.set('Accept', 'application/json');
       requestHeaders.set('Content-Type', 'application/json');
-      requestHeaders.set('Authorization', appToken);
 
       const response = await fetch(window._env_.GRAPHQL_API_ENDPOINT, {
         method: 'POST',
