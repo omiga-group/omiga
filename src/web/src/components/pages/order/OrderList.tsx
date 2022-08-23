@@ -4,6 +4,11 @@ import { createFragmentContainer, createPaginationContainer } from 'react-relay'
 import { Environment } from 'relay-runtime';
 import { QueryRenderer } from 'react-relay';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
+import { Theme } from '@mui/material/styles';
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+import { SxProps } from '@mui/system';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -11,7 +16,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Link from '@mui/material/Link';
-import Button from '@mui/material/Button';
 import { useTranslation } from 'react-i18next';
 
 import { OrderList_order$data } from './__generated__/OrderList_order.graphql';
@@ -23,9 +27,14 @@ import LoadingContainer from '../../common/loading/LoadingContainer';
 import GenericErrorContainer from '../../common/generic-error/GenericErrorContainer';
 
 export const enNZTranslation = {
-  loadMore: 'Load more',
   id: 'Id',
 };
+
+const getFabStyle = (theme: Theme): SxProps => ({
+  position: 'absolute',
+  bottom: theme.spacing(2),
+  right: theme.spacing(2),
+});
 
 const pageSize = 10000;
 
@@ -95,9 +104,7 @@ interface OrdersTableProps {
   };
 }
 
-const OrdersTable = React.memo<OrdersTableProps>(({ response, onOrderClick, relay }) => {
-  const { t } = useTranslation();
-
+const OrdersTable = React.memo<OrdersTableProps>(({ response, onOrderClick }) => {
   const getOrdersTable = (response: OrderList_Query$data) => {
     // @ts-ignore: Object is possibly 'null'.
     return response.orders.edges.map((edge) => (
@@ -110,19 +117,8 @@ const OrdersTable = React.memo<OrdersTableProps>(({ response, onOrderClick, rela
     ));
   };
 
-  const loadMore = () => {
-    if (!relay.hasMore() || relay.isLoading()) {
-      return;
-    }
-
-    relay.loadMore(pageSize, () => {});
-  };
-
   return (
     <Paper>
-      <Button variant="contained" onClick={loadMore} color="primary" disabled={!relay.hasMore()}>
-        {t('orderList.loadMore')}
-      </Button>
       <Table size="small">
         <Header />
         <TableBody>{getOrdersTable(response)}</TableBody>
@@ -177,7 +173,9 @@ interface OrderListContainerProps {
 }
 
 const OrderListContainer = React.memo<OrderListContainerProps>(({ response, relay: { environment } }) => {
+  const theme = useTheme();
   const navigate = useNavigate();
+  const fabStyle = getFabStyle(theme);
 
   const handleOrderClick = (code: string) => {
     navigate(code);
@@ -185,12 +183,11 @@ const OrderListContainer = React.memo<OrderListContainerProps>(({ response, rela
 
   return (
     <React.Fragment>
-      <OrdersTableRelayed
-        response={response}
-        // @ts-ignore: Object is possibly 'null'.
-        isReviewedStates={isReviewedStates}
-        onOrderClick={handleOrderClick}
-      />
+      <OrdersTableRelayed response={response} onOrderClick={handleOrderClick} />
+
+      <Fab color="primary" aria-label="add" sx={fabStyle} size="medium">
+        <AddIcon />
+      </Fab>
     </React.Fragment>
   );
 });
