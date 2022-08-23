@@ -1,26 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
+import { Provider } from 'react-redux';
+import { I18nextProvider } from 'react-i18next';
+import { BrowserRouter } from 'react-router-dom';
+import { SnackbarProvider } from 'notistack';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import './App.css';
+import i18n from './i18n';
+import { store } from './framework/redux/Store';
+import theme from './theme';
+import AppRoutes from './AppRoutes';
+
+let baseUrl = '/';
+const base = document.getElementsByTagName('base');
+
+if (base && base.length === 1) {
+  baseUrl = base[0].getAttribute('href') as string;
 }
+
+const App = () => {
+  return (
+    <I18nextProvider i18n={i18n}>
+      <Provider store={store}>
+        <BrowserRouter basename={baseUrl}>
+          <ThemeProvider theme={theme}>
+            <SnackbarProvider maxSnack={5}>
+              <CssBaseline />
+              <AppRoutes />
+            </SnackbarProvider>
+          </ThemeProvider>
+        </BrowserRouter>
+      </Provider>
+    </I18nextProvider>
+  );
+};
 
 export default App;
