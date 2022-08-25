@@ -5,7 +5,8 @@ go 1.19
 require (
 	entgo.io/contrib v0.3.1
 	entgo.io/ent v0.11.2
-	github.com/99designs/gqlgen v0.17.14
+	github.com/99designs/gqlgen v0.17.15
+	github.com/adshao/go-binance/v2 v2.3.8
 	github.com/apache/pulsar-client-go v0.8.1
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
@@ -22,7 +23,7 @@ require (
 	github.com/spf13/cobra v1.5.0
 	github.com/vektah/gqlparser/v2 v2.4.8
 	github.com/vmihailenco/msgpack/v5 v5.3.5
-	go.uber.org/zap v1.22.0
+	go.uber.org/zap v1.23.0
 	golang.org/x/sync v0.0.0-20220819030929-7fc1605a5dde
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -38,6 +39,7 @@ require (
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/ardielle/ardielle-go v1.5.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/danieljoos/wincred v1.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -62,6 +64,7 @@ require (
 	github.com/jackc/pgproto3/v2 v2.3.1 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.12.0 // indirect
+	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/keybase/go-keychain v0.0.0-20190712205309-48d3d31d256d // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/linkedin/goavro/v2 v2.9.8 // indirect
@@ -69,6 +72,8 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mtibben/percent v0.2.1 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
