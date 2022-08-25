@@ -19,7 +19,10 @@
 package commands
 
 import (
+	"context"
+
 	"github.com/google/wire"
+	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/subscribers"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
@@ -27,14 +30,29 @@ import (
 	"go.uber.org/zap"
 )
 
-func NewMessageConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, topic string) (messaging.MessageConsumer, error) {
+func NewMessageConsumer(
+	logger *zap.SugaredLogger,
+	pulsarConfig pulsar.PulsarConfig,
+	topic string) (messaging.MessageConsumer, error) {
 	wire.Build(pulsar.NewPulsarMessageConsumer)
 
 	return nil, nil
 }
 
-func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messaging.MessageConsumer) (syntheticorderv1.Consumer, error) {
+func NewSyntheticOrderConsumer(
+	logger *zap.SugaredLogger,
+	messageConsumer messaging.MessageConsumer) (syntheticorderv1.Consumer, error) {
 	wire.Build(syntheticorderv1.NewConsumer, subscribers.NewSyntheticOrderSubscriber)
+
+	return nil, nil
+}
+
+func NewBinanceOrderBookSubscriber(
+	ctx context.Context,
+	logger *zap.SugaredLogger,
+	binanceSettings configuration.BinanceSettings,
+	symbol string) (subscribers.BinanceOrderBookSubscriber, error) {
+	wire.Build(subscribers.NewBinanceOrderBookSubscriber)
 
 	return nil, nil
 }

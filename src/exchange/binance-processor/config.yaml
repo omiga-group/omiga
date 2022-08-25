@@ -2,3 +2,9 @@ pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "binance-processor"
   producerName: "binance-processor"
+
+binance:
+  useTestnet: true
+  orderBook:
+    symbols:
+      - LTCBTC

@@ -68,6 +68,17 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
+			for _, symbol := range config.Binance.OrderBook.Symbols {
+				_, err = NewBinanceOrderBookSubscriber(
+					ctx,
+					sugarLogger,
+					config.Binance,
+					symbol)
+				if err != nil {
+					sugarLogger.Fatal(err)
+				}
+			}
+
 			for {
 				if ctx.Err() == context.Canceled {
 					break
