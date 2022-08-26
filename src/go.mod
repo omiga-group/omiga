@@ -8,6 +8,7 @@ require (
 	github.com/99designs/gqlgen v0.17.15
 	github.com/adshao/go-binance/v2 v2.3.8
 	github.com/apache/pulsar-client-go v0.8.1
+	github.com/deepmap/oapi-codegen v1.11.0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
