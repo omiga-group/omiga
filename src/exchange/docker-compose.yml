@@ -115,3 +115,18 @@ services:
       - pulsar
     networks:
       - omiga_network
+
+  coingeko:
+    image: ${DOCKER_REGISTRY-}coingeko
+    build:
+      context: .
+      dockerfile: exchange/coingeko/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/order"
+    depends_on:
+      - postgres
+      - exchange-database-migration
+    networks:
+      - omiga_network
