@@ -22,7 +22,7 @@ WORKDIR /src/exchange/shared/repositories/cli
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/exchange-database-migration main.go
 
 FROM build AS local
-CMD ["/bin/exchange-database-migration", "migrate"]
+CMD ["/omiga/exchange-database-migration", "migrate", "--post-migration-script-path", "post-migration-script.sql"]
 
 FROM build AS test
 
@@ -34,4 +34,5 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/exchange-database-migration /omiga
 COPY --from=build /src/exchange/shared/repositories/cli/config.yaml /omiga
-CMD ["/omiga/exchange-database-migration", "migrate"]
+COPY --from=build /src/exchange/shared/repositories/cli/post-migration-script.sql /omiga
+CMD ["/omiga/exchange-database-migration", "migrate", "--post-migration-script-path", "post-migration-script.sql"]

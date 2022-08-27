@@ -113,9 +113,9 @@ var (
 				Columns: []*schema.Column{TickersColumns[1]},
 			},
 			{
-				Name:    "ticker_base",
+				Name:    "ticker_target",
 				Unique:  false,
-				Columns: []*schema.Column{TickersColumns[1]},
+				Columns: []*schema.Column{TickersColumns[2]},
 			},
 			{
 				Name:    "ticker_coin_id",

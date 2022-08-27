@@ -16,7 +16,12 @@ import (
 	"go.uber.org/zap"
 )
 
+type migrateDBOptions struct {
+	postMigrationScriptPath string
+}
+
 func migrateCommand() *cobra.Command {
+	opt := migrateDBOptions{}
 	cmd := &cobra.Command{
 		Use:   "migrate",
 		Short: "Migrate database to the latest version",
@@ -79,6 +84,11 @@ func migrateCommand() *cobra.Command {
 
 			defer entgoClient.Close()
 
+			osHelper, err := NewOsHelper()
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
 			client := entgoClient.GetClient()
 
 			if err = client.Schema.WriteTo(
@@ -94,9 +104,33 @@ func migrateCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
+			if len(opt.postMigrationScriptPath) > 0 {
+				if !osHelper.FileExist(opt.postMigrationScriptPath) {
+					err := fmt.Errorf("post migration script file does not exist. Path: %s", opt.postMigrationScriptPath)
+
+					sugarLogger.Fatal(err)
+				}
+
+				postMigrationScript, err := osHelper.GetFileAsString(opt.postMigrationScriptPath)
+				if err != nil {
+					sugarLogger.Fatal(err)
+				}
+
+				sugarLogger.Info("Applying post migration script...")
+
+				_, err = db.ExecContext(ctx, postMigrationScript)
+				if err != nil {
+					sugarLogger.Fatal(err)
+				}
+
+				sugarLogger.Info("Applying post migration script done.")
+			}
+
 			sugarLogger.Info("Successfully migrated database to the latest schema")
 		},
 	}
+
+	cmd.Flags().StringVar(&opt.postMigrationScriptPath, "post-migration-script-path", "", "Specify the path to the SQL script to run after entgo migration is done")
 
 	return cmd
 }

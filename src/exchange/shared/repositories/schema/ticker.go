@@ -50,7 +50,7 @@ func (Ticker) Edges() []ent.Edge {
 func (Ticker) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("base"),
-		index.Fields("base"),
+		index.Fields("target"),
 
 		index.Fields("coin_id"),
 		index.Fields("target_coin_id"),

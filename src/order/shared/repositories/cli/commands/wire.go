@@ -23,6 +23,7 @@ import (
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
+	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"go.uber.org/zap"
 )
 
@@ -38,6 +39,12 @@ func NewEntgoClient(
 	logger *zap.SugaredLogger,
 	postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
 	wire.Build(postgres.NewPostgres, repositories.NewEntgoClient)
+
+	return nil, nil
+}
+
+func NewOsHelper() (os.OsHelper, error) {
+	wire.Build(os.NewOsHelper)
 
 	return nil, nil
 }
