@@ -75,6 +75,11 @@ type PageInfo {
 
 type Exchange implements Node {
   id: ID!
+  exchangeId: String!
+  name: String
+  yearEstablished: Int
+  country: String
+  image: String
 }
 
 """

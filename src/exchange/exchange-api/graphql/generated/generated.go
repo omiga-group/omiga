@@ -48,7 +48,12 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Exchange struct {
-		ID func(childComplexity int) int
+		Country         func(childComplexity int) int
+		ExchangeID      func(childComplexity int) int
+		ID              func(childComplexity int) int
+		Image           func(childComplexity int) int
+		Name            func(childComplexity int) int
+		YearEstablished func(childComplexity int) int
 	}
 
 	ExchangeConnection struct {
@@ -107,12 +112,47 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
+	case "Exchange.country":
+		if e.complexity.Exchange.Country == nil {
+			break
+		}
+
+		return e.complexity.Exchange.Country(childComplexity), true
+
+	case "Exchange.exchangeId":
+		if e.complexity.Exchange.ExchangeID == nil {
+			break
+		}
+
+		return e.complexity.Exchange.ExchangeID(childComplexity), true
+
 	case "Exchange.id":
 		if e.complexity.Exchange.ID == nil {
 			break
 		}
 
 		return e.complexity.Exchange.ID(childComplexity), true
+
+	case "Exchange.image":
+		if e.complexity.Exchange.Image == nil {
+			break
+		}
+
+		return e.complexity.Exchange.Image(childComplexity), true
+
+	case "Exchange.name":
+		if e.complexity.Exchange.Name == nil {
+			break
+		}
+
+		return e.complexity.Exchange.Name(childComplexity), true
+
+	case "Exchange.yearEstablished":
+		if e.complexity.Exchange.YearEstablished == nil {
+			break
+		}
+
+		return e.complexity.Exchange.YearEstablished(childComplexity), true
 
 	case "ExchangeConnection.edges":
 		if e.complexity.ExchangeConnection.Edges == nil {
@@ -348,6 +388,11 @@ type PageInfo {
 
 type Exchange implements Node {
   id: ID!
+  exchangeId: String!
+  name: String
+  yearEstablished: Int
+  country: String
+  image: String
 }
 
 """
@@ -1052,6 +1097,214 @@ func (ec *executionContext) fieldContext_Exchange_id(ctx context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Exchange_exchangeId(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_exchangeId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExchangeID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_exchangeId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_name(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_yearEstablished(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_yearEstablished(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.YearEstablished, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_yearEstablished(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_country(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_country(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Country, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_country(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_image(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_image(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Image, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_image(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ExchangeConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *repositories.ExchangeConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ExchangeConnection_pageInfo(ctx, field)
 	if err != nil {
@@ -1232,6 +1485,16 @@ func (ec *executionContext) fieldContext_ExchangeEdge_node(ctx context.Context, 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Exchange_id(ctx, field)
+			case "exchangeId":
+				return ec.fieldContext_Exchange_exchangeId(ctx, field)
+			case "name":
+				return ec.fieldContext_Exchange_name(ctx, field)
+			case "yearEstablished":
+				return ec.fieldContext_Exchange_yearEstablished(ctx, field)
+			case "country":
+				return ec.fieldContext_Exchange_country(ctx, field)
+			case "image":
+				return ec.fieldContext_Exchange_image(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Exchange", field.Name)
 		},
@@ -1491,6 +1754,16 @@ func (ec *executionContext) fieldContext_Query_exchange(ctx context.Context, fie
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Exchange_id(ctx, field)
+			case "exchangeId":
+				return ec.fieldContext_Exchange_exchangeId(ctx, field)
+			case "name":
+				return ec.fieldContext_Exchange_name(ctx, field)
+			case "yearEstablished":
+				return ec.fieldContext_Exchange_yearEstablished(ctx, field)
+			case "country":
+				return ec.fieldContext_Exchange_country(ctx, field)
+			case "image":
+				return ec.fieldContext_Exchange_image(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Exchange", field.Name)
 		},
@@ -6935,6 +7208,29 @@ func (ec *executionContext) _Exchange(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "exchangeId":
+
+			out.Values[i] = ec._Exchange_exchangeId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+
+			out.Values[i] = ec._Exchange_name(ctx, field, obj)
+
+		case "yearEstablished":
+
+			out.Values[i] = ec._Exchange_yearEstablished(ctx, field, obj)
+
+		case "country":
+
+			out.Values[i] = ec._Exchange_country(ctx, field, obj)
+
+		case "image":
+
+			out.Values[i] = ec._Exchange_image(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
