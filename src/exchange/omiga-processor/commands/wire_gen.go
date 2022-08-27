@@ -17,6 +17,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
@@ -40,7 +41,11 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 }
 
 func NewOrderBookSimulator(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, pulsarConfig pulsar.PulsarConfig, topic string, orderBookSimulatorSettings simulators.OrderBookSimulatorSettings) (simulators.OrderBookSimulator, error) {
-	cronService, err := cron.NewCronService(logger)
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	cronService, err := cron.NewCronService(logger, timeHelper)
 	if err != nil {
 		return nil, err
 	}

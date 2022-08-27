@@ -12,6 +12,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 	coingekov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingeko/v3"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	timeex "github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
@@ -23,6 +24,7 @@ type coingekoSubscriber struct {
 	logger           *zap.SugaredLogger
 	coingekoSettings configuration.CoingekoSettings
 	entgoClient      repositories.EntgoClient
+	timeHelper       timeex.TimeHelper
 }
 
 func NewCoingekoSubscriber(
@@ -30,12 +32,14 @@ func NewCoingekoSubscriber(
 	logger *zap.SugaredLogger,
 	cronService cron.CronService,
 	coingekoSettings configuration.CoingekoSettings,
-	entgoClient repositories.EntgoClient) (CoingekoSubscriber, error) {
+	entgoClient repositories.EntgoClient,
+	timeHelper timeex.TimeHelper) (CoingekoSubscriber, error) {
 	instance := &coingekoSubscriber{
 		ctx:              ctx,
 		logger:           logger,
 		coingekoSettings: coingekoSettings,
 		entgoClient:      entgoClient,
+		timeHelper:       timeHelper,
 	}
 
 	if _, err := cronService.GetCron().AddJob("0/1 * * * * *", instance); err != nil {
@@ -74,10 +78,7 @@ func (cs *coingekoSubscriber) Run() {
 		exchangeId := exchangeIdName.Id
 
 		// This is to avoid coingeko rate limiter blocking us from querying exchanges details
-		select {
-		case <-cs.ctx.Done():
-		case <-time.After(2 * time.Second):
-		}
+		cs.timeHelper.SleepOrWaitForContextGetCancelled(cs.ctx, 2*time.Second)
 
 		if cs.ctx.Err() == context.Canceled {
 			break

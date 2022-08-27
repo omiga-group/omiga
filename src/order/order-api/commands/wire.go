@@ -34,13 +34,15 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	enterpriseOutbox "github.com/omiga-group/omiga/src/shared/enterprise/outbox"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
 func NewCronService(
 	logger *zap.SugaredLogger) (cron.CronService, error) {
 	wire.Build(
-		cron.NewCronService)
+		cron.NewCronService,
+		time.NewTimeHelper)
 
 	return nil, nil
 }

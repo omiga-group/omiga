@@ -27,6 +27,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
@@ -39,6 +40,7 @@ func NewCoingekoSubscriber(
 		postgres.NewPostgres,
 		repositories.NewEntgoClient,
 		cron.NewCronService,
+		time.NewTimeHelper,
 		subscribers.NewCoingekoSubscriber)
 
 	return nil, nil

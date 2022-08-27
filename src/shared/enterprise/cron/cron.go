@@ -16,13 +16,17 @@ type CronService interface {
 }
 
 type cronService struct {
-	logger *zap.SugaredLogger
-	cron   *cron.Cron
+	logger     *zap.SugaredLogger
+	timeHelper timeex.TimeHelper
+	cron       *cron.Cron
 }
 
-func NewCronService(logger *zap.SugaredLogger) (CronService, error) {
+func NewCronService(
+	logger *zap.SugaredLogger,
+	timeHelper timeex.TimeHelper) (CronService, error) {
 	instance := &cronService{
-		logger: logger,
+		logger:     logger,
+		timeHelper: timeHelper,
 	}
 
 	instance.cron = cron.New(
@@ -51,7 +55,9 @@ func (cs *cronService) Close() {
 				break
 			}
 
-			timeex.SleepOrWaitForContextGetCancelled(cronCtx, time.Millisecond*100)
+			cs.timeHelper.SleepOrWaitForContextGetCancelled(
+				cronCtx,
+				time.Millisecond*100)
 		}
 
 		cs.cron = nil

@@ -13,13 +13,18 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
 func NewCoingekoSubscriber(ctx context.Context, logger *zap.SugaredLogger, coingekoSettings configuration.CoingekoSettings, postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
-	cronService, err := cron.NewCronService(logger)
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	cronService, err := cron.NewCronService(logger, timeHelper)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +36,7 @@ func NewCoingekoSubscriber(ctx context.Context, logger *zap.SugaredLogger, coing
 	if err != nil {
 		return nil, err
 	}
-	coingekoSubscriber, err := subscribers.NewCoingekoSubscriber(ctx, logger, cronService, coingekoSettings, entgoClient)
+	coingekoSubscriber, err := subscribers.NewCoingekoSubscriber(ctx, logger, cronService, coingekoSettings, entgoClient, timeHelper)
 	if err != nil {
 		return nil, err
 	}

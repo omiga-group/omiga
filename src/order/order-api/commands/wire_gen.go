@@ -20,13 +20,18 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/outbox"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
 func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
-	cronService, err := cron.NewCronService(logger)
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	cronService, err := cron.NewCronService(logger, timeHelper)
 	if err != nil {
 		return nil, err
 	}

@@ -31,6 +31,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
@@ -65,6 +66,7 @@ func NewOrderBookSimulator(
 		orderbookv1.NewProducer,
 		pulsar.NewPulsarMessageProducer,
 		cron.NewCronService,
+		time.NewTimeHelper,
 		publishers.NewOrderBookPublisher)
 
 	return nil, nil

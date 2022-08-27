@@ -705,6 +705,8 @@ input TickerWhereInput {
   lastGTE: Float
   lastLT: Float
   lastLTE: Float
+  lastIsNil: Boolean
+  lastNotNil: Boolean
   """volume field predicates"""
   volume: Float
   volumeNEQ: Float
@@ -714,6 +716,8 @@ input TickerWhereInput {
   volumeGTE: Float
   volumeLT: Float
   volumeLTE: Float
+  volumeIsNil: Boolean
+  volumeNotNil: Boolean
   """trust_score field predicates"""
   trustScore: String
   trustScoreNEQ: String
@@ -726,6 +730,8 @@ input TickerWhereInput {
   trustScoreContains: String
   trustScoreHasPrefix: String
   trustScoreHasSuffix: String
+  trustScoreIsNil: Boolean
+  trustScoreNotNil: Boolean
   trustScoreEqualFold: String
   trustScoreContainsFold: String
   """bid_ask_spread_percentage field predicates"""
@@ -737,6 +743,8 @@ input TickerWhereInput {
   bidAskSpreadPercentageGTE: Float
   bidAskSpreadPercentageLT: Float
   bidAskSpreadPercentageLTE: Float
+  bidAskSpreadPercentageIsNil: Boolean
+  bidAskSpreadPercentageNotNil: Boolean
   """timestamp field predicates"""
   timestamp: Time
   timestampNEQ: Time
@@ -746,6 +754,8 @@ input TickerWhereInput {
   timestampGTE: Time
   timestampLT: Time
   timestampLTE: Time
+  timestampIsNil: Boolean
+  timestampNotNil: Boolean
   """last_traded_at field predicates"""
   lastTradedAt: Time
   lastTradedAtNEQ: Time
@@ -755,6 +765,8 @@ input TickerWhereInput {
   lastTradedAtGTE: Time
   lastTradedAtLT: Time
   lastTradedAtLTE: Time
+  lastTradedAtIsNil: Boolean
+  lastTradedAtNotNil: Boolean
   """last_fetch_at field predicates"""
   lastFetchAt: Time
   lastFetchAtNEQ: Time
@@ -764,12 +776,18 @@ input TickerWhereInput {
   lastFetchAtGTE: Time
   lastFetchAtLT: Time
   lastFetchAtLTE: Time
+  lastFetchAtIsNil: Boolean
+  lastFetchAtNotNil: Boolean
   """is_anomaly field predicates"""
   isAnomaly: Boolean
   isAnomalyNEQ: Boolean
+  isAnomalyIsNil: Boolean
+  isAnomalyNotNil: Boolean
   """is_stale field predicates"""
   isStale: Boolean
   isStaleNEQ: Boolean
+  isStaleIsNil: Boolean
+  isStaleNotNil: Boolean
   """trade_url field predicates"""
   tradeURL: String
   tradeURLNEQ: String
@@ -814,6 +832,8 @@ input TickerWhereInput {
   coinIDContains: String
   coinIDHasPrefix: String
   coinIDHasSuffix: String
+  coinIDIsNil: Boolean
+  coinIDNotNil: Boolean
   coinIDEqualFold: String
   coinIDContainsFold: String
   """target_coin_id field predicates"""
@@ -828,6 +848,8 @@ input TickerWhereInput {
   targetCoinIDContains: String
   targetCoinIDHasPrefix: String
   targetCoinIDHasSuffix: String
+  targetCoinIDIsNil: Boolean
+  targetCoinIDNotNil: Boolean
   targetCoinIDEqualFold: String
   targetCoinIDContainsFold: String
   """exchange edge predicates"""
@@ -5405,7 +5427,7 @@ func (ec *executionContext) unmarshalInputTickerWhereInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "base", "baseNEQ", "baseIn", "baseNotIn", "baseGT", "baseGTE", "baseLT", "baseLTE", "baseContains", "baseHasPrefix", "baseHasSuffix", "baseEqualFold", "baseContainsFold", "target", "targetNEQ", "targetIn", "targetNotIn", "targetGT", "targetGTE", "targetLT", "targetLTE", "targetContains", "targetHasPrefix", "targetHasSuffix", "targetEqualFold", "targetContainsFold", "last", "lastNEQ", "lastIn", "lastNotIn", "lastGT", "lastGTE", "lastLT", "lastLTE", "volume", "volumeNEQ", "volumeIn", "volumeNotIn", "volumeGT", "volumeGTE", "volumeLT", "volumeLTE", "trustScore", "trustScoreNEQ", "trustScoreIn", "trustScoreNotIn", "trustScoreGT", "trustScoreGTE", "trustScoreLT", "trustScoreLTE", "trustScoreContains", "trustScoreHasPrefix", "trustScoreHasSuffix", "trustScoreEqualFold", "trustScoreContainsFold", "bidAskSpreadPercentage", "bidAskSpreadPercentageNEQ", "bidAskSpreadPercentageIn", "bidAskSpreadPercentageNotIn", "bidAskSpreadPercentageGT", "bidAskSpreadPercentageGTE", "bidAskSpreadPercentageLT", "bidAskSpreadPercentageLTE", "timestamp", "timestampNEQ", "timestampIn", "timestampNotIn", "timestampGT", "timestampGTE", "timestampLT", "timestampLTE", "lastTradedAt", "lastTradedAtNEQ", "lastTradedAtIn", "lastTradedAtNotIn", "lastTradedAtGT", "lastTradedAtGTE", "lastTradedAtLT", "lastTradedAtLTE", "lastFetchAt", "lastFetchAtNEQ", "lastFetchAtIn", "lastFetchAtNotIn", "lastFetchAtGT", "lastFetchAtGTE", "lastFetchAtLT", "lastFetchAtLTE", "isAnomaly", "isAnomalyNEQ", "isStale", "isStaleNEQ", "tradeURL", "tradeURLNEQ", "tradeURLIn", "tradeURLNotIn", "tradeURLGT", "tradeURLGTE", "tradeURLLT", "tradeURLLTE", "tradeURLContains", "tradeURLHasPrefix", "tradeURLHasSuffix", "tradeURLIsNil", "tradeURLNotNil", "tradeURLEqualFold", "tradeURLContainsFold", "tokenInfoURL", "tokenInfoURLNEQ", "tokenInfoURLIn", "tokenInfoURLNotIn", "tokenInfoURLGT", "tokenInfoURLGTE", "tokenInfoURLLT", "tokenInfoURLLTE", "tokenInfoURLContains", "tokenInfoURLHasPrefix", "tokenInfoURLHasSuffix", "tokenInfoURLIsNil", "tokenInfoURLNotNil", "tokenInfoURLEqualFold", "tokenInfoURLContainsFold", "coinID", "coinIDNEQ", "coinIDIn", "coinIDNotIn", "coinIDGT", "coinIDGTE", "coinIDLT", "coinIDLTE", "coinIDContains", "coinIDHasPrefix", "coinIDHasSuffix", "coinIDEqualFold", "coinIDContainsFold", "targetCoinID", "targetCoinIDNEQ", "targetCoinIDIn", "targetCoinIDNotIn", "targetCoinIDGT", "targetCoinIDGTE", "targetCoinIDLT", "targetCoinIDLTE", "targetCoinIDContains", "targetCoinIDHasPrefix", "targetCoinIDHasSuffix", "targetCoinIDEqualFold", "targetCoinIDContainsFold", "hasExchange", "hasExchangeWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "base", "baseNEQ", "baseIn", "baseNotIn", "baseGT", "baseGTE", "baseLT", "baseLTE", "baseContains", "baseHasPrefix", "baseHasSuffix", "baseEqualFold", "baseContainsFold", "target", "targetNEQ", "targetIn", "targetNotIn", "targetGT", "targetGTE", "targetLT", "targetLTE", "targetContains", "targetHasPrefix", "targetHasSuffix", "targetEqualFold", "targetContainsFold", "last", "lastNEQ", "lastIn", "lastNotIn", "lastGT", "lastGTE", "lastLT", "lastLTE", "lastIsNil", "lastNotNil", "volume", "volumeNEQ", "volumeIn", "volumeNotIn", "volumeGT", "volumeGTE", "volumeLT", "volumeLTE", "volumeIsNil", "volumeNotNil", "trustScore", "trustScoreNEQ", "trustScoreIn", "trustScoreNotIn", "trustScoreGT", "trustScoreGTE", "trustScoreLT", "trustScoreLTE", "trustScoreContains", "trustScoreHasPrefix", "trustScoreHasSuffix", "trustScoreIsNil", "trustScoreNotNil", "trustScoreEqualFold", "trustScoreContainsFold", "bidAskSpreadPercentage", "bidAskSpreadPercentageNEQ", "bidAskSpreadPercentageIn", "bidAskSpreadPercentageNotIn", "bidAskSpreadPercentageGT", "bidAskSpreadPercentageGTE", "bidAskSpreadPercentageLT", "bidAskSpreadPercentageLTE", "bidAskSpreadPercentageIsNil", "bidAskSpreadPercentageNotNil", "timestamp", "timestampNEQ", "timestampIn", "timestampNotIn", "timestampGT", "timestampGTE", "timestampLT", "timestampLTE", "timestampIsNil", "timestampNotNil", "lastTradedAt", "lastTradedAtNEQ", "lastTradedAtIn", "lastTradedAtNotIn", "lastTradedAtGT", "lastTradedAtGTE", "lastTradedAtLT", "lastTradedAtLTE", "lastTradedAtIsNil", "lastTradedAtNotNil", "lastFetchAt", "lastFetchAtNEQ", "lastFetchAtIn", "lastFetchAtNotIn", "lastFetchAtGT", "lastFetchAtGTE", "lastFetchAtLT", "lastFetchAtLTE", "lastFetchAtIsNil", "lastFetchAtNotNil", "isAnomaly", "isAnomalyNEQ", "isAnomalyIsNil", "isAnomalyNotNil", "isStale", "isStaleNEQ", "isStaleIsNil", "isStaleNotNil", "tradeURL", "tradeURLNEQ", "tradeURLIn", "tradeURLNotIn", "tradeURLGT", "tradeURLGTE", "tradeURLLT", "tradeURLLTE", "tradeURLContains", "tradeURLHasPrefix", "tradeURLHasSuffix", "tradeURLIsNil", "tradeURLNotNil", "tradeURLEqualFold", "tradeURLContainsFold", "tokenInfoURL", "tokenInfoURLNEQ", "tokenInfoURLIn", "tokenInfoURLNotIn", "tokenInfoURLGT", "tokenInfoURLGTE", "tokenInfoURLLT", "tokenInfoURLLTE", "tokenInfoURLContains", "tokenInfoURLHasPrefix", "tokenInfoURLHasSuffix", "tokenInfoURLIsNil", "tokenInfoURLNotNil", "tokenInfoURLEqualFold", "tokenInfoURLContainsFold", "coinID", "coinIDNEQ", "coinIDIn", "coinIDNotIn", "coinIDGT", "coinIDGTE", "coinIDLT", "coinIDLTE", "coinIDContains", "coinIDHasPrefix", "coinIDHasSuffix", "coinIDIsNil", "coinIDNotNil", "coinIDEqualFold", "coinIDContainsFold", "targetCoinID", "targetCoinIDNEQ", "targetCoinIDIn", "targetCoinIDNotIn", "targetCoinIDGT", "targetCoinIDGTE", "targetCoinIDLT", "targetCoinIDLTE", "targetCoinIDContains", "targetCoinIDHasPrefix", "targetCoinIDHasSuffix", "targetCoinIDIsNil", "targetCoinIDNotNil", "targetCoinIDEqualFold", "targetCoinIDContainsFold", "hasExchange", "hasExchangeWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -5772,6 +5794,22 @@ func (ec *executionContext) unmarshalInputTickerWhereInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
+		case "lastIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastIsNil"))
+			it.LastIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "lastNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastNotNil"))
+			it.LastNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "volume":
 			var err error
 
@@ -5833,6 +5871,22 @@ func (ec *executionContext) unmarshalInputTickerWhereInput(ctx context.Context, 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("volumeLTE"))
 			it.VolumeLTE, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "volumeIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("volumeIsNil"))
+			it.VolumeIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "volumeNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("volumeNotNil"))
+			it.VolumeNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5924,6 +5978,22 @@ func (ec *executionContext) unmarshalInputTickerWhereInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
+		case "trustScoreIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreIsNil"))
+			it.TrustScoreIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreNotNil"))
+			it.TrustScoreNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "trustScoreEqualFold":
 			var err error
 
@@ -6004,6 +6074,22 @@ func (ec *executionContext) unmarshalInputTickerWhereInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
+		case "bidAskSpreadPercentageIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("bidAskSpreadPercentageIsNil"))
+			it.BidAskSpreadPercentageIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "bidAskSpreadPercentageNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("bidAskSpreadPercentageNotNil"))
+			it.BidAskSpreadPercentageNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "timestamp":
 			var err error
 
@@ -6065,6 +6151,22 @@ func (ec *executionContext) unmarshalInputTickerWhereInput(ctx context.Context, 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timestampLTE"))
 			it.TimestampLTE, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "timestampIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timestampIsNil"))
+			it.TimestampIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "timestampNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timestampNotNil"))
+			it.TimestampNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6132,6 +6234,22 @@ func (ec *executionContext) unmarshalInputTickerWhereInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
+		case "lastTradedAtIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastTradedAtIsNil"))
+			it.LastTradedAtIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "lastTradedAtNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastTradedAtNotNil"))
+			it.LastTradedAtNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "lastFetchAt":
 			var err error
 
@@ -6196,6 +6314,22 @@ func (ec *executionContext) unmarshalInputTickerWhereInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
+		case "lastFetchAtIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastFetchAtIsNil"))
+			it.LastFetchAtIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "lastFetchAtNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastFetchAtNotNil"))
+			it.LastFetchAtNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "isAnomaly":
 			var err error
 
@@ -6212,6 +6346,22 @@ func (ec *executionContext) unmarshalInputTickerWhereInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
+		case "isAnomalyIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isAnomalyIsNil"))
+			it.IsAnomalyIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isAnomalyNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isAnomalyNotNil"))
+			it.IsAnomalyNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "isStale":
 			var err error
 
@@ -6225,6 +6375,22 @@ func (ec *executionContext) unmarshalInputTickerWhereInput(ctx context.Context, 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isStaleNEQ"))
 			it.IsStaleNEQ, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isStaleIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isStaleIsNil"))
+			it.IsStaleIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isStaleNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isStaleNotNil"))
+			it.IsStaleNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6556,6 +6722,22 @@ func (ec *executionContext) unmarshalInputTickerWhereInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
+		case "coinIDIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coinIDIsNil"))
+			it.CoinIDIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "coinIDNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coinIDNotNil"))
+			it.CoinIDNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "coinIDEqualFold":
 			var err error
 
@@ -6657,6 +6839,22 @@ func (ec *executionContext) unmarshalInputTickerWhereInput(ctx context.Context, 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetCoinIDHasSuffix"))
 			it.TargetCoinIDHasSuffix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "targetCoinIDIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetCoinIDIsNil"))
+			it.TargetCoinIDIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "targetCoinIDNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetCoinIDNotNil"))
+			it.TargetCoinIDNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
