@@ -1,5 +1,5 @@
 app:
-  source: "urn::omiga::omiga-exchange"
+  source: "urn::omiga::omiga-processor"
 
 pulsar:
   url: "pulsar://localhost:6650"

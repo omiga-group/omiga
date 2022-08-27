@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
+	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
@@ -72,8 +73,11 @@ func startCommand() *cobra.Command {
 				_, err = NewBinanceOrderBookSubscriber(
 					ctx,
 					sugarLogger,
+					config.App,
 					config.Binance,
-					symbolConfig)
+					symbolConfig,
+					config.Pulsar,
+					orderbookv1.TopicName)
 				if err != nil {
 					sugarLogger.Fatal(err)
 				}

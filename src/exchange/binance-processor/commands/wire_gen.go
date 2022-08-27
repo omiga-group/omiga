@@ -8,9 +8,13 @@ package commands
 
 import (
 	"context"
-	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
+	configuration2 "github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
+	"github.com/omiga-group/omiga/src/exchange/binance-processor/services"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/subscribers"
+	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
+	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
+	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -44,8 +48,21 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	return consumer, nil
 }
 
-func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, binanceConfig configuration.BinanceConfig, symbolConfig configuration.SymbolConfig) (subscribers.BinanceOrderBookSubscriber, error) {
-	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, symbolConfig)
+func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, binanceConfig configuration2.BinanceConfig, symbolConfig configuration2.SymbolConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.BinanceOrderBookSubscriber, error) {
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, topic)
+	if err != nil {
+		return nil, err
+	}
+	producer := orderbookv1.NewProducer(logger, messageProducer)
+	orderBookPublisher, err := publishers.NewOrderBookPublisher(logger, appConfig, producer)
+	if err != nil {
+		return nil, err
+	}
+	orderBookAggregator, err := services.NewOrderBookAggregator(ctx, logger, orderBookPublisher)
+	if err != nil {
+		return nil, err
+	}
+	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, symbolConfig, orderBookAggregator)
 	if err != nil {
 		return nil, err
 	}

@@ -1,3 +1,3 @@
 package subscribers
 
-//go:generate mockgen -source=binance-order-nbook-subscriber.go -destination=mock/mock-binance-order-nbook-subscriber.go
+//go:generate mockgen -source=orderbook-subscriber.go -destination=mock/mock-orderbook-subscriber.go

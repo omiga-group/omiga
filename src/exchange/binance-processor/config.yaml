@@ -1,3 +1,6 @@
+app:
+  source: "urn::omiga::binance-processor"
+
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "binance-processor"
