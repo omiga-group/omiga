@@ -35,9 +35,7 @@ func NewCoingekoSubscriber(
 		entgoClient:      entgoClient,
 	}
 
-	instance.Run()
-
-	if _, err := cronService.GetCron().AddJob("0/30 * * * *", instance); err != nil {
+	if _, err := cronService.GetCron().AddJob("0/1 * * * * *", instance); err != nil {
 		return nil, err
 	}
 
@@ -71,7 +69,14 @@ func (cs *coingekoSubscriber) Run() {
 
 	for _, exchangeIdName := range *exchangesListResponse.JSON200 {
 		// This is to avoid coingeko rate limiter blocking us from querying exchanges details
-		time.Sleep(2 * time.Second)
+		select {
+		case <-cs.ctx.Done():
+		case <-time.After(2 * time.Second):
+		}
+
+		if cs.ctx.Err() == context.Canceled {
+			break
+		}
 
 		exchangeIdResponse, err := coingekoClient.GetExchangesIdWithResponse(
 			cs.ctx,
