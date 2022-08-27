@@ -1113,6 +1113,245 @@ func (t *TickerQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// TickerOrderFieldBase orders Ticker by base.
+	TickerOrderFieldBase = &TickerOrderField{
+		field: ticker.FieldBase,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.Base,
+			}
+		},
+	}
+	// TickerOrderFieldTarget orders Ticker by target.
+	TickerOrderFieldTarget = &TickerOrderField{
+		field: ticker.FieldTarget,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.Target,
+			}
+		},
+	}
+	// TickerOrderFieldLast orders Ticker by last.
+	TickerOrderFieldLast = &TickerOrderField{
+		field: ticker.FieldLast,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.Last,
+			}
+		},
+	}
+	// TickerOrderFieldVolume orders Ticker by volume.
+	TickerOrderFieldVolume = &TickerOrderField{
+		field: ticker.FieldVolume,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.Volume,
+			}
+		},
+	}
+	// TickerOrderFieldTrustScore orders Ticker by trust_score.
+	TickerOrderFieldTrustScore = &TickerOrderField{
+		field: ticker.FieldTrustScore,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.TrustScore,
+			}
+		},
+	}
+	// TickerOrderFieldBidAskSpreadPercentage orders Ticker by bid_ask_spread_percentage.
+	TickerOrderFieldBidAskSpreadPercentage = &TickerOrderField{
+		field: ticker.FieldBidAskSpreadPercentage,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.BidAskSpreadPercentage,
+			}
+		},
+	}
+	// TickerOrderFieldTimestamp orders Ticker by timestamp.
+	TickerOrderFieldTimestamp = &TickerOrderField{
+		field: ticker.FieldTimestamp,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.Timestamp,
+			}
+		},
+	}
+	// TickerOrderFieldLastTradedAt orders Ticker by last_traded_at.
+	TickerOrderFieldLastTradedAt = &TickerOrderField{
+		field: ticker.FieldLastTradedAt,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.LastTradedAt,
+			}
+		},
+	}
+	// TickerOrderFieldLastFetchAt orders Ticker by last_fetch_at.
+	TickerOrderFieldLastFetchAt = &TickerOrderField{
+		field: ticker.FieldLastFetchAt,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.LastFetchAt,
+			}
+		},
+	}
+	// TickerOrderFieldIsAnomaly orders Ticker by is_anomaly.
+	TickerOrderFieldIsAnomaly = &TickerOrderField{
+		field: ticker.FieldIsAnomaly,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.IsAnomaly,
+			}
+		},
+	}
+	// TickerOrderFieldIsStale orders Ticker by is_stale.
+	TickerOrderFieldIsStale = &TickerOrderField{
+		field: ticker.FieldIsStale,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.IsStale,
+			}
+		},
+	}
+	// TickerOrderFieldTradeURL orders Ticker by trade_url.
+	TickerOrderFieldTradeURL = &TickerOrderField{
+		field: ticker.FieldTradeURL,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.TradeURL,
+			}
+		},
+	}
+	// TickerOrderFieldTokenInfoURL orders Ticker by token_info_url.
+	TickerOrderFieldTokenInfoURL = &TickerOrderField{
+		field: ticker.FieldTokenInfoURL,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.TokenInfoURL,
+			}
+		},
+	}
+	// TickerOrderFieldCoinID orders Ticker by coin_id.
+	TickerOrderFieldCoinID = &TickerOrderField{
+		field: ticker.FieldCoinID,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.CoinID,
+			}
+		},
+	}
+	// TickerOrderFieldTargetCoinID orders Ticker by target_coin_id.
+	TickerOrderFieldTargetCoinID = &TickerOrderField{
+		field: ticker.FieldTargetCoinID,
+		toCursor: func(t *Ticker) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.TargetCoinID,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f TickerOrderField) String() string {
+	var str string
+	switch f.field {
+	case ticker.FieldBase:
+		str = "base"
+	case ticker.FieldTarget:
+		str = "target"
+	case ticker.FieldLast:
+		str = "last"
+	case ticker.FieldVolume:
+		str = "volume"
+	case ticker.FieldTrustScore:
+		str = "trustScore"
+	case ticker.FieldBidAskSpreadPercentage:
+		str = "bidAskSpreadPercentage"
+	case ticker.FieldTimestamp:
+		str = "timestamp"
+	case ticker.FieldLastTradedAt:
+		str = "lastTradedAt"
+	case ticker.FieldLastFetchAt:
+		str = "lastFetchAt"
+	case ticker.FieldIsAnomaly:
+		str = "isAnomaly"
+	case ticker.FieldIsStale:
+		str = "isStale"
+	case ticker.FieldTradeURL:
+		str = "tradeUrl"
+	case ticker.FieldTokenInfoURL:
+		str = "tokenInfoUrl"
+	case ticker.FieldCoinID:
+		str = "coinId"
+	case ticker.FieldTargetCoinID:
+		str = "targetCoinId"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f TickerOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *TickerOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("TickerOrderField %T must be a string", v)
+	}
+	switch str {
+	case "base":
+		*f = *TickerOrderFieldBase
+	case "target":
+		*f = *TickerOrderFieldTarget
+	case "last":
+		*f = *TickerOrderFieldLast
+	case "volume":
+		*f = *TickerOrderFieldVolume
+	case "trustScore":
+		*f = *TickerOrderFieldTrustScore
+	case "bidAskSpreadPercentage":
+		*f = *TickerOrderFieldBidAskSpreadPercentage
+	case "timestamp":
+		*f = *TickerOrderFieldTimestamp
+	case "lastTradedAt":
+		*f = *TickerOrderFieldLastTradedAt
+	case "lastFetchAt":
+		*f = *TickerOrderFieldLastFetchAt
+	case "isAnomaly":
+		*f = *TickerOrderFieldIsAnomaly
+	case "isStale":
+		*f = *TickerOrderFieldIsStale
+	case "tradeUrl":
+		*f = *TickerOrderFieldTradeURL
+	case "tokenInfoUrl":
+		*f = *TickerOrderFieldTokenInfoURL
+	case "coinId":
+		*f = *TickerOrderFieldCoinID
+	case "targetCoinId":
+		*f = *TickerOrderFieldTargetCoinID
+	default:
+		return fmt.Errorf("%s is not a valid TickerOrderField", str)
+	}
+	return nil
+}
+
 // TickerOrderField defines the ordering field of Ticker.
 type TickerOrderField struct {
 	field    string

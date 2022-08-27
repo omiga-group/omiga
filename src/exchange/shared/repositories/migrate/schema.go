@@ -178,6 +178,61 @@ var (
 				Columns: []*schema.Column{TickersColumns[2]},
 			},
 			{
+				Name:    "ticker_last",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[4]},
+			},
+			{
+				Name:    "ticker_volume",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[5]},
+			},
+			{
+				Name:    "ticker_trust_score",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[8]},
+			},
+			{
+				Name:    "ticker_bid_ask_spread_percentage",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[9]},
+			},
+			{
+				Name:    "ticker_timestamp",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[10]},
+			},
+			{
+				Name:    "ticker_last_traded_at",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[11]},
+			},
+			{
+				Name:    "ticker_last_fetch_at",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[12]},
+			},
+			{
+				Name:    "ticker_is_anomaly",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[13]},
+			},
+			{
+				Name:    "ticker_is_stale",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[14]},
+			},
+			{
+				Name:    "ticker_trade_url",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[15]},
+			},
+			{
+				Name:    "ticker_token_info_url",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[16]},
+			},
+			{
 				Name:    "ticker_coin_id",
 				Unique:  false,
 				Columns: []*schema.Column{TickersColumns[17]},
