@@ -124,7 +124,7 @@ services:
       target: local
     restart: unless-stopped
     environment:
-      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/order"
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
     depends_on:
       - postgres
       - exchange-database-migration
