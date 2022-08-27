@@ -10,10 +10,10 @@ type Config struct {
 }
 
 type BinanceSettings struct {
-	UseTestnet bool      `json:"useTestnet" env:"OMIGA_BINANCE_USETESTNET"`
-	OrderBook  OrderBook `json:"orderBook" env:"OMIGA_FTX_ORDERBOOK"`
+	UseTestnet bool      `yaml:"useTestnet" env:"OMIGA_BINANCE_USETESTNET"`
+	OrderBook  OrderBook `yaml:"orderBook" env:"OMIGA_FTX_ORDERBOOK"`
 }
 
 type OrderBook struct {
-	Symbols []string `json:"symbols" env:"OMIGA_FTX_ORDERBOOK_SYMBOLS"`
+	Symbols []string `yaml:"symbols" env:"OMIGA_FTX_ORDERBOOK_SYMBOLS"`
 }

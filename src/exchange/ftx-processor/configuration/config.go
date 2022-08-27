@@ -10,10 +10,10 @@ type Config struct {
 }
 
 type FtxSettings struct {
-	WebsocketUrl string    `json:"websocketUrl" env:"OMIGA_FTX_WEBSOCKETURL"`
-	OrderBook    OrderBook `json:"orderBook" env:"OMIGA_FTX_ORDERBOOK"`
+	WebsocketUrl string    `yaml:"websocketUrl" env:"OMIGA_FTX_WEBSOCKETURL"`
+	OrderBook    OrderBook `yaml:"orderBook" env:"OMIGA_FTX_ORDERBOOK"`
 }
 
 type OrderBook struct {
-	Markets []string `json:"markets" env:"OMIGA_FTX_ORDERBOOK_MARKETS"`
+	Markets []string `yaml:"markets" env:"OMIGA_FTX_ORDERBOOK_MARKETS"`
 }
