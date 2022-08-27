@@ -312,6 +312,8 @@ input TickerWhereInput {
   lastGTE: Float
   lastLT: Float
   lastLTE: Float
+  lastIsNil: Boolean
+  lastNotNil: Boolean
   """volume field predicates"""
   volume: Float
   volumeNEQ: Float
@@ -321,6 +323,8 @@ input TickerWhereInput {
   volumeGTE: Float
   volumeLT: Float
   volumeLTE: Float
+  volumeIsNil: Boolean
+  volumeNotNil: Boolean
   """trust_score field predicates"""
   trustScore: String
   trustScoreNEQ: String
@@ -333,6 +337,8 @@ input TickerWhereInput {
   trustScoreContains: String
   trustScoreHasPrefix: String
   trustScoreHasSuffix: String
+  trustScoreIsNil: Boolean
+  trustScoreNotNil: Boolean
   trustScoreEqualFold: String
   trustScoreContainsFold: String
   """bid_ask_spread_percentage field predicates"""
@@ -344,6 +350,8 @@ input TickerWhereInput {
   bidAskSpreadPercentageGTE: Float
   bidAskSpreadPercentageLT: Float
   bidAskSpreadPercentageLTE: Float
+  bidAskSpreadPercentageIsNil: Boolean
+  bidAskSpreadPercentageNotNil: Boolean
   """timestamp field predicates"""
   timestamp: Time
   timestampNEQ: Time
@@ -353,6 +361,8 @@ input TickerWhereInput {
   timestampGTE: Time
   timestampLT: Time
   timestampLTE: Time
+  timestampIsNil: Boolean
+  timestampNotNil: Boolean
   """last_traded_at field predicates"""
   lastTradedAt: Time
   lastTradedAtNEQ: Time
@@ -362,6 +372,8 @@ input TickerWhereInput {
   lastTradedAtGTE: Time
   lastTradedAtLT: Time
   lastTradedAtLTE: Time
+  lastTradedAtIsNil: Boolean
+  lastTradedAtNotNil: Boolean
   """last_fetch_at field predicates"""
   lastFetchAt: Time
   lastFetchAtNEQ: Time
@@ -371,12 +383,18 @@ input TickerWhereInput {
   lastFetchAtGTE: Time
   lastFetchAtLT: Time
   lastFetchAtLTE: Time
+  lastFetchAtIsNil: Boolean
+  lastFetchAtNotNil: Boolean
   """is_anomaly field predicates"""
   isAnomaly: Boolean
   isAnomalyNEQ: Boolean
+  isAnomalyIsNil: Boolean
+  isAnomalyNotNil: Boolean
   """is_stale field predicates"""
   isStale: Boolean
   isStaleNEQ: Boolean
+  isStaleIsNil: Boolean
+  isStaleNotNil: Boolean
   """trade_url field predicates"""
   tradeURL: String
   tradeURLNEQ: String
@@ -421,6 +439,8 @@ input TickerWhereInput {
   coinIDContains: String
   coinIDHasPrefix: String
   coinIDHasSuffix: String
+  coinIDIsNil: Boolean
+  coinIDNotNil: Boolean
   coinIDEqualFold: String
   coinIDContainsFold: String
   """target_coin_id field predicates"""
@@ -435,6 +455,8 @@ input TickerWhereInput {
   targetCoinIDContains: String
   targetCoinIDHasPrefix: String
   targetCoinIDHasSuffix: String
+  targetCoinIDIsNil: Boolean
+  targetCoinIDNotNil: Boolean
   targetCoinIDEqualFold: String
   targetCoinIDContainsFold: String
   """exchange edge predicates"""

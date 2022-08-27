@@ -71,6 +71,8 @@ func (cs *coingekoSubscriber) Run() {
 	}
 
 	for _, exchangeIdName := range *exchangesListResponse.JSON200 {
+		exchangeId := exchangeIdName.Id
+
 		// This is to avoid coingeko rate limiter blocking us from querying exchanges details
 		select {
 		case <-cs.ctx.Done():
@@ -83,7 +85,7 @@ func (cs *coingekoSubscriber) Run() {
 
 		exchangeIdResponse, err := coingekoClient.GetExchangesIdWithResponse(
 			cs.ctx,
-			exchangeIdName.Id)
+			exchangeId)
 		if err != nil {
 			cs.logger.Errorf("Failed to get exchange details. Error: %v", err)
 
@@ -114,7 +116,7 @@ func (cs *coingekoSubscriber) Run() {
 
 		if err = client.Exchange.
 			Create().
-			SetExchangeID(exchangeIdName.Id).
+			SetExchangeID(exchangeId).
 			SetName(exchangeDetails.Name).
 			SetYearEstablished(exchangeDetails.YearEstablished).
 			SetCountry(exchangeDetails.Country).
@@ -136,12 +138,22 @@ func (cs *coingekoSubscriber) Run() {
 			continue
 		}
 
+		savedExchange, err := client.Exchange.
+			Query().
+			Where(exchange.ExchangeID(exchangeId)).
+			First(cs.ctx)
+		if err != nil {
+			cs.logger.Errorf("Failed to fetch exchange with exchange Id: %s. Error: %v", exchangeId, err)
+
+			continue
+		}
+
 		tickers, err := client.Ticker.
 			Query().
-			Where(ticker.HasExchangeWith(exchange.ExchangeIDEQ(exchangeIdName.Id))).
+			Where(ticker.HasExchangeWith(exchange.IDEQ(savedExchange.ID))).
 			All(cs.ctx)
 		if err != nil {
-			cs.logger.Errorf("Failed to fetch tickers for exchange Id: %s. Error: %v", exchangeIdName.Id, err)
+			cs.logger.Errorf("Failed to fetch tickers for exchange Id: %s. Error: %v", exchangeId, err)
 
 			continue
 		}
@@ -152,6 +164,7 @@ func (cs *coingekoSubscriber) Run() {
 				func(ticker coingekov3.Ticker) *repositories.TickerCreate {
 					return client.Ticker.
 						Create().
+						SetExchangeID(savedExchange.ID).
 						SetBase(ticker.Base).
 						SetTarget(ticker.Target).
 						SetMarket(models.Market{
@@ -179,17 +192,17 @@ func (cs *coingekoSubscriber) Run() {
 						SetIsAnomaly(ticker.IsAnomaly).
 						SetIsStale(ticker.IsStale).
 						SetTradeURL(ticker.TradeUrl).
-						SetTokenInfoURL(*ticker.TokenInfoUrl).
+						SetNillableTokenInfoURL(ticker.TokenInfoUrl).
 						SetCoinID(ticker.CoinId).
 						SetTargetCoinID(ticker.TargetCoinId)
 				})
 
 			if err = client.Ticker.
 				CreateBulk(tickersToCreate...).
-				OnConflictColumns(ticker.FieldBase, ticker.FieldTarget).
+				OnConflictColumns(ticker.FieldBase, ticker.FieldTarget, ticker.ExchangeColumn).
 				UpdateNewValues().
 				Exec(cs.ctx); err != nil {
-				cs.logger.Errorf("Failed to save tickers for exchange Id: %s. Error: %v", exchangeIdName.Id, err)
+				cs.logger.Errorf("Failed to save tickers for exchange Id: %s. Error: %v", exchangeId, err)
 
 				continue
 			}
@@ -217,7 +230,7 @@ func (cs *coingekoSubscriber) Run() {
 			Delete().
 			Where(ticker.IDIn(tickerIdsToDelete...)).
 			Exec(cs.ctx); err != nil {
-			cs.logger.Errorf("Failed to delete old tickers for exchange Id: %s. Error: %v", exchangeIdName.Id, err)
+			cs.logger.Errorf("Failed to delete old tickers for exchange Id: %s. Error: %v", exchangeId, err)
 
 			continue
 		}

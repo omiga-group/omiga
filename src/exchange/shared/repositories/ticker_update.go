@@ -50,6 +50,20 @@ func (tu *TickerUpdate) SetMarket(m models.Market) *TickerUpdate {
 	return tu
 }
 
+// SetNillableMarket sets the "market" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableMarket(m *models.Market) *TickerUpdate {
+	if m != nil {
+		tu.SetMarket(*m)
+	}
+	return tu
+}
+
+// ClearMarket clears the value of the "market" field.
+func (tu *TickerUpdate) ClearMarket() *TickerUpdate {
+	tu.mutation.ClearMarket()
+	return tu
+}
+
 // SetLast sets the "last" field.
 func (tu *TickerUpdate) SetLast(f float64) *TickerUpdate {
 	tu.mutation.ResetLast()
@@ -57,9 +71,23 @@ func (tu *TickerUpdate) SetLast(f float64) *TickerUpdate {
 	return tu
 }
 
+// SetNillableLast sets the "last" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableLast(f *float64) *TickerUpdate {
+	if f != nil {
+		tu.SetLast(*f)
+	}
+	return tu
+}
+
 // AddLast adds f to the "last" field.
 func (tu *TickerUpdate) AddLast(f float64) *TickerUpdate {
 	tu.mutation.AddLast(f)
+	return tu
+}
+
+// ClearLast clears the value of the "last" field.
+func (tu *TickerUpdate) ClearLast() *TickerUpdate {
+	tu.mutation.ClearLast()
 	return tu
 }
 
@@ -70,9 +98,23 @@ func (tu *TickerUpdate) SetVolume(f float64) *TickerUpdate {
 	return tu
 }
 
+// SetNillableVolume sets the "volume" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableVolume(f *float64) *TickerUpdate {
+	if f != nil {
+		tu.SetVolume(*f)
+	}
+	return tu
+}
+
 // AddVolume adds f to the "volume" field.
 func (tu *TickerUpdate) AddVolume(f float64) *TickerUpdate {
 	tu.mutation.AddVolume(f)
+	return tu
+}
+
+// ClearVolume clears the value of the "volume" field.
+func (tu *TickerUpdate) ClearVolume() *TickerUpdate {
+	tu.mutation.ClearVolume()
 	return tu
 }
 
@@ -82,15 +124,57 @@ func (tu *TickerUpdate) SetConvertedLast(md models.ConvertedDetails) *TickerUpda
 	return tu
 }
 
+// SetNillableConvertedLast sets the "converted_last" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableConvertedLast(md *models.ConvertedDetails) *TickerUpdate {
+	if md != nil {
+		tu.SetConvertedLast(*md)
+	}
+	return tu
+}
+
+// ClearConvertedLast clears the value of the "converted_last" field.
+func (tu *TickerUpdate) ClearConvertedLast() *TickerUpdate {
+	tu.mutation.ClearConvertedLast()
+	return tu
+}
+
 // SetConvertedVolume sets the "converted_volume" field.
 func (tu *TickerUpdate) SetConvertedVolume(md models.ConvertedDetails) *TickerUpdate {
 	tu.mutation.SetConvertedVolume(md)
 	return tu
 }
 
+// SetNillableConvertedVolume sets the "converted_volume" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableConvertedVolume(md *models.ConvertedDetails) *TickerUpdate {
+	if md != nil {
+		tu.SetConvertedVolume(*md)
+	}
+	return tu
+}
+
+// ClearConvertedVolume clears the value of the "converted_volume" field.
+func (tu *TickerUpdate) ClearConvertedVolume() *TickerUpdate {
+	tu.mutation.ClearConvertedVolume()
+	return tu
+}
+
 // SetTrustScore sets the "trust_score" field.
 func (tu *TickerUpdate) SetTrustScore(s string) *TickerUpdate {
 	tu.mutation.SetTrustScore(s)
+	return tu
+}
+
+// SetNillableTrustScore sets the "trust_score" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableTrustScore(s *string) *TickerUpdate {
+	if s != nil {
+		tu.SetTrustScore(*s)
+	}
+	return tu
+}
+
+// ClearTrustScore clears the value of the "trust_score" field.
+func (tu *TickerUpdate) ClearTrustScore() *TickerUpdate {
+	tu.mutation.ClearTrustScore()
 	return tu
 }
 
@@ -101,9 +185,23 @@ func (tu *TickerUpdate) SetBidAskSpreadPercentage(f float64) *TickerUpdate {
 	return tu
 }
 
+// SetNillableBidAskSpreadPercentage sets the "bid_ask_spread_percentage" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableBidAskSpreadPercentage(f *float64) *TickerUpdate {
+	if f != nil {
+		tu.SetBidAskSpreadPercentage(*f)
+	}
+	return tu
+}
+
 // AddBidAskSpreadPercentage adds f to the "bid_ask_spread_percentage" field.
 func (tu *TickerUpdate) AddBidAskSpreadPercentage(f float64) *TickerUpdate {
 	tu.mutation.AddBidAskSpreadPercentage(f)
+	return tu
+}
+
+// ClearBidAskSpreadPercentage clears the value of the "bid_ask_spread_percentage" field.
+func (tu *TickerUpdate) ClearBidAskSpreadPercentage() *TickerUpdate {
+	tu.mutation.ClearBidAskSpreadPercentage()
 	return tu
 }
 
@@ -113,9 +211,37 @@ func (tu *TickerUpdate) SetTimestamp(t time.Time) *TickerUpdate {
 	return tu
 }
 
+// SetNillableTimestamp sets the "timestamp" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableTimestamp(t *time.Time) *TickerUpdate {
+	if t != nil {
+		tu.SetTimestamp(*t)
+	}
+	return tu
+}
+
+// ClearTimestamp clears the value of the "timestamp" field.
+func (tu *TickerUpdate) ClearTimestamp() *TickerUpdate {
+	tu.mutation.ClearTimestamp()
+	return tu
+}
+
 // SetLastTradedAt sets the "last_traded_at" field.
 func (tu *TickerUpdate) SetLastTradedAt(t time.Time) *TickerUpdate {
 	tu.mutation.SetLastTradedAt(t)
+	return tu
+}
+
+// SetNillableLastTradedAt sets the "last_traded_at" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableLastTradedAt(t *time.Time) *TickerUpdate {
+	if t != nil {
+		tu.SetLastTradedAt(*t)
+	}
+	return tu
+}
+
+// ClearLastTradedAt clears the value of the "last_traded_at" field.
+func (tu *TickerUpdate) ClearLastTradedAt() *TickerUpdate {
+	tu.mutation.ClearLastTradedAt()
 	return tu
 }
 
@@ -125,15 +251,57 @@ func (tu *TickerUpdate) SetLastFetchAt(t time.Time) *TickerUpdate {
 	return tu
 }
 
+// SetNillableLastFetchAt sets the "last_fetch_at" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableLastFetchAt(t *time.Time) *TickerUpdate {
+	if t != nil {
+		tu.SetLastFetchAt(*t)
+	}
+	return tu
+}
+
+// ClearLastFetchAt clears the value of the "last_fetch_at" field.
+func (tu *TickerUpdate) ClearLastFetchAt() *TickerUpdate {
+	tu.mutation.ClearLastFetchAt()
+	return tu
+}
+
 // SetIsAnomaly sets the "is_anomaly" field.
 func (tu *TickerUpdate) SetIsAnomaly(b bool) *TickerUpdate {
 	tu.mutation.SetIsAnomaly(b)
 	return tu
 }
 
+// SetNillableIsAnomaly sets the "is_anomaly" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableIsAnomaly(b *bool) *TickerUpdate {
+	if b != nil {
+		tu.SetIsAnomaly(*b)
+	}
+	return tu
+}
+
+// ClearIsAnomaly clears the value of the "is_anomaly" field.
+func (tu *TickerUpdate) ClearIsAnomaly() *TickerUpdate {
+	tu.mutation.ClearIsAnomaly()
+	return tu
+}
+
 // SetIsStale sets the "is_stale" field.
 func (tu *TickerUpdate) SetIsStale(b bool) *TickerUpdate {
 	tu.mutation.SetIsStale(b)
+	return tu
+}
+
+// SetNillableIsStale sets the "is_stale" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableIsStale(b *bool) *TickerUpdate {
+	if b != nil {
+		tu.SetIsStale(*b)
+	}
+	return tu
+}
+
+// ClearIsStale clears the value of the "is_stale" field.
+func (tu *TickerUpdate) ClearIsStale() *TickerUpdate {
+	tu.mutation.ClearIsStale()
 	return tu
 }
 
@@ -183,9 +351,37 @@ func (tu *TickerUpdate) SetCoinID(s string) *TickerUpdate {
 	return tu
 }
 
+// SetNillableCoinID sets the "coin_id" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableCoinID(s *string) *TickerUpdate {
+	if s != nil {
+		tu.SetCoinID(*s)
+	}
+	return tu
+}
+
+// ClearCoinID clears the value of the "coin_id" field.
+func (tu *TickerUpdate) ClearCoinID() *TickerUpdate {
+	tu.mutation.ClearCoinID()
+	return tu
+}
+
 // SetTargetCoinID sets the "target_coin_id" field.
 func (tu *TickerUpdate) SetTargetCoinID(s string) *TickerUpdate {
 	tu.mutation.SetTargetCoinID(s)
+	return tu
+}
+
+// SetNillableTargetCoinID sets the "target_coin_id" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableTargetCoinID(s *string) *TickerUpdate {
+	if s != nil {
+		tu.SetTargetCoinID(*s)
+	}
+	return tu
+}
+
+// ClearTargetCoinID clears the value of the "target_coin_id" field.
+func (tu *TickerUpdate) ClearTargetCoinID() *TickerUpdate {
+	tu.mutation.ClearTargetCoinID()
 	return tu
 }
 
@@ -324,6 +520,12 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: ticker.FieldMarket,
 		})
 	}
+	if tu.mutation.MarketCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: ticker.FieldMarket,
+		})
+	}
 	if value, ok := tu.mutation.Last(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
@@ -335,6 +537,12 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Value:  value,
+			Column: ticker.FieldLast,
+		})
+	}
+	if tu.mutation.LastCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
 			Column: ticker.FieldLast,
 		})
 	}
@@ -352,10 +560,22 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: ticker.FieldVolume,
 		})
 	}
+	if tu.mutation.VolumeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: ticker.FieldVolume,
+		})
+	}
 	if value, ok := tu.mutation.ConvertedLast(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Value:  value,
+			Column: ticker.FieldConvertedLast,
+		})
+	}
+	if tu.mutation.ConvertedLastCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
 			Column: ticker.FieldConvertedLast,
 		})
 	}
@@ -366,10 +586,22 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: ticker.FieldConvertedVolume,
 		})
 	}
+	if tu.mutation.ConvertedVolumeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: ticker.FieldConvertedVolume,
+		})
+	}
 	if value, ok := tu.mutation.TrustScore(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
+			Column: ticker.FieldTrustScore,
+		})
+	}
+	if tu.mutation.TrustScoreCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
 			Column: ticker.FieldTrustScore,
 		})
 	}
@@ -387,10 +619,22 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: ticker.FieldBidAskSpreadPercentage,
 		})
 	}
+	if tu.mutation.BidAskSpreadPercentageCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: ticker.FieldBidAskSpreadPercentage,
+		})
+	}
 	if value, ok := tu.mutation.Timestamp(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
+			Column: ticker.FieldTimestamp,
+		})
+	}
+	if tu.mutation.TimestampCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
 			Column: ticker.FieldTimestamp,
 		})
 	}
@@ -401,10 +645,22 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: ticker.FieldLastTradedAt,
 		})
 	}
+	if tu.mutation.LastTradedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: ticker.FieldLastTradedAt,
+		})
+	}
 	if value, ok := tu.mutation.LastFetchAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
+			Column: ticker.FieldLastFetchAt,
+		})
+	}
+	if tu.mutation.LastFetchAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
 			Column: ticker.FieldLastFetchAt,
 		})
 	}
@@ -415,10 +671,22 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: ticker.FieldIsAnomaly,
 		})
 	}
+	if tu.mutation.IsAnomalyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: ticker.FieldIsAnomaly,
+		})
+	}
 	if value, ok := tu.mutation.IsStale(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
+			Column: ticker.FieldIsStale,
+		})
+	}
+	if tu.mutation.IsStaleCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
 			Column: ticker.FieldIsStale,
 		})
 	}
@@ -455,10 +723,22 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: ticker.FieldCoinID,
 		})
 	}
+	if tu.mutation.CoinIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: ticker.FieldCoinID,
+		})
+	}
 	if value, ok := tu.mutation.TargetCoinID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
+			Column: ticker.FieldTargetCoinID,
+		})
+	}
+	if tu.mutation.TargetCoinIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
 			Column: ticker.FieldTargetCoinID,
 		})
 	}
@@ -540,6 +820,20 @@ func (tuo *TickerUpdateOne) SetMarket(m models.Market) *TickerUpdateOne {
 	return tuo
 }
 
+// SetNillableMarket sets the "market" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableMarket(m *models.Market) *TickerUpdateOne {
+	if m != nil {
+		tuo.SetMarket(*m)
+	}
+	return tuo
+}
+
+// ClearMarket clears the value of the "market" field.
+func (tuo *TickerUpdateOne) ClearMarket() *TickerUpdateOne {
+	tuo.mutation.ClearMarket()
+	return tuo
+}
+
 // SetLast sets the "last" field.
 func (tuo *TickerUpdateOne) SetLast(f float64) *TickerUpdateOne {
 	tuo.mutation.ResetLast()
@@ -547,9 +841,23 @@ func (tuo *TickerUpdateOne) SetLast(f float64) *TickerUpdateOne {
 	return tuo
 }
 
+// SetNillableLast sets the "last" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableLast(f *float64) *TickerUpdateOne {
+	if f != nil {
+		tuo.SetLast(*f)
+	}
+	return tuo
+}
+
 // AddLast adds f to the "last" field.
 func (tuo *TickerUpdateOne) AddLast(f float64) *TickerUpdateOne {
 	tuo.mutation.AddLast(f)
+	return tuo
+}
+
+// ClearLast clears the value of the "last" field.
+func (tuo *TickerUpdateOne) ClearLast() *TickerUpdateOne {
+	tuo.mutation.ClearLast()
 	return tuo
 }
 
@@ -560,9 +868,23 @@ func (tuo *TickerUpdateOne) SetVolume(f float64) *TickerUpdateOne {
 	return tuo
 }
 
+// SetNillableVolume sets the "volume" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableVolume(f *float64) *TickerUpdateOne {
+	if f != nil {
+		tuo.SetVolume(*f)
+	}
+	return tuo
+}
+
 // AddVolume adds f to the "volume" field.
 func (tuo *TickerUpdateOne) AddVolume(f float64) *TickerUpdateOne {
 	tuo.mutation.AddVolume(f)
+	return tuo
+}
+
+// ClearVolume clears the value of the "volume" field.
+func (tuo *TickerUpdateOne) ClearVolume() *TickerUpdateOne {
+	tuo.mutation.ClearVolume()
 	return tuo
 }
 
@@ -572,15 +894,57 @@ func (tuo *TickerUpdateOne) SetConvertedLast(md models.ConvertedDetails) *Ticker
 	return tuo
 }
 
+// SetNillableConvertedLast sets the "converted_last" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableConvertedLast(md *models.ConvertedDetails) *TickerUpdateOne {
+	if md != nil {
+		tuo.SetConvertedLast(*md)
+	}
+	return tuo
+}
+
+// ClearConvertedLast clears the value of the "converted_last" field.
+func (tuo *TickerUpdateOne) ClearConvertedLast() *TickerUpdateOne {
+	tuo.mutation.ClearConvertedLast()
+	return tuo
+}
+
 // SetConvertedVolume sets the "converted_volume" field.
 func (tuo *TickerUpdateOne) SetConvertedVolume(md models.ConvertedDetails) *TickerUpdateOne {
 	tuo.mutation.SetConvertedVolume(md)
 	return tuo
 }
 
+// SetNillableConvertedVolume sets the "converted_volume" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableConvertedVolume(md *models.ConvertedDetails) *TickerUpdateOne {
+	if md != nil {
+		tuo.SetConvertedVolume(*md)
+	}
+	return tuo
+}
+
+// ClearConvertedVolume clears the value of the "converted_volume" field.
+func (tuo *TickerUpdateOne) ClearConvertedVolume() *TickerUpdateOne {
+	tuo.mutation.ClearConvertedVolume()
+	return tuo
+}
+
 // SetTrustScore sets the "trust_score" field.
 func (tuo *TickerUpdateOne) SetTrustScore(s string) *TickerUpdateOne {
 	tuo.mutation.SetTrustScore(s)
+	return tuo
+}
+
+// SetNillableTrustScore sets the "trust_score" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableTrustScore(s *string) *TickerUpdateOne {
+	if s != nil {
+		tuo.SetTrustScore(*s)
+	}
+	return tuo
+}
+
+// ClearTrustScore clears the value of the "trust_score" field.
+func (tuo *TickerUpdateOne) ClearTrustScore() *TickerUpdateOne {
+	tuo.mutation.ClearTrustScore()
 	return tuo
 }
 
@@ -591,9 +955,23 @@ func (tuo *TickerUpdateOne) SetBidAskSpreadPercentage(f float64) *TickerUpdateOn
 	return tuo
 }
 
+// SetNillableBidAskSpreadPercentage sets the "bid_ask_spread_percentage" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableBidAskSpreadPercentage(f *float64) *TickerUpdateOne {
+	if f != nil {
+		tuo.SetBidAskSpreadPercentage(*f)
+	}
+	return tuo
+}
+
 // AddBidAskSpreadPercentage adds f to the "bid_ask_spread_percentage" field.
 func (tuo *TickerUpdateOne) AddBidAskSpreadPercentage(f float64) *TickerUpdateOne {
 	tuo.mutation.AddBidAskSpreadPercentage(f)
+	return tuo
+}
+
+// ClearBidAskSpreadPercentage clears the value of the "bid_ask_spread_percentage" field.
+func (tuo *TickerUpdateOne) ClearBidAskSpreadPercentage() *TickerUpdateOne {
+	tuo.mutation.ClearBidAskSpreadPercentage()
 	return tuo
 }
 
@@ -603,9 +981,37 @@ func (tuo *TickerUpdateOne) SetTimestamp(t time.Time) *TickerUpdateOne {
 	return tuo
 }
 
+// SetNillableTimestamp sets the "timestamp" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableTimestamp(t *time.Time) *TickerUpdateOne {
+	if t != nil {
+		tuo.SetTimestamp(*t)
+	}
+	return tuo
+}
+
+// ClearTimestamp clears the value of the "timestamp" field.
+func (tuo *TickerUpdateOne) ClearTimestamp() *TickerUpdateOne {
+	tuo.mutation.ClearTimestamp()
+	return tuo
+}
+
 // SetLastTradedAt sets the "last_traded_at" field.
 func (tuo *TickerUpdateOne) SetLastTradedAt(t time.Time) *TickerUpdateOne {
 	tuo.mutation.SetLastTradedAt(t)
+	return tuo
+}
+
+// SetNillableLastTradedAt sets the "last_traded_at" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableLastTradedAt(t *time.Time) *TickerUpdateOne {
+	if t != nil {
+		tuo.SetLastTradedAt(*t)
+	}
+	return tuo
+}
+
+// ClearLastTradedAt clears the value of the "last_traded_at" field.
+func (tuo *TickerUpdateOne) ClearLastTradedAt() *TickerUpdateOne {
+	tuo.mutation.ClearLastTradedAt()
 	return tuo
 }
 
@@ -615,15 +1021,57 @@ func (tuo *TickerUpdateOne) SetLastFetchAt(t time.Time) *TickerUpdateOne {
 	return tuo
 }
 
+// SetNillableLastFetchAt sets the "last_fetch_at" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableLastFetchAt(t *time.Time) *TickerUpdateOne {
+	if t != nil {
+		tuo.SetLastFetchAt(*t)
+	}
+	return tuo
+}
+
+// ClearLastFetchAt clears the value of the "last_fetch_at" field.
+func (tuo *TickerUpdateOne) ClearLastFetchAt() *TickerUpdateOne {
+	tuo.mutation.ClearLastFetchAt()
+	return tuo
+}
+
 // SetIsAnomaly sets the "is_anomaly" field.
 func (tuo *TickerUpdateOne) SetIsAnomaly(b bool) *TickerUpdateOne {
 	tuo.mutation.SetIsAnomaly(b)
 	return tuo
 }
 
+// SetNillableIsAnomaly sets the "is_anomaly" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableIsAnomaly(b *bool) *TickerUpdateOne {
+	if b != nil {
+		tuo.SetIsAnomaly(*b)
+	}
+	return tuo
+}
+
+// ClearIsAnomaly clears the value of the "is_anomaly" field.
+func (tuo *TickerUpdateOne) ClearIsAnomaly() *TickerUpdateOne {
+	tuo.mutation.ClearIsAnomaly()
+	return tuo
+}
+
 // SetIsStale sets the "is_stale" field.
 func (tuo *TickerUpdateOne) SetIsStale(b bool) *TickerUpdateOne {
 	tuo.mutation.SetIsStale(b)
+	return tuo
+}
+
+// SetNillableIsStale sets the "is_stale" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableIsStale(b *bool) *TickerUpdateOne {
+	if b != nil {
+		tuo.SetIsStale(*b)
+	}
+	return tuo
+}
+
+// ClearIsStale clears the value of the "is_stale" field.
+func (tuo *TickerUpdateOne) ClearIsStale() *TickerUpdateOne {
+	tuo.mutation.ClearIsStale()
 	return tuo
 }
 
@@ -673,9 +1121,37 @@ func (tuo *TickerUpdateOne) SetCoinID(s string) *TickerUpdateOne {
 	return tuo
 }
 
+// SetNillableCoinID sets the "coin_id" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableCoinID(s *string) *TickerUpdateOne {
+	if s != nil {
+		tuo.SetCoinID(*s)
+	}
+	return tuo
+}
+
+// ClearCoinID clears the value of the "coin_id" field.
+func (tuo *TickerUpdateOne) ClearCoinID() *TickerUpdateOne {
+	tuo.mutation.ClearCoinID()
+	return tuo
+}
+
 // SetTargetCoinID sets the "target_coin_id" field.
 func (tuo *TickerUpdateOne) SetTargetCoinID(s string) *TickerUpdateOne {
 	tuo.mutation.SetTargetCoinID(s)
+	return tuo
+}
+
+// SetNillableTargetCoinID sets the "target_coin_id" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableTargetCoinID(s *string) *TickerUpdateOne {
+	if s != nil {
+		tuo.SetTargetCoinID(*s)
+	}
+	return tuo
+}
+
+// ClearTargetCoinID clears the value of the "target_coin_id" field.
+func (tuo *TickerUpdateOne) ClearTargetCoinID() *TickerUpdateOne {
+	tuo.mutation.ClearTargetCoinID()
 	return tuo
 }
 
@@ -844,6 +1320,12 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 			Column: ticker.FieldMarket,
 		})
 	}
+	if tuo.mutation.MarketCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: ticker.FieldMarket,
+		})
+	}
 	if value, ok := tuo.mutation.Last(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
@@ -855,6 +1337,12 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Value:  value,
+			Column: ticker.FieldLast,
+		})
+	}
+	if tuo.mutation.LastCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
 			Column: ticker.FieldLast,
 		})
 	}
@@ -872,10 +1360,22 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 			Column: ticker.FieldVolume,
 		})
 	}
+	if tuo.mutation.VolumeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: ticker.FieldVolume,
+		})
+	}
 	if value, ok := tuo.mutation.ConvertedLast(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Value:  value,
+			Column: ticker.FieldConvertedLast,
+		})
+	}
+	if tuo.mutation.ConvertedLastCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
 			Column: ticker.FieldConvertedLast,
 		})
 	}
@@ -886,10 +1386,22 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 			Column: ticker.FieldConvertedVolume,
 		})
 	}
+	if tuo.mutation.ConvertedVolumeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: ticker.FieldConvertedVolume,
+		})
+	}
 	if value, ok := tuo.mutation.TrustScore(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
+			Column: ticker.FieldTrustScore,
+		})
+	}
+	if tuo.mutation.TrustScoreCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
 			Column: ticker.FieldTrustScore,
 		})
 	}
@@ -907,10 +1419,22 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 			Column: ticker.FieldBidAskSpreadPercentage,
 		})
 	}
+	if tuo.mutation.BidAskSpreadPercentageCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: ticker.FieldBidAskSpreadPercentage,
+		})
+	}
 	if value, ok := tuo.mutation.Timestamp(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
+			Column: ticker.FieldTimestamp,
+		})
+	}
+	if tuo.mutation.TimestampCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
 			Column: ticker.FieldTimestamp,
 		})
 	}
@@ -921,10 +1445,22 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 			Column: ticker.FieldLastTradedAt,
 		})
 	}
+	if tuo.mutation.LastTradedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: ticker.FieldLastTradedAt,
+		})
+	}
 	if value, ok := tuo.mutation.LastFetchAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
+			Column: ticker.FieldLastFetchAt,
+		})
+	}
+	if tuo.mutation.LastFetchAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
 			Column: ticker.FieldLastFetchAt,
 		})
 	}
@@ -935,10 +1471,22 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 			Column: ticker.FieldIsAnomaly,
 		})
 	}
+	if tuo.mutation.IsAnomalyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: ticker.FieldIsAnomaly,
+		})
+	}
 	if value, ok := tuo.mutation.IsStale(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
+			Column: ticker.FieldIsStale,
+		})
+	}
+	if tuo.mutation.IsStaleCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
 			Column: ticker.FieldIsStale,
 		})
 	}
@@ -975,10 +1523,22 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 			Column: ticker.FieldCoinID,
 		})
 	}
+	if tuo.mutation.CoinIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: ticker.FieldCoinID,
+		})
+	}
 	if value, ok := tuo.mutation.TargetCoinID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
+			Column: ticker.FieldTargetCoinID,
+		})
+	}
+	if tuo.mutation.TargetCoinIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
 			Column: ticker.FieldTargetCoinID,
 		})
 	}

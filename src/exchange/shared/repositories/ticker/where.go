@@ -385,6 +385,20 @@ func TargetContainsFold(v string) predicate.Ticker {
 	})
 }
 
+// MarketIsNil applies the IsNil predicate on the "market" field.
+func MarketIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldMarket)))
+	})
+}
+
+// MarketNotNil applies the NotNil predicate on the "market" field.
+func MarketNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldMarket)))
+	})
+}
+
 // LastEQ applies the EQ predicate on the "last" field.
 func LastEQ(v float64) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
@@ -449,6 +463,20 @@ func LastLTE(v float64) predicate.Ticker {
 	})
 }
 
+// LastIsNil applies the IsNil predicate on the "last" field.
+func LastIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLast)))
+	})
+}
+
+// LastNotNil applies the NotNil predicate on the "last" field.
+func LastNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLast)))
+	})
+}
+
 // VolumeEQ applies the EQ predicate on the "volume" field.
 func VolumeEQ(v float64) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
@@ -510,6 +538,48 @@ func VolumeLT(v float64) predicate.Ticker {
 func VolumeLTE(v float64) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldVolume), v))
+	})
+}
+
+// VolumeIsNil applies the IsNil predicate on the "volume" field.
+func VolumeIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldVolume)))
+	})
+}
+
+// VolumeNotNil applies the NotNil predicate on the "volume" field.
+func VolumeNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldVolume)))
+	})
+}
+
+// ConvertedLastIsNil applies the IsNil predicate on the "converted_last" field.
+func ConvertedLastIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldConvertedLast)))
+	})
+}
+
+// ConvertedLastNotNil applies the NotNil predicate on the "converted_last" field.
+func ConvertedLastNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldConvertedLast)))
+	})
+}
+
+// ConvertedVolumeIsNil applies the IsNil predicate on the "converted_volume" field.
+func ConvertedVolumeIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldConvertedVolume)))
+	})
+}
+
+// ConvertedVolumeNotNil applies the NotNil predicate on the "converted_volume" field.
+func ConvertedVolumeNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldConvertedVolume)))
 	})
 }
 
@@ -598,6 +668,20 @@ func TrustScoreHasSuffix(v string) predicate.Ticker {
 	})
 }
 
+// TrustScoreIsNil applies the IsNil predicate on the "trust_score" field.
+func TrustScoreIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTrustScore)))
+	})
+}
+
+// TrustScoreNotNil applies the NotNil predicate on the "trust_score" field.
+func TrustScoreNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTrustScore)))
+	})
+}
+
 // TrustScoreEqualFold applies the EqualFold predicate on the "trust_score" field.
 func TrustScoreEqualFold(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
@@ -676,6 +760,20 @@ func BidAskSpreadPercentageLTE(v float64) predicate.Ticker {
 	})
 }
 
+// BidAskSpreadPercentageIsNil applies the IsNil predicate on the "bid_ask_spread_percentage" field.
+func BidAskSpreadPercentageIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldBidAskSpreadPercentage)))
+	})
+}
+
+// BidAskSpreadPercentageNotNil applies the NotNil predicate on the "bid_ask_spread_percentage" field.
+func BidAskSpreadPercentageNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldBidAskSpreadPercentage)))
+	})
+}
+
 // TimestampEQ applies the EQ predicate on the "timestamp" field.
 func TimestampEQ(v time.Time) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
@@ -737,6 +835,20 @@ func TimestampLT(v time.Time) predicate.Ticker {
 func TimestampLTE(v time.Time) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTimestamp), v))
+	})
+}
+
+// TimestampIsNil applies the IsNil predicate on the "timestamp" field.
+func TimestampIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTimestamp)))
+	})
+}
+
+// TimestampNotNil applies the NotNil predicate on the "timestamp" field.
+func TimestampNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTimestamp)))
 	})
 }
 
@@ -804,6 +916,20 @@ func LastTradedAtLTE(v time.Time) predicate.Ticker {
 	})
 }
 
+// LastTradedAtIsNil applies the IsNil predicate on the "last_traded_at" field.
+func LastTradedAtIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLastTradedAt)))
+	})
+}
+
+// LastTradedAtNotNil applies the NotNil predicate on the "last_traded_at" field.
+func LastTradedAtNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLastTradedAt)))
+	})
+}
+
 // LastFetchAtEQ applies the EQ predicate on the "last_fetch_at" field.
 func LastFetchAtEQ(v time.Time) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
@@ -868,6 +994,20 @@ func LastFetchAtLTE(v time.Time) predicate.Ticker {
 	})
 }
 
+// LastFetchAtIsNil applies the IsNil predicate on the "last_fetch_at" field.
+func LastFetchAtIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLastFetchAt)))
+	})
+}
+
+// LastFetchAtNotNil applies the NotNil predicate on the "last_fetch_at" field.
+func LastFetchAtNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLastFetchAt)))
+	})
+}
+
 // IsAnomalyEQ applies the EQ predicate on the "is_anomaly" field.
 func IsAnomalyEQ(v bool) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
@@ -882,6 +1022,20 @@ func IsAnomalyNEQ(v bool) predicate.Ticker {
 	})
 }
 
+// IsAnomalyIsNil applies the IsNil predicate on the "is_anomaly" field.
+func IsAnomalyIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIsAnomaly)))
+	})
+}
+
+// IsAnomalyNotNil applies the NotNil predicate on the "is_anomaly" field.
+func IsAnomalyNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIsAnomaly)))
+	})
+}
+
 // IsStaleEQ applies the EQ predicate on the "is_stale" field.
 func IsStaleEQ(v bool) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
@@ -893,6 +1047,20 @@ func IsStaleEQ(v bool) predicate.Ticker {
 func IsStaleNEQ(v bool) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldIsStale), v))
+	})
+}
+
+// IsStaleIsNil applies the IsNil predicate on the "is_stale" field.
+func IsStaleIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIsStale)))
+	})
+}
+
+// IsStaleNotNil applies the NotNil predicate on the "is_stale" field.
+func IsStaleNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIsStale)))
 	})
 }
 
@@ -1207,6 +1375,20 @@ func CoinIDHasSuffix(v string) predicate.Ticker {
 	})
 }
 
+// CoinIDIsNil applies the IsNil predicate on the "coin_id" field.
+func CoinIDIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCoinID)))
+	})
+}
+
+// CoinIDNotNil applies the NotNil predicate on the "coin_id" field.
+func CoinIDNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCoinID)))
+	})
+}
+
 // CoinIDEqualFold applies the EqualFold predicate on the "coin_id" field.
 func CoinIDEqualFold(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
@@ -1303,6 +1485,20 @@ func TargetCoinIDHasPrefix(v string) predicate.Ticker {
 func TargetCoinIDHasSuffix(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldTargetCoinID), v))
+	})
+}
+
+// TargetCoinIDIsNil applies the IsNil predicate on the "target_coin_id" field.
+func TargetCoinIDIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTargetCoinID)))
+	})
+}
+
+// TargetCoinIDNotNil applies the NotNil predicate on the "target_coin_id" field.
+func TargetCoinIDNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTargetCoinID)))
 	})
 }
 

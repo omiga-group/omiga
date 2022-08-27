@@ -1177,24 +1177,28 @@ type TickerWhereInput struct {
 	TargetContainsFold *string  `json:"targetContainsFold,omitempty"`
 
 	// "last" field predicates.
-	Last      *float64  `json:"last,omitempty"`
-	LastNEQ   *float64  `json:"lastNEQ,omitempty"`
-	LastIn    []float64 `json:"lastIn,omitempty"`
-	LastNotIn []float64 `json:"lastNotIn,omitempty"`
-	LastGT    *float64  `json:"lastGT,omitempty"`
-	LastGTE   *float64  `json:"lastGTE,omitempty"`
-	LastLT    *float64  `json:"lastLT,omitempty"`
-	LastLTE   *float64  `json:"lastLTE,omitempty"`
+	Last       *float64  `json:"last,omitempty"`
+	LastNEQ    *float64  `json:"lastNEQ,omitempty"`
+	LastIn     []float64 `json:"lastIn,omitempty"`
+	LastNotIn  []float64 `json:"lastNotIn,omitempty"`
+	LastGT     *float64  `json:"lastGT,omitempty"`
+	LastGTE    *float64  `json:"lastGTE,omitempty"`
+	LastLT     *float64  `json:"lastLT,omitempty"`
+	LastLTE    *float64  `json:"lastLTE,omitempty"`
+	LastIsNil  bool      `json:"lastIsNil,omitempty"`
+	LastNotNil bool      `json:"lastNotNil,omitempty"`
 
 	// "volume" field predicates.
-	Volume      *float64  `json:"volume,omitempty"`
-	VolumeNEQ   *float64  `json:"volumeNEQ,omitempty"`
-	VolumeIn    []float64 `json:"volumeIn,omitempty"`
-	VolumeNotIn []float64 `json:"volumeNotIn,omitempty"`
-	VolumeGT    *float64  `json:"volumeGT,omitempty"`
-	VolumeGTE   *float64  `json:"volumeGTE,omitempty"`
-	VolumeLT    *float64  `json:"volumeLT,omitempty"`
-	VolumeLTE   *float64  `json:"volumeLTE,omitempty"`
+	Volume       *float64  `json:"volume,omitempty"`
+	VolumeNEQ    *float64  `json:"volumeNEQ,omitempty"`
+	VolumeIn     []float64 `json:"volumeIn,omitempty"`
+	VolumeNotIn  []float64 `json:"volumeNotIn,omitempty"`
+	VolumeGT     *float64  `json:"volumeGT,omitempty"`
+	VolumeGTE    *float64  `json:"volumeGTE,omitempty"`
+	VolumeLT     *float64  `json:"volumeLT,omitempty"`
+	VolumeLTE    *float64  `json:"volumeLTE,omitempty"`
+	VolumeIsNil  bool      `json:"volumeIsNil,omitempty"`
+	VolumeNotNil bool      `json:"volumeNotNil,omitempty"`
 
 	// "trust_score" field predicates.
 	TrustScore             *string  `json:"trustScore,omitempty"`
@@ -1208,56 +1212,70 @@ type TickerWhereInput struct {
 	TrustScoreContains     *string  `json:"trustScoreContains,omitempty"`
 	TrustScoreHasPrefix    *string  `json:"trustScoreHasPrefix,omitempty"`
 	TrustScoreHasSuffix    *string  `json:"trustScoreHasSuffix,omitempty"`
+	TrustScoreIsNil        bool     `json:"trustScoreIsNil,omitempty"`
+	TrustScoreNotNil       bool     `json:"trustScoreNotNil,omitempty"`
 	TrustScoreEqualFold    *string  `json:"trustScoreEqualFold,omitempty"`
 	TrustScoreContainsFold *string  `json:"trustScoreContainsFold,omitempty"`
 
 	// "bid_ask_spread_percentage" field predicates.
-	BidAskSpreadPercentage      *float64  `json:"bidAskSpreadPercentage,omitempty"`
-	BidAskSpreadPercentageNEQ   *float64  `json:"bidAskSpreadPercentageNEQ,omitempty"`
-	BidAskSpreadPercentageIn    []float64 `json:"bidAskSpreadPercentageIn,omitempty"`
-	BidAskSpreadPercentageNotIn []float64 `json:"bidAskSpreadPercentageNotIn,omitempty"`
-	BidAskSpreadPercentageGT    *float64  `json:"bidAskSpreadPercentageGT,omitempty"`
-	BidAskSpreadPercentageGTE   *float64  `json:"bidAskSpreadPercentageGTE,omitempty"`
-	BidAskSpreadPercentageLT    *float64  `json:"bidAskSpreadPercentageLT,omitempty"`
-	BidAskSpreadPercentageLTE   *float64  `json:"bidAskSpreadPercentageLTE,omitempty"`
+	BidAskSpreadPercentage       *float64  `json:"bidAskSpreadPercentage,omitempty"`
+	BidAskSpreadPercentageNEQ    *float64  `json:"bidAskSpreadPercentageNEQ,omitempty"`
+	BidAskSpreadPercentageIn     []float64 `json:"bidAskSpreadPercentageIn,omitempty"`
+	BidAskSpreadPercentageNotIn  []float64 `json:"bidAskSpreadPercentageNotIn,omitempty"`
+	BidAskSpreadPercentageGT     *float64  `json:"bidAskSpreadPercentageGT,omitempty"`
+	BidAskSpreadPercentageGTE    *float64  `json:"bidAskSpreadPercentageGTE,omitempty"`
+	BidAskSpreadPercentageLT     *float64  `json:"bidAskSpreadPercentageLT,omitempty"`
+	BidAskSpreadPercentageLTE    *float64  `json:"bidAskSpreadPercentageLTE,omitempty"`
+	BidAskSpreadPercentageIsNil  bool      `json:"bidAskSpreadPercentageIsNil,omitempty"`
+	BidAskSpreadPercentageNotNil bool      `json:"bidAskSpreadPercentageNotNil,omitempty"`
 
 	// "timestamp" field predicates.
-	Timestamp      *time.Time  `json:"timestamp,omitempty"`
-	TimestampNEQ   *time.Time  `json:"timestampNEQ,omitempty"`
-	TimestampIn    []time.Time `json:"timestampIn,omitempty"`
-	TimestampNotIn []time.Time `json:"timestampNotIn,omitempty"`
-	TimestampGT    *time.Time  `json:"timestampGT,omitempty"`
-	TimestampGTE   *time.Time  `json:"timestampGTE,omitempty"`
-	TimestampLT    *time.Time  `json:"timestampLT,omitempty"`
-	TimestampLTE   *time.Time  `json:"timestampLTE,omitempty"`
+	Timestamp       *time.Time  `json:"timestamp,omitempty"`
+	TimestampNEQ    *time.Time  `json:"timestampNEQ,omitempty"`
+	TimestampIn     []time.Time `json:"timestampIn,omitempty"`
+	TimestampNotIn  []time.Time `json:"timestampNotIn,omitempty"`
+	TimestampGT     *time.Time  `json:"timestampGT,omitempty"`
+	TimestampGTE    *time.Time  `json:"timestampGTE,omitempty"`
+	TimestampLT     *time.Time  `json:"timestampLT,omitempty"`
+	TimestampLTE    *time.Time  `json:"timestampLTE,omitempty"`
+	TimestampIsNil  bool        `json:"timestampIsNil,omitempty"`
+	TimestampNotNil bool        `json:"timestampNotNil,omitempty"`
 
 	// "last_traded_at" field predicates.
-	LastTradedAt      *time.Time  `json:"lastTradedAt,omitempty"`
-	LastTradedAtNEQ   *time.Time  `json:"lastTradedAtNEQ,omitempty"`
-	LastTradedAtIn    []time.Time `json:"lastTradedAtIn,omitempty"`
-	LastTradedAtNotIn []time.Time `json:"lastTradedAtNotIn,omitempty"`
-	LastTradedAtGT    *time.Time  `json:"lastTradedAtGT,omitempty"`
-	LastTradedAtGTE   *time.Time  `json:"lastTradedAtGTE,omitempty"`
-	LastTradedAtLT    *time.Time  `json:"lastTradedAtLT,omitempty"`
-	LastTradedAtLTE   *time.Time  `json:"lastTradedAtLTE,omitempty"`
+	LastTradedAt       *time.Time  `json:"lastTradedAt,omitempty"`
+	LastTradedAtNEQ    *time.Time  `json:"lastTradedAtNEQ,omitempty"`
+	LastTradedAtIn     []time.Time `json:"lastTradedAtIn,omitempty"`
+	LastTradedAtNotIn  []time.Time `json:"lastTradedAtNotIn,omitempty"`
+	LastTradedAtGT     *time.Time  `json:"lastTradedAtGT,omitempty"`
+	LastTradedAtGTE    *time.Time  `json:"lastTradedAtGTE,omitempty"`
+	LastTradedAtLT     *time.Time  `json:"lastTradedAtLT,omitempty"`
+	LastTradedAtLTE    *time.Time  `json:"lastTradedAtLTE,omitempty"`
+	LastTradedAtIsNil  bool        `json:"lastTradedAtIsNil,omitempty"`
+	LastTradedAtNotNil bool        `json:"lastTradedAtNotNil,omitempty"`
 
 	// "last_fetch_at" field predicates.
-	LastFetchAt      *time.Time  `json:"lastFetchAt,omitempty"`
-	LastFetchAtNEQ   *time.Time  `json:"lastFetchAtNEQ,omitempty"`
-	LastFetchAtIn    []time.Time `json:"lastFetchAtIn,omitempty"`
-	LastFetchAtNotIn []time.Time `json:"lastFetchAtNotIn,omitempty"`
-	LastFetchAtGT    *time.Time  `json:"lastFetchAtGT,omitempty"`
-	LastFetchAtGTE   *time.Time  `json:"lastFetchAtGTE,omitempty"`
-	LastFetchAtLT    *time.Time  `json:"lastFetchAtLT,omitempty"`
-	LastFetchAtLTE   *time.Time  `json:"lastFetchAtLTE,omitempty"`
+	LastFetchAt       *time.Time  `json:"lastFetchAt,omitempty"`
+	LastFetchAtNEQ    *time.Time  `json:"lastFetchAtNEQ,omitempty"`
+	LastFetchAtIn     []time.Time `json:"lastFetchAtIn,omitempty"`
+	LastFetchAtNotIn  []time.Time `json:"lastFetchAtNotIn,omitempty"`
+	LastFetchAtGT     *time.Time  `json:"lastFetchAtGT,omitempty"`
+	LastFetchAtGTE    *time.Time  `json:"lastFetchAtGTE,omitempty"`
+	LastFetchAtLT     *time.Time  `json:"lastFetchAtLT,omitempty"`
+	LastFetchAtLTE    *time.Time  `json:"lastFetchAtLTE,omitempty"`
+	LastFetchAtIsNil  bool        `json:"lastFetchAtIsNil,omitempty"`
+	LastFetchAtNotNil bool        `json:"lastFetchAtNotNil,omitempty"`
 
 	// "is_anomaly" field predicates.
-	IsAnomaly    *bool `json:"isAnomaly,omitempty"`
-	IsAnomalyNEQ *bool `json:"isAnomalyNEQ,omitempty"`
+	IsAnomaly       *bool `json:"isAnomaly,omitempty"`
+	IsAnomalyNEQ    *bool `json:"isAnomalyNEQ,omitempty"`
+	IsAnomalyIsNil  bool  `json:"isAnomalyIsNil,omitempty"`
+	IsAnomalyNotNil bool  `json:"isAnomalyNotNil,omitempty"`
 
 	// "is_stale" field predicates.
-	IsStale    *bool `json:"isStale,omitempty"`
-	IsStaleNEQ *bool `json:"isStaleNEQ,omitempty"`
+	IsStale       *bool `json:"isStale,omitempty"`
+	IsStaleNEQ    *bool `json:"isStaleNEQ,omitempty"`
+	IsStaleIsNil  bool  `json:"isStaleIsNil,omitempty"`
+	IsStaleNotNil bool  `json:"isStaleNotNil,omitempty"`
 
 	// "trade_url" field predicates.
 	TradeURL             *string  `json:"tradeURL,omitempty"`
@@ -1305,6 +1323,8 @@ type TickerWhereInput struct {
 	CoinIDContains     *string  `json:"coinIDContains,omitempty"`
 	CoinIDHasPrefix    *string  `json:"coinIDHasPrefix,omitempty"`
 	CoinIDHasSuffix    *string  `json:"coinIDHasSuffix,omitempty"`
+	CoinIDIsNil        bool     `json:"coinIDIsNil,omitempty"`
+	CoinIDNotNil       bool     `json:"coinIDNotNil,omitempty"`
 	CoinIDEqualFold    *string  `json:"coinIDEqualFold,omitempty"`
 	CoinIDContainsFold *string  `json:"coinIDContainsFold,omitempty"`
 
@@ -1320,6 +1340,8 @@ type TickerWhereInput struct {
 	TargetCoinIDContains     *string  `json:"targetCoinIDContains,omitempty"`
 	TargetCoinIDHasPrefix    *string  `json:"targetCoinIDHasPrefix,omitempty"`
 	TargetCoinIDHasSuffix    *string  `json:"targetCoinIDHasSuffix,omitempty"`
+	TargetCoinIDIsNil        bool     `json:"targetCoinIDIsNil,omitempty"`
+	TargetCoinIDNotNil       bool     `json:"targetCoinIDNotNil,omitempty"`
 	TargetCoinIDEqualFold    *string  `json:"targetCoinIDEqualFold,omitempty"`
 	TargetCoinIDContainsFold *string  `json:"targetCoinIDContainsFold,omitempty"`
 
@@ -1525,6 +1547,12 @@ func (i *TickerWhereInput) P() (predicate.Ticker, error) {
 	if i.LastLTE != nil {
 		predicates = append(predicates, ticker.LastLTE(*i.LastLTE))
 	}
+	if i.LastIsNil {
+		predicates = append(predicates, ticker.LastIsNil())
+	}
+	if i.LastNotNil {
+		predicates = append(predicates, ticker.LastNotNil())
+	}
 	if i.Volume != nil {
 		predicates = append(predicates, ticker.VolumeEQ(*i.Volume))
 	}
@@ -1548,6 +1576,12 @@ func (i *TickerWhereInput) P() (predicate.Ticker, error) {
 	}
 	if i.VolumeLTE != nil {
 		predicates = append(predicates, ticker.VolumeLTE(*i.VolumeLTE))
+	}
+	if i.VolumeIsNil {
+		predicates = append(predicates, ticker.VolumeIsNil())
+	}
+	if i.VolumeNotNil {
+		predicates = append(predicates, ticker.VolumeNotNil())
 	}
 	if i.TrustScore != nil {
 		predicates = append(predicates, ticker.TrustScoreEQ(*i.TrustScore))
@@ -1582,6 +1616,12 @@ func (i *TickerWhereInput) P() (predicate.Ticker, error) {
 	if i.TrustScoreHasSuffix != nil {
 		predicates = append(predicates, ticker.TrustScoreHasSuffix(*i.TrustScoreHasSuffix))
 	}
+	if i.TrustScoreIsNil {
+		predicates = append(predicates, ticker.TrustScoreIsNil())
+	}
+	if i.TrustScoreNotNil {
+		predicates = append(predicates, ticker.TrustScoreNotNil())
+	}
 	if i.TrustScoreEqualFold != nil {
 		predicates = append(predicates, ticker.TrustScoreEqualFold(*i.TrustScoreEqualFold))
 	}
@@ -1612,6 +1652,12 @@ func (i *TickerWhereInput) P() (predicate.Ticker, error) {
 	if i.BidAskSpreadPercentageLTE != nil {
 		predicates = append(predicates, ticker.BidAskSpreadPercentageLTE(*i.BidAskSpreadPercentageLTE))
 	}
+	if i.BidAskSpreadPercentageIsNil {
+		predicates = append(predicates, ticker.BidAskSpreadPercentageIsNil())
+	}
+	if i.BidAskSpreadPercentageNotNil {
+		predicates = append(predicates, ticker.BidAskSpreadPercentageNotNil())
+	}
 	if i.Timestamp != nil {
 		predicates = append(predicates, ticker.TimestampEQ(*i.Timestamp))
 	}
@@ -1635,6 +1681,12 @@ func (i *TickerWhereInput) P() (predicate.Ticker, error) {
 	}
 	if i.TimestampLTE != nil {
 		predicates = append(predicates, ticker.TimestampLTE(*i.TimestampLTE))
+	}
+	if i.TimestampIsNil {
+		predicates = append(predicates, ticker.TimestampIsNil())
+	}
+	if i.TimestampNotNil {
+		predicates = append(predicates, ticker.TimestampNotNil())
 	}
 	if i.LastTradedAt != nil {
 		predicates = append(predicates, ticker.LastTradedAtEQ(*i.LastTradedAt))
@@ -1660,6 +1712,12 @@ func (i *TickerWhereInput) P() (predicate.Ticker, error) {
 	if i.LastTradedAtLTE != nil {
 		predicates = append(predicates, ticker.LastTradedAtLTE(*i.LastTradedAtLTE))
 	}
+	if i.LastTradedAtIsNil {
+		predicates = append(predicates, ticker.LastTradedAtIsNil())
+	}
+	if i.LastTradedAtNotNil {
+		predicates = append(predicates, ticker.LastTradedAtNotNil())
+	}
 	if i.LastFetchAt != nil {
 		predicates = append(predicates, ticker.LastFetchAtEQ(*i.LastFetchAt))
 	}
@@ -1684,17 +1742,35 @@ func (i *TickerWhereInput) P() (predicate.Ticker, error) {
 	if i.LastFetchAtLTE != nil {
 		predicates = append(predicates, ticker.LastFetchAtLTE(*i.LastFetchAtLTE))
 	}
+	if i.LastFetchAtIsNil {
+		predicates = append(predicates, ticker.LastFetchAtIsNil())
+	}
+	if i.LastFetchAtNotNil {
+		predicates = append(predicates, ticker.LastFetchAtNotNil())
+	}
 	if i.IsAnomaly != nil {
 		predicates = append(predicates, ticker.IsAnomalyEQ(*i.IsAnomaly))
 	}
 	if i.IsAnomalyNEQ != nil {
 		predicates = append(predicates, ticker.IsAnomalyNEQ(*i.IsAnomalyNEQ))
 	}
+	if i.IsAnomalyIsNil {
+		predicates = append(predicates, ticker.IsAnomalyIsNil())
+	}
+	if i.IsAnomalyNotNil {
+		predicates = append(predicates, ticker.IsAnomalyNotNil())
+	}
 	if i.IsStale != nil {
 		predicates = append(predicates, ticker.IsStaleEQ(*i.IsStale))
 	}
 	if i.IsStaleNEQ != nil {
 		predicates = append(predicates, ticker.IsStaleNEQ(*i.IsStaleNEQ))
+	}
+	if i.IsStaleIsNil {
+		predicates = append(predicates, ticker.IsStaleIsNil())
+	}
+	if i.IsStaleNotNil {
+		predicates = append(predicates, ticker.IsStaleNotNil())
 	}
 	if i.TradeURL != nil {
 		predicates = append(predicates, ticker.TradeURLEQ(*i.TradeURL))
@@ -1819,6 +1895,12 @@ func (i *TickerWhereInput) P() (predicate.Ticker, error) {
 	if i.CoinIDHasSuffix != nil {
 		predicates = append(predicates, ticker.CoinIDHasSuffix(*i.CoinIDHasSuffix))
 	}
+	if i.CoinIDIsNil {
+		predicates = append(predicates, ticker.CoinIDIsNil())
+	}
+	if i.CoinIDNotNil {
+		predicates = append(predicates, ticker.CoinIDNotNil())
+	}
 	if i.CoinIDEqualFold != nil {
 		predicates = append(predicates, ticker.CoinIDEqualFold(*i.CoinIDEqualFold))
 	}
@@ -1857,6 +1939,12 @@ func (i *TickerWhereInput) P() (predicate.Ticker, error) {
 	}
 	if i.TargetCoinIDHasSuffix != nil {
 		predicates = append(predicates, ticker.TargetCoinIDHasSuffix(*i.TargetCoinIDHasSuffix))
+	}
+	if i.TargetCoinIDIsNil {
+		predicates = append(predicates, ticker.TargetCoinIDIsNil())
+	}
+	if i.TargetCoinIDNotNil {
+		predicates = append(predicates, ticker.TargetCoinIDNotNil())
 	}
 	if i.TargetCoinIDEqualFold != nil {
 		predicates = append(predicates, ticker.TargetCoinIDEqualFold(*i.TargetCoinIDEqualFold))

@@ -2617,9 +2617,22 @@ func (m *TickerMutation) OldMarket(ctx context.Context) (v models.Market, err er
 	return oldValue.Market, nil
 }
 
+// ClearMarket clears the value of the "market" field.
+func (m *TickerMutation) ClearMarket() {
+	m.market = nil
+	m.clearedFields[ticker.FieldMarket] = struct{}{}
+}
+
+// MarketCleared returns if the "market" field was cleared in this mutation.
+func (m *TickerMutation) MarketCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldMarket]
+	return ok
+}
+
 // ResetMarket resets all changes to the "market" field.
 func (m *TickerMutation) ResetMarket() {
 	m.market = nil
+	delete(m.clearedFields, ticker.FieldMarket)
 }
 
 // SetLast sets the "last" field.
@@ -2672,10 +2685,24 @@ func (m *TickerMutation) AddedLast() (r float64, exists bool) {
 	return *v, true
 }
 
+// ClearLast clears the value of the "last" field.
+func (m *TickerMutation) ClearLast() {
+	m.last = nil
+	m.addlast = nil
+	m.clearedFields[ticker.FieldLast] = struct{}{}
+}
+
+// LastCleared returns if the "last" field was cleared in this mutation.
+func (m *TickerMutation) LastCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldLast]
+	return ok
+}
+
 // ResetLast resets all changes to the "last" field.
 func (m *TickerMutation) ResetLast() {
 	m.last = nil
 	m.addlast = nil
+	delete(m.clearedFields, ticker.FieldLast)
 }
 
 // SetVolume sets the "volume" field.
@@ -2728,10 +2755,24 @@ func (m *TickerMutation) AddedVolume() (r float64, exists bool) {
 	return *v, true
 }
 
+// ClearVolume clears the value of the "volume" field.
+func (m *TickerMutation) ClearVolume() {
+	m.volume = nil
+	m.addvolume = nil
+	m.clearedFields[ticker.FieldVolume] = struct{}{}
+}
+
+// VolumeCleared returns if the "volume" field was cleared in this mutation.
+func (m *TickerMutation) VolumeCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldVolume]
+	return ok
+}
+
 // ResetVolume resets all changes to the "volume" field.
 func (m *TickerMutation) ResetVolume() {
 	m.volume = nil
 	m.addvolume = nil
+	delete(m.clearedFields, ticker.FieldVolume)
 }
 
 // SetConvertedLast sets the "converted_last" field.
@@ -2765,9 +2806,22 @@ func (m *TickerMutation) OldConvertedLast(ctx context.Context) (v models.Convert
 	return oldValue.ConvertedLast, nil
 }
 
+// ClearConvertedLast clears the value of the "converted_last" field.
+func (m *TickerMutation) ClearConvertedLast() {
+	m.converted_last = nil
+	m.clearedFields[ticker.FieldConvertedLast] = struct{}{}
+}
+
+// ConvertedLastCleared returns if the "converted_last" field was cleared in this mutation.
+func (m *TickerMutation) ConvertedLastCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldConvertedLast]
+	return ok
+}
+
 // ResetConvertedLast resets all changes to the "converted_last" field.
 func (m *TickerMutation) ResetConvertedLast() {
 	m.converted_last = nil
+	delete(m.clearedFields, ticker.FieldConvertedLast)
 }
 
 // SetConvertedVolume sets the "converted_volume" field.
@@ -2801,9 +2855,22 @@ func (m *TickerMutation) OldConvertedVolume(ctx context.Context) (v models.Conve
 	return oldValue.ConvertedVolume, nil
 }
 
+// ClearConvertedVolume clears the value of the "converted_volume" field.
+func (m *TickerMutation) ClearConvertedVolume() {
+	m.converted_volume = nil
+	m.clearedFields[ticker.FieldConvertedVolume] = struct{}{}
+}
+
+// ConvertedVolumeCleared returns if the "converted_volume" field was cleared in this mutation.
+func (m *TickerMutation) ConvertedVolumeCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldConvertedVolume]
+	return ok
+}
+
 // ResetConvertedVolume resets all changes to the "converted_volume" field.
 func (m *TickerMutation) ResetConvertedVolume() {
 	m.converted_volume = nil
+	delete(m.clearedFields, ticker.FieldConvertedVolume)
 }
 
 // SetTrustScore sets the "trust_score" field.
@@ -2837,9 +2904,22 @@ func (m *TickerMutation) OldTrustScore(ctx context.Context) (v string, err error
 	return oldValue.TrustScore, nil
 }
 
+// ClearTrustScore clears the value of the "trust_score" field.
+func (m *TickerMutation) ClearTrustScore() {
+	m.trust_score = nil
+	m.clearedFields[ticker.FieldTrustScore] = struct{}{}
+}
+
+// TrustScoreCleared returns if the "trust_score" field was cleared in this mutation.
+func (m *TickerMutation) TrustScoreCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldTrustScore]
+	return ok
+}
+
 // ResetTrustScore resets all changes to the "trust_score" field.
 func (m *TickerMutation) ResetTrustScore() {
 	m.trust_score = nil
+	delete(m.clearedFields, ticker.FieldTrustScore)
 }
 
 // SetBidAskSpreadPercentage sets the "bid_ask_spread_percentage" field.
@@ -2892,10 +2972,24 @@ func (m *TickerMutation) AddedBidAskSpreadPercentage() (r float64, exists bool) 
 	return *v, true
 }
 
+// ClearBidAskSpreadPercentage clears the value of the "bid_ask_spread_percentage" field.
+func (m *TickerMutation) ClearBidAskSpreadPercentage() {
+	m.bid_ask_spread_percentage = nil
+	m.addbid_ask_spread_percentage = nil
+	m.clearedFields[ticker.FieldBidAskSpreadPercentage] = struct{}{}
+}
+
+// BidAskSpreadPercentageCleared returns if the "bid_ask_spread_percentage" field was cleared in this mutation.
+func (m *TickerMutation) BidAskSpreadPercentageCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldBidAskSpreadPercentage]
+	return ok
+}
+
 // ResetBidAskSpreadPercentage resets all changes to the "bid_ask_spread_percentage" field.
 func (m *TickerMutation) ResetBidAskSpreadPercentage() {
 	m.bid_ask_spread_percentage = nil
 	m.addbid_ask_spread_percentage = nil
+	delete(m.clearedFields, ticker.FieldBidAskSpreadPercentage)
 }
 
 // SetTimestamp sets the "timestamp" field.
@@ -2929,9 +3023,22 @@ func (m *TickerMutation) OldTimestamp(ctx context.Context) (v time.Time, err err
 	return oldValue.Timestamp, nil
 }
 
+// ClearTimestamp clears the value of the "timestamp" field.
+func (m *TickerMutation) ClearTimestamp() {
+	m.timestamp = nil
+	m.clearedFields[ticker.FieldTimestamp] = struct{}{}
+}
+
+// TimestampCleared returns if the "timestamp" field was cleared in this mutation.
+func (m *TickerMutation) TimestampCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldTimestamp]
+	return ok
+}
+
 // ResetTimestamp resets all changes to the "timestamp" field.
 func (m *TickerMutation) ResetTimestamp() {
 	m.timestamp = nil
+	delete(m.clearedFields, ticker.FieldTimestamp)
 }
 
 // SetLastTradedAt sets the "last_traded_at" field.
@@ -2965,9 +3072,22 @@ func (m *TickerMutation) OldLastTradedAt(ctx context.Context) (v time.Time, err 
 	return oldValue.LastTradedAt, nil
 }
 
+// ClearLastTradedAt clears the value of the "last_traded_at" field.
+func (m *TickerMutation) ClearLastTradedAt() {
+	m.last_traded_at = nil
+	m.clearedFields[ticker.FieldLastTradedAt] = struct{}{}
+}
+
+// LastTradedAtCleared returns if the "last_traded_at" field was cleared in this mutation.
+func (m *TickerMutation) LastTradedAtCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldLastTradedAt]
+	return ok
+}
+
 // ResetLastTradedAt resets all changes to the "last_traded_at" field.
 func (m *TickerMutation) ResetLastTradedAt() {
 	m.last_traded_at = nil
+	delete(m.clearedFields, ticker.FieldLastTradedAt)
 }
 
 // SetLastFetchAt sets the "last_fetch_at" field.
@@ -3001,9 +3121,22 @@ func (m *TickerMutation) OldLastFetchAt(ctx context.Context) (v time.Time, err e
 	return oldValue.LastFetchAt, nil
 }
 
+// ClearLastFetchAt clears the value of the "last_fetch_at" field.
+func (m *TickerMutation) ClearLastFetchAt() {
+	m.last_fetch_at = nil
+	m.clearedFields[ticker.FieldLastFetchAt] = struct{}{}
+}
+
+// LastFetchAtCleared returns if the "last_fetch_at" field was cleared in this mutation.
+func (m *TickerMutation) LastFetchAtCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldLastFetchAt]
+	return ok
+}
+
 // ResetLastFetchAt resets all changes to the "last_fetch_at" field.
 func (m *TickerMutation) ResetLastFetchAt() {
 	m.last_fetch_at = nil
+	delete(m.clearedFields, ticker.FieldLastFetchAt)
 }
 
 // SetIsAnomaly sets the "is_anomaly" field.
@@ -3037,9 +3170,22 @@ func (m *TickerMutation) OldIsAnomaly(ctx context.Context) (v bool, err error) {
 	return oldValue.IsAnomaly, nil
 }
 
+// ClearIsAnomaly clears the value of the "is_anomaly" field.
+func (m *TickerMutation) ClearIsAnomaly() {
+	m.is_anomaly = nil
+	m.clearedFields[ticker.FieldIsAnomaly] = struct{}{}
+}
+
+// IsAnomalyCleared returns if the "is_anomaly" field was cleared in this mutation.
+func (m *TickerMutation) IsAnomalyCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldIsAnomaly]
+	return ok
+}
+
 // ResetIsAnomaly resets all changes to the "is_anomaly" field.
 func (m *TickerMutation) ResetIsAnomaly() {
 	m.is_anomaly = nil
+	delete(m.clearedFields, ticker.FieldIsAnomaly)
 }
 
 // SetIsStale sets the "is_stale" field.
@@ -3073,9 +3219,22 @@ func (m *TickerMutation) OldIsStale(ctx context.Context) (v bool, err error) {
 	return oldValue.IsStale, nil
 }
 
+// ClearIsStale clears the value of the "is_stale" field.
+func (m *TickerMutation) ClearIsStale() {
+	m.is_stale = nil
+	m.clearedFields[ticker.FieldIsStale] = struct{}{}
+}
+
+// IsStaleCleared returns if the "is_stale" field was cleared in this mutation.
+func (m *TickerMutation) IsStaleCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldIsStale]
+	return ok
+}
+
 // ResetIsStale resets all changes to the "is_stale" field.
 func (m *TickerMutation) ResetIsStale() {
 	m.is_stale = nil
+	delete(m.clearedFields, ticker.FieldIsStale)
 }
 
 // SetTradeURL sets the "trade_url" field.
@@ -3207,9 +3366,22 @@ func (m *TickerMutation) OldCoinID(ctx context.Context) (v string, err error) {
 	return oldValue.CoinID, nil
 }
 
+// ClearCoinID clears the value of the "coin_id" field.
+func (m *TickerMutation) ClearCoinID() {
+	m.coin_id = nil
+	m.clearedFields[ticker.FieldCoinID] = struct{}{}
+}
+
+// CoinIDCleared returns if the "coin_id" field was cleared in this mutation.
+func (m *TickerMutation) CoinIDCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldCoinID]
+	return ok
+}
+
 // ResetCoinID resets all changes to the "coin_id" field.
 func (m *TickerMutation) ResetCoinID() {
 	m.coin_id = nil
+	delete(m.clearedFields, ticker.FieldCoinID)
 }
 
 // SetTargetCoinID sets the "target_coin_id" field.
@@ -3243,9 +3415,22 @@ func (m *TickerMutation) OldTargetCoinID(ctx context.Context) (v string, err err
 	return oldValue.TargetCoinID, nil
 }
 
+// ClearTargetCoinID clears the value of the "target_coin_id" field.
+func (m *TickerMutation) ClearTargetCoinID() {
+	m.target_coin_id = nil
+	m.clearedFields[ticker.FieldTargetCoinID] = struct{}{}
+}
+
+// TargetCoinIDCleared returns if the "target_coin_id" field was cleared in this mutation.
+func (m *TickerMutation) TargetCoinIDCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldTargetCoinID]
+	return ok
+}
+
 // ResetTargetCoinID resets all changes to the "target_coin_id" field.
 func (m *TickerMutation) ResetTargetCoinID() {
 	m.target_coin_id = nil
+	delete(m.clearedFields, ticker.FieldTargetCoinID)
 }
 
 // SetExchangeID sets the "exchange" edge to the Exchange entity by id.
@@ -3654,11 +3839,53 @@ func (m *TickerMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *TickerMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(ticker.FieldMarket) {
+		fields = append(fields, ticker.FieldMarket)
+	}
+	if m.FieldCleared(ticker.FieldLast) {
+		fields = append(fields, ticker.FieldLast)
+	}
+	if m.FieldCleared(ticker.FieldVolume) {
+		fields = append(fields, ticker.FieldVolume)
+	}
+	if m.FieldCleared(ticker.FieldConvertedLast) {
+		fields = append(fields, ticker.FieldConvertedLast)
+	}
+	if m.FieldCleared(ticker.FieldConvertedVolume) {
+		fields = append(fields, ticker.FieldConvertedVolume)
+	}
+	if m.FieldCleared(ticker.FieldTrustScore) {
+		fields = append(fields, ticker.FieldTrustScore)
+	}
+	if m.FieldCleared(ticker.FieldBidAskSpreadPercentage) {
+		fields = append(fields, ticker.FieldBidAskSpreadPercentage)
+	}
+	if m.FieldCleared(ticker.FieldTimestamp) {
+		fields = append(fields, ticker.FieldTimestamp)
+	}
+	if m.FieldCleared(ticker.FieldLastTradedAt) {
+		fields = append(fields, ticker.FieldLastTradedAt)
+	}
+	if m.FieldCleared(ticker.FieldLastFetchAt) {
+		fields = append(fields, ticker.FieldLastFetchAt)
+	}
+	if m.FieldCleared(ticker.FieldIsAnomaly) {
+		fields = append(fields, ticker.FieldIsAnomaly)
+	}
+	if m.FieldCleared(ticker.FieldIsStale) {
+		fields = append(fields, ticker.FieldIsStale)
+	}
 	if m.FieldCleared(ticker.FieldTradeURL) {
 		fields = append(fields, ticker.FieldTradeURL)
 	}
 	if m.FieldCleared(ticker.FieldTokenInfoURL) {
 		fields = append(fields, ticker.FieldTokenInfoURL)
+	}
+	if m.FieldCleared(ticker.FieldCoinID) {
+		fields = append(fields, ticker.FieldCoinID)
+	}
+	if m.FieldCleared(ticker.FieldTargetCoinID) {
+		fields = append(fields, ticker.FieldTargetCoinID)
 	}
 	return fields
 }
@@ -3674,11 +3901,53 @@ func (m *TickerMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *TickerMutation) ClearField(name string) error {
 	switch name {
+	case ticker.FieldMarket:
+		m.ClearMarket()
+		return nil
+	case ticker.FieldLast:
+		m.ClearLast()
+		return nil
+	case ticker.FieldVolume:
+		m.ClearVolume()
+		return nil
+	case ticker.FieldConvertedLast:
+		m.ClearConvertedLast()
+		return nil
+	case ticker.FieldConvertedVolume:
+		m.ClearConvertedVolume()
+		return nil
+	case ticker.FieldTrustScore:
+		m.ClearTrustScore()
+		return nil
+	case ticker.FieldBidAskSpreadPercentage:
+		m.ClearBidAskSpreadPercentage()
+		return nil
+	case ticker.FieldTimestamp:
+		m.ClearTimestamp()
+		return nil
+	case ticker.FieldLastTradedAt:
+		m.ClearLastTradedAt()
+		return nil
+	case ticker.FieldLastFetchAt:
+		m.ClearLastFetchAt()
+		return nil
+	case ticker.FieldIsAnomaly:
+		m.ClearIsAnomaly()
+		return nil
+	case ticker.FieldIsStale:
+		m.ClearIsStale()
+		return nil
 	case ticker.FieldTradeURL:
 		m.ClearTradeURL()
 		return nil
 	case ticker.FieldTokenInfoURL:
 		m.ClearTokenInfoURL()
+		return nil
+	case ticker.FieldCoinID:
+		m.ClearCoinID()
+		return nil
+	case ticker.FieldTargetCoinID:
+		m.ClearTargetCoinID()
 		return nil
 	}
 	return fmt.Errorf("unknown Ticker nullable field %s", name)

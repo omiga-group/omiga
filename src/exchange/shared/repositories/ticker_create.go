@@ -42,9 +42,25 @@ func (tc *TickerCreate) SetMarket(m models.Market) *TickerCreate {
 	return tc
 }
 
+// SetNillableMarket sets the "market" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableMarket(m *models.Market) *TickerCreate {
+	if m != nil {
+		tc.SetMarket(*m)
+	}
+	return tc
+}
+
 // SetLast sets the "last" field.
 func (tc *TickerCreate) SetLast(f float64) *TickerCreate {
 	tc.mutation.SetLast(f)
+	return tc
+}
+
+// SetNillableLast sets the "last" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableLast(f *float64) *TickerCreate {
+	if f != nil {
+		tc.SetLast(*f)
+	}
 	return tc
 }
 
@@ -54,9 +70,25 @@ func (tc *TickerCreate) SetVolume(f float64) *TickerCreate {
 	return tc
 }
 
+// SetNillableVolume sets the "volume" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableVolume(f *float64) *TickerCreate {
+	if f != nil {
+		tc.SetVolume(*f)
+	}
+	return tc
+}
+
 // SetConvertedLast sets the "converted_last" field.
 func (tc *TickerCreate) SetConvertedLast(md models.ConvertedDetails) *TickerCreate {
 	tc.mutation.SetConvertedLast(md)
+	return tc
+}
+
+// SetNillableConvertedLast sets the "converted_last" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableConvertedLast(md *models.ConvertedDetails) *TickerCreate {
+	if md != nil {
+		tc.SetConvertedLast(*md)
+	}
 	return tc
 }
 
@@ -66,9 +98,25 @@ func (tc *TickerCreate) SetConvertedVolume(md models.ConvertedDetails) *TickerCr
 	return tc
 }
 
+// SetNillableConvertedVolume sets the "converted_volume" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableConvertedVolume(md *models.ConvertedDetails) *TickerCreate {
+	if md != nil {
+		tc.SetConvertedVolume(*md)
+	}
+	return tc
+}
+
 // SetTrustScore sets the "trust_score" field.
 func (tc *TickerCreate) SetTrustScore(s string) *TickerCreate {
 	tc.mutation.SetTrustScore(s)
+	return tc
+}
+
+// SetNillableTrustScore sets the "trust_score" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableTrustScore(s *string) *TickerCreate {
+	if s != nil {
+		tc.SetTrustScore(*s)
+	}
 	return tc
 }
 
@@ -78,9 +126,25 @@ func (tc *TickerCreate) SetBidAskSpreadPercentage(f float64) *TickerCreate {
 	return tc
 }
 
+// SetNillableBidAskSpreadPercentage sets the "bid_ask_spread_percentage" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableBidAskSpreadPercentage(f *float64) *TickerCreate {
+	if f != nil {
+		tc.SetBidAskSpreadPercentage(*f)
+	}
+	return tc
+}
+
 // SetTimestamp sets the "timestamp" field.
 func (tc *TickerCreate) SetTimestamp(t time.Time) *TickerCreate {
 	tc.mutation.SetTimestamp(t)
+	return tc
+}
+
+// SetNillableTimestamp sets the "timestamp" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableTimestamp(t *time.Time) *TickerCreate {
+	if t != nil {
+		tc.SetTimestamp(*t)
+	}
 	return tc
 }
 
@@ -90,9 +154,25 @@ func (tc *TickerCreate) SetLastTradedAt(t time.Time) *TickerCreate {
 	return tc
 }
 
+// SetNillableLastTradedAt sets the "last_traded_at" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableLastTradedAt(t *time.Time) *TickerCreate {
+	if t != nil {
+		tc.SetLastTradedAt(*t)
+	}
+	return tc
+}
+
 // SetLastFetchAt sets the "last_fetch_at" field.
 func (tc *TickerCreate) SetLastFetchAt(t time.Time) *TickerCreate {
 	tc.mutation.SetLastFetchAt(t)
+	return tc
+}
+
+// SetNillableLastFetchAt sets the "last_fetch_at" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableLastFetchAt(t *time.Time) *TickerCreate {
+	if t != nil {
+		tc.SetLastFetchAt(*t)
+	}
 	return tc
 }
 
@@ -102,9 +182,25 @@ func (tc *TickerCreate) SetIsAnomaly(b bool) *TickerCreate {
 	return tc
 }
 
+// SetNillableIsAnomaly sets the "is_anomaly" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableIsAnomaly(b *bool) *TickerCreate {
+	if b != nil {
+		tc.SetIsAnomaly(*b)
+	}
+	return tc
+}
+
 // SetIsStale sets the "is_stale" field.
 func (tc *TickerCreate) SetIsStale(b bool) *TickerCreate {
 	tc.mutation.SetIsStale(b)
+	return tc
+}
+
+// SetNillableIsStale sets the "is_stale" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableIsStale(b *bool) *TickerCreate {
+	if b != nil {
+		tc.SetIsStale(*b)
+	}
 	return tc
 }
 
@@ -142,9 +238,25 @@ func (tc *TickerCreate) SetCoinID(s string) *TickerCreate {
 	return tc
 }
 
+// SetNillableCoinID sets the "coin_id" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableCoinID(s *string) *TickerCreate {
+	if s != nil {
+		tc.SetCoinID(*s)
+	}
+	return tc
+}
+
 // SetTargetCoinID sets the "target_coin_id" field.
 func (tc *TickerCreate) SetTargetCoinID(s string) *TickerCreate {
 	tc.mutation.SetTargetCoinID(s)
+	return tc
+}
+
+// SetNillableTargetCoinID sets the "target_coin_id" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableTargetCoinID(s *string) *TickerCreate {
+	if s != nil {
+		tc.SetTargetCoinID(*s)
+	}
 	return tc
 }
 
@@ -240,48 +352,6 @@ func (tc *TickerCreate) check() error {
 	}
 	if _, ok := tc.mutation.Target(); !ok {
 		return &ValidationError{Name: "target", err: errors.New(`repositories: missing required field "Ticker.target"`)}
-	}
-	if _, ok := tc.mutation.Market(); !ok {
-		return &ValidationError{Name: "market", err: errors.New(`repositories: missing required field "Ticker.market"`)}
-	}
-	if _, ok := tc.mutation.Last(); !ok {
-		return &ValidationError{Name: "last", err: errors.New(`repositories: missing required field "Ticker.last"`)}
-	}
-	if _, ok := tc.mutation.Volume(); !ok {
-		return &ValidationError{Name: "volume", err: errors.New(`repositories: missing required field "Ticker.volume"`)}
-	}
-	if _, ok := tc.mutation.ConvertedLast(); !ok {
-		return &ValidationError{Name: "converted_last", err: errors.New(`repositories: missing required field "Ticker.converted_last"`)}
-	}
-	if _, ok := tc.mutation.ConvertedVolume(); !ok {
-		return &ValidationError{Name: "converted_volume", err: errors.New(`repositories: missing required field "Ticker.converted_volume"`)}
-	}
-	if _, ok := tc.mutation.TrustScore(); !ok {
-		return &ValidationError{Name: "trust_score", err: errors.New(`repositories: missing required field "Ticker.trust_score"`)}
-	}
-	if _, ok := tc.mutation.BidAskSpreadPercentage(); !ok {
-		return &ValidationError{Name: "bid_ask_spread_percentage", err: errors.New(`repositories: missing required field "Ticker.bid_ask_spread_percentage"`)}
-	}
-	if _, ok := tc.mutation.Timestamp(); !ok {
-		return &ValidationError{Name: "timestamp", err: errors.New(`repositories: missing required field "Ticker.timestamp"`)}
-	}
-	if _, ok := tc.mutation.LastTradedAt(); !ok {
-		return &ValidationError{Name: "last_traded_at", err: errors.New(`repositories: missing required field "Ticker.last_traded_at"`)}
-	}
-	if _, ok := tc.mutation.LastFetchAt(); !ok {
-		return &ValidationError{Name: "last_fetch_at", err: errors.New(`repositories: missing required field "Ticker.last_fetch_at"`)}
-	}
-	if _, ok := tc.mutation.IsAnomaly(); !ok {
-		return &ValidationError{Name: "is_anomaly", err: errors.New(`repositories: missing required field "Ticker.is_anomaly"`)}
-	}
-	if _, ok := tc.mutation.IsStale(); !ok {
-		return &ValidationError{Name: "is_stale", err: errors.New(`repositories: missing required field "Ticker.is_stale"`)}
-	}
-	if _, ok := tc.mutation.CoinID(); !ok {
-		return &ValidationError{Name: "coin_id", err: errors.New(`repositories: missing required field "Ticker.coin_id"`)}
-	}
-	if _, ok := tc.mutation.TargetCoinID(); !ok {
-		return &ValidationError{Name: "target_coin_id", err: errors.New(`repositories: missing required field "Ticker.target_coin_id"`)}
 	}
 	if _, ok := tc.mutation.ExchangeID(); !ok {
 		return &ValidationError{Name: "exchange", err: errors.New(`repositories: missing required edge "Ticker.exchange"`)}
@@ -568,6 +638,12 @@ func (u *TickerUpsert) UpdateMarket() *TickerUpsert {
 	return u
 }
 
+// ClearMarket clears the value of the "market" field.
+func (u *TickerUpsert) ClearMarket() *TickerUpsert {
+	u.SetNull(ticker.FieldMarket)
+	return u
+}
+
 // SetLast sets the "last" field.
 func (u *TickerUpsert) SetLast(v float64) *TickerUpsert {
 	u.Set(ticker.FieldLast, v)
@@ -583,6 +659,12 @@ func (u *TickerUpsert) UpdateLast() *TickerUpsert {
 // AddLast adds v to the "last" field.
 func (u *TickerUpsert) AddLast(v float64) *TickerUpsert {
 	u.Add(ticker.FieldLast, v)
+	return u
+}
+
+// ClearLast clears the value of the "last" field.
+func (u *TickerUpsert) ClearLast() *TickerUpsert {
+	u.SetNull(ticker.FieldLast)
 	return u
 }
 
@@ -604,6 +686,12 @@ func (u *TickerUpsert) AddVolume(v float64) *TickerUpsert {
 	return u
 }
 
+// ClearVolume clears the value of the "volume" field.
+func (u *TickerUpsert) ClearVolume() *TickerUpsert {
+	u.SetNull(ticker.FieldVolume)
+	return u
+}
+
 // SetConvertedLast sets the "converted_last" field.
 func (u *TickerUpsert) SetConvertedLast(v models.ConvertedDetails) *TickerUpsert {
 	u.Set(ticker.FieldConvertedLast, v)
@@ -613,6 +701,12 @@ func (u *TickerUpsert) SetConvertedLast(v models.ConvertedDetails) *TickerUpsert
 // UpdateConvertedLast sets the "converted_last" field to the value that was provided on create.
 func (u *TickerUpsert) UpdateConvertedLast() *TickerUpsert {
 	u.SetExcluded(ticker.FieldConvertedLast)
+	return u
+}
+
+// ClearConvertedLast clears the value of the "converted_last" field.
+func (u *TickerUpsert) ClearConvertedLast() *TickerUpsert {
+	u.SetNull(ticker.FieldConvertedLast)
 	return u
 }
 
@@ -628,6 +722,12 @@ func (u *TickerUpsert) UpdateConvertedVolume() *TickerUpsert {
 	return u
 }
 
+// ClearConvertedVolume clears the value of the "converted_volume" field.
+func (u *TickerUpsert) ClearConvertedVolume() *TickerUpsert {
+	u.SetNull(ticker.FieldConvertedVolume)
+	return u
+}
+
 // SetTrustScore sets the "trust_score" field.
 func (u *TickerUpsert) SetTrustScore(v string) *TickerUpsert {
 	u.Set(ticker.FieldTrustScore, v)
@@ -637,6 +737,12 @@ func (u *TickerUpsert) SetTrustScore(v string) *TickerUpsert {
 // UpdateTrustScore sets the "trust_score" field to the value that was provided on create.
 func (u *TickerUpsert) UpdateTrustScore() *TickerUpsert {
 	u.SetExcluded(ticker.FieldTrustScore)
+	return u
+}
+
+// ClearTrustScore clears the value of the "trust_score" field.
+func (u *TickerUpsert) ClearTrustScore() *TickerUpsert {
+	u.SetNull(ticker.FieldTrustScore)
 	return u
 }
 
@@ -658,6 +764,12 @@ func (u *TickerUpsert) AddBidAskSpreadPercentage(v float64) *TickerUpsert {
 	return u
 }
 
+// ClearBidAskSpreadPercentage clears the value of the "bid_ask_spread_percentage" field.
+func (u *TickerUpsert) ClearBidAskSpreadPercentage() *TickerUpsert {
+	u.SetNull(ticker.FieldBidAskSpreadPercentage)
+	return u
+}
+
 // SetTimestamp sets the "timestamp" field.
 func (u *TickerUpsert) SetTimestamp(v time.Time) *TickerUpsert {
 	u.Set(ticker.FieldTimestamp, v)
@@ -667,6 +779,12 @@ func (u *TickerUpsert) SetTimestamp(v time.Time) *TickerUpsert {
 // UpdateTimestamp sets the "timestamp" field to the value that was provided on create.
 func (u *TickerUpsert) UpdateTimestamp() *TickerUpsert {
 	u.SetExcluded(ticker.FieldTimestamp)
+	return u
+}
+
+// ClearTimestamp clears the value of the "timestamp" field.
+func (u *TickerUpsert) ClearTimestamp() *TickerUpsert {
+	u.SetNull(ticker.FieldTimestamp)
 	return u
 }
 
@@ -682,6 +800,12 @@ func (u *TickerUpsert) UpdateLastTradedAt() *TickerUpsert {
 	return u
 }
 
+// ClearLastTradedAt clears the value of the "last_traded_at" field.
+func (u *TickerUpsert) ClearLastTradedAt() *TickerUpsert {
+	u.SetNull(ticker.FieldLastTradedAt)
+	return u
+}
+
 // SetLastFetchAt sets the "last_fetch_at" field.
 func (u *TickerUpsert) SetLastFetchAt(v time.Time) *TickerUpsert {
 	u.Set(ticker.FieldLastFetchAt, v)
@@ -691,6 +815,12 @@ func (u *TickerUpsert) SetLastFetchAt(v time.Time) *TickerUpsert {
 // UpdateLastFetchAt sets the "last_fetch_at" field to the value that was provided on create.
 func (u *TickerUpsert) UpdateLastFetchAt() *TickerUpsert {
 	u.SetExcluded(ticker.FieldLastFetchAt)
+	return u
+}
+
+// ClearLastFetchAt clears the value of the "last_fetch_at" field.
+func (u *TickerUpsert) ClearLastFetchAt() *TickerUpsert {
+	u.SetNull(ticker.FieldLastFetchAt)
 	return u
 }
 
@@ -706,6 +836,12 @@ func (u *TickerUpsert) UpdateIsAnomaly() *TickerUpsert {
 	return u
 }
 
+// ClearIsAnomaly clears the value of the "is_anomaly" field.
+func (u *TickerUpsert) ClearIsAnomaly() *TickerUpsert {
+	u.SetNull(ticker.FieldIsAnomaly)
+	return u
+}
+
 // SetIsStale sets the "is_stale" field.
 func (u *TickerUpsert) SetIsStale(v bool) *TickerUpsert {
 	u.Set(ticker.FieldIsStale, v)
@@ -715,6 +851,12 @@ func (u *TickerUpsert) SetIsStale(v bool) *TickerUpsert {
 // UpdateIsStale sets the "is_stale" field to the value that was provided on create.
 func (u *TickerUpsert) UpdateIsStale() *TickerUpsert {
 	u.SetExcluded(ticker.FieldIsStale)
+	return u
+}
+
+// ClearIsStale clears the value of the "is_stale" field.
+func (u *TickerUpsert) ClearIsStale() *TickerUpsert {
+	u.SetNull(ticker.FieldIsStale)
 	return u
 }
 
@@ -766,6 +908,12 @@ func (u *TickerUpsert) UpdateCoinID() *TickerUpsert {
 	return u
 }
 
+// ClearCoinID clears the value of the "coin_id" field.
+func (u *TickerUpsert) ClearCoinID() *TickerUpsert {
+	u.SetNull(ticker.FieldCoinID)
+	return u
+}
+
 // SetTargetCoinID sets the "target_coin_id" field.
 func (u *TickerUpsert) SetTargetCoinID(v string) *TickerUpsert {
 	u.Set(ticker.FieldTargetCoinID, v)
@@ -775,6 +923,12 @@ func (u *TickerUpsert) SetTargetCoinID(v string) *TickerUpsert {
 // UpdateTargetCoinID sets the "target_coin_id" field to the value that was provided on create.
 func (u *TickerUpsert) UpdateTargetCoinID() *TickerUpsert {
 	u.SetExcluded(ticker.FieldTargetCoinID)
+	return u
+}
+
+// ClearTargetCoinID clears the value of the "target_coin_id" field.
+func (u *TickerUpsert) ClearTargetCoinID() *TickerUpsert {
+	u.SetNull(ticker.FieldTargetCoinID)
 	return u
 }
 
@@ -860,6 +1014,13 @@ func (u *TickerUpsertOne) UpdateMarket() *TickerUpsertOne {
 	})
 }
 
+// ClearMarket clears the value of the "market" field.
+func (u *TickerUpsertOne) ClearMarket() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearMarket()
+	})
+}
+
 // SetLast sets the "last" field.
 func (u *TickerUpsertOne) SetLast(v float64) *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
@@ -878,6 +1039,13 @@ func (u *TickerUpsertOne) AddLast(v float64) *TickerUpsertOne {
 func (u *TickerUpsertOne) UpdateLast() *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateLast()
+	})
+}
+
+// ClearLast clears the value of the "last" field.
+func (u *TickerUpsertOne) ClearLast() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearLast()
 	})
 }
 
@@ -902,6 +1070,13 @@ func (u *TickerUpsertOne) UpdateVolume() *TickerUpsertOne {
 	})
 }
 
+// ClearVolume clears the value of the "volume" field.
+func (u *TickerUpsertOne) ClearVolume() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearVolume()
+	})
+}
+
 // SetConvertedLast sets the "converted_last" field.
 func (u *TickerUpsertOne) SetConvertedLast(v models.ConvertedDetails) *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
@@ -913,6 +1088,13 @@ func (u *TickerUpsertOne) SetConvertedLast(v models.ConvertedDetails) *TickerUps
 func (u *TickerUpsertOne) UpdateConvertedLast() *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateConvertedLast()
+	})
+}
+
+// ClearConvertedLast clears the value of the "converted_last" field.
+func (u *TickerUpsertOne) ClearConvertedLast() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearConvertedLast()
 	})
 }
 
@@ -930,6 +1112,13 @@ func (u *TickerUpsertOne) UpdateConvertedVolume() *TickerUpsertOne {
 	})
 }
 
+// ClearConvertedVolume clears the value of the "converted_volume" field.
+func (u *TickerUpsertOne) ClearConvertedVolume() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearConvertedVolume()
+	})
+}
+
 // SetTrustScore sets the "trust_score" field.
 func (u *TickerUpsertOne) SetTrustScore(v string) *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
@@ -941,6 +1130,13 @@ func (u *TickerUpsertOne) SetTrustScore(v string) *TickerUpsertOne {
 func (u *TickerUpsertOne) UpdateTrustScore() *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateTrustScore()
+	})
+}
+
+// ClearTrustScore clears the value of the "trust_score" field.
+func (u *TickerUpsertOne) ClearTrustScore() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearTrustScore()
 	})
 }
 
@@ -965,6 +1161,13 @@ func (u *TickerUpsertOne) UpdateBidAskSpreadPercentage() *TickerUpsertOne {
 	})
 }
 
+// ClearBidAskSpreadPercentage clears the value of the "bid_ask_spread_percentage" field.
+func (u *TickerUpsertOne) ClearBidAskSpreadPercentage() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearBidAskSpreadPercentage()
+	})
+}
+
 // SetTimestamp sets the "timestamp" field.
 func (u *TickerUpsertOne) SetTimestamp(v time.Time) *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
@@ -976,6 +1179,13 @@ func (u *TickerUpsertOne) SetTimestamp(v time.Time) *TickerUpsertOne {
 func (u *TickerUpsertOne) UpdateTimestamp() *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateTimestamp()
+	})
+}
+
+// ClearTimestamp clears the value of the "timestamp" field.
+func (u *TickerUpsertOne) ClearTimestamp() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearTimestamp()
 	})
 }
 
@@ -993,6 +1203,13 @@ func (u *TickerUpsertOne) UpdateLastTradedAt() *TickerUpsertOne {
 	})
 }
 
+// ClearLastTradedAt clears the value of the "last_traded_at" field.
+func (u *TickerUpsertOne) ClearLastTradedAt() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearLastTradedAt()
+	})
+}
+
 // SetLastFetchAt sets the "last_fetch_at" field.
 func (u *TickerUpsertOne) SetLastFetchAt(v time.Time) *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
@@ -1004,6 +1221,13 @@ func (u *TickerUpsertOne) SetLastFetchAt(v time.Time) *TickerUpsertOne {
 func (u *TickerUpsertOne) UpdateLastFetchAt() *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateLastFetchAt()
+	})
+}
+
+// ClearLastFetchAt clears the value of the "last_fetch_at" field.
+func (u *TickerUpsertOne) ClearLastFetchAt() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearLastFetchAt()
 	})
 }
 
@@ -1021,6 +1245,13 @@ func (u *TickerUpsertOne) UpdateIsAnomaly() *TickerUpsertOne {
 	})
 }
 
+// ClearIsAnomaly clears the value of the "is_anomaly" field.
+func (u *TickerUpsertOne) ClearIsAnomaly() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearIsAnomaly()
+	})
+}
+
 // SetIsStale sets the "is_stale" field.
 func (u *TickerUpsertOne) SetIsStale(v bool) *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
@@ -1032,6 +1263,13 @@ func (u *TickerUpsertOne) SetIsStale(v bool) *TickerUpsertOne {
 func (u *TickerUpsertOne) UpdateIsStale() *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateIsStale()
+	})
+}
+
+// ClearIsStale clears the value of the "is_stale" field.
+func (u *TickerUpsertOne) ClearIsStale() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearIsStale()
 	})
 }
 
@@ -1091,6 +1329,13 @@ func (u *TickerUpsertOne) UpdateCoinID() *TickerUpsertOne {
 	})
 }
 
+// ClearCoinID clears the value of the "coin_id" field.
+func (u *TickerUpsertOne) ClearCoinID() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearCoinID()
+	})
+}
+
 // SetTargetCoinID sets the "target_coin_id" field.
 func (u *TickerUpsertOne) SetTargetCoinID(v string) *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
@@ -1102,6 +1347,13 @@ func (u *TickerUpsertOne) SetTargetCoinID(v string) *TickerUpsertOne {
 func (u *TickerUpsertOne) UpdateTargetCoinID() *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateTargetCoinID()
+	})
+}
+
+// ClearTargetCoinID clears the value of the "target_coin_id" field.
+func (u *TickerUpsertOne) ClearTargetCoinID() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearTargetCoinID()
 	})
 }
 
@@ -1346,6 +1598,13 @@ func (u *TickerUpsertBulk) UpdateMarket() *TickerUpsertBulk {
 	})
 }
 
+// ClearMarket clears the value of the "market" field.
+func (u *TickerUpsertBulk) ClearMarket() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearMarket()
+	})
+}
+
 // SetLast sets the "last" field.
 func (u *TickerUpsertBulk) SetLast(v float64) *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
@@ -1364,6 +1623,13 @@ func (u *TickerUpsertBulk) AddLast(v float64) *TickerUpsertBulk {
 func (u *TickerUpsertBulk) UpdateLast() *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateLast()
+	})
+}
+
+// ClearLast clears the value of the "last" field.
+func (u *TickerUpsertBulk) ClearLast() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearLast()
 	})
 }
 
@@ -1388,6 +1654,13 @@ func (u *TickerUpsertBulk) UpdateVolume() *TickerUpsertBulk {
 	})
 }
 
+// ClearVolume clears the value of the "volume" field.
+func (u *TickerUpsertBulk) ClearVolume() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearVolume()
+	})
+}
+
 // SetConvertedLast sets the "converted_last" field.
 func (u *TickerUpsertBulk) SetConvertedLast(v models.ConvertedDetails) *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
@@ -1399,6 +1672,13 @@ func (u *TickerUpsertBulk) SetConvertedLast(v models.ConvertedDetails) *TickerUp
 func (u *TickerUpsertBulk) UpdateConvertedLast() *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateConvertedLast()
+	})
+}
+
+// ClearConvertedLast clears the value of the "converted_last" field.
+func (u *TickerUpsertBulk) ClearConvertedLast() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearConvertedLast()
 	})
 }
 
@@ -1416,6 +1696,13 @@ func (u *TickerUpsertBulk) UpdateConvertedVolume() *TickerUpsertBulk {
 	})
 }
 
+// ClearConvertedVolume clears the value of the "converted_volume" field.
+func (u *TickerUpsertBulk) ClearConvertedVolume() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearConvertedVolume()
+	})
+}
+
 // SetTrustScore sets the "trust_score" field.
 func (u *TickerUpsertBulk) SetTrustScore(v string) *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
@@ -1427,6 +1714,13 @@ func (u *TickerUpsertBulk) SetTrustScore(v string) *TickerUpsertBulk {
 func (u *TickerUpsertBulk) UpdateTrustScore() *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateTrustScore()
+	})
+}
+
+// ClearTrustScore clears the value of the "trust_score" field.
+func (u *TickerUpsertBulk) ClearTrustScore() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearTrustScore()
 	})
 }
 
@@ -1451,6 +1745,13 @@ func (u *TickerUpsertBulk) UpdateBidAskSpreadPercentage() *TickerUpsertBulk {
 	})
 }
 
+// ClearBidAskSpreadPercentage clears the value of the "bid_ask_spread_percentage" field.
+func (u *TickerUpsertBulk) ClearBidAskSpreadPercentage() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearBidAskSpreadPercentage()
+	})
+}
+
 // SetTimestamp sets the "timestamp" field.
 func (u *TickerUpsertBulk) SetTimestamp(v time.Time) *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
@@ -1462,6 +1763,13 @@ func (u *TickerUpsertBulk) SetTimestamp(v time.Time) *TickerUpsertBulk {
 func (u *TickerUpsertBulk) UpdateTimestamp() *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateTimestamp()
+	})
+}
+
+// ClearTimestamp clears the value of the "timestamp" field.
+func (u *TickerUpsertBulk) ClearTimestamp() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearTimestamp()
 	})
 }
 
@@ -1479,6 +1787,13 @@ func (u *TickerUpsertBulk) UpdateLastTradedAt() *TickerUpsertBulk {
 	})
 }
 
+// ClearLastTradedAt clears the value of the "last_traded_at" field.
+func (u *TickerUpsertBulk) ClearLastTradedAt() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearLastTradedAt()
+	})
+}
+
 // SetLastFetchAt sets the "last_fetch_at" field.
 func (u *TickerUpsertBulk) SetLastFetchAt(v time.Time) *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
@@ -1490,6 +1805,13 @@ func (u *TickerUpsertBulk) SetLastFetchAt(v time.Time) *TickerUpsertBulk {
 func (u *TickerUpsertBulk) UpdateLastFetchAt() *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateLastFetchAt()
+	})
+}
+
+// ClearLastFetchAt clears the value of the "last_fetch_at" field.
+func (u *TickerUpsertBulk) ClearLastFetchAt() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearLastFetchAt()
 	})
 }
 
@@ -1507,6 +1829,13 @@ func (u *TickerUpsertBulk) UpdateIsAnomaly() *TickerUpsertBulk {
 	})
 }
 
+// ClearIsAnomaly clears the value of the "is_anomaly" field.
+func (u *TickerUpsertBulk) ClearIsAnomaly() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearIsAnomaly()
+	})
+}
+
 // SetIsStale sets the "is_stale" field.
 func (u *TickerUpsertBulk) SetIsStale(v bool) *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
@@ -1518,6 +1847,13 @@ func (u *TickerUpsertBulk) SetIsStale(v bool) *TickerUpsertBulk {
 func (u *TickerUpsertBulk) UpdateIsStale() *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateIsStale()
+	})
+}
+
+// ClearIsStale clears the value of the "is_stale" field.
+func (u *TickerUpsertBulk) ClearIsStale() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearIsStale()
 	})
 }
 
@@ -1577,6 +1913,13 @@ func (u *TickerUpsertBulk) UpdateCoinID() *TickerUpsertBulk {
 	})
 }
 
+// ClearCoinID clears the value of the "coin_id" field.
+func (u *TickerUpsertBulk) ClearCoinID() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearCoinID()
+	})
+}
+
 // SetTargetCoinID sets the "target_coin_id" field.
 func (u *TickerUpsertBulk) SetTargetCoinID(v string) *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
@@ -1588,6 +1931,13 @@ func (u *TickerUpsertBulk) SetTargetCoinID(v string) *TickerUpsertBulk {
 func (u *TickerUpsertBulk) UpdateTargetCoinID() *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
 		s.UpdateTargetCoinID()
+	})
+}
+
+// ClearTargetCoinID clears the value of the "target_coin_id" field.
+func (u *TickerUpsertBulk) ClearTargetCoinID() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearTargetCoinID()
 	})
 }
 
