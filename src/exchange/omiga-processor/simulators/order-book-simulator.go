@@ -12,15 +12,15 @@ import (
 type OrderBookSimulator interface {
 }
 
-type OrderBookSimulatorSettings struct {
+type OrderBookSimulatorConfig struct {
 	ExchangeName string
 }
 
 type orderBookSimulator struct {
-	ctx                        context.Context
-	logger                     *zap.SugaredLogger
-	orderBookPublisher         publishers.OrderBookPublisher
-	orderBookSimulatorSettings OrderBookSimulatorSettings
+	ctx                      context.Context
+	logger                   *zap.SugaredLogger
+	orderBookPublisher       publishers.OrderBookPublisher
+	orderBookSimulatorConfig OrderBookSimulatorConfig
 }
 
 func NewOrderBookSimulator(
@@ -28,12 +28,12 @@ func NewOrderBookSimulator(
 	logger *zap.SugaredLogger,
 	cronService cron.CronService,
 	orderBookPublisher publishers.OrderBookPublisher,
-	orderBookSimulatorSettings OrderBookSimulatorSettings) (OrderBookSimulator, error) {
+	orderBookSimulatorConfig OrderBookSimulatorConfig) (OrderBookSimulator, error) {
 	instance := &orderBookSimulator{
-		ctx:                        ctx,
-		logger:                     logger,
-		orderBookPublisher:         orderBookPublisher,
-		orderBookSimulatorSettings: orderBookSimulatorSettings,
+		ctx:                      ctx,
+		logger:                   logger,
+		orderBookPublisher:       orderBookPublisher,
+		orderBookSimulatorConfig: orderBookSimulatorConfig,
 	}
 
 	if _, err := cronService.GetCron().AddJob("0/5 * * * * *", instance); err != nil {
@@ -45,7 +45,7 @@ func NewOrderBookSimulator(
 
 func (obs *orderBookSimulator) Run() {
 	orderBook := models.OrderBook{
-		ExchangeId: obs.orderBookSimulatorSettings.ExchangeName,
+		ExchangeId: obs.orderBookSimulatorConfig.ExchangeName,
 		BaseCurrency: models.Currency{
 			Name:         "Bitcoin",
 			Code:         "BTC",
@@ -154,7 +154,7 @@ func (obs *orderBookSimulator) Run() {
 
 	if err := obs.orderBookPublisher.Publish(
 		obs.ctx,
-		obs.orderBookSimulatorSettings.ExchangeName,
+		obs.orderBookSimulatorConfig.ExchangeName,
 		orderBook); err != nil {
 		obs.logger.Errorf("Failed to publish order book. Error: %v", err)
 	}

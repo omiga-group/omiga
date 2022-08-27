@@ -41,7 +41,7 @@ func NewTimeHelper() (time.TimeHelper, error) {
 func NewCoingekoSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	coingekoSettings configuration.CoingekoSettings,
+	coingekoConfig configuration.CoingekoConfig,
 	postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,

@@ -20,10 +20,10 @@ type binanceOrderBookSubscriber struct {
 func NewBinanceOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	binanceSettings configuration.BinanceSettings,
+	binanceConfig configuration.BinanceConfig,
 	symbol string) (BinanceOrderBookSubscriber, error) {
 
-	binance.UseTestnet = binanceSettings.UseTestnet
+	binance.UseTestnet = binanceConfig.UseTestnet
 
 	instance := &binanceOrderBookSubscriber{
 		logger: logger,

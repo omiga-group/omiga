@@ -6,10 +6,10 @@ import (
 
 type Config struct {
 	Pulsar pulsar.PulsarConfig `yaml:"pulsar"`
-	Ftx    FtxSettings         `yaml:"ftx"`
+	Ftx    FtxConfig           `yaml:"ftx"`
 }
 
-type FtxSettings struct {
+type FtxConfig struct {
 	WebsocketUrl string    `yaml:"websocketUrl" env:"OMIGA_FTX_WEBSOCKETURL"`
 	OrderBook    OrderBook `yaml:"orderBook" env:"OMIGA_FTX_ORDERBOOK"`
 }

@@ -67,7 +67,7 @@ func NewOrderBookSimulator(
 	appConfig configuration.AppConfig,
 	pulsarConfig pulsar.PulsarConfig,
 	topic string,
-	orderBookSimulatorSettings simulators.OrderBookSimulatorSettings) (simulators.OrderBookSimulator, error) {
+	orderBookSimulatorConfig simulators.OrderBookSimulatorConfig) (simulators.OrderBookSimulator, error) {
 	wire.Build(
 		simulators.NewOrderBookSimulator,
 		orderbookv1.NewProducer,

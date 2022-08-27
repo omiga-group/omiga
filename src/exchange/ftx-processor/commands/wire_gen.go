@@ -44,8 +44,8 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	return consumer, nil
 }
 
-func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, ftxSettings configuration.FtxSettings, market string) (subscribers.FtxOrderBookSubscriber, error) {
-	ftxOrderBookSubscriber, err := subscribers.NewFtxOrderBookSubscriber(ctx, logger, ftxSettings, market)
+func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, ftxConfig configuration.FtxConfig, market string) (subscribers.FtxOrderBookSubscriber, error) {
+	ftxOrderBookSubscriber, err := subscribers.NewFtxOrderBookSubscriber(ctx, logger, ftxConfig, market)
 	if err != nil {
 		return nil, err
 	}

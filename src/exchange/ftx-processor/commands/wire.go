@@ -58,7 +58,7 @@ func NewSyntheticOrderConsumer(
 func NewFtxOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	ftxSettings configuration.FtxSettings,
+	ftxConfig configuration.FtxConfig,
 	market string) (subscribers.FtxOrderBookSubscriber, error) {
 	wire.Build(subscribers.NewFtxOrderBookSubscriber)
 

@@ -64,7 +64,7 @@ func startCommand() *cobra.Command {
 				config.App,
 				config.Pulsar,
 				orderbookv1.TopicName,
-				simulators.OrderBookSimulatorSettings{
+				simulators.OrderBookSimulatorConfig{
 					ExchangeName: opt.name,
 				})
 			if err != nil {

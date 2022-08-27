@@ -58,7 +58,7 @@ func NewSyntheticOrderConsumer(
 func NewBinanceOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	binanceSettings configuration.BinanceSettings,
+	binanceConfig configuration.BinanceConfig,
 	symbol string) (subscribers.BinanceOrderBookSubscriber, error) {
 	wire.Build(subscribers.NewBinanceOrderBookSubscriber)
 

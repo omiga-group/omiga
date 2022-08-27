@@ -27,7 +27,7 @@ func NewTimeHelper() (time.TimeHelper, error) {
 	return timeHelper, nil
 }
 
-func NewCoingekoSubscriber(ctx context.Context, logger *zap.SugaredLogger, coingekoSettings configuration.CoingekoSettings, postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
+func NewCoingekoSubscriber(ctx context.Context, logger *zap.SugaredLogger, coingekoConfig configuration.CoingekoConfig, postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
 	timeHelper, err := time.NewTimeHelper()
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func NewCoingekoSubscriber(ctx context.Context, logger *zap.SugaredLogger, coing
 	if err != nil {
 		return nil, err
 	}
-	coingekoSubscriber, err := subscribers.NewCoingekoSubscriber(ctx, logger, cronService, coingekoSettings, entgoClient, timeHelper)
+	coingekoSubscriber, err := subscribers.NewCoingekoSubscriber(ctx, logger, cronService, coingekoConfig, entgoClient, timeHelper)
 	if err != nil {
 		return nil, err
 	}

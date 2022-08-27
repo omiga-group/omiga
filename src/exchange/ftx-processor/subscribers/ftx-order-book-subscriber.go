@@ -69,20 +69,20 @@ type ftxOrderBookData struct {
 }
 
 type ftxOrderBookSubscriber struct {
-	logger      *zap.SugaredLogger
-	market      string
-	ftxSettings configuration.FtxSettings
+	logger    *zap.SugaredLogger
+	market    string
+	ftxConfig configuration.FtxConfig
 }
 
 func NewFtxOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	ftxSettings configuration.FtxSettings,
+	ftxConfig configuration.FtxConfig,
 	market string) (FtxOrderBookSubscriber, error) {
 	instance := &ftxOrderBookSubscriber{
-		logger:      logger,
-		market:      market,
-		ftxSettings: ftxSettings,
+		logger:    logger,
+		market:    market,
+		ftxConfig: ftxConfig,
 	}
 
 	go instance.run(ctx)
@@ -103,7 +103,7 @@ func (fobs *ftxOrderBookSubscriber) run(ctx context.Context) {
 func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
 	connection, _, err := websocket.DefaultDialer.DialContext(
 		ctx,
-		fobs.ftxSettings.WebsocketUrl,
+		fobs.ftxConfig.WebsocketUrl,
 		nil)
 	if err != nil {
 		fobs.logger.Errorf("Failed to dial FTX websocket. Error: %v", err)

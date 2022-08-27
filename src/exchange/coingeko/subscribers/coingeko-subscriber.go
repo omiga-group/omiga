@@ -20,26 +20,26 @@ type CoingekoSubscriber interface {
 }
 
 type coingekoSubscriber struct {
-	ctx              context.Context
-	logger           *zap.SugaredLogger
-	coingekoSettings configuration.CoingekoSettings
-	entgoClient      repositories.EntgoClient
-	timeHelper       timeex.TimeHelper
+	ctx            context.Context
+	logger         *zap.SugaredLogger
+	coingekoConfig configuration.CoingekoConfig
+	entgoClient    repositories.EntgoClient
+	timeHelper     timeex.TimeHelper
 }
 
 func NewCoingekoSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	cronService cron.CronService,
-	coingekoSettings configuration.CoingekoSettings,
+	coingekoConfig configuration.CoingekoConfig,
 	entgoClient repositories.EntgoClient,
 	timeHelper timeex.TimeHelper) (CoingekoSubscriber, error) {
 	instance := &coingekoSubscriber{
-		ctx:              ctx,
-		logger:           logger,
-		coingekoSettings: coingekoSettings,
-		entgoClient:      entgoClient,
-		timeHelper:       timeHelper,
+		ctx:            ctx,
+		logger:         logger,
+		coingekoConfig: coingekoConfig,
+		entgoClient:    entgoClient,
+		timeHelper:     timeHelper,
 	}
 
 	if _, err := cronService.GetCron().AddJob("0/1 * * * * *", instance); err != nil {
@@ -50,7 +50,7 @@ func NewCoingekoSubscriber(
 }
 
 func (cs *coingekoSubscriber) Run() {
-	coingekoClient, err := coingekov3.NewClientWithResponses(cs.coingekoSettings.BaseUrl)
+	coingekoClient, err := coingekov3.NewClientWithResponses(cs.coingekoConfig.BaseUrl)
 	if err != nil {
 		cs.logger.Errorf(
 			"Failed to create coingeko client. Error: %v",
