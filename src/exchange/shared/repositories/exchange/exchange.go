@@ -7,6 +7,34 @@ const (
 	Label = "exchange"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldExchangeID holds the string denoting the exchange_id field in the database.
+	FieldExchangeID = "exchange_id"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
+	// FieldYearEstablished holds the string denoting the year_established field in the database.
+	FieldYearEstablished = "year_established"
+	// FieldCountry holds the string denoting the country field in the database.
+	FieldCountry = "country"
+	// FieldImage holds the string denoting the image field in the database.
+	FieldImage = "image"
+	// FieldLinks holds the string denoting the links field in the database.
+	FieldLinks = "links"
+	// FieldHasTradingIncentive holds the string denoting the has_trading_incentive field in the database.
+	FieldHasTradingIncentive = "has_trading_incentive"
+	// FieldCentralized holds the string denoting the centralized field in the database.
+	FieldCentralized = "centralized"
+	// FieldPublicNotice holds the string denoting the public_notice field in the database.
+	FieldPublicNotice = "public_notice"
+	// FieldAlertNotice holds the string denoting the alert_notice field in the database.
+	FieldAlertNotice = "alert_notice"
+	// FieldTrustScore holds the string denoting the trust_score field in the database.
+	FieldTrustScore = "trust_score"
+	// FieldTrustScoreRank holds the string denoting the trust_score_rank field in the database.
+	FieldTrustScoreRank = "trust_score_rank"
+	// FieldTradeVolume24hBtc holds the string denoting the trade_volume_24h_btc field in the database.
+	FieldTradeVolume24hBtc = "trade_volume_24h_btc"
+	// FieldTradeVolume24hBtcNormalized holds the string denoting the trade_volume_24h_btc_normalized field in the database.
+	FieldTradeVolume24hBtcNormalized = "trade_volume_24h_btc_normalized"
 	// Table holds the table name of the exchange in the database.
 	Table = "exchanges"
 )
@@ -14,6 +42,20 @@ const (
 // Columns holds all SQL columns for exchange fields.
 var Columns = []string{
 	FieldID,
+	FieldExchangeID,
+	FieldName,
+	FieldYearEstablished,
+	FieldCountry,
+	FieldImage,
+	FieldLinks,
+	FieldHasTradingIncentive,
+	FieldCentralized,
+	FieldPublicNotice,
+	FieldAlertNotice,
+	FieldTrustScore,
+	FieldTrustScoreRank,
+	FieldTradeVolume24hBtc,
+	FieldTradeVolume24hBtcNormalized,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

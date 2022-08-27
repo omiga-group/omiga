@@ -50,6 +50,14 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
+			if _, err = NewCoingekoSubscriber(
+				ctx,
+				sugarLogger,
+				config.Coingeko,
+				config.Postgres); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
 			for {
 				if ctx.Err() == context.Canceled {
 					break

@@ -3,6 +3,7 @@
 package repositories
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -12,9 +13,37 @@ import (
 
 // Exchange is the model entity for the Exchange schema.
 type Exchange struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// ExchangeID holds the value of the "exchange_id" field.
+	ExchangeID string `json:"exchange_id,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
+	// YearEstablished holds the value of the "year_established" field.
+	YearEstablished int `json:"year_established,omitempty"`
+	// Country holds the value of the "country" field.
+	Country string `json:"country,omitempty"`
+	// Image holds the value of the "image" field.
+	Image string `json:"image,omitempty"`
+	// Links holds the value of the "links" field.
+	Links map[string]string `json:"links,omitempty"`
+	// HasTradingIncentive holds the value of the "has_trading_incentive" field.
+	HasTradingIncentive bool `json:"has_trading_incentive,omitempty"`
+	// Centralized holds the value of the "centralized" field.
+	Centralized bool `json:"centralized,omitempty"`
+	// PublicNotice holds the value of the "public_notice" field.
+	PublicNotice string `json:"public_notice,omitempty"`
+	// AlertNotice holds the value of the "alert_notice" field.
+	AlertNotice string `json:"alert_notice,omitempty"`
+	// TrustScore holds the value of the "trust_score" field.
+	TrustScore int `json:"trust_score,omitempty"`
+	// TrustScoreRank holds the value of the "trust_score_rank" field.
+	TrustScoreRank int `json:"trust_score_rank,omitempty"`
+	// TradeVolume24hBtc holds the value of the "trade_volume_24h_btc" field.
+	TradeVolume24hBtc float64 `json:"trade_volume_24h_btc,omitempty"`
+	// TradeVolume24hBtcNormalized holds the value of the "trade_volume_24h_btc_normalized" field.
+	TradeVolume24hBtcNormalized float64 `json:"trade_volume_24h_btc_normalized,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -22,8 +51,16 @@ func (*Exchange) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case exchange.FieldID:
+		case exchange.FieldLinks:
+			values[i] = new([]byte)
+		case exchange.FieldHasTradingIncentive, exchange.FieldCentralized:
+			values[i] = new(sql.NullBool)
+		case exchange.FieldTradeVolume24hBtc, exchange.FieldTradeVolume24hBtcNormalized:
+			values[i] = new(sql.NullFloat64)
+		case exchange.FieldID, exchange.FieldYearEstablished, exchange.FieldTrustScore, exchange.FieldTrustScoreRank:
 			values[i] = new(sql.NullInt64)
+		case exchange.FieldExchangeID, exchange.FieldName, exchange.FieldCountry, exchange.FieldImage, exchange.FieldPublicNotice, exchange.FieldAlertNotice:
+			values[i] = new(sql.NullString)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Exchange", columns[i])
 		}
@@ -45,6 +82,92 @@ func (e *Exchange) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			e.ID = int(value.Int64)
+		case exchange.FieldExchangeID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field exchange_id", values[i])
+			} else if value.Valid {
+				e.ExchangeID = value.String
+			}
+		case exchange.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				e.Name = value.String
+			}
+		case exchange.FieldYearEstablished:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field year_established", values[i])
+			} else if value.Valid {
+				e.YearEstablished = int(value.Int64)
+			}
+		case exchange.FieldCountry:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field country", values[i])
+			} else if value.Valid {
+				e.Country = value.String
+			}
+		case exchange.FieldImage:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field image", values[i])
+			} else if value.Valid {
+				e.Image = value.String
+			}
+		case exchange.FieldLinks:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field links", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &e.Links); err != nil {
+					return fmt.Errorf("unmarshal field links: %w", err)
+				}
+			}
+		case exchange.FieldHasTradingIncentive:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field has_trading_incentive", values[i])
+			} else if value.Valid {
+				e.HasTradingIncentive = value.Bool
+			}
+		case exchange.FieldCentralized:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field centralized", values[i])
+			} else if value.Valid {
+				e.Centralized = value.Bool
+			}
+		case exchange.FieldPublicNotice:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field public_notice", values[i])
+			} else if value.Valid {
+				e.PublicNotice = value.String
+			}
+		case exchange.FieldAlertNotice:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field alert_notice", values[i])
+			} else if value.Valid {
+				e.AlertNotice = value.String
+			}
+		case exchange.FieldTrustScore:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field trust_score", values[i])
+			} else if value.Valid {
+				e.TrustScore = int(value.Int64)
+			}
+		case exchange.FieldTrustScoreRank:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field trust_score_rank", values[i])
+			} else if value.Valid {
+				e.TrustScoreRank = int(value.Int64)
+			}
+		case exchange.FieldTradeVolume24hBtc:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field trade_volume_24h_btc", values[i])
+			} else if value.Valid {
+				e.TradeVolume24hBtc = value.Float64
+			}
+		case exchange.FieldTradeVolume24hBtcNormalized:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field trade_volume_24h_btc_normalized", values[i])
+			} else if value.Valid {
+				e.TradeVolume24hBtcNormalized = value.Float64
+			}
 		}
 	}
 	return nil
@@ -72,7 +195,48 @@ func (e *Exchange) Unwrap() *Exchange {
 func (e *Exchange) String() string {
 	var builder strings.Builder
 	builder.WriteString("Exchange(")
-	builder.WriteString(fmt.Sprintf("id=%v", e.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", e.ID))
+	builder.WriteString("exchange_id=")
+	builder.WriteString(e.ExchangeID)
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(e.Name)
+	builder.WriteString(", ")
+	builder.WriteString("year_established=")
+	builder.WriteString(fmt.Sprintf("%v", e.YearEstablished))
+	builder.WriteString(", ")
+	builder.WriteString("country=")
+	builder.WriteString(e.Country)
+	builder.WriteString(", ")
+	builder.WriteString("image=")
+	builder.WriteString(e.Image)
+	builder.WriteString(", ")
+	builder.WriteString("links=")
+	builder.WriteString(fmt.Sprintf("%v", e.Links))
+	builder.WriteString(", ")
+	builder.WriteString("has_trading_incentive=")
+	builder.WriteString(fmt.Sprintf("%v", e.HasTradingIncentive))
+	builder.WriteString(", ")
+	builder.WriteString("centralized=")
+	builder.WriteString(fmt.Sprintf("%v", e.Centralized))
+	builder.WriteString(", ")
+	builder.WriteString("public_notice=")
+	builder.WriteString(e.PublicNotice)
+	builder.WriteString(", ")
+	builder.WriteString("alert_notice=")
+	builder.WriteString(e.AlertNotice)
+	builder.WriteString(", ")
+	builder.WriteString("trust_score=")
+	builder.WriteString(fmt.Sprintf("%v", e.TrustScore))
+	builder.WriteString(", ")
+	builder.WriteString("trust_score_rank=")
+	builder.WriteString(fmt.Sprintf("%v", e.TrustScoreRank))
+	builder.WriteString(", ")
+	builder.WriteString("trade_volume_24h_btc=")
+	builder.WriteString(fmt.Sprintf("%v", e.TradeVolume24hBtc))
+	builder.WriteString(", ")
+	builder.WriteString("trade_volume_24h_btc_normalized=")
+	builder.WriteString(fmt.Sprintf("%v", e.TradeVolume24hBtcNormalized))
 	builder.WriteByte(')')
 	return builder.String()
 }

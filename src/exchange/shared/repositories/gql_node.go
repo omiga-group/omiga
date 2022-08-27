@@ -51,8 +51,121 @@ func (e *Exchange) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     e.ID,
 		Type:   "Exchange",
-		Fields: make([]*Field, 0),
+		Fields: make([]*Field, 14),
 		Edges:  make([]*Edge, 0),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(e.ExchangeID); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "string",
+		Name:  "exchange_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.YearEstablished); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "int",
+		Name:  "year_established",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.Country); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "country",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.Image); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "string",
+		Name:  "image",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.Links); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "map[string]string",
+		Name:  "links",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.HasTradingIncentive); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "bool",
+		Name:  "has_trading_incentive",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.Centralized); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "bool",
+		Name:  "centralized",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.PublicNotice); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "string",
+		Name:  "public_notice",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.AlertNotice); err != nil {
+		return nil, err
+	}
+	node.Fields[9] = &Field{
+		Type:  "string",
+		Name:  "alert_notice",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.TrustScore); err != nil {
+		return nil, err
+	}
+	node.Fields[10] = &Field{
+		Type:  "int",
+		Name:  "trust_score",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.TrustScoreRank); err != nil {
+		return nil, err
+	}
+	node.Fields[11] = &Field{
+		Type:  "int",
+		Name:  "trust_score_rank",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.TradeVolume24hBtc); err != nil {
+		return nil, err
+	}
+	node.Fields[12] = &Field{
+		Type:  "float64",
+		Name:  "trade_volume_24h_btc",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.TradeVolume24hBtcNormalized); err != nil {
+		return nil, err
+	}
+	node.Fields[13] = &Field{
+		Type:  "float64",
+		Name:  "trade_volume_24h_btc_normalized",
+		Value: string(buf),
 	}
 	return node, nil
 }

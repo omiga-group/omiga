@@ -15,6 +15,149 @@ input ExchangeWhereInput {
   idGTE: ID
   idLT: ID
   idLTE: ID
+  """exchange_id field predicates"""
+  exchangeID: String
+  exchangeIDNEQ: String
+  exchangeIDIn: [String!]
+  exchangeIDNotIn: [String!]
+  exchangeIDGT: String
+  exchangeIDGTE: String
+  exchangeIDLT: String
+  exchangeIDLTE: String
+  exchangeIDContains: String
+  exchangeIDHasPrefix: String
+  exchangeIDHasSuffix: String
+  exchangeIDEqualFold: String
+  exchangeIDContainsFold: String
+  """name field predicates"""
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
+  nameEqualFold: String
+  nameContainsFold: String
+  """year_established field predicates"""
+  yearEstablished: Int
+  yearEstablishedNEQ: Int
+  yearEstablishedIn: [Int!]
+  yearEstablishedNotIn: [Int!]
+  yearEstablishedGT: Int
+  yearEstablishedGTE: Int
+  yearEstablishedLT: Int
+  yearEstablishedLTE: Int
+  yearEstablishedIsNil: Boolean
+  yearEstablishedNotNil: Boolean
+  """country field predicates"""
+  country: String
+  countryNEQ: String
+  countryIn: [String!]
+  countryNotIn: [String!]
+  countryGT: String
+  countryGTE: String
+  countryLT: String
+  countryLTE: String
+  countryContains: String
+  countryHasPrefix: String
+  countryHasSuffix: String
+  countryIsNil: Boolean
+  countryNotNil: Boolean
+  countryEqualFold: String
+  countryContainsFold: String
+  """image field predicates"""
+  image: String
+  imageNEQ: String
+  imageIn: [String!]
+  imageNotIn: [String!]
+  imageGT: String
+  imageGTE: String
+  imageLT: String
+  imageLTE: String
+  imageContains: String
+  imageHasPrefix: String
+  imageHasSuffix: String
+  imageIsNil: Boolean
+  imageNotNil: Boolean
+  imageEqualFold: String
+  imageContainsFold: String
+  """has_trading_incentive field predicates"""
+  hasTradingIncentive: Boolean
+  hasTradingIncentiveNEQ: Boolean
+  """centralized field predicates"""
+  centralized: Boolean
+  centralizedNEQ: Boolean
+  """public_notice field predicates"""
+  publicNotice: String
+  publicNoticeNEQ: String
+  publicNoticeIn: [String!]
+  publicNoticeNotIn: [String!]
+  publicNoticeGT: String
+  publicNoticeGTE: String
+  publicNoticeLT: String
+  publicNoticeLTE: String
+  publicNoticeContains: String
+  publicNoticeHasPrefix: String
+  publicNoticeHasSuffix: String
+  publicNoticeEqualFold: String
+  publicNoticeContainsFold: String
+  """alert_notice field predicates"""
+  alertNotice: String
+  alertNoticeNEQ: String
+  alertNoticeIn: [String!]
+  alertNoticeNotIn: [String!]
+  alertNoticeGT: String
+  alertNoticeGTE: String
+  alertNoticeLT: String
+  alertNoticeLTE: String
+  alertNoticeContains: String
+  alertNoticeHasPrefix: String
+  alertNoticeHasSuffix: String
+  alertNoticeEqualFold: String
+  alertNoticeContainsFold: String
+  """trust_score field predicates"""
+  trustScore: Int
+  trustScoreNEQ: Int
+  trustScoreIn: [Int!]
+  trustScoreNotIn: [Int!]
+  trustScoreGT: Int
+  trustScoreGTE: Int
+  trustScoreLT: Int
+  trustScoreLTE: Int
+  """trust_score_rank field predicates"""
+  trustScoreRank: Int
+  trustScoreRankNEQ: Int
+  trustScoreRankIn: [Int!]
+  trustScoreRankNotIn: [Int!]
+  trustScoreRankGT: Int
+  trustScoreRankGTE: Int
+  trustScoreRankLT: Int
+  trustScoreRankLTE: Int
+  """trade_volume_24h_btc field predicates"""
+  tradeVolume24hBtc: Float
+  tradeVolume24hBtcNEQ: Float
+  tradeVolume24hBtcIn: [Float!]
+  tradeVolume24hBtcNotIn: [Float!]
+  tradeVolume24hBtcGT: Float
+  tradeVolume24hBtcGTE: Float
+  tradeVolume24hBtcLT: Float
+  tradeVolume24hBtcLTE: Float
+  """trade_volume_24h_btc_normalized field predicates"""
+  tradeVolume24hBtcNormalized: Float
+  tradeVolume24hBtcNormalizedNEQ: Float
+  tradeVolume24hBtcNormalizedIn: [Float!]
+  tradeVolume24hBtcNormalizedNotIn: [Float!]
+  tradeVolume24hBtcNormalizedGT: Float
+  tradeVolume24hBtcNormalizedGTE: Float
+  tradeVolume24hBtcNormalizedLT: Float
+  tradeVolume24hBtcNormalizedLTE: Float
 }
 """
 OutboxWhereInput is used for filtering Outbox objects.

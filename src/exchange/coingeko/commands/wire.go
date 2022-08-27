@@ -24,15 +24,20 @@ import (
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/subscribers"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"go.uber.org/zap"
 )
 
-func NewOrderBookSimulator(
+func NewCoingekoSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	coingekoSettings configuration.CoingekoSettings) (subscribers.CoingekoSubscriber, error) {
+	coingekoSettings configuration.CoingekoSettings,
+	postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
 	wire.Build(
+		postgres.NewPostgres,
+		repositories.NewEntgoClient,
 		cron.NewCronService,
 		subscribers.NewCoingekoSubscriber)
 

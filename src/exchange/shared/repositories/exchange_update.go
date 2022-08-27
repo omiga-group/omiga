@@ -29,6 +29,187 @@ func (eu *ExchangeUpdate) Where(ps ...predicate.Exchange) *ExchangeUpdate {
 	return eu
 }
 
+// SetExchangeID sets the "exchange_id" field.
+func (eu *ExchangeUpdate) SetExchangeID(s string) *ExchangeUpdate {
+	eu.mutation.SetExchangeID(s)
+	return eu
+}
+
+// SetName sets the "name" field.
+func (eu *ExchangeUpdate) SetName(s string) *ExchangeUpdate {
+	eu.mutation.SetName(s)
+	return eu
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableName(s *string) *ExchangeUpdate {
+	if s != nil {
+		eu.SetName(*s)
+	}
+	return eu
+}
+
+// ClearName clears the value of the "name" field.
+func (eu *ExchangeUpdate) ClearName() *ExchangeUpdate {
+	eu.mutation.ClearName()
+	return eu
+}
+
+// SetYearEstablished sets the "year_established" field.
+func (eu *ExchangeUpdate) SetYearEstablished(i int) *ExchangeUpdate {
+	eu.mutation.ResetYearEstablished()
+	eu.mutation.SetYearEstablished(i)
+	return eu
+}
+
+// SetNillableYearEstablished sets the "year_established" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableYearEstablished(i *int) *ExchangeUpdate {
+	if i != nil {
+		eu.SetYearEstablished(*i)
+	}
+	return eu
+}
+
+// AddYearEstablished adds i to the "year_established" field.
+func (eu *ExchangeUpdate) AddYearEstablished(i int) *ExchangeUpdate {
+	eu.mutation.AddYearEstablished(i)
+	return eu
+}
+
+// ClearYearEstablished clears the value of the "year_established" field.
+func (eu *ExchangeUpdate) ClearYearEstablished() *ExchangeUpdate {
+	eu.mutation.ClearYearEstablished()
+	return eu
+}
+
+// SetCountry sets the "country" field.
+func (eu *ExchangeUpdate) SetCountry(s string) *ExchangeUpdate {
+	eu.mutation.SetCountry(s)
+	return eu
+}
+
+// SetNillableCountry sets the "country" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableCountry(s *string) *ExchangeUpdate {
+	if s != nil {
+		eu.SetCountry(*s)
+	}
+	return eu
+}
+
+// ClearCountry clears the value of the "country" field.
+func (eu *ExchangeUpdate) ClearCountry() *ExchangeUpdate {
+	eu.mutation.ClearCountry()
+	return eu
+}
+
+// SetImage sets the "image" field.
+func (eu *ExchangeUpdate) SetImage(s string) *ExchangeUpdate {
+	eu.mutation.SetImage(s)
+	return eu
+}
+
+// SetNillableImage sets the "image" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableImage(s *string) *ExchangeUpdate {
+	if s != nil {
+		eu.SetImage(*s)
+	}
+	return eu
+}
+
+// ClearImage clears the value of the "image" field.
+func (eu *ExchangeUpdate) ClearImage() *ExchangeUpdate {
+	eu.mutation.ClearImage()
+	return eu
+}
+
+// SetLinks sets the "links" field.
+func (eu *ExchangeUpdate) SetLinks(m map[string]string) *ExchangeUpdate {
+	eu.mutation.SetLinks(m)
+	return eu
+}
+
+// ClearLinks clears the value of the "links" field.
+func (eu *ExchangeUpdate) ClearLinks() *ExchangeUpdate {
+	eu.mutation.ClearLinks()
+	return eu
+}
+
+// SetHasTradingIncentive sets the "has_trading_incentive" field.
+func (eu *ExchangeUpdate) SetHasTradingIncentive(b bool) *ExchangeUpdate {
+	eu.mutation.SetHasTradingIncentive(b)
+	return eu
+}
+
+// SetCentralized sets the "centralized" field.
+func (eu *ExchangeUpdate) SetCentralized(b bool) *ExchangeUpdate {
+	eu.mutation.SetCentralized(b)
+	return eu
+}
+
+// SetPublicNotice sets the "public_notice" field.
+func (eu *ExchangeUpdate) SetPublicNotice(s string) *ExchangeUpdate {
+	eu.mutation.SetPublicNotice(s)
+	return eu
+}
+
+// SetAlertNotice sets the "alert_notice" field.
+func (eu *ExchangeUpdate) SetAlertNotice(s string) *ExchangeUpdate {
+	eu.mutation.SetAlertNotice(s)
+	return eu
+}
+
+// SetTrustScore sets the "trust_score" field.
+func (eu *ExchangeUpdate) SetTrustScore(i int) *ExchangeUpdate {
+	eu.mutation.ResetTrustScore()
+	eu.mutation.SetTrustScore(i)
+	return eu
+}
+
+// AddTrustScore adds i to the "trust_score" field.
+func (eu *ExchangeUpdate) AddTrustScore(i int) *ExchangeUpdate {
+	eu.mutation.AddTrustScore(i)
+	return eu
+}
+
+// SetTrustScoreRank sets the "trust_score_rank" field.
+func (eu *ExchangeUpdate) SetTrustScoreRank(i int) *ExchangeUpdate {
+	eu.mutation.ResetTrustScoreRank()
+	eu.mutation.SetTrustScoreRank(i)
+	return eu
+}
+
+// AddTrustScoreRank adds i to the "trust_score_rank" field.
+func (eu *ExchangeUpdate) AddTrustScoreRank(i int) *ExchangeUpdate {
+	eu.mutation.AddTrustScoreRank(i)
+	return eu
+}
+
+// SetTradeVolume24hBtc sets the "trade_volume_24h_btc" field.
+func (eu *ExchangeUpdate) SetTradeVolume24hBtc(f float64) *ExchangeUpdate {
+	eu.mutation.ResetTradeVolume24hBtc()
+	eu.mutation.SetTradeVolume24hBtc(f)
+	return eu
+}
+
+// AddTradeVolume24hBtc adds f to the "trade_volume_24h_btc" field.
+func (eu *ExchangeUpdate) AddTradeVolume24hBtc(f float64) *ExchangeUpdate {
+	eu.mutation.AddTradeVolume24hBtc(f)
+	return eu
+}
+
+// SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
+func (eu *ExchangeUpdate) SetTradeVolume24hBtcNormalized(f float64) *ExchangeUpdate {
+	eu.mutation.ResetTradeVolume24hBtcNormalized()
+	eu.mutation.SetTradeVolume24hBtcNormalized(f)
+	return eu
+}
+
+// AddTradeVolume24hBtcNormalized adds f to the "trade_volume_24h_btc_normalized" field.
+func (eu *ExchangeUpdate) AddTradeVolume24hBtcNormalized(f float64) *ExchangeUpdate {
+	eu.mutation.AddTradeVolume24hBtcNormalized(f)
+	return eu
+}
+
 // Mutation returns the ExchangeMutation object of the builder.
 func (eu *ExchangeUpdate) Mutation() *ExchangeMutation {
 	return eu.mutation
@@ -112,6 +293,169 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := eu.mutation.ExchangeID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldExchangeID,
+		})
+	}
+	if value, ok := eu.mutation.Name(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldName,
+		})
+	}
+	if eu.mutation.NameCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: exchange.FieldName,
+		})
+	}
+	if value, ok := eu.mutation.YearEstablished(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldYearEstablished,
+		})
+	}
+	if value, ok := eu.mutation.AddedYearEstablished(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldYearEstablished,
+		})
+	}
+	if eu.mutation.YearEstablishedCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: exchange.FieldYearEstablished,
+		})
+	}
+	if value, ok := eu.mutation.Country(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldCountry,
+		})
+	}
+	if eu.mutation.CountryCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: exchange.FieldCountry,
+		})
+	}
+	if value, ok := eu.mutation.Image(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldImage,
+		})
+	}
+	if eu.mutation.ImageCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: exchange.FieldImage,
+		})
+	}
+	if value, ok := eu.mutation.Links(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: exchange.FieldLinks,
+		})
+	}
+	if eu.mutation.LinksCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: exchange.FieldLinks,
+		})
+	}
+	if value, ok := eu.mutation.HasTradingIncentive(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: exchange.FieldHasTradingIncentive,
+		})
+	}
+	if value, ok := eu.mutation.Centralized(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: exchange.FieldCentralized,
+		})
+	}
+	if value, ok := eu.mutation.PublicNotice(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldPublicNotice,
+		})
+	}
+	if value, ok := eu.mutation.AlertNotice(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldAlertNotice,
+		})
+	}
+	if value, ok := eu.mutation.TrustScore(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldTrustScore,
+		})
+	}
+	if value, ok := eu.mutation.AddedTrustScore(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldTrustScore,
+		})
+	}
+	if value, ok := eu.mutation.TrustScoreRank(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldTrustScoreRank,
+		})
+	}
+	if value, ok := eu.mutation.AddedTrustScoreRank(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldTrustScoreRank,
+		})
+	}
+	if value, ok := eu.mutation.TradeVolume24hBtc(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTradeVolume24hBtc,
+		})
+	}
+	if value, ok := eu.mutation.AddedTradeVolume24hBtc(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTradeVolume24hBtc,
+		})
+	}
+	if value, ok := eu.mutation.TradeVolume24hBtcNormalized(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTradeVolume24hBtcNormalized,
+		})
+	}
+	if value, ok := eu.mutation.AddedTradeVolume24hBtcNormalized(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTradeVolume24hBtcNormalized,
+		})
+	}
 	_spec.Node.Schema = eu.schemaConfig.Exchange
 	ctx = internal.NewSchemaConfigContext(ctx, eu.schemaConfig)
 	_spec.Modifiers = eu.modifiers
@@ -133,6 +477,187 @@ type ExchangeUpdateOne struct {
 	hooks     []Hook
 	mutation  *ExchangeMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetExchangeID sets the "exchange_id" field.
+func (euo *ExchangeUpdateOne) SetExchangeID(s string) *ExchangeUpdateOne {
+	euo.mutation.SetExchangeID(s)
+	return euo
+}
+
+// SetName sets the "name" field.
+func (euo *ExchangeUpdateOne) SetName(s string) *ExchangeUpdateOne {
+	euo.mutation.SetName(s)
+	return euo
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableName(s *string) *ExchangeUpdateOne {
+	if s != nil {
+		euo.SetName(*s)
+	}
+	return euo
+}
+
+// ClearName clears the value of the "name" field.
+func (euo *ExchangeUpdateOne) ClearName() *ExchangeUpdateOne {
+	euo.mutation.ClearName()
+	return euo
+}
+
+// SetYearEstablished sets the "year_established" field.
+func (euo *ExchangeUpdateOne) SetYearEstablished(i int) *ExchangeUpdateOne {
+	euo.mutation.ResetYearEstablished()
+	euo.mutation.SetYearEstablished(i)
+	return euo
+}
+
+// SetNillableYearEstablished sets the "year_established" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableYearEstablished(i *int) *ExchangeUpdateOne {
+	if i != nil {
+		euo.SetYearEstablished(*i)
+	}
+	return euo
+}
+
+// AddYearEstablished adds i to the "year_established" field.
+func (euo *ExchangeUpdateOne) AddYearEstablished(i int) *ExchangeUpdateOne {
+	euo.mutation.AddYearEstablished(i)
+	return euo
+}
+
+// ClearYearEstablished clears the value of the "year_established" field.
+func (euo *ExchangeUpdateOne) ClearYearEstablished() *ExchangeUpdateOne {
+	euo.mutation.ClearYearEstablished()
+	return euo
+}
+
+// SetCountry sets the "country" field.
+func (euo *ExchangeUpdateOne) SetCountry(s string) *ExchangeUpdateOne {
+	euo.mutation.SetCountry(s)
+	return euo
+}
+
+// SetNillableCountry sets the "country" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableCountry(s *string) *ExchangeUpdateOne {
+	if s != nil {
+		euo.SetCountry(*s)
+	}
+	return euo
+}
+
+// ClearCountry clears the value of the "country" field.
+func (euo *ExchangeUpdateOne) ClearCountry() *ExchangeUpdateOne {
+	euo.mutation.ClearCountry()
+	return euo
+}
+
+// SetImage sets the "image" field.
+func (euo *ExchangeUpdateOne) SetImage(s string) *ExchangeUpdateOne {
+	euo.mutation.SetImage(s)
+	return euo
+}
+
+// SetNillableImage sets the "image" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableImage(s *string) *ExchangeUpdateOne {
+	if s != nil {
+		euo.SetImage(*s)
+	}
+	return euo
+}
+
+// ClearImage clears the value of the "image" field.
+func (euo *ExchangeUpdateOne) ClearImage() *ExchangeUpdateOne {
+	euo.mutation.ClearImage()
+	return euo
+}
+
+// SetLinks sets the "links" field.
+func (euo *ExchangeUpdateOne) SetLinks(m map[string]string) *ExchangeUpdateOne {
+	euo.mutation.SetLinks(m)
+	return euo
+}
+
+// ClearLinks clears the value of the "links" field.
+func (euo *ExchangeUpdateOne) ClearLinks() *ExchangeUpdateOne {
+	euo.mutation.ClearLinks()
+	return euo
+}
+
+// SetHasTradingIncentive sets the "has_trading_incentive" field.
+func (euo *ExchangeUpdateOne) SetHasTradingIncentive(b bool) *ExchangeUpdateOne {
+	euo.mutation.SetHasTradingIncentive(b)
+	return euo
+}
+
+// SetCentralized sets the "centralized" field.
+func (euo *ExchangeUpdateOne) SetCentralized(b bool) *ExchangeUpdateOne {
+	euo.mutation.SetCentralized(b)
+	return euo
+}
+
+// SetPublicNotice sets the "public_notice" field.
+func (euo *ExchangeUpdateOne) SetPublicNotice(s string) *ExchangeUpdateOne {
+	euo.mutation.SetPublicNotice(s)
+	return euo
+}
+
+// SetAlertNotice sets the "alert_notice" field.
+func (euo *ExchangeUpdateOne) SetAlertNotice(s string) *ExchangeUpdateOne {
+	euo.mutation.SetAlertNotice(s)
+	return euo
+}
+
+// SetTrustScore sets the "trust_score" field.
+func (euo *ExchangeUpdateOne) SetTrustScore(i int) *ExchangeUpdateOne {
+	euo.mutation.ResetTrustScore()
+	euo.mutation.SetTrustScore(i)
+	return euo
+}
+
+// AddTrustScore adds i to the "trust_score" field.
+func (euo *ExchangeUpdateOne) AddTrustScore(i int) *ExchangeUpdateOne {
+	euo.mutation.AddTrustScore(i)
+	return euo
+}
+
+// SetTrustScoreRank sets the "trust_score_rank" field.
+func (euo *ExchangeUpdateOne) SetTrustScoreRank(i int) *ExchangeUpdateOne {
+	euo.mutation.ResetTrustScoreRank()
+	euo.mutation.SetTrustScoreRank(i)
+	return euo
+}
+
+// AddTrustScoreRank adds i to the "trust_score_rank" field.
+func (euo *ExchangeUpdateOne) AddTrustScoreRank(i int) *ExchangeUpdateOne {
+	euo.mutation.AddTrustScoreRank(i)
+	return euo
+}
+
+// SetTradeVolume24hBtc sets the "trade_volume_24h_btc" field.
+func (euo *ExchangeUpdateOne) SetTradeVolume24hBtc(f float64) *ExchangeUpdateOne {
+	euo.mutation.ResetTradeVolume24hBtc()
+	euo.mutation.SetTradeVolume24hBtc(f)
+	return euo
+}
+
+// AddTradeVolume24hBtc adds f to the "trade_volume_24h_btc" field.
+func (euo *ExchangeUpdateOne) AddTradeVolume24hBtc(f float64) *ExchangeUpdateOne {
+	euo.mutation.AddTradeVolume24hBtc(f)
+	return euo
+}
+
+// SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
+func (euo *ExchangeUpdateOne) SetTradeVolume24hBtcNormalized(f float64) *ExchangeUpdateOne {
+	euo.mutation.ResetTradeVolume24hBtcNormalized()
+	euo.mutation.SetTradeVolume24hBtcNormalized(f)
+	return euo
+}
+
+// AddTradeVolume24hBtcNormalized adds f to the "trade_volume_24h_btc_normalized" field.
+func (euo *ExchangeUpdateOne) AddTradeVolume24hBtcNormalized(f float64) *ExchangeUpdateOne {
+	euo.mutation.AddTradeVolume24hBtcNormalized(f)
+	return euo
 }
 
 // Mutation returns the ExchangeMutation object of the builder.
@@ -247,6 +772,169 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := euo.mutation.ExchangeID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldExchangeID,
+		})
+	}
+	if value, ok := euo.mutation.Name(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldName,
+		})
+	}
+	if euo.mutation.NameCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: exchange.FieldName,
+		})
+	}
+	if value, ok := euo.mutation.YearEstablished(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldYearEstablished,
+		})
+	}
+	if value, ok := euo.mutation.AddedYearEstablished(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldYearEstablished,
+		})
+	}
+	if euo.mutation.YearEstablishedCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: exchange.FieldYearEstablished,
+		})
+	}
+	if value, ok := euo.mutation.Country(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldCountry,
+		})
+	}
+	if euo.mutation.CountryCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: exchange.FieldCountry,
+		})
+	}
+	if value, ok := euo.mutation.Image(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldImage,
+		})
+	}
+	if euo.mutation.ImageCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: exchange.FieldImage,
+		})
+	}
+	if value, ok := euo.mutation.Links(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: exchange.FieldLinks,
+		})
+	}
+	if euo.mutation.LinksCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: exchange.FieldLinks,
+		})
+	}
+	if value, ok := euo.mutation.HasTradingIncentive(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: exchange.FieldHasTradingIncentive,
+		})
+	}
+	if value, ok := euo.mutation.Centralized(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: exchange.FieldCentralized,
+		})
+	}
+	if value, ok := euo.mutation.PublicNotice(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldPublicNotice,
+		})
+	}
+	if value, ok := euo.mutation.AlertNotice(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldAlertNotice,
+		})
+	}
+	if value, ok := euo.mutation.TrustScore(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldTrustScore,
+		})
+	}
+	if value, ok := euo.mutation.AddedTrustScore(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldTrustScore,
+		})
+	}
+	if value, ok := euo.mutation.TrustScoreRank(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldTrustScoreRank,
+		})
+	}
+	if value, ok := euo.mutation.AddedTrustScoreRank(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldTrustScoreRank,
+		})
+	}
+	if value, ok := euo.mutation.TradeVolume24hBtc(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTradeVolume24hBtc,
+		})
+	}
+	if value, ok := euo.mutation.AddedTradeVolume24hBtc(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTradeVolume24hBtc,
+		})
+	}
+	if value, ok := euo.mutation.TradeVolume24hBtcNormalized(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTradeVolume24hBtcNormalized,
+		})
+	}
+	if value, ok := euo.mutation.AddedTradeVolume24hBtcNormalized(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTradeVolume24hBtcNormalized,
+		})
 	}
 	_spec.Node.Schema = euo.schemaConfig.Exchange
 	ctx = internal.NewSchemaConfigContext(ctx, euo.schemaConfig)

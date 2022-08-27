@@ -33,10 +33,10 @@ type Exchange struct {
 	Name                        string                 `json:"name"`
 	TradeVolume24hBtc           float64                `json:"trade_volume_24h_btc"`
 	TradeVolume24hBtcNormalized float64                `json:"trade_volume_24h_btc_normalized"`
-	TrustScore                  int32                  `json:"trust_score"`
-	TrustScoreRank              int32                  `json:"trust_score_rank"`
+	TrustScore                  int                    `json:"trust_score"`
+	TrustScoreRank              int                    `json:"trust_score_rank"`
 	Url                         string                 `json:"url"`
-	YearEstablished             int32                  `json:"year_established"`
+	YearEstablished             int                    `json:"year_established"`
 	AdditionalProperties        map[string]interface{} `json:"-"`
 }
 
@@ -60,11 +60,11 @@ type ExchangeDetails struct {
 	Tickers                     *[]Ticker              `json:"tickers,omitempty"`
 	TradeVolume24hBtc           float64                `json:"trade_volume_24h_btc"`
 	TradeVolume24hBtcNormalized float64                `json:"trade_volume_24h_btc_normalized"`
-	TrustScore                  int32                  `json:"trust_score"`
-	TrustScoreRank              int32                  `json:"trust_score_rank"`
+	TrustScore                  int                    `json:"trust_score"`
+	TrustScoreRank              int                    `json:"trust_score_rank"`
 	TwitterHandle               string                 `json:"twitter_handle"`
 	Url                         string                 `json:"url"`
-	YearEstablished             int32                  `json:"year_established"`
+	YearEstablished             int                    `json:"year_established"`
 	AdditionalProperties        map[string]interface{} `json:"-"`
 }
 
@@ -5060,7 +5060,7 @@ func (r GetExchangesListResponse) StatusCode() int {
 type GetExchangesIdResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]ExchangeDetails
+	JSON200      *ExchangeDetails
 }
 
 // Status returns HTTPResponse.Status
@@ -5988,7 +5988,7 @@ func ParseGetExchangesIdResponse(rsp *http.Response) (*GetExchangesIdResponse, e
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []ExchangeDetails
+		var dest ExchangeDetails
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

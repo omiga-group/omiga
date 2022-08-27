@@ -24,8 +24,23 @@ var schemaGraph = func() *sqlgraph.Schema {
 				Column: exchange.FieldID,
 			},
 		},
-		Type:   "Exchange",
-		Fields: map[string]*sqlgraph.FieldSpec{},
+		Type: "Exchange",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			exchange.FieldExchangeID:                  {Type: field.TypeString, Column: exchange.FieldExchangeID},
+			exchange.FieldName:                        {Type: field.TypeString, Column: exchange.FieldName},
+			exchange.FieldYearEstablished:             {Type: field.TypeInt, Column: exchange.FieldYearEstablished},
+			exchange.FieldCountry:                     {Type: field.TypeString, Column: exchange.FieldCountry},
+			exchange.FieldImage:                       {Type: field.TypeString, Column: exchange.FieldImage},
+			exchange.FieldLinks:                       {Type: field.TypeJSON, Column: exchange.FieldLinks},
+			exchange.FieldHasTradingIncentive:         {Type: field.TypeBool, Column: exchange.FieldHasTradingIncentive},
+			exchange.FieldCentralized:                 {Type: field.TypeBool, Column: exchange.FieldCentralized},
+			exchange.FieldPublicNotice:                {Type: field.TypeString, Column: exchange.FieldPublicNotice},
+			exchange.FieldAlertNotice:                 {Type: field.TypeString, Column: exchange.FieldAlertNotice},
+			exchange.FieldTrustScore:                  {Type: field.TypeInt, Column: exchange.FieldTrustScore},
+			exchange.FieldTrustScoreRank:              {Type: field.TypeInt, Column: exchange.FieldTrustScoreRank},
+			exchange.FieldTradeVolume24hBtc:           {Type: field.TypeFloat64, Column: exchange.FieldTradeVolume24hBtc},
+			exchange.FieldTradeVolume24hBtcNormalized: {Type: field.TypeFloat64, Column: exchange.FieldTradeVolume24hBtcNormalized},
+		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
@@ -96,6 +111,76 @@ func (f *ExchangeFilter) Where(p entql.P) {
 // WhereID applies the entql int predicate on the id field.
 func (f *ExchangeFilter) WhereID(p entql.IntP) {
 	f.Where(p.Field(exchange.FieldID))
+}
+
+// WhereExchangeID applies the entql string predicate on the exchange_id field.
+func (f *ExchangeFilter) WhereExchangeID(p entql.StringP) {
+	f.Where(p.Field(exchange.FieldExchangeID))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *ExchangeFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(exchange.FieldName))
+}
+
+// WhereYearEstablished applies the entql int predicate on the year_established field.
+func (f *ExchangeFilter) WhereYearEstablished(p entql.IntP) {
+	f.Where(p.Field(exchange.FieldYearEstablished))
+}
+
+// WhereCountry applies the entql string predicate on the country field.
+func (f *ExchangeFilter) WhereCountry(p entql.StringP) {
+	f.Where(p.Field(exchange.FieldCountry))
+}
+
+// WhereImage applies the entql string predicate on the image field.
+func (f *ExchangeFilter) WhereImage(p entql.StringP) {
+	f.Where(p.Field(exchange.FieldImage))
+}
+
+// WhereLinks applies the entql json.RawMessage predicate on the links field.
+func (f *ExchangeFilter) WhereLinks(p entql.BytesP) {
+	f.Where(p.Field(exchange.FieldLinks))
+}
+
+// WhereHasTradingIncentive applies the entql bool predicate on the has_trading_incentive field.
+func (f *ExchangeFilter) WhereHasTradingIncentive(p entql.BoolP) {
+	f.Where(p.Field(exchange.FieldHasTradingIncentive))
+}
+
+// WhereCentralized applies the entql bool predicate on the centralized field.
+func (f *ExchangeFilter) WhereCentralized(p entql.BoolP) {
+	f.Where(p.Field(exchange.FieldCentralized))
+}
+
+// WherePublicNotice applies the entql string predicate on the public_notice field.
+func (f *ExchangeFilter) WherePublicNotice(p entql.StringP) {
+	f.Where(p.Field(exchange.FieldPublicNotice))
+}
+
+// WhereAlertNotice applies the entql string predicate on the alert_notice field.
+func (f *ExchangeFilter) WhereAlertNotice(p entql.StringP) {
+	f.Where(p.Field(exchange.FieldAlertNotice))
+}
+
+// WhereTrustScore applies the entql int predicate on the trust_score field.
+func (f *ExchangeFilter) WhereTrustScore(p entql.IntP) {
+	f.Where(p.Field(exchange.FieldTrustScore))
+}
+
+// WhereTrustScoreRank applies the entql int predicate on the trust_score_rank field.
+func (f *ExchangeFilter) WhereTrustScoreRank(p entql.IntP) {
+	f.Where(p.Field(exchange.FieldTrustScoreRank))
+}
+
+// WhereTradeVolume24hBtc applies the entql float64 predicate on the trade_volume_24h_btc field.
+func (f *ExchangeFilter) WhereTradeVolume24hBtc(p entql.Float64P) {
+	f.Where(p.Field(exchange.FieldTradeVolume24hBtc))
+}
+
+// WhereTradeVolume24hBtcNormalized applies the entql float64 predicate on the trade_volume_24h_btc_normalized field.
+func (f *ExchangeFilter) WhereTradeVolume24hBtcNormalized(p entql.Float64P) {
+	f.Where(p.Field(exchange.FieldTradeVolume24hBtcNormalized))
 }
 
 // addPredicate implements the predicateAdder interface.

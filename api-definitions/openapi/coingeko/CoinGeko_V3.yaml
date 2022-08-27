@@ -708,9 +708,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/exchangeDetails"
+                $ref: "#/components/schemas/exchangeDetails"
 
   /exchanges/{id}/tickers:
     get:
@@ -997,7 +995,6 @@ components:
           type: string
         year_established:
           type: integer
-          format: int32
         country:
           type: string
         description:
@@ -1010,10 +1007,8 @@ components:
           type: boolean
         trust_score:
           type: integer
-          format: int32
         trust_score_rank:
           type: integer
-          format: int32
         trade_volume_24h_btc:
           type: number
           format: double
@@ -1051,7 +1046,6 @@ components:
           type: string
         year_established:
           type: integer
-          format: int32
         country:
           type: string
         description:
@@ -1084,10 +1078,8 @@ components:
           type: string
         trust_score:
           type: integer
-          format: int32
         trust_score_rank:
           type: integer
-          format: int32
         trade_volume_24h_btc:
           type: number
           format: double

@@ -407,6 +407,149 @@ input ExchangeWhereInput {
   idGTE: ID
   idLT: ID
   idLTE: ID
+  """exchange_id field predicates"""
+  exchangeID: String
+  exchangeIDNEQ: String
+  exchangeIDIn: [String!]
+  exchangeIDNotIn: [String!]
+  exchangeIDGT: String
+  exchangeIDGTE: String
+  exchangeIDLT: String
+  exchangeIDLTE: String
+  exchangeIDContains: String
+  exchangeIDHasPrefix: String
+  exchangeIDHasSuffix: String
+  exchangeIDEqualFold: String
+  exchangeIDContainsFold: String
+  """name field predicates"""
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
+  nameEqualFold: String
+  nameContainsFold: String
+  """year_established field predicates"""
+  yearEstablished: Int
+  yearEstablishedNEQ: Int
+  yearEstablishedIn: [Int!]
+  yearEstablishedNotIn: [Int!]
+  yearEstablishedGT: Int
+  yearEstablishedGTE: Int
+  yearEstablishedLT: Int
+  yearEstablishedLTE: Int
+  yearEstablishedIsNil: Boolean
+  yearEstablishedNotNil: Boolean
+  """country field predicates"""
+  country: String
+  countryNEQ: String
+  countryIn: [String!]
+  countryNotIn: [String!]
+  countryGT: String
+  countryGTE: String
+  countryLT: String
+  countryLTE: String
+  countryContains: String
+  countryHasPrefix: String
+  countryHasSuffix: String
+  countryIsNil: Boolean
+  countryNotNil: Boolean
+  countryEqualFold: String
+  countryContainsFold: String
+  """image field predicates"""
+  image: String
+  imageNEQ: String
+  imageIn: [String!]
+  imageNotIn: [String!]
+  imageGT: String
+  imageGTE: String
+  imageLT: String
+  imageLTE: String
+  imageContains: String
+  imageHasPrefix: String
+  imageHasSuffix: String
+  imageIsNil: Boolean
+  imageNotNil: Boolean
+  imageEqualFold: String
+  imageContainsFold: String
+  """has_trading_incentive field predicates"""
+  hasTradingIncentive: Boolean
+  hasTradingIncentiveNEQ: Boolean
+  """centralized field predicates"""
+  centralized: Boolean
+  centralizedNEQ: Boolean
+  """public_notice field predicates"""
+  publicNotice: String
+  publicNoticeNEQ: String
+  publicNoticeIn: [String!]
+  publicNoticeNotIn: [String!]
+  publicNoticeGT: String
+  publicNoticeGTE: String
+  publicNoticeLT: String
+  publicNoticeLTE: String
+  publicNoticeContains: String
+  publicNoticeHasPrefix: String
+  publicNoticeHasSuffix: String
+  publicNoticeEqualFold: String
+  publicNoticeContainsFold: String
+  """alert_notice field predicates"""
+  alertNotice: String
+  alertNoticeNEQ: String
+  alertNoticeIn: [String!]
+  alertNoticeNotIn: [String!]
+  alertNoticeGT: String
+  alertNoticeGTE: String
+  alertNoticeLT: String
+  alertNoticeLTE: String
+  alertNoticeContains: String
+  alertNoticeHasPrefix: String
+  alertNoticeHasSuffix: String
+  alertNoticeEqualFold: String
+  alertNoticeContainsFold: String
+  """trust_score field predicates"""
+  trustScore: Int
+  trustScoreNEQ: Int
+  trustScoreIn: [Int!]
+  trustScoreNotIn: [Int!]
+  trustScoreGT: Int
+  trustScoreGTE: Int
+  trustScoreLT: Int
+  trustScoreLTE: Int
+  """trust_score_rank field predicates"""
+  trustScoreRank: Int
+  trustScoreRankNEQ: Int
+  trustScoreRankIn: [Int!]
+  trustScoreRankNotIn: [Int!]
+  trustScoreRankGT: Int
+  trustScoreRankGTE: Int
+  trustScoreRankLT: Int
+  trustScoreRankLTE: Int
+  """trade_volume_24h_btc field predicates"""
+  tradeVolume24hBtc: Float
+  tradeVolume24hBtcNEQ: Float
+  tradeVolume24hBtcIn: [Float!]
+  tradeVolume24hBtcNotIn: [Float!]
+  tradeVolume24hBtcGT: Float
+  tradeVolume24hBtcGTE: Float
+  tradeVolume24hBtcLT: Float
+  tradeVolume24hBtcLTE: Float
+  """trade_volume_24h_btc_normalized field predicates"""
+  tradeVolume24hBtcNormalized: Float
+  tradeVolume24hBtcNormalizedNEQ: Float
+  tradeVolume24hBtcNormalizedIn: [Float!]
+  tradeVolume24hBtcNormalizedNotIn: [Float!]
+  tradeVolume24hBtcNormalizedGT: Float
+  tradeVolume24hBtcNormalizedGTE: Float
+  tradeVolume24hBtcNormalizedLT: Float
+  tradeVolume24hBtcNormalizedLTE: Float
 }
 """
 OutboxWhereInput is used for filtering Outbox objects.
@@ -3199,7 +3342,7 @@ func (ec *executionContext) unmarshalInputExchangeWhereInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "exchangeID", "exchangeIDNEQ", "exchangeIDIn", "exchangeIDNotIn", "exchangeIDGT", "exchangeIDGTE", "exchangeIDLT", "exchangeIDLTE", "exchangeIDContains", "exchangeIDHasPrefix", "exchangeIDHasSuffix", "exchangeIDEqualFold", "exchangeIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "yearEstablished", "yearEstablishedNEQ", "yearEstablishedIn", "yearEstablishedNotIn", "yearEstablishedGT", "yearEstablishedGTE", "yearEstablishedLT", "yearEstablishedLTE", "yearEstablishedIsNil", "yearEstablishedNotNil", "country", "countryNEQ", "countryIn", "countryNotIn", "countryGT", "countryGTE", "countryLT", "countryLTE", "countryContains", "countryHasPrefix", "countryHasSuffix", "countryIsNil", "countryNotNil", "countryEqualFold", "countryContainsFold", "image", "imageNEQ", "imageIn", "imageNotIn", "imageGT", "imageGTE", "imageLT", "imageLTE", "imageContains", "imageHasPrefix", "imageHasSuffix", "imageIsNil", "imageNotNil", "imageEqualFold", "imageContainsFold", "hasTradingIncentive", "hasTradingIncentiveNEQ", "centralized", "centralizedNEQ", "publicNotice", "publicNoticeNEQ", "publicNoticeIn", "publicNoticeNotIn", "publicNoticeGT", "publicNoticeGTE", "publicNoticeLT", "publicNoticeLTE", "publicNoticeContains", "publicNoticeHasPrefix", "publicNoticeHasSuffix", "publicNoticeEqualFold", "publicNoticeContainsFold", "alertNotice", "alertNoticeNEQ", "alertNoticeIn", "alertNoticeNotIn", "alertNoticeGT", "alertNoticeGTE", "alertNoticeLT", "alertNoticeLTE", "alertNoticeContains", "alertNoticeHasPrefix", "alertNoticeHasSuffix", "alertNoticeEqualFold", "alertNoticeContainsFold", "trustScore", "trustScoreNEQ", "trustScoreIn", "trustScoreNotIn", "trustScoreGT", "trustScoreGTE", "trustScoreLT", "trustScoreLTE", "trustScoreRank", "trustScoreRankNEQ", "trustScoreRankIn", "trustScoreRankNotIn", "trustScoreRankGT", "trustScoreRankGTE", "trustScoreRankLT", "trustScoreRankLTE", "tradeVolume24hBtc", "tradeVolume24hBtcNEQ", "tradeVolume24hBtcIn", "tradeVolume24hBtcNotIn", "tradeVolume24hBtcGT", "tradeVolume24hBtcGTE", "tradeVolume24hBtcLT", "tradeVolume24hBtcLTE", "tradeVolume24hBtcNormalized", "tradeVolume24hBtcNormalizedNEQ", "tradeVolume24hBtcNormalizedIn", "tradeVolume24hBtcNormalizedNotIn", "tradeVolume24hBtcNormalizedGT", "tradeVolume24hBtcNormalizedGTE", "tradeVolume24hBtcNormalizedLT", "tradeVolume24hBtcNormalizedLTE"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3291,6 +3434,1046 @@ func (ec *executionContext) unmarshalInputExchangeWhereInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
 			it.IDLTE, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeID"))
+			it.ExchangeID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeIDNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeIDNEQ"))
+			it.ExchangeIDNEQ, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeIDIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeIDIn"))
+			it.ExchangeIDIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeIDNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeIDNotIn"))
+			it.ExchangeIDNotIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeIDGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeIDGT"))
+			it.ExchangeIDGT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeIDGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeIDGTE"))
+			it.ExchangeIDGTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeIDLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeIDLT"))
+			it.ExchangeIDLT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeIDLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeIDLTE"))
+			it.ExchangeIDLTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeIDContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeIDContains"))
+			it.ExchangeIDContains, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeIDHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeIDHasPrefix"))
+			it.ExchangeIDHasPrefix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeIDHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeIDHasSuffix"))
+			it.ExchangeIDHasSuffix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeIDEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeIDEqualFold"))
+			it.ExchangeIDEqualFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeIDContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeIDContainsFold"))
+			it.ExchangeIDContainsFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNEQ"))
+			it.NameNEQ, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameIn"))
+			it.NameIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNotIn"))
+			it.NameNotIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameGT"))
+			it.NameGT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameGTE"))
+			it.NameGTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameLT"))
+			it.NameLT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameLTE"))
+			it.NameLTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameContains"))
+			it.NameContains, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameHasPrefix"))
+			it.NameHasPrefix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameHasSuffix"))
+			it.NameHasSuffix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameIsNil"))
+			it.NameIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNotNil"))
+			it.NameNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameEqualFold"))
+			it.NameEqualFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameContainsFold"))
+			it.NameContainsFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "yearEstablished":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearEstablished"))
+			it.YearEstablished, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "yearEstablishedNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearEstablishedNEQ"))
+			it.YearEstablishedNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "yearEstablishedIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearEstablishedIn"))
+			it.YearEstablishedIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "yearEstablishedNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearEstablishedNotIn"))
+			it.YearEstablishedNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "yearEstablishedGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearEstablishedGT"))
+			it.YearEstablishedGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "yearEstablishedGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearEstablishedGTE"))
+			it.YearEstablishedGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "yearEstablishedLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearEstablishedLT"))
+			it.YearEstablishedLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "yearEstablishedLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearEstablishedLTE"))
+			it.YearEstablishedLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "yearEstablishedIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearEstablishedIsNil"))
+			it.YearEstablishedIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "yearEstablishedNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearEstablishedNotNil"))
+			it.YearEstablishedNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "country":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("country"))
+			it.Country, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryNEQ"))
+			it.CountryNEQ, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryIn"))
+			it.CountryIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryNotIn"))
+			it.CountryNotIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryGT"))
+			it.CountryGT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryGTE"))
+			it.CountryGTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryLT"))
+			it.CountryLT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryLTE"))
+			it.CountryLTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryContains"))
+			it.CountryContains, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryHasPrefix"))
+			it.CountryHasPrefix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryHasSuffix"))
+			it.CountryHasSuffix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryIsNil"))
+			it.CountryIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryNotNil"))
+			it.CountryNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryEqualFold"))
+			it.CountryEqualFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countryContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryContainsFold"))
+			it.CountryContainsFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "image":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
+			it.Image, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageNEQ"))
+			it.ImageNEQ, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageIn"))
+			it.ImageIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageNotIn"))
+			it.ImageNotIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageGT"))
+			it.ImageGT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageGTE"))
+			it.ImageGTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageLT"))
+			it.ImageLT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageLTE"))
+			it.ImageLTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageContains"))
+			it.ImageContains, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageHasPrefix"))
+			it.ImageHasPrefix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageHasSuffix"))
+			it.ImageHasSuffix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageIsNil"))
+			it.ImageIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageNotNil"))
+			it.ImageNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageEqualFold"))
+			it.ImageEqualFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "imageContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageContainsFold"))
+			it.ImageContainsFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hasTradingIncentive":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTradingIncentive"))
+			it.HasTradingIncentive, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hasTradingIncentiveNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTradingIncentiveNEQ"))
+			it.HasTradingIncentiveNEQ, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "centralized":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("centralized"))
+			it.Centralized, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "centralizedNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("centralizedNEQ"))
+			it.CentralizedNEQ, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNotice":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNotice"))
+			it.PublicNotice, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoticeNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoticeNEQ"))
+			it.PublicNoticeNEQ, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoticeIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoticeIn"))
+			it.PublicNoticeIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoticeNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoticeNotIn"))
+			it.PublicNoticeNotIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoticeGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoticeGT"))
+			it.PublicNoticeGT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoticeGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoticeGTE"))
+			it.PublicNoticeGTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoticeLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoticeLT"))
+			it.PublicNoticeLT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoticeLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoticeLTE"))
+			it.PublicNoticeLTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoticeContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoticeContains"))
+			it.PublicNoticeContains, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoticeHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoticeHasPrefix"))
+			it.PublicNoticeHasPrefix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoticeHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoticeHasSuffix"))
+			it.PublicNoticeHasSuffix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoticeEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoticeEqualFold"))
+			it.PublicNoticeEqualFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoticeContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoticeContainsFold"))
+			it.PublicNoticeContainsFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNotice":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNotice"))
+			it.AlertNotice, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNoticeNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNoticeNEQ"))
+			it.AlertNoticeNEQ, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNoticeIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNoticeIn"))
+			it.AlertNoticeIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNoticeNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNoticeNotIn"))
+			it.AlertNoticeNotIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNoticeGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNoticeGT"))
+			it.AlertNoticeGT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNoticeGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNoticeGTE"))
+			it.AlertNoticeGTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNoticeLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNoticeLT"))
+			it.AlertNoticeLT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNoticeLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNoticeLTE"))
+			it.AlertNoticeLTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNoticeContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNoticeContains"))
+			it.AlertNoticeContains, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNoticeHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNoticeHasPrefix"))
+			it.AlertNoticeHasPrefix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNoticeHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNoticeHasSuffix"))
+			it.AlertNoticeHasSuffix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNoticeEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNoticeEqualFold"))
+			it.AlertNoticeEqualFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alertNoticeContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alertNoticeContainsFold"))
+			it.AlertNoticeContainsFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScore":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScore"))
+			it.TrustScore, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreNEQ"))
+			it.TrustScoreNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreIn"))
+			it.TrustScoreIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreNotIn"))
+			it.TrustScoreNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreGT"))
+			it.TrustScoreGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreGTE"))
+			it.TrustScoreGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreLT"))
+			it.TrustScoreLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreLTE"))
+			it.TrustScoreLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreRank":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreRank"))
+			it.TrustScoreRank, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreRankNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreRankNEQ"))
+			it.TrustScoreRankNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreRankIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreRankIn"))
+			it.TrustScoreRankIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreRankNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreRankNotIn"))
+			it.TrustScoreRankNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreRankGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreRankGT"))
+			it.TrustScoreRankGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreRankGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreRankGTE"))
+			it.TrustScoreRankGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreRankLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreRankLT"))
+			it.TrustScoreRankLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trustScoreRankLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trustScoreRankLTE"))
+			it.TrustScoreRankLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtc":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtc"))
+			it.TradeVolume24hBtc, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcNEQ"))
+			it.TradeVolume24hBtcNEQ, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcIn"))
+			it.TradeVolume24hBtcIn, err = ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcNotIn"))
+			it.TradeVolume24hBtcNotIn, err = ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcGT"))
+			it.TradeVolume24hBtcGT, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcGTE"))
+			it.TradeVolume24hBtcGTE, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcLT"))
+			it.TradeVolume24hBtcLT, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcLTE"))
+			it.TradeVolume24hBtcLTE, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcNormalized":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcNormalized"))
+			it.TradeVolume24hBtcNormalized, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcNormalizedNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcNormalizedNEQ"))
+			it.TradeVolume24hBtcNormalizedNEQ, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcNormalizedIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcNormalizedIn"))
+			it.TradeVolume24hBtcNormalizedIn, err = ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcNormalizedNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcNormalizedNotIn"))
+			it.TradeVolume24hBtcNormalizedNotIn, err = ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcNormalizedGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcNormalizedGT"))
+			it.TradeVolume24hBtcNormalizedGT, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcNormalizedGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcNormalizedGTE"))
+			it.TradeVolume24hBtcNormalizedGTE, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcNormalizedLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcNormalizedLT"))
+			it.TradeVolume24hBtcNormalizedLT, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tradeVolume24hBtcNormalizedLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcNormalizedLTE"))
+			it.TradeVolume24hBtcNormalizedLTE, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4507,6 +5690,21 @@ func (ec *executionContext) unmarshalNExchangeWhereInput2ᚖgithubᚗcomᚋomiga
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	res := graphql.MarshalFloatContext(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return graphql.WrapContextMarshaler(ctx, res)
+}
+
 func (ec *executionContext) unmarshalNID2int(ctx context.Context, v interface{}) (int, error) {
 	res, err := graphql.UnmarshalIntID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -4988,6 +6186,60 @@ func (ec *executionContext) unmarshalOExchangeWhereInput2ᚖgithubᚗcomᚋomiga
 	}
 	res, err := ec.unmarshalInputExchangeWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOFloat2ᚕfloat64ᚄ(ctx context.Context, v interface{}) ([]float64, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]float64, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNFloat2float64(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOFloat2ᚕfloat64ᚄ(ctx context.Context, sel ast.SelectionSet, v []float64) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNFloat2float64(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v interface{}) (*float64, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel ast.SelectionSet, v *float64) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalFloatContext(*v)
+	return graphql.WrapContextMarshaler(ctx, res)
 }
 
 func (ec *executionContext) unmarshalOID2ᚕintᚄ(ctx context.Context, v interface{}) ([]int, error) {

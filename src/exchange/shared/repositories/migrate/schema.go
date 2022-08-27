@@ -11,12 +11,33 @@ var (
 	// ExchangesColumns holds the columns for the "exchanges" table.
 	ExchangesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "exchange_id", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "year_established", Type: field.TypeInt, Nullable: true},
+		{Name: "country", Type: field.TypeString, Nullable: true},
+		{Name: "image", Type: field.TypeString, Nullable: true},
+		{Name: "links", Type: field.TypeJSON, Nullable: true},
+		{Name: "has_trading_incentive", Type: field.TypeBool},
+		{Name: "centralized", Type: field.TypeBool},
+		{Name: "public_notice", Type: field.TypeString},
+		{Name: "alert_notice", Type: field.TypeString},
+		{Name: "trust_score", Type: field.TypeInt},
+		{Name: "trust_score_rank", Type: field.TypeInt},
+		{Name: "trade_volume_24h_btc", Type: field.TypeFloat64},
+		{Name: "trade_volume_24h_btc_normalized", Type: field.TypeFloat64},
 	}
 	// ExchangesTable holds the schema information for the "exchanges" table.
 	ExchangesTable = &schema.Table{
 		Name:       "exchanges",
 		Columns:    ExchangesColumns,
 		PrimaryKey: []*schema.Column{ExchangesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "exchange_exchange_id",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[1]},
+			},
+		},
 	}
 	// OutboxesColumns holds the columns for the "outboxes" table.
 	OutboxesColumns = []*schema.Column{

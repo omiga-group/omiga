@@ -10,18 +10,28 @@ import (
 	"context"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/subscribers"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
-func NewOrderBookSimulator(ctx context.Context, logger *zap.SugaredLogger, coingekoSettings configuration.CoingekoSettings) (subscribers.CoingekoSubscriber, error) {
+func NewCoingekoSubscriber(ctx context.Context, logger *zap.SugaredLogger, coingekoSettings configuration.CoingekoSettings, postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
 	cronService, err := cron.NewCronService(logger)
 	if err != nil {
 		return nil, err
 	}
-	coingekoSubscriber, err := subscribers.NewCoingekoSubscriber(ctx, logger, cronService, coingekoSettings)
+	database, err := postgres.NewPostgres(logger, postgresConfig)
+	if err != nil {
+		return nil, err
+	}
+	entgoClient, err := repositories.NewEntgoClient(logger, database)
+	if err != nil {
+		return nil, err
+	}
+	coingekoSubscriber, err := subscribers.NewCoingekoSubscriber(ctx, logger, cronService, coingekoSettings, entgoClient)
 	if err != nil {
 		return nil, err
 	}

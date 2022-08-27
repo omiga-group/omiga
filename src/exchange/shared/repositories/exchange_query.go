@@ -253,6 +253,18 @@ func (eq *ExchangeQuery) Clone() *ExchangeQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		ExchangeID string `json:"exchange_id,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Exchange.Query().
+//		GroupBy(exchange.FieldExchangeID).
+//		Aggregate(repositories.Count()).
+//		Scan(ctx, &v)
 func (eq *ExchangeQuery) GroupBy(field string, fields ...string) *ExchangeGroupBy {
 	grbuild := &ExchangeGroupBy{config: eq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -269,6 +281,16 @@ func (eq *ExchangeQuery) GroupBy(field string, fields ...string) *ExchangeGroupB
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		ExchangeID string `json:"exchange_id,omitempty"`
+//	}
+//
+//	client.Exchange.Query().
+//		Select(exchange.FieldExchangeID).
+//		Scan(ctx, &v)
 func (eq *ExchangeQuery) Select(fields ...string) *ExchangeSelect {
 	eq.fields = append(eq.fields, fields...)
 	selbuild := &ExchangeSelect{ExchangeQuery: eq}

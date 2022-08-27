@@ -78,6 +78,1109 @@ func IDLTE(id int) predicate.Exchange {
 	})
 }
 
+// ExchangeID applies equality check predicate on the "exchange_id" field. It's identical to ExchangeIDEQ.
+func ExchangeID(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldExchangeID), v))
+	})
+}
+
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldName), v))
+	})
+}
+
+// YearEstablished applies equality check predicate on the "year_established" field. It's identical to YearEstablishedEQ.
+func YearEstablished(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldYearEstablished), v))
+	})
+}
+
+// Country applies equality check predicate on the "country" field. It's identical to CountryEQ.
+func Country(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCountry), v))
+	})
+}
+
+// Image applies equality check predicate on the "image" field. It's identical to ImageEQ.
+func Image(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldImage), v))
+	})
+}
+
+// HasTradingIncentive applies equality check predicate on the "has_trading_incentive" field. It's identical to HasTradingIncentiveEQ.
+func HasTradingIncentive(v bool) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldHasTradingIncentive), v))
+	})
+}
+
+// Centralized applies equality check predicate on the "centralized" field. It's identical to CentralizedEQ.
+func Centralized(v bool) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCentralized), v))
+	})
+}
+
+// PublicNotice applies equality check predicate on the "public_notice" field. It's identical to PublicNoticeEQ.
+func PublicNotice(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPublicNotice), v))
+	})
+}
+
+// AlertNotice applies equality check predicate on the "alert_notice" field. It's identical to AlertNoticeEQ.
+func AlertNotice(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAlertNotice), v))
+	})
+}
+
+// TrustScore applies equality check predicate on the "trust_score" field. It's identical to TrustScoreEQ.
+func TrustScore(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTrustScore), v))
+	})
+}
+
+// TrustScoreRank applies equality check predicate on the "trust_score_rank" field. It's identical to TrustScoreRankEQ.
+func TrustScoreRank(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTrustScoreRank), v))
+	})
+}
+
+// TradeVolume24hBtc applies equality check predicate on the "trade_volume_24h_btc" field. It's identical to TradeVolume24hBtcEQ.
+func TradeVolume24hBtc(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTradeVolume24hBtc), v))
+	})
+}
+
+// TradeVolume24hBtcNormalized applies equality check predicate on the "trade_volume_24h_btc_normalized" field. It's identical to TradeVolume24hBtcNormalizedEQ.
+func TradeVolume24hBtcNormalized(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTradeVolume24hBtcNormalized), v))
+	})
+}
+
+// ExchangeIDEQ applies the EQ predicate on the "exchange_id" field.
+func ExchangeIDEQ(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldExchangeID), v))
+	})
+}
+
+// ExchangeIDNEQ applies the NEQ predicate on the "exchange_id" field.
+func ExchangeIDNEQ(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldExchangeID), v))
+	})
+}
+
+// ExchangeIDIn applies the In predicate on the "exchange_id" field.
+func ExchangeIDIn(vs ...string) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldExchangeID), v...))
+	})
+}
+
+// ExchangeIDNotIn applies the NotIn predicate on the "exchange_id" field.
+func ExchangeIDNotIn(vs ...string) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldExchangeID), v...))
+	})
+}
+
+// ExchangeIDGT applies the GT predicate on the "exchange_id" field.
+func ExchangeIDGT(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldExchangeID), v))
+	})
+}
+
+// ExchangeIDGTE applies the GTE predicate on the "exchange_id" field.
+func ExchangeIDGTE(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldExchangeID), v))
+	})
+}
+
+// ExchangeIDLT applies the LT predicate on the "exchange_id" field.
+func ExchangeIDLT(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldExchangeID), v))
+	})
+}
+
+// ExchangeIDLTE applies the LTE predicate on the "exchange_id" field.
+func ExchangeIDLTE(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldExchangeID), v))
+	})
+}
+
+// ExchangeIDContains applies the Contains predicate on the "exchange_id" field.
+func ExchangeIDContains(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldExchangeID), v))
+	})
+}
+
+// ExchangeIDHasPrefix applies the HasPrefix predicate on the "exchange_id" field.
+func ExchangeIDHasPrefix(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldExchangeID), v))
+	})
+}
+
+// ExchangeIDHasSuffix applies the HasSuffix predicate on the "exchange_id" field.
+func ExchangeIDHasSuffix(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldExchangeID), v))
+	})
+}
+
+// ExchangeIDEqualFold applies the EqualFold predicate on the "exchange_id" field.
+func ExchangeIDEqualFold(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldExchangeID), v))
+	})
+}
+
+// ExchangeIDContainsFold applies the ContainsFold predicate on the "exchange_id" field.
+func ExchangeIDContainsFold(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldExchangeID), v))
+	})
+}
+
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldName), v))
+	})
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldName), v))
+	})
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldName), v...))
+	})
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldName), v...))
+	})
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldName), v))
+	})
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldName), v))
+	})
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldName), v))
+	})
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldName), v))
+	})
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldName), v))
+	})
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldName), v))
+	})
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldName), v))
+	})
+}
+
+// NameIsNil applies the IsNil predicate on the "name" field.
+func NameIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldName)))
+	})
+}
+
+// NameNotNil applies the NotNil predicate on the "name" field.
+func NameNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldName)))
+	})
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldName), v))
+	})
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldName), v))
+	})
+}
+
+// YearEstablishedEQ applies the EQ predicate on the "year_established" field.
+func YearEstablishedEQ(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldYearEstablished), v))
+	})
+}
+
+// YearEstablishedNEQ applies the NEQ predicate on the "year_established" field.
+func YearEstablishedNEQ(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldYearEstablished), v))
+	})
+}
+
+// YearEstablishedIn applies the In predicate on the "year_established" field.
+func YearEstablishedIn(vs ...int) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldYearEstablished), v...))
+	})
+}
+
+// YearEstablishedNotIn applies the NotIn predicate on the "year_established" field.
+func YearEstablishedNotIn(vs ...int) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldYearEstablished), v...))
+	})
+}
+
+// YearEstablishedGT applies the GT predicate on the "year_established" field.
+func YearEstablishedGT(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldYearEstablished), v))
+	})
+}
+
+// YearEstablishedGTE applies the GTE predicate on the "year_established" field.
+func YearEstablishedGTE(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldYearEstablished), v))
+	})
+}
+
+// YearEstablishedLT applies the LT predicate on the "year_established" field.
+func YearEstablishedLT(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldYearEstablished), v))
+	})
+}
+
+// YearEstablishedLTE applies the LTE predicate on the "year_established" field.
+func YearEstablishedLTE(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldYearEstablished), v))
+	})
+}
+
+// YearEstablishedIsNil applies the IsNil predicate on the "year_established" field.
+func YearEstablishedIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldYearEstablished)))
+	})
+}
+
+// YearEstablishedNotNil applies the NotNil predicate on the "year_established" field.
+func YearEstablishedNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldYearEstablished)))
+	})
+}
+
+// CountryEQ applies the EQ predicate on the "country" field.
+func CountryEQ(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCountry), v))
+	})
+}
+
+// CountryNEQ applies the NEQ predicate on the "country" field.
+func CountryNEQ(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCountry), v))
+	})
+}
+
+// CountryIn applies the In predicate on the "country" field.
+func CountryIn(vs ...string) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCountry), v...))
+	})
+}
+
+// CountryNotIn applies the NotIn predicate on the "country" field.
+func CountryNotIn(vs ...string) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCountry), v...))
+	})
+}
+
+// CountryGT applies the GT predicate on the "country" field.
+func CountryGT(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCountry), v))
+	})
+}
+
+// CountryGTE applies the GTE predicate on the "country" field.
+func CountryGTE(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCountry), v))
+	})
+}
+
+// CountryLT applies the LT predicate on the "country" field.
+func CountryLT(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCountry), v))
+	})
+}
+
+// CountryLTE applies the LTE predicate on the "country" field.
+func CountryLTE(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCountry), v))
+	})
+}
+
+// CountryContains applies the Contains predicate on the "country" field.
+func CountryContains(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldCountry), v))
+	})
+}
+
+// CountryHasPrefix applies the HasPrefix predicate on the "country" field.
+func CountryHasPrefix(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldCountry), v))
+	})
+}
+
+// CountryHasSuffix applies the HasSuffix predicate on the "country" field.
+func CountryHasSuffix(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldCountry), v))
+	})
+}
+
+// CountryIsNil applies the IsNil predicate on the "country" field.
+func CountryIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCountry)))
+	})
+}
+
+// CountryNotNil applies the NotNil predicate on the "country" field.
+func CountryNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCountry)))
+	})
+}
+
+// CountryEqualFold applies the EqualFold predicate on the "country" field.
+func CountryEqualFold(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldCountry), v))
+	})
+}
+
+// CountryContainsFold applies the ContainsFold predicate on the "country" field.
+func CountryContainsFold(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldCountry), v))
+	})
+}
+
+// ImageEQ applies the EQ predicate on the "image" field.
+func ImageEQ(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldImage), v))
+	})
+}
+
+// ImageNEQ applies the NEQ predicate on the "image" field.
+func ImageNEQ(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldImage), v))
+	})
+}
+
+// ImageIn applies the In predicate on the "image" field.
+func ImageIn(vs ...string) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldImage), v...))
+	})
+}
+
+// ImageNotIn applies the NotIn predicate on the "image" field.
+func ImageNotIn(vs ...string) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldImage), v...))
+	})
+}
+
+// ImageGT applies the GT predicate on the "image" field.
+func ImageGT(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldImage), v))
+	})
+}
+
+// ImageGTE applies the GTE predicate on the "image" field.
+func ImageGTE(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldImage), v))
+	})
+}
+
+// ImageLT applies the LT predicate on the "image" field.
+func ImageLT(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldImage), v))
+	})
+}
+
+// ImageLTE applies the LTE predicate on the "image" field.
+func ImageLTE(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldImage), v))
+	})
+}
+
+// ImageContains applies the Contains predicate on the "image" field.
+func ImageContains(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldImage), v))
+	})
+}
+
+// ImageHasPrefix applies the HasPrefix predicate on the "image" field.
+func ImageHasPrefix(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldImage), v))
+	})
+}
+
+// ImageHasSuffix applies the HasSuffix predicate on the "image" field.
+func ImageHasSuffix(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldImage), v))
+	})
+}
+
+// ImageIsNil applies the IsNil predicate on the "image" field.
+func ImageIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldImage)))
+	})
+}
+
+// ImageNotNil applies the NotNil predicate on the "image" field.
+func ImageNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldImage)))
+	})
+}
+
+// ImageEqualFold applies the EqualFold predicate on the "image" field.
+func ImageEqualFold(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldImage), v))
+	})
+}
+
+// ImageContainsFold applies the ContainsFold predicate on the "image" field.
+func ImageContainsFold(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldImage), v))
+	})
+}
+
+// LinksIsNil applies the IsNil predicate on the "links" field.
+func LinksIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLinks)))
+	})
+}
+
+// LinksNotNil applies the NotNil predicate on the "links" field.
+func LinksNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLinks)))
+	})
+}
+
+// HasTradingIncentiveEQ applies the EQ predicate on the "has_trading_incentive" field.
+func HasTradingIncentiveEQ(v bool) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldHasTradingIncentive), v))
+	})
+}
+
+// HasTradingIncentiveNEQ applies the NEQ predicate on the "has_trading_incentive" field.
+func HasTradingIncentiveNEQ(v bool) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldHasTradingIncentive), v))
+	})
+}
+
+// CentralizedEQ applies the EQ predicate on the "centralized" field.
+func CentralizedEQ(v bool) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCentralized), v))
+	})
+}
+
+// CentralizedNEQ applies the NEQ predicate on the "centralized" field.
+func CentralizedNEQ(v bool) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCentralized), v))
+	})
+}
+
+// PublicNoticeEQ applies the EQ predicate on the "public_notice" field.
+func PublicNoticeEQ(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPublicNotice), v))
+	})
+}
+
+// PublicNoticeNEQ applies the NEQ predicate on the "public_notice" field.
+func PublicNoticeNEQ(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPublicNotice), v))
+	})
+}
+
+// PublicNoticeIn applies the In predicate on the "public_notice" field.
+func PublicNoticeIn(vs ...string) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldPublicNotice), v...))
+	})
+}
+
+// PublicNoticeNotIn applies the NotIn predicate on the "public_notice" field.
+func PublicNoticeNotIn(vs ...string) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldPublicNotice), v...))
+	})
+}
+
+// PublicNoticeGT applies the GT predicate on the "public_notice" field.
+func PublicNoticeGT(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPublicNotice), v))
+	})
+}
+
+// PublicNoticeGTE applies the GTE predicate on the "public_notice" field.
+func PublicNoticeGTE(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPublicNotice), v))
+	})
+}
+
+// PublicNoticeLT applies the LT predicate on the "public_notice" field.
+func PublicNoticeLT(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPublicNotice), v))
+	})
+}
+
+// PublicNoticeLTE applies the LTE predicate on the "public_notice" field.
+func PublicNoticeLTE(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPublicNotice), v))
+	})
+}
+
+// PublicNoticeContains applies the Contains predicate on the "public_notice" field.
+func PublicNoticeContains(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldPublicNotice), v))
+	})
+}
+
+// PublicNoticeHasPrefix applies the HasPrefix predicate on the "public_notice" field.
+func PublicNoticeHasPrefix(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldPublicNotice), v))
+	})
+}
+
+// PublicNoticeHasSuffix applies the HasSuffix predicate on the "public_notice" field.
+func PublicNoticeHasSuffix(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldPublicNotice), v))
+	})
+}
+
+// PublicNoticeEqualFold applies the EqualFold predicate on the "public_notice" field.
+func PublicNoticeEqualFold(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldPublicNotice), v))
+	})
+}
+
+// PublicNoticeContainsFold applies the ContainsFold predicate on the "public_notice" field.
+func PublicNoticeContainsFold(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldPublicNotice), v))
+	})
+}
+
+// AlertNoticeEQ applies the EQ predicate on the "alert_notice" field.
+func AlertNoticeEQ(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAlertNotice), v))
+	})
+}
+
+// AlertNoticeNEQ applies the NEQ predicate on the "alert_notice" field.
+func AlertNoticeNEQ(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAlertNotice), v))
+	})
+}
+
+// AlertNoticeIn applies the In predicate on the "alert_notice" field.
+func AlertNoticeIn(vs ...string) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldAlertNotice), v...))
+	})
+}
+
+// AlertNoticeNotIn applies the NotIn predicate on the "alert_notice" field.
+func AlertNoticeNotIn(vs ...string) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldAlertNotice), v...))
+	})
+}
+
+// AlertNoticeGT applies the GT predicate on the "alert_notice" field.
+func AlertNoticeGT(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAlertNotice), v))
+	})
+}
+
+// AlertNoticeGTE applies the GTE predicate on the "alert_notice" field.
+func AlertNoticeGTE(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAlertNotice), v))
+	})
+}
+
+// AlertNoticeLT applies the LT predicate on the "alert_notice" field.
+func AlertNoticeLT(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAlertNotice), v))
+	})
+}
+
+// AlertNoticeLTE applies the LTE predicate on the "alert_notice" field.
+func AlertNoticeLTE(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAlertNotice), v))
+	})
+}
+
+// AlertNoticeContains applies the Contains predicate on the "alert_notice" field.
+func AlertNoticeContains(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldAlertNotice), v))
+	})
+}
+
+// AlertNoticeHasPrefix applies the HasPrefix predicate on the "alert_notice" field.
+func AlertNoticeHasPrefix(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldAlertNotice), v))
+	})
+}
+
+// AlertNoticeHasSuffix applies the HasSuffix predicate on the "alert_notice" field.
+func AlertNoticeHasSuffix(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldAlertNotice), v))
+	})
+}
+
+// AlertNoticeEqualFold applies the EqualFold predicate on the "alert_notice" field.
+func AlertNoticeEqualFold(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldAlertNotice), v))
+	})
+}
+
+// AlertNoticeContainsFold applies the ContainsFold predicate on the "alert_notice" field.
+func AlertNoticeContainsFold(v string) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldAlertNotice), v))
+	})
+}
+
+// TrustScoreEQ applies the EQ predicate on the "trust_score" field.
+func TrustScoreEQ(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTrustScore), v))
+	})
+}
+
+// TrustScoreNEQ applies the NEQ predicate on the "trust_score" field.
+func TrustScoreNEQ(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTrustScore), v))
+	})
+}
+
+// TrustScoreIn applies the In predicate on the "trust_score" field.
+func TrustScoreIn(vs ...int) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldTrustScore), v...))
+	})
+}
+
+// TrustScoreNotIn applies the NotIn predicate on the "trust_score" field.
+func TrustScoreNotIn(vs ...int) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldTrustScore), v...))
+	})
+}
+
+// TrustScoreGT applies the GT predicate on the "trust_score" field.
+func TrustScoreGT(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTrustScore), v))
+	})
+}
+
+// TrustScoreGTE applies the GTE predicate on the "trust_score" field.
+func TrustScoreGTE(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTrustScore), v))
+	})
+}
+
+// TrustScoreLT applies the LT predicate on the "trust_score" field.
+func TrustScoreLT(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTrustScore), v))
+	})
+}
+
+// TrustScoreLTE applies the LTE predicate on the "trust_score" field.
+func TrustScoreLTE(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTrustScore), v))
+	})
+}
+
+// TrustScoreRankEQ applies the EQ predicate on the "trust_score_rank" field.
+func TrustScoreRankEQ(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTrustScoreRank), v))
+	})
+}
+
+// TrustScoreRankNEQ applies the NEQ predicate on the "trust_score_rank" field.
+func TrustScoreRankNEQ(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTrustScoreRank), v))
+	})
+}
+
+// TrustScoreRankIn applies the In predicate on the "trust_score_rank" field.
+func TrustScoreRankIn(vs ...int) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldTrustScoreRank), v...))
+	})
+}
+
+// TrustScoreRankNotIn applies the NotIn predicate on the "trust_score_rank" field.
+func TrustScoreRankNotIn(vs ...int) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldTrustScoreRank), v...))
+	})
+}
+
+// TrustScoreRankGT applies the GT predicate on the "trust_score_rank" field.
+func TrustScoreRankGT(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTrustScoreRank), v))
+	})
+}
+
+// TrustScoreRankGTE applies the GTE predicate on the "trust_score_rank" field.
+func TrustScoreRankGTE(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTrustScoreRank), v))
+	})
+}
+
+// TrustScoreRankLT applies the LT predicate on the "trust_score_rank" field.
+func TrustScoreRankLT(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTrustScoreRank), v))
+	})
+}
+
+// TrustScoreRankLTE applies the LTE predicate on the "trust_score_rank" field.
+func TrustScoreRankLTE(v int) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTrustScoreRank), v))
+	})
+}
+
+// TradeVolume24hBtcEQ applies the EQ predicate on the "trade_volume_24h_btc" field.
+func TradeVolume24hBtcEQ(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTradeVolume24hBtc), v))
+	})
+}
+
+// TradeVolume24hBtcNEQ applies the NEQ predicate on the "trade_volume_24h_btc" field.
+func TradeVolume24hBtcNEQ(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTradeVolume24hBtc), v))
+	})
+}
+
+// TradeVolume24hBtcIn applies the In predicate on the "trade_volume_24h_btc" field.
+func TradeVolume24hBtcIn(vs ...float64) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldTradeVolume24hBtc), v...))
+	})
+}
+
+// TradeVolume24hBtcNotIn applies the NotIn predicate on the "trade_volume_24h_btc" field.
+func TradeVolume24hBtcNotIn(vs ...float64) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldTradeVolume24hBtc), v...))
+	})
+}
+
+// TradeVolume24hBtcGT applies the GT predicate on the "trade_volume_24h_btc" field.
+func TradeVolume24hBtcGT(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTradeVolume24hBtc), v))
+	})
+}
+
+// TradeVolume24hBtcGTE applies the GTE predicate on the "trade_volume_24h_btc" field.
+func TradeVolume24hBtcGTE(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTradeVolume24hBtc), v))
+	})
+}
+
+// TradeVolume24hBtcLT applies the LT predicate on the "trade_volume_24h_btc" field.
+func TradeVolume24hBtcLT(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTradeVolume24hBtc), v))
+	})
+}
+
+// TradeVolume24hBtcLTE applies the LTE predicate on the "trade_volume_24h_btc" field.
+func TradeVolume24hBtcLTE(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTradeVolume24hBtc), v))
+	})
+}
+
+// TradeVolume24hBtcNormalizedEQ applies the EQ predicate on the "trade_volume_24h_btc_normalized" field.
+func TradeVolume24hBtcNormalizedEQ(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTradeVolume24hBtcNormalized), v))
+	})
+}
+
+// TradeVolume24hBtcNormalizedNEQ applies the NEQ predicate on the "trade_volume_24h_btc_normalized" field.
+func TradeVolume24hBtcNormalizedNEQ(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTradeVolume24hBtcNormalized), v))
+	})
+}
+
+// TradeVolume24hBtcNormalizedIn applies the In predicate on the "trade_volume_24h_btc_normalized" field.
+func TradeVolume24hBtcNormalizedIn(vs ...float64) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldTradeVolume24hBtcNormalized), v...))
+	})
+}
+
+// TradeVolume24hBtcNormalizedNotIn applies the NotIn predicate on the "trade_volume_24h_btc_normalized" field.
+func TradeVolume24hBtcNormalizedNotIn(vs ...float64) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldTradeVolume24hBtcNormalized), v...))
+	})
+}
+
+// TradeVolume24hBtcNormalizedGT applies the GT predicate on the "trade_volume_24h_btc_normalized" field.
+func TradeVolume24hBtcNormalizedGT(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTradeVolume24hBtcNormalized), v))
+	})
+}
+
+// TradeVolume24hBtcNormalizedGTE applies the GTE predicate on the "trade_volume_24h_btc_normalized" field.
+func TradeVolume24hBtcNormalizedGTE(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTradeVolume24hBtcNormalized), v))
+	})
+}
+
+// TradeVolume24hBtcNormalizedLT applies the LT predicate on the "trade_volume_24h_btc_normalized" field.
+func TradeVolume24hBtcNormalizedLT(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTradeVolume24hBtcNormalized), v))
+	})
+}
+
+// TradeVolume24hBtcNormalizedLTE applies the LTE predicate on the "trade_volume_24h_btc_normalized" field.
+func TradeVolume24hBtcNormalizedLTE(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTradeVolume24hBtcNormalized), v))
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Exchange) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {

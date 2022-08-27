@@ -21,6 +21,122 @@ type ExchangeCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetExchangeID sets the "exchange_id" field.
+func (ec *ExchangeCreate) SetExchangeID(s string) *ExchangeCreate {
+	ec.mutation.SetExchangeID(s)
+	return ec
+}
+
+// SetName sets the "name" field.
+func (ec *ExchangeCreate) SetName(s string) *ExchangeCreate {
+	ec.mutation.SetName(s)
+	return ec
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableName(s *string) *ExchangeCreate {
+	if s != nil {
+		ec.SetName(*s)
+	}
+	return ec
+}
+
+// SetYearEstablished sets the "year_established" field.
+func (ec *ExchangeCreate) SetYearEstablished(i int) *ExchangeCreate {
+	ec.mutation.SetYearEstablished(i)
+	return ec
+}
+
+// SetNillableYearEstablished sets the "year_established" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableYearEstablished(i *int) *ExchangeCreate {
+	if i != nil {
+		ec.SetYearEstablished(*i)
+	}
+	return ec
+}
+
+// SetCountry sets the "country" field.
+func (ec *ExchangeCreate) SetCountry(s string) *ExchangeCreate {
+	ec.mutation.SetCountry(s)
+	return ec
+}
+
+// SetNillableCountry sets the "country" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableCountry(s *string) *ExchangeCreate {
+	if s != nil {
+		ec.SetCountry(*s)
+	}
+	return ec
+}
+
+// SetImage sets the "image" field.
+func (ec *ExchangeCreate) SetImage(s string) *ExchangeCreate {
+	ec.mutation.SetImage(s)
+	return ec
+}
+
+// SetNillableImage sets the "image" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableImage(s *string) *ExchangeCreate {
+	if s != nil {
+		ec.SetImage(*s)
+	}
+	return ec
+}
+
+// SetLinks sets the "links" field.
+func (ec *ExchangeCreate) SetLinks(m map[string]string) *ExchangeCreate {
+	ec.mutation.SetLinks(m)
+	return ec
+}
+
+// SetHasTradingIncentive sets the "has_trading_incentive" field.
+func (ec *ExchangeCreate) SetHasTradingIncentive(b bool) *ExchangeCreate {
+	ec.mutation.SetHasTradingIncentive(b)
+	return ec
+}
+
+// SetCentralized sets the "centralized" field.
+func (ec *ExchangeCreate) SetCentralized(b bool) *ExchangeCreate {
+	ec.mutation.SetCentralized(b)
+	return ec
+}
+
+// SetPublicNotice sets the "public_notice" field.
+func (ec *ExchangeCreate) SetPublicNotice(s string) *ExchangeCreate {
+	ec.mutation.SetPublicNotice(s)
+	return ec
+}
+
+// SetAlertNotice sets the "alert_notice" field.
+func (ec *ExchangeCreate) SetAlertNotice(s string) *ExchangeCreate {
+	ec.mutation.SetAlertNotice(s)
+	return ec
+}
+
+// SetTrustScore sets the "trust_score" field.
+func (ec *ExchangeCreate) SetTrustScore(i int) *ExchangeCreate {
+	ec.mutation.SetTrustScore(i)
+	return ec
+}
+
+// SetTrustScoreRank sets the "trust_score_rank" field.
+func (ec *ExchangeCreate) SetTrustScoreRank(i int) *ExchangeCreate {
+	ec.mutation.SetTrustScoreRank(i)
+	return ec
+}
+
+// SetTradeVolume24hBtc sets the "trade_volume_24h_btc" field.
+func (ec *ExchangeCreate) SetTradeVolume24hBtc(f float64) *ExchangeCreate {
+	ec.mutation.SetTradeVolume24hBtc(f)
+	return ec
+}
+
+// SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
+func (ec *ExchangeCreate) SetTradeVolume24hBtcNormalized(f float64) *ExchangeCreate {
+	ec.mutation.SetTradeVolume24hBtcNormalized(f)
+	return ec
+}
+
 // Mutation returns the ExchangeMutation object of the builder.
 func (ec *ExchangeCreate) Mutation() *ExchangeMutation {
 	return ec.mutation
@@ -97,6 +213,33 @@ func (ec *ExchangeCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (ec *ExchangeCreate) check() error {
+	if _, ok := ec.mutation.ExchangeID(); !ok {
+		return &ValidationError{Name: "exchange_id", err: errors.New(`repositories: missing required field "Exchange.exchange_id"`)}
+	}
+	if _, ok := ec.mutation.HasTradingIncentive(); !ok {
+		return &ValidationError{Name: "has_trading_incentive", err: errors.New(`repositories: missing required field "Exchange.has_trading_incentive"`)}
+	}
+	if _, ok := ec.mutation.Centralized(); !ok {
+		return &ValidationError{Name: "centralized", err: errors.New(`repositories: missing required field "Exchange.centralized"`)}
+	}
+	if _, ok := ec.mutation.PublicNotice(); !ok {
+		return &ValidationError{Name: "public_notice", err: errors.New(`repositories: missing required field "Exchange.public_notice"`)}
+	}
+	if _, ok := ec.mutation.AlertNotice(); !ok {
+		return &ValidationError{Name: "alert_notice", err: errors.New(`repositories: missing required field "Exchange.alert_notice"`)}
+	}
+	if _, ok := ec.mutation.TrustScore(); !ok {
+		return &ValidationError{Name: "trust_score", err: errors.New(`repositories: missing required field "Exchange.trust_score"`)}
+	}
+	if _, ok := ec.mutation.TrustScoreRank(); !ok {
+		return &ValidationError{Name: "trust_score_rank", err: errors.New(`repositories: missing required field "Exchange.trust_score_rank"`)}
+	}
+	if _, ok := ec.mutation.TradeVolume24hBtc(); !ok {
+		return &ValidationError{Name: "trade_volume_24h_btc", err: errors.New(`repositories: missing required field "Exchange.trade_volume_24h_btc"`)}
+	}
+	if _, ok := ec.mutation.TradeVolume24hBtcNormalized(); !ok {
+		return &ValidationError{Name: "trade_volume_24h_btc_normalized", err: errors.New(`repositories: missing required field "Exchange.trade_volume_24h_btc_normalized"`)}
+	}
 	return nil
 }
 
@@ -126,6 +269,118 @@ func (ec *ExchangeCreate) createSpec() (*Exchange, *sqlgraph.CreateSpec) {
 	)
 	_spec.Schema = ec.schemaConfig.Exchange
 	_spec.OnConflict = ec.conflict
+	if value, ok := ec.mutation.ExchangeID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldExchangeID,
+		})
+		_node.ExchangeID = value
+	}
+	if value, ok := ec.mutation.Name(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldName,
+		})
+		_node.Name = value
+	}
+	if value, ok := ec.mutation.YearEstablished(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldYearEstablished,
+		})
+		_node.YearEstablished = value
+	}
+	if value, ok := ec.mutation.Country(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldCountry,
+		})
+		_node.Country = value
+	}
+	if value, ok := ec.mutation.Image(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldImage,
+		})
+		_node.Image = value
+	}
+	if value, ok := ec.mutation.Links(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: exchange.FieldLinks,
+		})
+		_node.Links = value
+	}
+	if value, ok := ec.mutation.HasTradingIncentive(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: exchange.FieldHasTradingIncentive,
+		})
+		_node.HasTradingIncentive = value
+	}
+	if value, ok := ec.mutation.Centralized(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: exchange.FieldCentralized,
+		})
+		_node.Centralized = value
+	}
+	if value, ok := ec.mutation.PublicNotice(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldPublicNotice,
+		})
+		_node.PublicNotice = value
+	}
+	if value, ok := ec.mutation.AlertNotice(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: exchange.FieldAlertNotice,
+		})
+		_node.AlertNotice = value
+	}
+	if value, ok := ec.mutation.TrustScore(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldTrustScore,
+		})
+		_node.TrustScore = value
+	}
+	if value, ok := ec.mutation.TrustScoreRank(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exchange.FieldTrustScoreRank,
+		})
+		_node.TrustScoreRank = value
+	}
+	if value, ok := ec.mutation.TradeVolume24hBtc(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTradeVolume24hBtc,
+		})
+		_node.TradeVolume24hBtc = value
+	}
+	if value, ok := ec.mutation.TradeVolume24hBtcNormalized(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTradeVolume24hBtcNormalized,
+		})
+		_node.TradeVolume24hBtcNormalized = value
+	}
 	return _node, _spec
 }
 
@@ -133,11 +388,17 @@ func (ec *ExchangeCreate) createSpec() (*Exchange, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Exchange.Create().
+//		SetExchangeID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.ExchangeUpsert) {
+//			SetExchangeID(v+v).
+//		}).
 //		Exec(ctx)
 func (ec *ExchangeCreate) OnConflict(opts ...sql.ConflictOption) *ExchangeUpsertOne {
 	ec.conflict = opts
@@ -171,6 +432,234 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetExchangeID sets the "exchange_id" field.
+func (u *ExchangeUpsert) SetExchangeID(v string) *ExchangeUpsert {
+	u.Set(exchange.FieldExchangeID, v)
+	return u
+}
+
+// UpdateExchangeID sets the "exchange_id" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateExchangeID() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldExchangeID)
+	return u
+}
+
+// SetName sets the "name" field.
+func (u *ExchangeUpsert) SetName(v string) *ExchangeUpsert {
+	u.Set(exchange.FieldName, v)
+	return u
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateName() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldName)
+	return u
+}
+
+// ClearName clears the value of the "name" field.
+func (u *ExchangeUpsert) ClearName() *ExchangeUpsert {
+	u.SetNull(exchange.FieldName)
+	return u
+}
+
+// SetYearEstablished sets the "year_established" field.
+func (u *ExchangeUpsert) SetYearEstablished(v int) *ExchangeUpsert {
+	u.Set(exchange.FieldYearEstablished, v)
+	return u
+}
+
+// UpdateYearEstablished sets the "year_established" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateYearEstablished() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldYearEstablished)
+	return u
+}
+
+// AddYearEstablished adds v to the "year_established" field.
+func (u *ExchangeUpsert) AddYearEstablished(v int) *ExchangeUpsert {
+	u.Add(exchange.FieldYearEstablished, v)
+	return u
+}
+
+// ClearYearEstablished clears the value of the "year_established" field.
+func (u *ExchangeUpsert) ClearYearEstablished() *ExchangeUpsert {
+	u.SetNull(exchange.FieldYearEstablished)
+	return u
+}
+
+// SetCountry sets the "country" field.
+func (u *ExchangeUpsert) SetCountry(v string) *ExchangeUpsert {
+	u.Set(exchange.FieldCountry, v)
+	return u
+}
+
+// UpdateCountry sets the "country" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateCountry() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldCountry)
+	return u
+}
+
+// ClearCountry clears the value of the "country" field.
+func (u *ExchangeUpsert) ClearCountry() *ExchangeUpsert {
+	u.SetNull(exchange.FieldCountry)
+	return u
+}
+
+// SetImage sets the "image" field.
+func (u *ExchangeUpsert) SetImage(v string) *ExchangeUpsert {
+	u.Set(exchange.FieldImage, v)
+	return u
+}
+
+// UpdateImage sets the "image" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateImage() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldImage)
+	return u
+}
+
+// ClearImage clears the value of the "image" field.
+func (u *ExchangeUpsert) ClearImage() *ExchangeUpsert {
+	u.SetNull(exchange.FieldImage)
+	return u
+}
+
+// SetLinks sets the "links" field.
+func (u *ExchangeUpsert) SetLinks(v map[string]string) *ExchangeUpsert {
+	u.Set(exchange.FieldLinks, v)
+	return u
+}
+
+// UpdateLinks sets the "links" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateLinks() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldLinks)
+	return u
+}
+
+// ClearLinks clears the value of the "links" field.
+func (u *ExchangeUpsert) ClearLinks() *ExchangeUpsert {
+	u.SetNull(exchange.FieldLinks)
+	return u
+}
+
+// SetHasTradingIncentive sets the "has_trading_incentive" field.
+func (u *ExchangeUpsert) SetHasTradingIncentive(v bool) *ExchangeUpsert {
+	u.Set(exchange.FieldHasTradingIncentive, v)
+	return u
+}
+
+// UpdateHasTradingIncentive sets the "has_trading_incentive" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateHasTradingIncentive() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldHasTradingIncentive)
+	return u
+}
+
+// SetCentralized sets the "centralized" field.
+func (u *ExchangeUpsert) SetCentralized(v bool) *ExchangeUpsert {
+	u.Set(exchange.FieldCentralized, v)
+	return u
+}
+
+// UpdateCentralized sets the "centralized" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateCentralized() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldCentralized)
+	return u
+}
+
+// SetPublicNotice sets the "public_notice" field.
+func (u *ExchangeUpsert) SetPublicNotice(v string) *ExchangeUpsert {
+	u.Set(exchange.FieldPublicNotice, v)
+	return u
+}
+
+// UpdatePublicNotice sets the "public_notice" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdatePublicNotice() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldPublicNotice)
+	return u
+}
+
+// SetAlertNotice sets the "alert_notice" field.
+func (u *ExchangeUpsert) SetAlertNotice(v string) *ExchangeUpsert {
+	u.Set(exchange.FieldAlertNotice, v)
+	return u
+}
+
+// UpdateAlertNotice sets the "alert_notice" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateAlertNotice() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldAlertNotice)
+	return u
+}
+
+// SetTrustScore sets the "trust_score" field.
+func (u *ExchangeUpsert) SetTrustScore(v int) *ExchangeUpsert {
+	u.Set(exchange.FieldTrustScore, v)
+	return u
+}
+
+// UpdateTrustScore sets the "trust_score" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateTrustScore() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldTrustScore)
+	return u
+}
+
+// AddTrustScore adds v to the "trust_score" field.
+func (u *ExchangeUpsert) AddTrustScore(v int) *ExchangeUpsert {
+	u.Add(exchange.FieldTrustScore, v)
+	return u
+}
+
+// SetTrustScoreRank sets the "trust_score_rank" field.
+func (u *ExchangeUpsert) SetTrustScoreRank(v int) *ExchangeUpsert {
+	u.Set(exchange.FieldTrustScoreRank, v)
+	return u
+}
+
+// UpdateTrustScoreRank sets the "trust_score_rank" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateTrustScoreRank() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldTrustScoreRank)
+	return u
+}
+
+// AddTrustScoreRank adds v to the "trust_score_rank" field.
+func (u *ExchangeUpsert) AddTrustScoreRank(v int) *ExchangeUpsert {
+	u.Add(exchange.FieldTrustScoreRank, v)
+	return u
+}
+
+// SetTradeVolume24hBtc sets the "trade_volume_24h_btc" field.
+func (u *ExchangeUpsert) SetTradeVolume24hBtc(v float64) *ExchangeUpsert {
+	u.Set(exchange.FieldTradeVolume24hBtc, v)
+	return u
+}
+
+// UpdateTradeVolume24hBtc sets the "trade_volume_24h_btc" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateTradeVolume24hBtc() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldTradeVolume24hBtc)
+	return u
+}
+
+// AddTradeVolume24hBtc adds v to the "trade_volume_24h_btc" field.
+func (u *ExchangeUpsert) AddTradeVolume24hBtc(v float64) *ExchangeUpsert {
+	u.Add(exchange.FieldTradeVolume24hBtc, v)
+	return u
+}
+
+// SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
+func (u *ExchangeUpsert) SetTradeVolume24hBtcNormalized(v float64) *ExchangeUpsert {
+	u.Set(exchange.FieldTradeVolume24hBtcNormalized, v)
+	return u
+}
+
+// UpdateTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateTradeVolume24hBtcNormalized() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldTradeVolume24hBtcNormalized)
+	return u
+}
+
+// AddTradeVolume24hBtcNormalized adds v to the "trade_volume_24h_btc_normalized" field.
+func (u *ExchangeUpsert) AddTradeVolume24hBtcNormalized(v float64) *ExchangeUpsert {
+	u.Add(exchange.FieldTradeVolume24hBtcNormalized, v)
+	return u
+}
 
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
@@ -210,6 +699,272 @@ func (u *ExchangeUpsertOne) Update(set func(*ExchangeUpsert)) *ExchangeUpsertOne
 		set(&ExchangeUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetExchangeID sets the "exchange_id" field.
+func (u *ExchangeUpsertOne) SetExchangeID(v string) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetExchangeID(v)
+	})
+}
+
+// UpdateExchangeID sets the "exchange_id" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateExchangeID() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateExchangeID()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *ExchangeUpsertOne) SetName(v string) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateName() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateName()
+	})
+}
+
+// ClearName clears the value of the "name" field.
+func (u *ExchangeUpsertOne) ClearName() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearName()
+	})
+}
+
+// SetYearEstablished sets the "year_established" field.
+func (u *ExchangeUpsertOne) SetYearEstablished(v int) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetYearEstablished(v)
+	})
+}
+
+// AddYearEstablished adds v to the "year_established" field.
+func (u *ExchangeUpsertOne) AddYearEstablished(v int) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddYearEstablished(v)
+	})
+}
+
+// UpdateYearEstablished sets the "year_established" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateYearEstablished() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateYearEstablished()
+	})
+}
+
+// ClearYearEstablished clears the value of the "year_established" field.
+func (u *ExchangeUpsertOne) ClearYearEstablished() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearYearEstablished()
+	})
+}
+
+// SetCountry sets the "country" field.
+func (u *ExchangeUpsertOne) SetCountry(v string) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetCountry(v)
+	})
+}
+
+// UpdateCountry sets the "country" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateCountry() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateCountry()
+	})
+}
+
+// ClearCountry clears the value of the "country" field.
+func (u *ExchangeUpsertOne) ClearCountry() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearCountry()
+	})
+}
+
+// SetImage sets the "image" field.
+func (u *ExchangeUpsertOne) SetImage(v string) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetImage(v)
+	})
+}
+
+// UpdateImage sets the "image" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateImage() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateImage()
+	})
+}
+
+// ClearImage clears the value of the "image" field.
+func (u *ExchangeUpsertOne) ClearImage() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearImage()
+	})
+}
+
+// SetLinks sets the "links" field.
+func (u *ExchangeUpsertOne) SetLinks(v map[string]string) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetLinks(v)
+	})
+}
+
+// UpdateLinks sets the "links" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateLinks() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateLinks()
+	})
+}
+
+// ClearLinks clears the value of the "links" field.
+func (u *ExchangeUpsertOne) ClearLinks() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearLinks()
+	})
+}
+
+// SetHasTradingIncentive sets the "has_trading_incentive" field.
+func (u *ExchangeUpsertOne) SetHasTradingIncentive(v bool) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetHasTradingIncentive(v)
+	})
+}
+
+// UpdateHasTradingIncentive sets the "has_trading_incentive" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateHasTradingIncentive() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateHasTradingIncentive()
+	})
+}
+
+// SetCentralized sets the "centralized" field.
+func (u *ExchangeUpsertOne) SetCentralized(v bool) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetCentralized(v)
+	})
+}
+
+// UpdateCentralized sets the "centralized" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateCentralized() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateCentralized()
+	})
+}
+
+// SetPublicNotice sets the "public_notice" field.
+func (u *ExchangeUpsertOne) SetPublicNotice(v string) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetPublicNotice(v)
+	})
+}
+
+// UpdatePublicNotice sets the "public_notice" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdatePublicNotice() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdatePublicNotice()
+	})
+}
+
+// SetAlertNotice sets the "alert_notice" field.
+func (u *ExchangeUpsertOne) SetAlertNotice(v string) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetAlertNotice(v)
+	})
+}
+
+// UpdateAlertNotice sets the "alert_notice" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateAlertNotice() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateAlertNotice()
+	})
+}
+
+// SetTrustScore sets the "trust_score" field.
+func (u *ExchangeUpsertOne) SetTrustScore(v int) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetTrustScore(v)
+	})
+}
+
+// AddTrustScore adds v to the "trust_score" field.
+func (u *ExchangeUpsertOne) AddTrustScore(v int) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddTrustScore(v)
+	})
+}
+
+// UpdateTrustScore sets the "trust_score" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateTrustScore() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateTrustScore()
+	})
+}
+
+// SetTrustScoreRank sets the "trust_score_rank" field.
+func (u *ExchangeUpsertOne) SetTrustScoreRank(v int) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetTrustScoreRank(v)
+	})
+}
+
+// AddTrustScoreRank adds v to the "trust_score_rank" field.
+func (u *ExchangeUpsertOne) AddTrustScoreRank(v int) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddTrustScoreRank(v)
+	})
+}
+
+// UpdateTrustScoreRank sets the "trust_score_rank" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateTrustScoreRank() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateTrustScoreRank()
+	})
+}
+
+// SetTradeVolume24hBtc sets the "trade_volume_24h_btc" field.
+func (u *ExchangeUpsertOne) SetTradeVolume24hBtc(v float64) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetTradeVolume24hBtc(v)
+	})
+}
+
+// AddTradeVolume24hBtc adds v to the "trade_volume_24h_btc" field.
+func (u *ExchangeUpsertOne) AddTradeVolume24hBtc(v float64) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddTradeVolume24hBtc(v)
+	})
+}
+
+// UpdateTradeVolume24hBtc sets the "trade_volume_24h_btc" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateTradeVolume24hBtc() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateTradeVolume24hBtc()
+	})
+}
+
+// SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
+func (u *ExchangeUpsertOne) SetTradeVolume24hBtcNormalized(v float64) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetTradeVolume24hBtcNormalized(v)
+	})
+}
+
+// AddTradeVolume24hBtcNormalized adds v to the "trade_volume_24h_btc_normalized" field.
+func (u *ExchangeUpsertOne) AddTradeVolume24hBtcNormalized(v float64) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddTradeVolume24hBtcNormalized(v)
+	})
+}
+
+// UpdateTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateTradeVolume24hBtcNormalized() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateTradeVolume24hBtcNormalized()
+	})
 }
 
 // Exec executes the query.
@@ -339,6 +1094,11 @@ func (ecb *ExchangeCreateBulk) ExecX(ctx context.Context) {
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.ExchangeUpsert) {
+//			SetExchangeID(v+v).
+//		}).
 //		Exec(ctx)
 func (ecb *ExchangeCreateBulk) OnConflict(opts ...sql.ConflictOption) *ExchangeUpsertBulk {
 	ecb.conflict = opts
@@ -404,6 +1164,272 @@ func (u *ExchangeUpsertBulk) Update(set func(*ExchangeUpsert)) *ExchangeUpsertBu
 		set(&ExchangeUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetExchangeID sets the "exchange_id" field.
+func (u *ExchangeUpsertBulk) SetExchangeID(v string) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetExchangeID(v)
+	})
+}
+
+// UpdateExchangeID sets the "exchange_id" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateExchangeID() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateExchangeID()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *ExchangeUpsertBulk) SetName(v string) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateName() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateName()
+	})
+}
+
+// ClearName clears the value of the "name" field.
+func (u *ExchangeUpsertBulk) ClearName() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearName()
+	})
+}
+
+// SetYearEstablished sets the "year_established" field.
+func (u *ExchangeUpsertBulk) SetYearEstablished(v int) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetYearEstablished(v)
+	})
+}
+
+// AddYearEstablished adds v to the "year_established" field.
+func (u *ExchangeUpsertBulk) AddYearEstablished(v int) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddYearEstablished(v)
+	})
+}
+
+// UpdateYearEstablished sets the "year_established" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateYearEstablished() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateYearEstablished()
+	})
+}
+
+// ClearYearEstablished clears the value of the "year_established" field.
+func (u *ExchangeUpsertBulk) ClearYearEstablished() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearYearEstablished()
+	})
+}
+
+// SetCountry sets the "country" field.
+func (u *ExchangeUpsertBulk) SetCountry(v string) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetCountry(v)
+	})
+}
+
+// UpdateCountry sets the "country" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateCountry() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateCountry()
+	})
+}
+
+// ClearCountry clears the value of the "country" field.
+func (u *ExchangeUpsertBulk) ClearCountry() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearCountry()
+	})
+}
+
+// SetImage sets the "image" field.
+func (u *ExchangeUpsertBulk) SetImage(v string) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetImage(v)
+	})
+}
+
+// UpdateImage sets the "image" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateImage() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateImage()
+	})
+}
+
+// ClearImage clears the value of the "image" field.
+func (u *ExchangeUpsertBulk) ClearImage() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearImage()
+	})
+}
+
+// SetLinks sets the "links" field.
+func (u *ExchangeUpsertBulk) SetLinks(v map[string]string) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetLinks(v)
+	})
+}
+
+// UpdateLinks sets the "links" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateLinks() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateLinks()
+	})
+}
+
+// ClearLinks clears the value of the "links" field.
+func (u *ExchangeUpsertBulk) ClearLinks() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearLinks()
+	})
+}
+
+// SetHasTradingIncentive sets the "has_trading_incentive" field.
+func (u *ExchangeUpsertBulk) SetHasTradingIncentive(v bool) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetHasTradingIncentive(v)
+	})
+}
+
+// UpdateHasTradingIncentive sets the "has_trading_incentive" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateHasTradingIncentive() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateHasTradingIncentive()
+	})
+}
+
+// SetCentralized sets the "centralized" field.
+func (u *ExchangeUpsertBulk) SetCentralized(v bool) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetCentralized(v)
+	})
+}
+
+// UpdateCentralized sets the "centralized" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateCentralized() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateCentralized()
+	})
+}
+
+// SetPublicNotice sets the "public_notice" field.
+func (u *ExchangeUpsertBulk) SetPublicNotice(v string) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetPublicNotice(v)
+	})
+}
+
+// UpdatePublicNotice sets the "public_notice" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdatePublicNotice() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdatePublicNotice()
+	})
+}
+
+// SetAlertNotice sets the "alert_notice" field.
+func (u *ExchangeUpsertBulk) SetAlertNotice(v string) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetAlertNotice(v)
+	})
+}
+
+// UpdateAlertNotice sets the "alert_notice" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateAlertNotice() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateAlertNotice()
+	})
+}
+
+// SetTrustScore sets the "trust_score" field.
+func (u *ExchangeUpsertBulk) SetTrustScore(v int) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetTrustScore(v)
+	})
+}
+
+// AddTrustScore adds v to the "trust_score" field.
+func (u *ExchangeUpsertBulk) AddTrustScore(v int) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddTrustScore(v)
+	})
+}
+
+// UpdateTrustScore sets the "trust_score" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateTrustScore() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateTrustScore()
+	})
+}
+
+// SetTrustScoreRank sets the "trust_score_rank" field.
+func (u *ExchangeUpsertBulk) SetTrustScoreRank(v int) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetTrustScoreRank(v)
+	})
+}
+
+// AddTrustScoreRank adds v to the "trust_score_rank" field.
+func (u *ExchangeUpsertBulk) AddTrustScoreRank(v int) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddTrustScoreRank(v)
+	})
+}
+
+// UpdateTrustScoreRank sets the "trust_score_rank" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateTrustScoreRank() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateTrustScoreRank()
+	})
+}
+
+// SetTradeVolume24hBtc sets the "trade_volume_24h_btc" field.
+func (u *ExchangeUpsertBulk) SetTradeVolume24hBtc(v float64) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetTradeVolume24hBtc(v)
+	})
+}
+
+// AddTradeVolume24hBtc adds v to the "trade_volume_24h_btc" field.
+func (u *ExchangeUpsertBulk) AddTradeVolume24hBtc(v float64) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddTradeVolume24hBtc(v)
+	})
+}
+
+// UpdateTradeVolume24hBtc sets the "trade_volume_24h_btc" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateTradeVolume24hBtc() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateTradeVolume24hBtc()
+	})
+}
+
+// SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
+func (u *ExchangeUpsertBulk) SetTradeVolume24hBtcNormalized(v float64) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetTradeVolume24hBtcNormalized(v)
+	})
+}
+
+// AddTradeVolume24hBtcNormalized adds v to the "trade_volume_24h_btc_normalized" field.
+func (u *ExchangeUpsertBulk) AddTradeVolume24hBtcNormalized(v float64) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddTradeVolume24hBtcNormalized(v)
+	})
+}
+
+// UpdateTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateTradeVolume24hBtcNormalized() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateTradeVolume24hBtcNormalized()
+	})
 }
 
 // Exec executes the query.

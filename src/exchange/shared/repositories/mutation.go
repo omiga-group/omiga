@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/predicate"
 
@@ -31,13 +32,32 @@ const (
 // ExchangeMutation represents an operation that mutates the Exchange nodes in the graph.
 type ExchangeMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Exchange, error)
-	predicates    []predicate.Exchange
+	op                                 Op
+	typ                                string
+	id                                 *int
+	exchange_id                        *string
+	name                               *string
+	year_established                   *int
+	addyear_established                *int
+	country                            *string
+	image                              *string
+	links                              *map[string]string
+	has_trading_incentive              *bool
+	centralized                        *bool
+	public_notice                      *string
+	alert_notice                       *string
+	trust_score                        *int
+	addtrust_score                     *int
+	trust_score_rank                   *int
+	addtrust_score_rank                *int
+	trade_volume_24h_btc               *float64
+	addtrade_volume_24h_btc            *float64
+	trade_volume_24h_btc_normalized    *float64
+	addtrade_volume_24h_btc_normalized *float64
+	clearedFields                      map[string]struct{}
+	done                               bool
+	oldValue                           func(context.Context) (*Exchange, error)
+	predicates                         []predicate.Exchange
 }
 
 var _ ent.Mutation = (*ExchangeMutation)(nil)
@@ -138,6 +158,676 @@ func (m *ExchangeMutation) IDs(ctx context.Context) ([]int, error) {
 	}
 }
 
+// SetExchangeID sets the "exchange_id" field.
+func (m *ExchangeMutation) SetExchangeID(s string) {
+	m.exchange_id = &s
+}
+
+// ExchangeID returns the value of the "exchange_id" field in the mutation.
+func (m *ExchangeMutation) ExchangeID() (r string, exists bool) {
+	v := m.exchange_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExchangeID returns the old "exchange_id" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldExchangeID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExchangeID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExchangeID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExchangeID: %w", err)
+	}
+	return oldValue.ExchangeID, nil
+}
+
+// ResetExchangeID resets all changes to the "exchange_id" field.
+func (m *ExchangeMutation) ResetExchangeID() {
+	m.exchange_id = nil
+}
+
+// SetName sets the "name" field.
+func (m *ExchangeMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *ExchangeMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *ExchangeMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[exchange.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *ExchangeMutation) NameCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *ExchangeMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, exchange.FieldName)
+}
+
+// SetYearEstablished sets the "year_established" field.
+func (m *ExchangeMutation) SetYearEstablished(i int) {
+	m.year_established = &i
+	m.addyear_established = nil
+}
+
+// YearEstablished returns the value of the "year_established" field in the mutation.
+func (m *ExchangeMutation) YearEstablished() (r int, exists bool) {
+	v := m.year_established
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldYearEstablished returns the old "year_established" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldYearEstablished(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldYearEstablished is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldYearEstablished requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldYearEstablished: %w", err)
+	}
+	return oldValue.YearEstablished, nil
+}
+
+// AddYearEstablished adds i to the "year_established" field.
+func (m *ExchangeMutation) AddYearEstablished(i int) {
+	if m.addyear_established != nil {
+		*m.addyear_established += i
+	} else {
+		m.addyear_established = &i
+	}
+}
+
+// AddedYearEstablished returns the value that was added to the "year_established" field in this mutation.
+func (m *ExchangeMutation) AddedYearEstablished() (r int, exists bool) {
+	v := m.addyear_established
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearYearEstablished clears the value of the "year_established" field.
+func (m *ExchangeMutation) ClearYearEstablished() {
+	m.year_established = nil
+	m.addyear_established = nil
+	m.clearedFields[exchange.FieldYearEstablished] = struct{}{}
+}
+
+// YearEstablishedCleared returns if the "year_established" field was cleared in this mutation.
+func (m *ExchangeMutation) YearEstablishedCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldYearEstablished]
+	return ok
+}
+
+// ResetYearEstablished resets all changes to the "year_established" field.
+func (m *ExchangeMutation) ResetYearEstablished() {
+	m.year_established = nil
+	m.addyear_established = nil
+	delete(m.clearedFields, exchange.FieldYearEstablished)
+}
+
+// SetCountry sets the "country" field.
+func (m *ExchangeMutation) SetCountry(s string) {
+	m.country = &s
+}
+
+// Country returns the value of the "country" field in the mutation.
+func (m *ExchangeMutation) Country() (r string, exists bool) {
+	v := m.country
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCountry returns the old "country" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldCountry(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCountry is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCountry requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCountry: %w", err)
+	}
+	return oldValue.Country, nil
+}
+
+// ClearCountry clears the value of the "country" field.
+func (m *ExchangeMutation) ClearCountry() {
+	m.country = nil
+	m.clearedFields[exchange.FieldCountry] = struct{}{}
+}
+
+// CountryCleared returns if the "country" field was cleared in this mutation.
+func (m *ExchangeMutation) CountryCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldCountry]
+	return ok
+}
+
+// ResetCountry resets all changes to the "country" field.
+func (m *ExchangeMutation) ResetCountry() {
+	m.country = nil
+	delete(m.clearedFields, exchange.FieldCountry)
+}
+
+// SetImage sets the "image" field.
+func (m *ExchangeMutation) SetImage(s string) {
+	m.image = &s
+}
+
+// Image returns the value of the "image" field in the mutation.
+func (m *ExchangeMutation) Image() (r string, exists bool) {
+	v := m.image
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldImage returns the old "image" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldImage(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldImage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldImage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldImage: %w", err)
+	}
+	return oldValue.Image, nil
+}
+
+// ClearImage clears the value of the "image" field.
+func (m *ExchangeMutation) ClearImage() {
+	m.image = nil
+	m.clearedFields[exchange.FieldImage] = struct{}{}
+}
+
+// ImageCleared returns if the "image" field was cleared in this mutation.
+func (m *ExchangeMutation) ImageCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldImage]
+	return ok
+}
+
+// ResetImage resets all changes to the "image" field.
+func (m *ExchangeMutation) ResetImage() {
+	m.image = nil
+	delete(m.clearedFields, exchange.FieldImage)
+}
+
+// SetLinks sets the "links" field.
+func (m *ExchangeMutation) SetLinks(value map[string]string) {
+	m.links = &value
+}
+
+// Links returns the value of the "links" field in the mutation.
+func (m *ExchangeMutation) Links() (r map[string]string, exists bool) {
+	v := m.links
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLinks returns the old "links" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldLinks(ctx context.Context) (v map[string]string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLinks is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLinks requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLinks: %w", err)
+	}
+	return oldValue.Links, nil
+}
+
+// ClearLinks clears the value of the "links" field.
+func (m *ExchangeMutation) ClearLinks() {
+	m.links = nil
+	m.clearedFields[exchange.FieldLinks] = struct{}{}
+}
+
+// LinksCleared returns if the "links" field was cleared in this mutation.
+func (m *ExchangeMutation) LinksCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldLinks]
+	return ok
+}
+
+// ResetLinks resets all changes to the "links" field.
+func (m *ExchangeMutation) ResetLinks() {
+	m.links = nil
+	delete(m.clearedFields, exchange.FieldLinks)
+}
+
+// SetHasTradingIncentive sets the "has_trading_incentive" field.
+func (m *ExchangeMutation) SetHasTradingIncentive(b bool) {
+	m.has_trading_incentive = &b
+}
+
+// HasTradingIncentive returns the value of the "has_trading_incentive" field in the mutation.
+func (m *ExchangeMutation) HasTradingIncentive() (r bool, exists bool) {
+	v := m.has_trading_incentive
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHasTradingIncentive returns the old "has_trading_incentive" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldHasTradingIncentive(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHasTradingIncentive is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHasTradingIncentive requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHasTradingIncentive: %w", err)
+	}
+	return oldValue.HasTradingIncentive, nil
+}
+
+// ResetHasTradingIncentive resets all changes to the "has_trading_incentive" field.
+func (m *ExchangeMutation) ResetHasTradingIncentive() {
+	m.has_trading_incentive = nil
+}
+
+// SetCentralized sets the "centralized" field.
+func (m *ExchangeMutation) SetCentralized(b bool) {
+	m.centralized = &b
+}
+
+// Centralized returns the value of the "centralized" field in the mutation.
+func (m *ExchangeMutation) Centralized() (r bool, exists bool) {
+	v := m.centralized
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCentralized returns the old "centralized" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldCentralized(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCentralized is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCentralized requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCentralized: %w", err)
+	}
+	return oldValue.Centralized, nil
+}
+
+// ResetCentralized resets all changes to the "centralized" field.
+func (m *ExchangeMutation) ResetCentralized() {
+	m.centralized = nil
+}
+
+// SetPublicNotice sets the "public_notice" field.
+func (m *ExchangeMutation) SetPublicNotice(s string) {
+	m.public_notice = &s
+}
+
+// PublicNotice returns the value of the "public_notice" field in the mutation.
+func (m *ExchangeMutation) PublicNotice() (r string, exists bool) {
+	v := m.public_notice
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPublicNotice returns the old "public_notice" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldPublicNotice(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPublicNotice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPublicNotice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPublicNotice: %w", err)
+	}
+	return oldValue.PublicNotice, nil
+}
+
+// ResetPublicNotice resets all changes to the "public_notice" field.
+func (m *ExchangeMutation) ResetPublicNotice() {
+	m.public_notice = nil
+}
+
+// SetAlertNotice sets the "alert_notice" field.
+func (m *ExchangeMutation) SetAlertNotice(s string) {
+	m.alert_notice = &s
+}
+
+// AlertNotice returns the value of the "alert_notice" field in the mutation.
+func (m *ExchangeMutation) AlertNotice() (r string, exists bool) {
+	v := m.alert_notice
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAlertNotice returns the old "alert_notice" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldAlertNotice(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAlertNotice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAlertNotice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAlertNotice: %w", err)
+	}
+	return oldValue.AlertNotice, nil
+}
+
+// ResetAlertNotice resets all changes to the "alert_notice" field.
+func (m *ExchangeMutation) ResetAlertNotice() {
+	m.alert_notice = nil
+}
+
+// SetTrustScore sets the "trust_score" field.
+func (m *ExchangeMutation) SetTrustScore(i int) {
+	m.trust_score = &i
+	m.addtrust_score = nil
+}
+
+// TrustScore returns the value of the "trust_score" field in the mutation.
+func (m *ExchangeMutation) TrustScore() (r int, exists bool) {
+	v := m.trust_score
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTrustScore returns the old "trust_score" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldTrustScore(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTrustScore is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTrustScore requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTrustScore: %w", err)
+	}
+	return oldValue.TrustScore, nil
+}
+
+// AddTrustScore adds i to the "trust_score" field.
+func (m *ExchangeMutation) AddTrustScore(i int) {
+	if m.addtrust_score != nil {
+		*m.addtrust_score += i
+	} else {
+		m.addtrust_score = &i
+	}
+}
+
+// AddedTrustScore returns the value that was added to the "trust_score" field in this mutation.
+func (m *ExchangeMutation) AddedTrustScore() (r int, exists bool) {
+	v := m.addtrust_score
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTrustScore resets all changes to the "trust_score" field.
+func (m *ExchangeMutation) ResetTrustScore() {
+	m.trust_score = nil
+	m.addtrust_score = nil
+}
+
+// SetTrustScoreRank sets the "trust_score_rank" field.
+func (m *ExchangeMutation) SetTrustScoreRank(i int) {
+	m.trust_score_rank = &i
+	m.addtrust_score_rank = nil
+}
+
+// TrustScoreRank returns the value of the "trust_score_rank" field in the mutation.
+func (m *ExchangeMutation) TrustScoreRank() (r int, exists bool) {
+	v := m.trust_score_rank
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTrustScoreRank returns the old "trust_score_rank" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldTrustScoreRank(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTrustScoreRank is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTrustScoreRank requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTrustScoreRank: %w", err)
+	}
+	return oldValue.TrustScoreRank, nil
+}
+
+// AddTrustScoreRank adds i to the "trust_score_rank" field.
+func (m *ExchangeMutation) AddTrustScoreRank(i int) {
+	if m.addtrust_score_rank != nil {
+		*m.addtrust_score_rank += i
+	} else {
+		m.addtrust_score_rank = &i
+	}
+}
+
+// AddedTrustScoreRank returns the value that was added to the "trust_score_rank" field in this mutation.
+func (m *ExchangeMutation) AddedTrustScoreRank() (r int, exists bool) {
+	v := m.addtrust_score_rank
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTrustScoreRank resets all changes to the "trust_score_rank" field.
+func (m *ExchangeMutation) ResetTrustScoreRank() {
+	m.trust_score_rank = nil
+	m.addtrust_score_rank = nil
+}
+
+// SetTradeVolume24hBtc sets the "trade_volume_24h_btc" field.
+func (m *ExchangeMutation) SetTradeVolume24hBtc(f float64) {
+	m.trade_volume_24h_btc = &f
+	m.addtrade_volume_24h_btc = nil
+}
+
+// TradeVolume24hBtc returns the value of the "trade_volume_24h_btc" field in the mutation.
+func (m *ExchangeMutation) TradeVolume24hBtc() (r float64, exists bool) {
+	v := m.trade_volume_24h_btc
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTradeVolume24hBtc returns the old "trade_volume_24h_btc" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldTradeVolume24hBtc(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTradeVolume24hBtc is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTradeVolume24hBtc requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTradeVolume24hBtc: %w", err)
+	}
+	return oldValue.TradeVolume24hBtc, nil
+}
+
+// AddTradeVolume24hBtc adds f to the "trade_volume_24h_btc" field.
+func (m *ExchangeMutation) AddTradeVolume24hBtc(f float64) {
+	if m.addtrade_volume_24h_btc != nil {
+		*m.addtrade_volume_24h_btc += f
+	} else {
+		m.addtrade_volume_24h_btc = &f
+	}
+}
+
+// AddedTradeVolume24hBtc returns the value that was added to the "trade_volume_24h_btc" field in this mutation.
+func (m *ExchangeMutation) AddedTradeVolume24hBtc() (r float64, exists bool) {
+	v := m.addtrade_volume_24h_btc
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTradeVolume24hBtc resets all changes to the "trade_volume_24h_btc" field.
+func (m *ExchangeMutation) ResetTradeVolume24hBtc() {
+	m.trade_volume_24h_btc = nil
+	m.addtrade_volume_24h_btc = nil
+}
+
+// SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
+func (m *ExchangeMutation) SetTradeVolume24hBtcNormalized(f float64) {
+	m.trade_volume_24h_btc_normalized = &f
+	m.addtrade_volume_24h_btc_normalized = nil
+}
+
+// TradeVolume24hBtcNormalized returns the value of the "trade_volume_24h_btc_normalized" field in the mutation.
+func (m *ExchangeMutation) TradeVolume24hBtcNormalized() (r float64, exists bool) {
+	v := m.trade_volume_24h_btc_normalized
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTradeVolume24hBtcNormalized returns the old "trade_volume_24h_btc_normalized" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldTradeVolume24hBtcNormalized(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTradeVolume24hBtcNormalized is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTradeVolume24hBtcNormalized requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTradeVolume24hBtcNormalized: %w", err)
+	}
+	return oldValue.TradeVolume24hBtcNormalized, nil
+}
+
+// AddTradeVolume24hBtcNormalized adds f to the "trade_volume_24h_btc_normalized" field.
+func (m *ExchangeMutation) AddTradeVolume24hBtcNormalized(f float64) {
+	if m.addtrade_volume_24h_btc_normalized != nil {
+		*m.addtrade_volume_24h_btc_normalized += f
+	} else {
+		m.addtrade_volume_24h_btc_normalized = &f
+	}
+}
+
+// AddedTradeVolume24hBtcNormalized returns the value that was added to the "trade_volume_24h_btc_normalized" field in this mutation.
+func (m *ExchangeMutation) AddedTradeVolume24hBtcNormalized() (r float64, exists bool) {
+	v := m.addtrade_volume_24h_btc_normalized
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTradeVolume24hBtcNormalized resets all changes to the "trade_volume_24h_btc_normalized" field.
+func (m *ExchangeMutation) ResetTradeVolume24hBtcNormalized() {
+	m.trade_volume_24h_btc_normalized = nil
+	m.addtrade_volume_24h_btc_normalized = nil
+}
+
 // Where appends a list predicates to the ExchangeMutation builder.
 func (m *ExchangeMutation) Where(ps ...predicate.Exchange) {
 	m.predicates = append(m.predicates, ps...)
@@ -157,7 +847,49 @@ func (m *ExchangeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ExchangeMutation) Fields() []string {
-	fields := make([]string, 0, 0)
+	fields := make([]string, 0, 14)
+	if m.exchange_id != nil {
+		fields = append(fields, exchange.FieldExchangeID)
+	}
+	if m.name != nil {
+		fields = append(fields, exchange.FieldName)
+	}
+	if m.year_established != nil {
+		fields = append(fields, exchange.FieldYearEstablished)
+	}
+	if m.country != nil {
+		fields = append(fields, exchange.FieldCountry)
+	}
+	if m.image != nil {
+		fields = append(fields, exchange.FieldImage)
+	}
+	if m.links != nil {
+		fields = append(fields, exchange.FieldLinks)
+	}
+	if m.has_trading_incentive != nil {
+		fields = append(fields, exchange.FieldHasTradingIncentive)
+	}
+	if m.centralized != nil {
+		fields = append(fields, exchange.FieldCentralized)
+	}
+	if m.public_notice != nil {
+		fields = append(fields, exchange.FieldPublicNotice)
+	}
+	if m.alert_notice != nil {
+		fields = append(fields, exchange.FieldAlertNotice)
+	}
+	if m.trust_score != nil {
+		fields = append(fields, exchange.FieldTrustScore)
+	}
+	if m.trust_score_rank != nil {
+		fields = append(fields, exchange.FieldTrustScoreRank)
+	}
+	if m.trade_volume_24h_btc != nil {
+		fields = append(fields, exchange.FieldTradeVolume24hBtc)
+	}
+	if m.trade_volume_24h_btc_normalized != nil {
+		fields = append(fields, exchange.FieldTradeVolume24hBtcNormalized)
+	}
 	return fields
 }
 
@@ -165,6 +897,36 @@ func (m *ExchangeMutation) Fields() []string {
 // return value indicates that this field was not set, or was not defined in the
 // schema.
 func (m *ExchangeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case exchange.FieldExchangeID:
+		return m.ExchangeID()
+	case exchange.FieldName:
+		return m.Name()
+	case exchange.FieldYearEstablished:
+		return m.YearEstablished()
+	case exchange.FieldCountry:
+		return m.Country()
+	case exchange.FieldImage:
+		return m.Image()
+	case exchange.FieldLinks:
+		return m.Links()
+	case exchange.FieldHasTradingIncentive:
+		return m.HasTradingIncentive()
+	case exchange.FieldCentralized:
+		return m.Centralized()
+	case exchange.FieldPublicNotice:
+		return m.PublicNotice()
+	case exchange.FieldAlertNotice:
+		return m.AlertNotice()
+	case exchange.FieldTrustScore:
+		return m.TrustScore()
+	case exchange.FieldTrustScoreRank:
+		return m.TrustScoreRank()
+	case exchange.FieldTradeVolume24hBtc:
+		return m.TradeVolume24hBtc()
+	case exchange.FieldTradeVolume24hBtcNormalized:
+		return m.TradeVolume24hBtcNormalized()
+	}
 	return nil, false
 }
 
@@ -172,6 +934,36 @@ func (m *ExchangeMutation) Field(name string) (ent.Value, bool) {
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
 func (m *ExchangeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case exchange.FieldExchangeID:
+		return m.OldExchangeID(ctx)
+	case exchange.FieldName:
+		return m.OldName(ctx)
+	case exchange.FieldYearEstablished:
+		return m.OldYearEstablished(ctx)
+	case exchange.FieldCountry:
+		return m.OldCountry(ctx)
+	case exchange.FieldImage:
+		return m.OldImage(ctx)
+	case exchange.FieldLinks:
+		return m.OldLinks(ctx)
+	case exchange.FieldHasTradingIncentive:
+		return m.OldHasTradingIncentive(ctx)
+	case exchange.FieldCentralized:
+		return m.OldCentralized(ctx)
+	case exchange.FieldPublicNotice:
+		return m.OldPublicNotice(ctx)
+	case exchange.FieldAlertNotice:
+		return m.OldAlertNotice(ctx)
+	case exchange.FieldTrustScore:
+		return m.OldTrustScore(ctx)
+	case exchange.FieldTrustScoreRank:
+		return m.OldTrustScoreRank(ctx)
+	case exchange.FieldTradeVolume24hBtc:
+		return m.OldTradeVolume24hBtc(ctx)
+	case exchange.FieldTradeVolume24hBtcNormalized:
+		return m.OldTradeVolume24hBtcNormalized(ctx)
+	}
 	return nil, fmt.Errorf("unknown Exchange field %s", name)
 }
 
@@ -180,6 +972,104 @@ func (m *ExchangeMutation) OldField(ctx context.Context, name string) (ent.Value
 // type.
 func (m *ExchangeMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case exchange.FieldExchangeID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExchangeID(v)
+		return nil
+	case exchange.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case exchange.FieldYearEstablished:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetYearEstablished(v)
+		return nil
+	case exchange.FieldCountry:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCountry(v)
+		return nil
+	case exchange.FieldImage:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetImage(v)
+		return nil
+	case exchange.FieldLinks:
+		v, ok := value.(map[string]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLinks(v)
+		return nil
+	case exchange.FieldHasTradingIncentive:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHasTradingIncentive(v)
+		return nil
+	case exchange.FieldCentralized:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCentralized(v)
+		return nil
+	case exchange.FieldPublicNotice:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPublicNotice(v)
+		return nil
+	case exchange.FieldAlertNotice:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAlertNotice(v)
+		return nil
+	case exchange.FieldTrustScore:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTrustScore(v)
+		return nil
+	case exchange.FieldTrustScoreRank:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTrustScoreRank(v)
+		return nil
+	case exchange.FieldTradeVolume24hBtc:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTradeVolume24hBtc(v)
+		return nil
+	case exchange.FieldTradeVolume24hBtcNormalized:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTradeVolume24hBtcNormalized(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Exchange field %s", name)
 }
@@ -187,13 +1077,41 @@ func (m *ExchangeMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *ExchangeMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addyear_established != nil {
+		fields = append(fields, exchange.FieldYearEstablished)
+	}
+	if m.addtrust_score != nil {
+		fields = append(fields, exchange.FieldTrustScore)
+	}
+	if m.addtrust_score_rank != nil {
+		fields = append(fields, exchange.FieldTrustScoreRank)
+	}
+	if m.addtrade_volume_24h_btc != nil {
+		fields = append(fields, exchange.FieldTradeVolume24hBtc)
+	}
+	if m.addtrade_volume_24h_btc_normalized != nil {
+		fields = append(fields, exchange.FieldTradeVolume24hBtcNormalized)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *ExchangeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case exchange.FieldYearEstablished:
+		return m.AddedYearEstablished()
+	case exchange.FieldTrustScore:
+		return m.AddedTrustScore()
+	case exchange.FieldTrustScoreRank:
+		return m.AddedTrustScoreRank()
+	case exchange.FieldTradeVolume24hBtc:
+		return m.AddedTradeVolume24hBtc()
+	case exchange.FieldTradeVolume24hBtcNormalized:
+		return m.AddedTradeVolume24hBtcNormalized()
+	}
 	return nil, false
 }
 
@@ -201,13 +1119,66 @@ func (m *ExchangeMutation) AddedField(name string) (ent.Value, bool) {
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
 func (m *ExchangeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case exchange.FieldYearEstablished:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddYearEstablished(v)
+		return nil
+	case exchange.FieldTrustScore:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTrustScore(v)
+		return nil
+	case exchange.FieldTrustScoreRank:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTrustScoreRank(v)
+		return nil
+	case exchange.FieldTradeVolume24hBtc:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTradeVolume24hBtc(v)
+		return nil
+	case exchange.FieldTradeVolume24hBtcNormalized:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTradeVolume24hBtcNormalized(v)
+		return nil
+	}
 	return fmt.Errorf("unknown Exchange numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *ExchangeMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(exchange.FieldName) {
+		fields = append(fields, exchange.FieldName)
+	}
+	if m.FieldCleared(exchange.FieldYearEstablished) {
+		fields = append(fields, exchange.FieldYearEstablished)
+	}
+	if m.FieldCleared(exchange.FieldCountry) {
+		fields = append(fields, exchange.FieldCountry)
+	}
+	if m.FieldCleared(exchange.FieldImage) {
+		fields = append(fields, exchange.FieldImage)
+	}
+	if m.FieldCleared(exchange.FieldLinks) {
+		fields = append(fields, exchange.FieldLinks)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -220,12 +1191,73 @@ func (m *ExchangeMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *ExchangeMutation) ClearField(name string) error {
+	switch name {
+	case exchange.FieldName:
+		m.ClearName()
+		return nil
+	case exchange.FieldYearEstablished:
+		m.ClearYearEstablished()
+		return nil
+	case exchange.FieldCountry:
+		m.ClearCountry()
+		return nil
+	case exchange.FieldImage:
+		m.ClearImage()
+		return nil
+	case exchange.FieldLinks:
+		m.ClearLinks()
+		return nil
+	}
 	return fmt.Errorf("unknown Exchange nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
 func (m *ExchangeMutation) ResetField(name string) error {
+	switch name {
+	case exchange.FieldExchangeID:
+		m.ResetExchangeID()
+		return nil
+	case exchange.FieldName:
+		m.ResetName()
+		return nil
+	case exchange.FieldYearEstablished:
+		m.ResetYearEstablished()
+		return nil
+	case exchange.FieldCountry:
+		m.ResetCountry()
+		return nil
+	case exchange.FieldImage:
+		m.ResetImage()
+		return nil
+	case exchange.FieldLinks:
+		m.ResetLinks()
+		return nil
+	case exchange.FieldHasTradingIncentive:
+		m.ResetHasTradingIncentive()
+		return nil
+	case exchange.FieldCentralized:
+		m.ResetCentralized()
+		return nil
+	case exchange.FieldPublicNotice:
+		m.ResetPublicNotice()
+		return nil
+	case exchange.FieldAlertNotice:
+		m.ResetAlertNotice()
+		return nil
+	case exchange.FieldTrustScore:
+		m.ResetTrustScore()
+		return nil
+	case exchange.FieldTrustScoreRank:
+		m.ResetTrustScoreRank()
+		return nil
+	case exchange.FieldTradeVolume24hBtc:
+		m.ResetTradeVolume24hBtc()
+		return nil
+	case exchange.FieldTradeVolume24hBtcNormalized:
+		m.ResetTradeVolume24hBtcNormalized()
+		return nil
+	}
 	return fmt.Errorf("unknown Exchange field %s", name)
 }
 
