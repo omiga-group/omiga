@@ -13,10 +13,19 @@ import (
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
+
+func NewTimeHelper() (time.TimeHelper, error) {
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	return timeHelper, nil
+}
 
 func NewMessageConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, topic string) (messaging.MessageConsumer, error) {
 	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarConfig, topic)

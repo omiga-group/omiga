@@ -58,15 +58,19 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
+			timeHelper, err := NewTimeHelper()
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
 			for {
 				if ctx.Err() == context.Canceled {
 					break
 				}
 
-				select {
-				case <-ctx.Done():
-				case <-time.After(time.Second):
-				}
+				timeHelper.SleepOrWaitForContextGetCancelled(
+					ctx,
+					time.Second)
 			}
 		},
 	}

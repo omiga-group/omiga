@@ -27,8 +27,16 @@ import (
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
+
+func NewTimeHelper() (time.TimeHelper, error) {
+	wire.Build(
+		time.NewTimeHelper)
+
+	return nil, nil
+}
 
 func NewMessageConsumer(
 	logger *zap.SugaredLogger,

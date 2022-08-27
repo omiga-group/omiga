@@ -28,8 +28,16 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
+
+func NewTimeHelper() (time.TimeHelper, error) {
+	wire.Build(
+		time.NewTimeHelper)
+
+	return nil, nil
+}
 
 func NewEntgoClient(
 	logger *zap.SugaredLogger,

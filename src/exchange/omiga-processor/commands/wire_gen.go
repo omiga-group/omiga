@@ -23,6 +23,14 @@ import (
 
 // Injectors from wire.go:
 
+func NewTimeHelper() (time.TimeHelper, error) {
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	return timeHelper, nil
+}
+
 func NewMessageConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, topic string) (messaging.MessageConsumer, error) {
 	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarConfig, topic)
 	if err != nil {

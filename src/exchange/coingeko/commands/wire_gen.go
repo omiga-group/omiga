@@ -19,6 +19,14 @@ import (
 
 // Injectors from wire.go:
 
+func NewTimeHelper() (time.TimeHelper, error) {
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	return timeHelper, nil
+}
+
 func NewCoingekoSubscriber(ctx context.Context, logger *zap.SugaredLogger, coingekoSettings configuration.CoingekoSettings, postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
 	timeHelper, err := time.NewTimeHelper()
 	if err != nil {

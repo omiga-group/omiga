@@ -31,6 +31,13 @@ import (
 	"go.uber.org/zap"
 )
 
+func NewTimeHelper() (time.TimeHelper, error) {
+	wire.Build(
+		time.NewTimeHelper)
+
+	return nil, nil
+}
+
 func NewCoingekoSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
