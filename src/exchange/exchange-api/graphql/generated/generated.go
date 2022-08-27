@@ -41,6 +41,7 @@ type Config struct {
 type ResolverRoot interface {
 	Exchange() ExchangeResolver
 	Query() QueryResolver
+	Ticker() TickerResolver
 	OutboxWhereInput() OutboxWhereInputResolver
 }
 
@@ -48,6 +49,12 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	ConvertedDetails struct {
+		Btc func(childComplexity int) int
+		Eth func(childComplexity int) int
+		Usd func(childComplexity int) int
+	}
+
 	Exchange struct {
 		AlertNotice                 func(childComplexity int) int
 		Centralized                 func(childComplexity int) int
@@ -59,6 +66,7 @@ type ComplexityRoot struct {
 		Links                       func(childComplexity int) int
 		Name                        func(childComplexity int) int
 		PublicNotice                func(childComplexity int) int
+		Tickers                     func(childComplexity int) int
 		TradeVolume24hBtc           func(childComplexity int) int
 		TradeVolume24hBtcNormalized func(childComplexity int) int
 		TrustScore                  func(childComplexity int) int
@@ -86,6 +94,12 @@ type ComplexityRoot struct {
 		Website  func(childComplexity int) int
 	}
 
+	Market struct {
+		HasTradingIncentive func(childComplexity int) int
+		Identifier          func(childComplexity int) int
+		Name                func(childComplexity int) int
+	}
+
 	PageInfo struct {
 		EndCursor       func(childComplexity int) int
 		HasNextPage     func(childComplexity int) int
@@ -99,6 +113,28 @@ type ComplexityRoot struct {
 		__resolve__service func(childComplexity int) int
 	}
 
+	Ticker struct {
+		Base                   func(childComplexity int) int
+		BidAskSpreadPercentage func(childComplexity int) int
+		CoinID                 func(childComplexity int) int
+		ConvertedLast          func(childComplexity int) int
+		ConvertedVolume        func(childComplexity int) int
+		ID                     func(childComplexity int) int
+		IsAnomaly              func(childComplexity int) int
+		IsStale                func(childComplexity int) int
+		Last                   func(childComplexity int) int
+		LastFetchAt            func(childComplexity int) int
+		LastTradedAt           func(childComplexity int) int
+		Market                 func(childComplexity int) int
+		Target                 func(childComplexity int) int
+		TargetCoinID           func(childComplexity int) int
+		Timestamp              func(childComplexity int) int
+		TokenInfoURL           func(childComplexity int) int
+		TradeURL               func(childComplexity int) int
+		TrustScore             func(childComplexity int) int
+		Volume                 func(childComplexity int) int
+	}
+
 	_Service struct {
 		SDL func(childComplexity int) int
 	}
@@ -106,10 +142,18 @@ type ComplexityRoot struct {
 
 type ExchangeResolver interface {
 	Links(ctx context.Context, obj *repositories.Exchange) (*models.Links, error)
+
+	Tickers(ctx context.Context, obj *repositories.Exchange) ([]*repositories.Ticker, error)
 }
 type QueryResolver interface {
 	Exchange(ctx context.Context, id int) (*repositories.Exchange, error)
 	Exchanges(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, orderBy []*repositories.ExchangeOrder, where *repositories.ExchangeWhereInput) (*repositories.ExchangeConnection, error)
+}
+type TickerResolver interface {
+	Market(ctx context.Context, obj *repositories.Ticker) (*models.Market, error)
+
+	ConvertedLast(ctx context.Context, obj *repositories.Ticker) (*models.ConvertedDetails, error)
+	ConvertedVolume(ctx context.Context, obj *repositories.Ticker) (*models.ConvertedDetails, error)
 }
 
 type OutboxWhereInputResolver interface {
@@ -133,6 +177,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "ConvertedDetails.btc":
+		if e.complexity.ConvertedDetails.Btc == nil {
+			break
+		}
+
+		return e.complexity.ConvertedDetails.Btc(childComplexity), true
+
+	case "ConvertedDetails.eth":
+		if e.complexity.ConvertedDetails.Eth == nil {
+			break
+		}
+
+		return e.complexity.ConvertedDetails.Eth(childComplexity), true
+
+	case "ConvertedDetails.usd":
+		if e.complexity.ConvertedDetails.Usd == nil {
+			break
+		}
+
+		return e.complexity.ConvertedDetails.Usd(childComplexity), true
 
 	case "Exchange.alertNotice":
 		if e.complexity.Exchange.AlertNotice == nil {
@@ -203,6 +268,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exchange.PublicNotice(childComplexity), true
+
+	case "Exchange.tickers":
+		if e.complexity.Exchange.Tickers == nil {
+			break
+		}
+
+		return e.complexity.Exchange.Tickers(childComplexity), true
 
 	case "Exchange.tradeVolume24hBtc":
 		if e.complexity.Exchange.TradeVolume24hBtc == nil {
@@ -316,6 +388,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Links.Website(childComplexity), true
 
+	case "Market.hasTradingIncentive":
+		if e.complexity.Market.HasTradingIncentive == nil {
+			break
+		}
+
+		return e.complexity.Market.HasTradingIncentive(childComplexity), true
+
+	case "Market.identifier":
+		if e.complexity.Market.Identifier == nil {
+			break
+		}
+
+		return e.complexity.Market.Identifier(childComplexity), true
+
+	case "Market.name":
+		if e.complexity.Market.Name == nil {
+			break
+		}
+
+		return e.complexity.Market.Name(childComplexity), true
+
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
 			break
@@ -374,6 +467,139 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.__resolve__service(childComplexity), true
+
+	case "Ticker.base":
+		if e.complexity.Ticker.Base == nil {
+			break
+		}
+
+		return e.complexity.Ticker.Base(childComplexity), true
+
+	case "Ticker.bidAskSpreadPercentage":
+		if e.complexity.Ticker.BidAskSpreadPercentage == nil {
+			break
+		}
+
+		return e.complexity.Ticker.BidAskSpreadPercentage(childComplexity), true
+
+	case "Ticker.coinId":
+		if e.complexity.Ticker.CoinID == nil {
+			break
+		}
+
+		return e.complexity.Ticker.CoinID(childComplexity), true
+
+	case "Ticker.convertedLast":
+		if e.complexity.Ticker.ConvertedLast == nil {
+			break
+		}
+
+		return e.complexity.Ticker.ConvertedLast(childComplexity), true
+
+	case "Ticker.convertedVolume":
+		if e.complexity.Ticker.ConvertedVolume == nil {
+			break
+		}
+
+		return e.complexity.Ticker.ConvertedVolume(childComplexity), true
+
+	case "Ticker.id":
+		if e.complexity.Ticker.ID == nil {
+			break
+		}
+
+		return e.complexity.Ticker.ID(childComplexity), true
+
+	case "Ticker.isAnomaly":
+		if e.complexity.Ticker.IsAnomaly == nil {
+			break
+		}
+
+		return e.complexity.Ticker.IsAnomaly(childComplexity), true
+
+	case "Ticker.isStale":
+		if e.complexity.Ticker.IsStale == nil {
+			break
+		}
+
+		return e.complexity.Ticker.IsStale(childComplexity), true
+
+	case "Ticker.last":
+		if e.complexity.Ticker.Last == nil {
+			break
+		}
+
+		return e.complexity.Ticker.Last(childComplexity), true
+
+	case "Ticker.lastFetchAt":
+		if e.complexity.Ticker.LastFetchAt == nil {
+			break
+		}
+
+		return e.complexity.Ticker.LastFetchAt(childComplexity), true
+
+	case "Ticker.lastTradedAt":
+		if e.complexity.Ticker.LastTradedAt == nil {
+			break
+		}
+
+		return e.complexity.Ticker.LastTradedAt(childComplexity), true
+
+	case "Ticker.market":
+		if e.complexity.Ticker.Market == nil {
+			break
+		}
+
+		return e.complexity.Ticker.Market(childComplexity), true
+
+	case "Ticker.target":
+		if e.complexity.Ticker.Target == nil {
+			break
+		}
+
+		return e.complexity.Ticker.Target(childComplexity), true
+
+	case "Ticker.targetCoinId":
+		if e.complexity.Ticker.TargetCoinID == nil {
+			break
+		}
+
+		return e.complexity.Ticker.TargetCoinID(childComplexity), true
+
+	case "Ticker.timestamp":
+		if e.complexity.Ticker.Timestamp == nil {
+			break
+		}
+
+		return e.complexity.Ticker.Timestamp(childComplexity), true
+
+	case "Ticker.tokenInfoUrl":
+		if e.complexity.Ticker.TokenInfoURL == nil {
+			break
+		}
+
+		return e.complexity.Ticker.TokenInfoURL(childComplexity), true
+
+	case "Ticker.tradeUrl":
+		if e.complexity.Ticker.TradeURL == nil {
+			break
+		}
+
+		return e.complexity.Ticker.TradeURL(childComplexity), true
+
+	case "Ticker.trustScore":
+		if e.complexity.Ticker.TrustScore == nil {
+			break
+		}
+
+		return e.complexity.Ticker.TrustScore(childComplexity), true
+
+	case "Ticker.volume":
+		if e.complexity.Ticker.Volume == nil {
+			break
+		}
+
+		return e.complexity.Ticker.Volume(childComplexity), true
 
 	case "_Service.sdl":
 		if e.complexity._Service.SDL == nil {
@@ -564,6 +790,7 @@ type Exchange implements Node {
   trustScoreRank: Int
   tradeVolume24hBtc: Float
   tradeVolume24hBtcNormalized: Float
+  tickers: [Ticker!]!
 }
 
 type Links {
@@ -573,6 +800,40 @@ type Links {
   twitter: String
   slack: String
   telegram: String
+}
+
+type Ticker implements Node {
+  id: ID!
+  base: String!
+  target: String!
+  market: Market
+  last: Float
+  volume: Float
+  convertedLast: ConvertedDetails
+  convertedVolume: ConvertedDetails
+  trustScore: String
+  bidAskSpreadPercentage: Float
+  timestamp: Time
+  lastTradedAt: Time
+  lastFetchAt: Time
+  isAnomaly: Boolean
+  isStale: Boolean
+  tradeUrl: String
+  tokenInfoUrl: String
+  coinId: String
+  targetCoinId: String
+}
+
+type Market {
+  hasTradingIncentive: Boolean!
+  identifier: String!
+  name: String
+}
+
+type ConvertedDetails {
+  btc: Float!
+  eth: Float!
+  usd: Float!
 }
 
 """
@@ -1242,6 +1503,138 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
+func (ec *executionContext) _ConvertedDetails_btc(ctx context.Context, field graphql.CollectedField, obj *models.ConvertedDetails) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ConvertedDetails_btc(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Btc, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ConvertedDetails_btc(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ConvertedDetails",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ConvertedDetails_eth(ctx context.Context, field graphql.CollectedField, obj *models.ConvertedDetails) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ConvertedDetails_eth(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Eth, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ConvertedDetails_eth(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ConvertedDetails",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ConvertedDetails_usd(ctx context.Context, field graphql.CollectedField, obj *models.ConvertedDetails) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ConvertedDetails_usd(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Usd, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ConvertedDetails_usd(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ConvertedDetails",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Exchange_id(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Exchange_id(ctx, field)
 	if err != nil {
@@ -1880,6 +2273,90 @@ func (ec *executionContext) fieldContext_Exchange_tradeVolume24hBtcNormalized(ct
 	return fc, nil
 }
 
+func (ec *executionContext) _Exchange_tickers(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_tickers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Exchange().Tickers(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*repositories.Ticker)
+	fc.Result = res
+	return ec.marshalNTicker2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐTickerᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_tickers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Ticker_id(ctx, field)
+			case "base":
+				return ec.fieldContext_Ticker_base(ctx, field)
+			case "target":
+				return ec.fieldContext_Ticker_target(ctx, field)
+			case "market":
+				return ec.fieldContext_Ticker_market(ctx, field)
+			case "last":
+				return ec.fieldContext_Ticker_last(ctx, field)
+			case "volume":
+				return ec.fieldContext_Ticker_volume(ctx, field)
+			case "convertedLast":
+				return ec.fieldContext_Ticker_convertedLast(ctx, field)
+			case "convertedVolume":
+				return ec.fieldContext_Ticker_convertedVolume(ctx, field)
+			case "trustScore":
+				return ec.fieldContext_Ticker_trustScore(ctx, field)
+			case "bidAskSpreadPercentage":
+				return ec.fieldContext_Ticker_bidAskSpreadPercentage(ctx, field)
+			case "timestamp":
+				return ec.fieldContext_Ticker_timestamp(ctx, field)
+			case "lastTradedAt":
+				return ec.fieldContext_Ticker_lastTradedAt(ctx, field)
+			case "lastFetchAt":
+				return ec.fieldContext_Ticker_lastFetchAt(ctx, field)
+			case "isAnomaly":
+				return ec.fieldContext_Ticker_isAnomaly(ctx, field)
+			case "isStale":
+				return ec.fieldContext_Ticker_isStale(ctx, field)
+			case "tradeUrl":
+				return ec.fieldContext_Ticker_tradeUrl(ctx, field)
+			case "tokenInfoUrl":
+				return ec.fieldContext_Ticker_tokenInfoUrl(ctx, field)
+			case "coinId":
+				return ec.fieldContext_Ticker_coinId(ctx, field)
+			case "targetCoinId":
+				return ec.fieldContext_Ticker_targetCoinId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Ticker", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ExchangeConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *repositories.ExchangeConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ExchangeConnection_pageInfo(ctx, field)
 	if err != nil {
@@ -2088,6 +2565,8 @@ func (ec *executionContext) fieldContext_ExchangeEdge_node(ctx context.Context, 
 				return ec.fieldContext_Exchange_tradeVolume24hBtc(ctx, field)
 			case "tradeVolume24hBtcNormalized":
 				return ec.fieldContext_Exchange_tradeVolume24hBtcNormalized(ctx, field)
+			case "tickers":
+				return ec.fieldContext_Exchange_tickers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Exchange", field.Name)
 		},
@@ -2385,6 +2864,135 @@ func (ec *executionContext) fieldContext_Links_telegram(ctx context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _Market_hasTradingIncentive(ctx context.Context, field graphql.CollectedField, obj *models.Market) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Market_hasTradingIncentive(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasTradingIncentive, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Market_hasTradingIncentive(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Market",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Market_identifier(ctx context.Context, field graphql.CollectedField, obj *models.Market) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Market_identifier(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Identifier, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Market_identifier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Market",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Market_name(ctx context.Context, field graphql.CollectedField, obj *models.Market) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Market_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Market_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Market",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PageInfo_hasNextPage(ctx context.Context, field graphql.CollectedField, obj *repositories.PageInfo) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_hasNextPage(ctx, field)
 	if err != nil {
@@ -2621,6 +3229,8 @@ func (ec *executionContext) fieldContext_Query_exchange(ctx context.Context, fie
 				return ec.fieldContext_Exchange_tradeVolume24hBtc(ctx, field)
 			case "tradeVolume24hBtcNormalized":
 				return ec.fieldContext_Exchange_tradeVolume24hBtcNormalized(ctx, field)
+			case "tickers":
+				return ec.fieldContext_Exchange_tickers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Exchange", field.Name)
 		},
@@ -2871,6 +3481,818 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_id(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_base(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_base(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Base, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_base(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_target(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_target(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Target, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_target(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_market(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_market(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Ticker().Market(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.Market)
+	fc.Result = res
+	return ec.marshalOMarket2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarket(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_market(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasTradingIncentive":
+				return ec.fieldContext_Market_hasTradingIncentive(ctx, field)
+			case "identifier":
+				return ec.fieldContext_Market_identifier(ctx, field)
+			case "name":
+				return ec.fieldContext_Market_name(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Market", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_last(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_last(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Last, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_last(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_volume(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_volume(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Volume, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_volume(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_convertedLast(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_convertedLast(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Ticker().ConvertedLast(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.ConvertedDetails)
+	fc.Result = res
+	return ec.marshalOConvertedDetails2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐConvertedDetails(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_convertedLast(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "btc":
+				return ec.fieldContext_ConvertedDetails_btc(ctx, field)
+			case "eth":
+				return ec.fieldContext_ConvertedDetails_eth(ctx, field)
+			case "usd":
+				return ec.fieldContext_ConvertedDetails_usd(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ConvertedDetails", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_convertedVolume(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_convertedVolume(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Ticker().ConvertedVolume(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.ConvertedDetails)
+	fc.Result = res
+	return ec.marshalOConvertedDetails2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐConvertedDetails(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_convertedVolume(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "btc":
+				return ec.fieldContext_ConvertedDetails_btc(ctx, field)
+			case "eth":
+				return ec.fieldContext_ConvertedDetails_eth(ctx, field)
+			case "usd":
+				return ec.fieldContext_ConvertedDetails_usd(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ConvertedDetails", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_trustScore(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_trustScore(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TrustScore, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_trustScore(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_bidAskSpreadPercentage(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_bidAskSpreadPercentage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BidAskSpreadPercentage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_bidAskSpreadPercentage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_timestamp(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_timestamp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Timestamp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_timestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_lastTradedAt(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_lastTradedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastTradedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_lastTradedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_lastFetchAt(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_lastFetchAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastFetchAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_lastFetchAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_isAnomaly(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_isAnomaly(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsAnomaly, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_isAnomaly(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_isStale(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_isStale(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsStale, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_isStale(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_tradeUrl(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_tradeUrl(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TradeURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_tradeUrl(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_tokenInfoUrl(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_tokenInfoUrl(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TokenInfoURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_tokenInfoUrl(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_coinId(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_coinId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CoinID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_coinId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Ticker_targetCoinId(ctx context.Context, field graphql.CollectedField, obj *repositories.Ticker) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Ticker_targetCoinId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TargetCoinID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Ticker_targetCoinId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Ticker",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -8075,6 +9497,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Exchange(ctx, sel, obj)
+	case *repositories.Ticker:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Ticker(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -8083,6 +9510,48 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var convertedDetailsImplementors = []string{"ConvertedDetails"}
+
+func (ec *executionContext) _ConvertedDetails(ctx context.Context, sel ast.SelectionSet, obj *models.ConvertedDetails) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, convertedDetailsImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ConvertedDetails")
+		case "btc":
+
+			out.Values[i] = ec._ConvertedDetails_btc(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "eth":
+
+			out.Values[i] = ec._ConvertedDetails_eth(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "usd":
+
+			out.Values[i] = ec._ConvertedDetails_usd(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
 
 var exchangeImplementors = []string{"Exchange", "Node"}
 
@@ -8176,6 +9645,26 @@ func (ec *executionContext) _Exchange(ctx context.Context, sel ast.SelectionSet,
 
 			out.Values[i] = ec._Exchange_tradeVolume24hBtcNormalized(ctx, field, obj)
 
+		case "tickers":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Exchange_tickers(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -8288,6 +9777,45 @@ func (ec *executionContext) _Links(ctx context.Context, sel ast.SelectionSet, ob
 		case "telegram":
 
 			out.Values[i] = ec._Links_telegram(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var marketImplementors = []string{"Market"}
+
+func (ec *executionContext) _Market(ctx context.Context, sel ast.SelectionSet, obj *models.Market) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, marketImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Market")
+		case "hasTradingIncentive":
+
+			out.Values[i] = ec._Market_hasTradingIncentive(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "identifier":
+
+			out.Values[i] = ec._Market_identifier(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+
+			out.Values[i] = ec._Market_name(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -8436,6 +9964,151 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var tickerImplementors = []string{"Ticker", "Node"}
+
+func (ec *executionContext) _Ticker(ctx context.Context, sel ast.SelectionSet, obj *repositories.Ticker) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tickerImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Ticker")
+		case "id":
+
+			out.Values[i] = ec._Ticker_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "base":
+
+			out.Values[i] = ec._Ticker_base(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "target":
+
+			out.Values[i] = ec._Ticker_target(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "market":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Ticker_market(ctx, field, obj)
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "last":
+
+			out.Values[i] = ec._Ticker_last(ctx, field, obj)
+
+		case "volume":
+
+			out.Values[i] = ec._Ticker_volume(ctx, field, obj)
+
+		case "convertedLast":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Ticker_convertedLast(ctx, field, obj)
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "convertedVolume":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Ticker_convertedVolume(ctx, field, obj)
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "trustScore":
+
+			out.Values[i] = ec._Ticker_trustScore(ctx, field, obj)
+
+		case "bidAskSpreadPercentage":
+
+			out.Values[i] = ec._Ticker_bidAskSpreadPercentage(ctx, field, obj)
+
+		case "timestamp":
+
+			out.Values[i] = ec._Ticker_timestamp(ctx, field, obj)
+
+		case "lastTradedAt":
+
+			out.Values[i] = ec._Ticker_lastTradedAt(ctx, field, obj)
+
+		case "lastFetchAt":
+
+			out.Values[i] = ec._Ticker_lastFetchAt(ctx, field, obj)
+
+		case "isAnomaly":
+
+			out.Values[i] = ec._Ticker_isAnomaly(ctx, field, obj)
+
+		case "isStale":
+
+			out.Values[i] = ec._Ticker_isStale(ctx, field, obj)
+
+		case "tradeUrl":
+
+			out.Values[i] = ec._Ticker_tradeUrl(ctx, field, obj)
+
+		case "tokenInfoUrl":
+
+			out.Values[i] = ec._Ticker_tokenInfoUrl(ctx, field, obj)
+
+		case "coinId":
+
+			out.Values[i] = ec._Ticker_coinId(ctx, field, obj)
+
+		case "targetCoinId":
+
+			out.Values[i] = ec._Ticker_targetCoinId(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -8929,6 +10602,60 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
+func (ec *executionContext) marshalNTicker2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐTickerᚄ(ctx context.Context, sel ast.SelectionSet, v []*repositories.Ticker) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTicker2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐTicker(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNTicker2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐTicker(ctx context.Context, sel ast.SelectionSet, v *repositories.Ticker) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Ticker(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNTickerWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐTickerWhereInput(ctx context.Context, v interface{}) (*repositories.TickerWhereInput, error) {
 	res, err := ec.unmarshalInputTickerWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -9245,6 +10972,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOConvertedDetails2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐConvertedDetails(ctx context.Context, sel ast.SelectionSet, v *models.ConvertedDetails) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ConvertedDetails(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐCursor(ctx context.Context, v interface{}) (*repositories.Cursor, error) {
@@ -9571,6 +11305,13 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
+func (ec *executionContext) marshalOMarket2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarket(ctx context.Context, sel ast.SelectionSet, v *models.Market) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Market(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOOutboxStatus2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐOutboxStatusᚄ(ctx context.Context, v interface{}) ([]models.OutboxStatus, error) {
 	if v == nil {
 		return nil, nil
@@ -9772,6 +11513,16 @@ func (ec *executionContext) unmarshalOTickerWhereInput2ᚖgithubᚗcomᚋomiga�
 	}
 	res, err := ec.unmarshalInputTickerWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {
+	res, err := graphql.UnmarshalTime(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
+	res := graphql.MarshalTime(v)
+	return res
 }
 
 func (ec *executionContext) unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx context.Context, v interface{}) ([]time.Time, error) {

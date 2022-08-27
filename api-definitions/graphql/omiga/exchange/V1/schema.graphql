@@ -123,6 +123,7 @@ type Exchange implements Node {
   trustScoreRank: Int
   tradeVolume24hBtc: Float
   tradeVolume24hBtcNormalized: Float
+  tickers: [Ticker!]!
 }
 
 type Links {
@@ -132,6 +133,40 @@ type Links {
   twitter: String
   slack: String
   telegram: String
+}
+
+type Ticker implements Node {
+  id: ID!
+  base: String!
+  target: String!
+  market: Market
+  last: Float
+  volume: Float
+  convertedLast: ConvertedDetails
+  convertedVolume: ConvertedDetails
+  trustScore: String
+  bidAskSpreadPercentage: Float
+  timestamp: Time
+  lastTradedAt: Time
+  lastFetchAt: Time
+  isAnomaly: Boolean
+  isStale: Boolean
+  tradeUrl: String
+  tokenInfoUrl: String
+  coinId: String
+  targetCoinId: String
+}
+
+type Market {
+  hasTradingIncentive: Boolean!
+  identifier: String!
+  name: String
+}
+
+type ConvertedDetails {
+  btc: Float!
+  eth: Float!
+  usd: Float!
 }
 
 """

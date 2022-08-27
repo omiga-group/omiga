@@ -11,6 +11,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/exchange-api/graphql/models"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 )
 
 // Links is the resolver for the links field.
@@ -42,6 +43,14 @@ func (r *exchangeResolver) Links(ctx context.Context, obj *repositories.Exchange
 	}
 
 	return &links, nil
+}
+
+// Tickers is the resolver for the tickers field.
+func (r *exchangeResolver) Tickers(ctx context.Context, obj *repositories.Exchange) ([]*repositories.Ticker, error) {
+	return r.client.Ticker.
+		Query().
+		Where(ticker.HasExchangeWith(exchange.IDEQ(obj.ID))).
+		All(ctx)
 }
 
 // Exchange is the resolver for the exchange field.
@@ -80,11 +89,42 @@ func (r *queryResolver) Exchanges(ctx context.Context, after *repositories.Curso
 			pageOrderAndFilter...)
 }
 
+// Market is the resolver for the market field.
+func (r *tickerResolver) Market(ctx context.Context, obj *repositories.Ticker) (*models.Market, error) {
+	return &models.Market{
+		HasTradingIncentive: obj.Market.HasTradingIncentive,
+		Identifier:          obj.Market.Identifier,
+		Name:                &obj.Market.Name,
+	}, nil
+}
+
+// ConvertedLast is the resolver for the convertedLast field.
+func (r *tickerResolver) ConvertedLast(ctx context.Context, obj *repositories.Ticker) (*models.ConvertedDetails, error) {
+	return &models.ConvertedDetails{
+		Btc: obj.ConvertedLast.Btc,
+		Eth: obj.ConvertedLast.Eth,
+		Usd: obj.ConvertedLast.Usd,
+	}, nil
+}
+
+// ConvertedVolume is the resolver for the convertedVolume field.
+func (r *tickerResolver) ConvertedVolume(ctx context.Context, obj *repositories.Ticker) (*models.ConvertedDetails, error) {
+	return &models.ConvertedDetails{
+		Btc: obj.ConvertedVolume.Btc,
+		Eth: obj.ConvertedVolume.Eth,
+		Usd: obj.ConvertedVolume.Usd,
+	}, nil
+}
+
 // Exchange returns generated.ExchangeResolver implementation.
 func (r *Resolver) Exchange() generated.ExchangeResolver { return &exchangeResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
+// Ticker returns generated.TickerResolver implementation.
+func (r *Resolver) Ticker() generated.TickerResolver { return &tickerResolver{r} }
+
 type exchangeResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type tickerResolver struct{ *Resolver }

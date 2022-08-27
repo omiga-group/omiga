@@ -5,6 +5,11 @@ schema {
 scalar Cursor
 scalar Time
 scalar UUID
+type ConvertedDetails {
+  btc: Float!
+  eth: Float!
+  usd: Float!
+}
 type Exchange implements Node {
   id: ID!
   exchangeId: String!
@@ -21,6 +26,7 @@ type Exchange implements Node {
   trustScoreRank: Int
   tradeVolume24hBtc: Float
   tradeVolume24hBtcNormalized: Float
+  tickers: [Ticker!]!
 }
 "A connection to a list of items."
 type ExchangeConnection {
@@ -45,6 +51,11 @@ type Links {
   twitter: String
   slack: String
   telegram: String
+}
+type Market {
+  hasTradingIncentive: Boolean!
+  identifier: String!
+  name: String
 }
 type Mutation {
   submitOrder(input: SubmitOrderInput!): OrderPayload
@@ -116,6 +127,27 @@ type Query {
     before: Cursor,
     "Returns the last n items from the list."
     last: Int,where: OrderWhereInput  ): OrderConnection
+}
+type Ticker implements Node {
+  id: ID!
+  base: String!
+  target: String!
+  market: Market
+  last: Float
+  volume: Float
+  convertedLast: ConvertedDetails
+  convertedVolume: ConvertedDetails
+  trustScore: String
+  bidAskSpreadPercentage: Float
+  timestamp: Time
+  lastTradedAt: Time
+  lastFetchAt: Time
+  isAnomaly: Boolean
+  isStale: Boolean
+  tradeUrl: String
+  tokenInfoUrl: String
+  coinId: String
+  targetCoinId: String
 }
 "An object with an ID"
 interface Node {

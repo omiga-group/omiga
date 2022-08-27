@@ -8,6 +8,12 @@ import (
 	"strconv"
 )
 
+type ConvertedDetails struct {
+	Btc float64 `json:"btc"`
+	Eth float64 `json:"eth"`
+	Usd float64 `json:"usd"`
+}
+
 type Links struct {
 	Website  *string `json:"website"`
 	Facebook *string `json:"facebook"`
@@ -15,6 +21,12 @@ type Links struct {
 	Twitter  *string `json:"twitter"`
 	Slack    *string `json:"slack"`
 	Telegram *string `json:"telegram"`
+}
+
+type Market struct {
+	HasTradingIncentive bool    `json:"hasTradingIncentive"`
+	Identifier          string  `json:"identifier"`
+	Name                *string `json:"name"`
 }
 
 type OutboxStatus string
