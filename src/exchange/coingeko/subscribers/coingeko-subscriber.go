@@ -4,9 +4,12 @@ import (
 	"context"
 	"time"
 
+	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
+	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 	coingekov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingeko/v3"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"go.uber.org/zap"
@@ -107,7 +110,9 @@ func (cs *coingekoSubscriber) Run() {
 		links["other1"] = exchangeDetails.OtherUrl1
 		links["other2"] = exchangeDetails.OtherUrl2
 
-		if err = cs.entgoClient.GetClient().Exchange.
+		client := cs.entgoClient.GetClient()
+
+		if err = client.Exchange.
 			Create().
 			SetExchangeID(exchangeIdName.Id).
 			SetName(exchangeDetails.Name).
@@ -127,6 +132,92 @@ func (cs *coingekoSubscriber) Run() {
 			UpdateNewValues().
 			Exec(cs.ctx); err != nil {
 			cs.logger.Errorf("Failed to save exchange details. Error: %v", err)
+
+			continue
+		}
+
+		tickers, err := client.Ticker.
+			Query().
+			Where(ticker.HasExchangeWith(exchange.ExchangeIDEQ(exchangeIdName.Id))).
+			All(cs.ctx)
+		if err != nil {
+			cs.logger.Errorf("Failed to fetch tickers for exchange Id: %s. Error: %v", exchangeIdName.Id, err)
+
+			continue
+		}
+
+		if exchangeDetails.Tickers != nil {
+			tickersToCreate := slices.Map(
+				*exchangeDetails.Tickers,
+				func(ticker coingekov3.Ticker) *repositories.TickerCreate {
+					return client.Ticker.
+						Create().
+						SetBase(ticker.Base).
+						SetTarget(ticker.Target).
+						SetMarket(models.Market{
+							HasTradingIncentive: *ticker.Market.HasTradingIncentive,
+							Identifier:          *ticker.Market.Identifier,
+							Name:                *ticker.Market.Name,
+						}).
+						SetLast(ticker.Last).
+						SetVolume(ticker.Volume).
+						SetConvertedLast(models.ConvertedDetails{
+							Btc: *ticker.ConvertedLast.Btc,
+							Eth: *ticker.ConvertedLast.Eth,
+							Usd: *ticker.ConvertedLast.Usd,
+						}).
+						SetConvertedVolume(models.ConvertedDetails{
+							Btc: *ticker.ConvertedVolume.Btc,
+							Eth: *ticker.ConvertedVolume.Eth,
+							Usd: *ticker.ConvertedVolume.Usd,
+						}).
+						SetTrustScore(ticker.TrustScore).
+						SetBidAskSpreadPercentage(ticker.BidAskSpreadPercentage).
+						SetTimestamp(ticker.Timestamp).
+						SetLastTradedAt(ticker.LastTradedAt).
+						SetLastFetchAt(ticker.LastFetchAt).
+						SetIsAnomaly(ticker.IsAnomaly).
+						SetIsStale(ticker.IsStale).
+						SetTradeURL(ticker.TradeUrl).
+						SetTokenInfoURL(*ticker.TokenInfoUrl).
+						SetCoinID(ticker.CoinId).
+						SetTargetCoinID(ticker.TargetCoinId)
+				})
+
+			if err = client.Ticker.
+				CreateBulk(tickersToCreate...).
+				OnConflictColumns(ticker.FieldBase, ticker.FieldTarget).
+				UpdateNewValues().
+				Exec(cs.ctx); err != nil {
+				cs.logger.Errorf("Failed to save tickers for exchange Id: %s. Error: %v", exchangeIdName.Id, err)
+
+				continue
+			}
+		}
+
+		tickersToDelete := slices.Filter(
+			tickers,
+			func(existingTicker *repositories.Ticker) bool {
+				if exchangeDetails.Tickers == nil {
+					return true
+				}
+
+				return !slices.Any(*exchangeDetails.Tickers, func(ticker coingekov3.Ticker) bool {
+					return ticker.Base == existingTicker.Base && ticker.Target == existingTicker.Target
+				})
+			})
+
+		tickerIdsToDelete := slices.Map(
+			tickersToDelete,
+			func(ticker *repositories.Ticker) int {
+				return ticker.ID
+			})
+
+		if _, err = client.Ticker.
+			Delete().
+			Where(ticker.IDIn(tickerIdsToDelete...)).
+			Exec(cs.ctx); err != nil {
+			cs.logger.Errorf("Failed to delete old tickers for exchange Id: %s. Error: %v", exchangeIdName.Id, err)
 
 			continue
 		}

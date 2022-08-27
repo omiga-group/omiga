@@ -15,6 +15,7 @@ require (
 	github.com/gorilla/websocket v1.5.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/jackc/pgx/v4 v4.17.0
+	github.com/life4/genesis v1.1.0
 	github.com/lucsky/cuid v1.2.1
 	github.com/micro-business/go-core v0.6.3
 	github.com/onsi/ginkgo v1.16.5

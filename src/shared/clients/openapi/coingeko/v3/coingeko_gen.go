@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
 )
@@ -103,7 +104,7 @@ type Project struct {
 // StatusUpdate defines model for statusUpdate.
 type StatusUpdate struct {
 	Category             string                 `json:"category"`
-	CreatedAt            string                 `json:"created_at"`
+	CreatedAt            time.Time              `json:"created_at"`
 	Description          string                 `json:"description"`
 	Pin                  bool                   `json:"pin"`
 	Project              *Project               `json:"project,omitempty"`
@@ -122,12 +123,12 @@ type Ticker struct {
 	IsAnomaly              bool                   `json:"is_anomaly"`
 	IsStale                bool                   `json:"is_stale"`
 	Last                   float64                `json:"last"`
-	LastFetchAt            string                 `json:"last_fetch_at"`
-	LastTradedAt           string                 `json:"last_traded_at"`
+	LastFetchAt            time.Time              `json:"last_fetch_at"`
+	LastTradedAt           time.Time              `json:"last_traded_at"`
 	Market                 Market                 `json:"market"`
 	Target                 string                 `json:"target"`
 	TargetCoinId           string                 `json:"target_coin_id"`
-	Timestamp              string                 `json:"timestamp"`
+	Timestamp              time.Time              `json:"timestamp"`
 	TokenInfoUrl           *string                `json:"token_info_url,omitempty"`
 	TradeUrl               string                 `json:"trade_url"`
 	TrustScore             string                 `json:"trust_score"`
