@@ -31,7 +31,7 @@ jobs:
               - 'src/go.mod'
               - 'src/go.sum'
               - 'src/shared/**'
-              - 'src/exchange/shared/**'
+              - 'src/exchange/shared/repositories/**'
 
       - name: Install GitVersion
         if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
