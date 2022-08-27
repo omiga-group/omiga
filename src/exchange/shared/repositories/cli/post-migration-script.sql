@@ -15,9 +15,6 @@ BEGIN
 		UNIQUE (base, target, exchange_ticker); 
 	END IF;
 
-	CREATE INDEX IF NOT EXISTS ticker_exchange_ticker ON
-	public.tickers USING btree (exchange_ticker);
-
 	COMMIT;
 END
 $do$
