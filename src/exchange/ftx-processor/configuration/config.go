@@ -11,9 +11,14 @@ type Config struct {
 
 type FtxConfig struct {
 	WebsocketUrl string    `yaml:"websocketUrl" env:"OMIGA_FTX_WEBSOCKETURL"`
-	OrderBook    OrderBook `yaml:"orderBook" env:"OMIGA_FTX_ORDERBOOK"`
+	OrderBook    OrderBook `yaml:"orderBook"`
 }
 
 type OrderBook struct {
-	Markets []string `yaml:"markets" env:"OMIGA_FTX_ORDERBOOK_MARKETS"`
+	Markets []MarketConfig `yaml:"markets"`
+}
+
+type MarketConfig struct {
+	Market    string `yaml:"market"`
+	PurgeTime string `yaml:"purgeTime"`
 }

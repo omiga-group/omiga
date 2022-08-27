@@ -7,4 +7,5 @@ ftx:
   websocketUrl: "wss://ftx.com/ws/"
   orderBook:
     markets:
-      - ETH-PERP
+      - market: ETH-PERP
+        purgeTime: 30m

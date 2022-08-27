@@ -44,8 +44,8 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	return consumer, nil
 }
 
-func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, binanceConfig configuration.BinanceConfig, symbol string) (subscribers.BinanceOrderBookSubscriber, error) {
-	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, symbol)
+func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, binanceConfig configuration.BinanceConfig, symbolConfig configuration.SymbolConfig) (subscribers.BinanceOrderBookSubscriber, error) {
+	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, symbolConfig)
 	if err != nil {
 		return nil, err
 	}

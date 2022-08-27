@@ -2,9 +2,11 @@ package subscribers
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"github.com/adshao/go-binance/v2"
+	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
 	"go.uber.org/zap"
 )
@@ -12,22 +14,37 @@ import (
 type BinanceOrderBookSubscriber interface {
 }
 
+type BinanceOrderBookEntry struct {
+	Time time.Time
+	Bid  *binance.Bid
+	Ask  *binance.Ask
+}
+
 type binanceOrderBookSubscriber struct {
-	logger *zap.SugaredLogger
-	symbol string
+	logger           *zap.SugaredLogger
+	symbol           string
+	purgeTime        time.Duration
+	binanceOrderBook []BinanceOrderBookEntry
 }
 
 func NewBinanceOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	binanceConfig configuration.BinanceConfig,
-	symbol string) (BinanceOrderBookSubscriber, error) {
+	symbolConfig configuration.SymbolConfig) (BinanceOrderBookSubscriber, error) {
 
 	binance.UseTestnet = binanceConfig.UseTestnet
 
+	purgeTime, err := time.ParseDuration(symbolConfig.PurgeTime)
+	if err != nil {
+		return nil, err
+	}
+
 	instance := &binanceOrderBookSubscriber{
-		logger: logger,
-		symbol: symbol,
+		logger:           logger,
+		symbol:           symbolConfig.Symbol,
+		binanceOrderBook: make([]BinanceOrderBookEntry, 0),
+		purgeTime:        purgeTime,
 	}
 
 	go instance.run(ctx)
@@ -76,7 +93,35 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 		return
 	}
 
-	bobs.logger.Info(*event)
+	entryTime := time.UnixMilli(event.Time)
+
+	asks := slices.Map(event.Asks, func(ask binance.Ask) BinanceOrderBookEntry {
+		return BinanceOrderBookEntry{
+			Time: entryTime,
+			Ask:  &ask,
+			Bid:  nil,
+		}
+	})
+
+	bids := slices.Map(event.Bids, func(bid binance.Bid) BinanceOrderBookEntry {
+		return BinanceOrderBookEntry{
+			Time: entryTime,
+			Ask:  nil,
+			Bid:  &bid,
+		}
+	})
+
+	bobs.binanceOrderBook = slices.Concat(bobs.binanceOrderBook, asks, bids)
+
+	purgeTime := time.Now().Add(-1 * bobs.purgeTime)
+
+	bobs.binanceOrderBook = slices.Filter(bobs.binanceOrderBook, func(orderBookEntry BinanceOrderBookEntry) bool {
+		return orderBookEntry.Time.After(purgeTime)
+	})
+
+	sort.SliceStable(bobs.binanceOrderBook, func(i, j int) bool {
+		return bobs.binanceOrderBook[i].Time.Before(bobs.binanceOrderBook[j].Time)
+	})
 }
 
 func (bobs *binanceOrderBookSubscriber) wsErrorHandler(err error) {

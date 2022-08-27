@@ -59,7 +59,7 @@ func NewBinanceOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	binanceConfig configuration.BinanceConfig,
-	symbol string) (subscribers.BinanceOrderBookSubscriber, error) {
+	symbolConfig configuration.SymbolConfig) (subscribers.BinanceOrderBookSubscriber, error) {
 	wire.Build(subscribers.NewBinanceOrderBookSubscriber)
 
 	return nil, nil

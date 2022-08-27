@@ -68,12 +68,12 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			for _, market := range config.Ftx.OrderBook.Markets {
+			for _, marketConfig := range config.Ftx.OrderBook.Markets {
 				_, err = NewFtxOrderBookSubscriber(
 					ctx,
 					sugarLogger,
 					config.Ftx,
-					market)
+					marketConfig)
 				if err != nil {
 					sugarLogger.Fatal(err)
 				}

@@ -11,9 +11,14 @@ type Config struct {
 
 type BinanceConfig struct {
 	UseTestnet bool      `yaml:"useTestnet" env:"OMIGA_BINANCE_USETESTNET"`
-	OrderBook  OrderBook `yaml:"orderBook" env:"OMIGA_FTX_ORDERBOOK"`
+	OrderBook  OrderBook `yaml:"orderBook"`
 }
 
 type OrderBook struct {
-	Symbols []string `yaml:"symbols" env:"OMIGA_FTX_ORDERBOOK_SYMBOLS"`
+	Symbols []SymbolConfig `yaml:"symbols"`
+}
+
+type SymbolConfig struct {
+	Symbol    string `yaml:"symbol"`
+	PurgeTime string `yaml:"purgeTime"`
 }

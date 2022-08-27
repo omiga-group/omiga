@@ -7,4 +7,5 @@ binance:
   useTestnet: true
   orderBook:
     symbols:
-      - LTCBTC
+      - symbol: LTCBTC
+        purgeTime: 30m

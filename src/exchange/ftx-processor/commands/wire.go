@@ -59,7 +59,7 @@ func NewFtxOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	ftxConfig configuration.FtxConfig,
-	market string) (subscribers.FtxOrderBookSubscriber, error) {
+	marketConfig configuration.MarketConfig) (subscribers.FtxOrderBookSubscriber, error) {
 	wire.Build(subscribers.NewFtxOrderBookSubscriber)
 
 	return nil, nil
