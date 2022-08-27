@@ -118,7 +118,14 @@ func migrateCommand() *cobra.Command {
 
 				sugarLogger.Info("Applying post migration script...")
 
-				_, err = db.ExecContext(ctx, postMigrationScript)
+				database, err = NewDatabase(
+					sugarLogger,
+					config.Postgres)
+				if err != nil {
+					sugarLogger.Fatal(err)
+				}
+
+				_, err = database.GetDB().ExecContext(ctx, postMigrationScript)
 				if err != nil {
 					sugarLogger.Fatal(err)
 				}

@@ -5,11 +5,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// 2) also why do you name the interface after the implementation?
-// 3) if you plan to alway use ent go why use an interface at all!
-// 4) and finally usually it is not a good practice to put interface and impementation next to each other unless you have a convincing reason
 type EntgoClient interface {
-	GetClient() *Client // 1) hey mori, why do you return the internal object that you are trying to abstract away, that defeats the purpose of the interface!
+	GetClient() *Client
 	Close()
 }
 

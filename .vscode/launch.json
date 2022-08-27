@@ -7,7 +7,7 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/exchange/shared/repositories/cli/main.go",
-      "args": ["migrate"]
+      "args": ["migrate", "--post-migration-script-path", "${workspaceFolder}/src/exchange/shared/repositories/cli/post-migration-script.sql"]
     },
     {
       "name": "Coingeko",
@@ -39,7 +39,7 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/order/shared/repositories/cli/main.go",
-      "args": ["migrate"]
+      "args": ["migrate", "--post-migration-script-path", "${workspaceFolder}/src/order/shared/repositories/cli/post-migration-script.sql"]
     },
     {
       "name": "Order API",
