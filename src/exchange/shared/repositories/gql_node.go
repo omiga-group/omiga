@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 	"golang.org/x/sync/semaphore"
 )
 
@@ -52,7 +53,7 @@ func (e *Exchange) Node(ctx context.Context) (node *Node, err error) {
 		ID:     e.ID,
 		Type:   "Exchange",
 		Fields: make([]*Field, 14),
-		Edges:  make([]*Edge, 0),
+		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(e.ExchangeID); err != nil {
@@ -167,6 +168,16 @@ func (e *Exchange) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "trade_volume_24h_btc_normalized",
 		Value: string(buf),
 	}
+	node.Edges[0] = &Edge{
+		Type: "Ticker",
+		Name: "ticker",
+	}
+	err = e.QueryTicker().
+		Select(ticker.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
 	return node, nil
 }
 
@@ -253,6 +264,171 @@ func (o *Outbox) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (t *Ticker) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     t.ID,
+		Type:   "Ticker",
+		Fields: make([]*Field, 18),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(t.Base); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "string",
+		Name:  "base",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.Target); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "string",
+		Name:  "target",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.Market); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "models.Market",
+		Name:  "market",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.Last); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "float64",
+		Name:  "last",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.Volume); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "float64",
+		Name:  "volume",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.ConvertedLast); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "models.ConvertedDetails",
+		Name:  "converted_last",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.ConvertedVolume); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "models.ConvertedDetails",
+		Name:  "converted_volume",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.TrustScore); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "string",
+		Name:  "trust_score",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.BidAskSpreadPercentage); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "float64",
+		Name:  "bid_ask_spread_percentage",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.Timestamp); err != nil {
+		return nil, err
+	}
+	node.Fields[9] = &Field{
+		Type:  "time.Time",
+		Name:  "timestamp",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.LastTradedAt); err != nil {
+		return nil, err
+	}
+	node.Fields[10] = &Field{
+		Type:  "time.Time",
+		Name:  "last_traded_at",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.LastFetchAt); err != nil {
+		return nil, err
+	}
+	node.Fields[11] = &Field{
+		Type:  "time.Time",
+		Name:  "last_fetch_at",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.IsAnomaly); err != nil {
+		return nil, err
+	}
+	node.Fields[12] = &Field{
+		Type:  "bool",
+		Name:  "is_anomaly",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.IsStale); err != nil {
+		return nil, err
+	}
+	node.Fields[13] = &Field{
+		Type:  "bool",
+		Name:  "is_stale",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.TradeURL); err != nil {
+		return nil, err
+	}
+	node.Fields[14] = &Field{
+		Type:  "string",
+		Name:  "trade_url",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.TokenInfoURL); err != nil {
+		return nil, err
+	}
+	node.Fields[15] = &Field{
+		Type:  "string",
+		Name:  "token_info_url",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.CoinID); err != nil {
+		return nil, err
+	}
+	node.Fields[16] = &Field{
+		Type:  "string",
+		Name:  "coin_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.TargetCoinID); err != nil {
+		return nil, err
+	}
+	node.Fields[17] = &Field{
+		Type:  "string",
+		Name:  "target_coin_id",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Exchange",
+		Name: "exchange",
+	}
+	err = t.QueryExchange().
+		Select(exchange.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (c *Client) Node(ctx context.Context, id int) (*Node, error) {
 	n, err := c.Noder(ctx, id)
 	if err != nil {
@@ -335,6 +511,18 @@ func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error)
 		query := c.Outbox.Query().
 			Where(outbox.ID(id))
 		query, err := query.CollectFields(ctx, "Outbox")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case ticker.Table:
+		query := c.Ticker.Query().
+			Where(ticker.ID(id))
+		query, err := query.CollectFields(ctx, "Ticker")
 		if err != nil {
 			return nil, err
 		}
@@ -436,6 +624,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 		query := c.Outbox.Query().
 			Where(outbox.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "Outbox")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case ticker.Table:
+		query := c.Ticker.Query().
+			Where(ticker.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Ticker")
 		if err != nil {
 			return nil, err
 		}

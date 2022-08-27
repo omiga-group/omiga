@@ -2,6 +2,8 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 )
@@ -20,20 +22,25 @@ func (Exchange) Fields() []ent.Field {
 		field.String("country").Optional(),
 		field.String("image").Optional(),
 		field.JSON("links", map[string]string{}).Optional(),
-		field.Bool("has_trading_incentive"),
-		field.Bool("centralized"),
-		field.String("public_notice"),
-		field.String("alert_notice"),
-		field.Int("trust_score"),
-		field.Int("trust_score_rank"),
-		field.Float("trade_volume_24h_btc"),
-		field.Float("trade_volume_24h_btc_normalized"),
+		field.Bool("has_trading_incentive").Optional(),
+		field.Bool("centralized").Optional(),
+		field.String("public_notice").Optional(),
+		field.String("alert_notice").Optional(),
+		field.Int("trust_score").Optional(),
+		field.Int("trust_score_rank").Optional(),
+		field.Float("trade_volume_24h_btc").Optional(),
+		field.Float("trade_volume_24h_btc_normalized").Optional(),
 	}
 }
 
 // Edges of the Exchange.
 func (Exchange) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+		edge.To("ticker", Ticker.Type).
+			Annotations(entsql.Annotation{
+				OnDelete: entsql.Cascade,
+			}),
+	}
 }
 
 func (Exchange) Indexes() []ent.Index {

@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -34,6 +35,7 @@ func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		exchange.Table: exchange.ValidColumn,
 		outbox.Table:   outbox.ValidColumn,
+		ticker.Table:   ticker.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

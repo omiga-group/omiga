@@ -35,8 +35,17 @@ const (
 	FieldTradeVolume24hBtc = "trade_volume_24h_btc"
 	// FieldTradeVolume24hBtcNormalized holds the string denoting the trade_volume_24h_btc_normalized field in the database.
 	FieldTradeVolume24hBtcNormalized = "trade_volume_24h_btc_normalized"
+	// EdgeTicker holds the string denoting the ticker edge name in mutations.
+	EdgeTicker = "ticker"
 	// Table holds the table name of the exchange in the database.
 	Table = "exchanges"
+	// TickerTable is the table that holds the ticker relation/edge.
+	TickerTable = "tickers"
+	// TickerInverseTable is the table name for the Ticker entity.
+	// It exists in this package in order to avoid circular dependency with the "ticker" package.
+	TickerInverseTable = "tickers"
+	// TickerColumn is the table column denoting the ticker relation/edge.
+	TickerColumn = "exchange_ticker"
 )
 
 // Columns holds all SQL columns for exchange fields.

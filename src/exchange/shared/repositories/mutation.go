@@ -9,9 +9,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/predicate"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 
 	"entgo.io/ent"
 )
@@ -27,6 +29,7 @@ const (
 	// Node types.
 	TypeExchange = "Exchange"
 	TypeOutbox   = "Outbox"
+	TypeTicker   = "Ticker"
 )
 
 // ExchangeMutation represents an operation that mutates the Exchange nodes in the graph.
@@ -55,6 +58,9 @@ type ExchangeMutation struct {
 	trade_volume_24h_btc_normalized    *float64
 	addtrade_volume_24h_btc_normalized *float64
 	clearedFields                      map[string]struct{}
+	ticker                             map[int]struct{}
+	removedticker                      map[int]struct{}
+	clearedticker                      bool
 	done                               bool
 	oldValue                           func(context.Context) (*Exchange, error)
 	predicates                         []predicate.Exchange
@@ -491,9 +497,22 @@ func (m *ExchangeMutation) OldHasTradingIncentive(ctx context.Context) (v bool, 
 	return oldValue.HasTradingIncentive, nil
 }
 
+// ClearHasTradingIncentive clears the value of the "has_trading_incentive" field.
+func (m *ExchangeMutation) ClearHasTradingIncentive() {
+	m.has_trading_incentive = nil
+	m.clearedFields[exchange.FieldHasTradingIncentive] = struct{}{}
+}
+
+// HasTradingIncentiveCleared returns if the "has_trading_incentive" field was cleared in this mutation.
+func (m *ExchangeMutation) HasTradingIncentiveCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldHasTradingIncentive]
+	return ok
+}
+
 // ResetHasTradingIncentive resets all changes to the "has_trading_incentive" field.
 func (m *ExchangeMutation) ResetHasTradingIncentive() {
 	m.has_trading_incentive = nil
+	delete(m.clearedFields, exchange.FieldHasTradingIncentive)
 }
 
 // SetCentralized sets the "centralized" field.
@@ -527,9 +546,22 @@ func (m *ExchangeMutation) OldCentralized(ctx context.Context) (v bool, err erro
 	return oldValue.Centralized, nil
 }
 
+// ClearCentralized clears the value of the "centralized" field.
+func (m *ExchangeMutation) ClearCentralized() {
+	m.centralized = nil
+	m.clearedFields[exchange.FieldCentralized] = struct{}{}
+}
+
+// CentralizedCleared returns if the "centralized" field was cleared in this mutation.
+func (m *ExchangeMutation) CentralizedCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldCentralized]
+	return ok
+}
+
 // ResetCentralized resets all changes to the "centralized" field.
 func (m *ExchangeMutation) ResetCentralized() {
 	m.centralized = nil
+	delete(m.clearedFields, exchange.FieldCentralized)
 }
 
 // SetPublicNotice sets the "public_notice" field.
@@ -563,9 +595,22 @@ func (m *ExchangeMutation) OldPublicNotice(ctx context.Context) (v string, err e
 	return oldValue.PublicNotice, nil
 }
 
+// ClearPublicNotice clears the value of the "public_notice" field.
+func (m *ExchangeMutation) ClearPublicNotice() {
+	m.public_notice = nil
+	m.clearedFields[exchange.FieldPublicNotice] = struct{}{}
+}
+
+// PublicNoticeCleared returns if the "public_notice" field was cleared in this mutation.
+func (m *ExchangeMutation) PublicNoticeCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldPublicNotice]
+	return ok
+}
+
 // ResetPublicNotice resets all changes to the "public_notice" field.
 func (m *ExchangeMutation) ResetPublicNotice() {
 	m.public_notice = nil
+	delete(m.clearedFields, exchange.FieldPublicNotice)
 }
 
 // SetAlertNotice sets the "alert_notice" field.
@@ -599,9 +644,22 @@ func (m *ExchangeMutation) OldAlertNotice(ctx context.Context) (v string, err er
 	return oldValue.AlertNotice, nil
 }
 
+// ClearAlertNotice clears the value of the "alert_notice" field.
+func (m *ExchangeMutation) ClearAlertNotice() {
+	m.alert_notice = nil
+	m.clearedFields[exchange.FieldAlertNotice] = struct{}{}
+}
+
+// AlertNoticeCleared returns if the "alert_notice" field was cleared in this mutation.
+func (m *ExchangeMutation) AlertNoticeCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldAlertNotice]
+	return ok
+}
+
 // ResetAlertNotice resets all changes to the "alert_notice" field.
 func (m *ExchangeMutation) ResetAlertNotice() {
 	m.alert_notice = nil
+	delete(m.clearedFields, exchange.FieldAlertNotice)
 }
 
 // SetTrustScore sets the "trust_score" field.
@@ -654,10 +712,24 @@ func (m *ExchangeMutation) AddedTrustScore() (r int, exists bool) {
 	return *v, true
 }
 
+// ClearTrustScore clears the value of the "trust_score" field.
+func (m *ExchangeMutation) ClearTrustScore() {
+	m.trust_score = nil
+	m.addtrust_score = nil
+	m.clearedFields[exchange.FieldTrustScore] = struct{}{}
+}
+
+// TrustScoreCleared returns if the "trust_score" field was cleared in this mutation.
+func (m *ExchangeMutation) TrustScoreCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldTrustScore]
+	return ok
+}
+
 // ResetTrustScore resets all changes to the "trust_score" field.
 func (m *ExchangeMutation) ResetTrustScore() {
 	m.trust_score = nil
 	m.addtrust_score = nil
+	delete(m.clearedFields, exchange.FieldTrustScore)
 }
 
 // SetTrustScoreRank sets the "trust_score_rank" field.
@@ -710,10 +782,24 @@ func (m *ExchangeMutation) AddedTrustScoreRank() (r int, exists bool) {
 	return *v, true
 }
 
+// ClearTrustScoreRank clears the value of the "trust_score_rank" field.
+func (m *ExchangeMutation) ClearTrustScoreRank() {
+	m.trust_score_rank = nil
+	m.addtrust_score_rank = nil
+	m.clearedFields[exchange.FieldTrustScoreRank] = struct{}{}
+}
+
+// TrustScoreRankCleared returns if the "trust_score_rank" field was cleared in this mutation.
+func (m *ExchangeMutation) TrustScoreRankCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldTrustScoreRank]
+	return ok
+}
+
 // ResetTrustScoreRank resets all changes to the "trust_score_rank" field.
 func (m *ExchangeMutation) ResetTrustScoreRank() {
 	m.trust_score_rank = nil
 	m.addtrust_score_rank = nil
+	delete(m.clearedFields, exchange.FieldTrustScoreRank)
 }
 
 // SetTradeVolume24hBtc sets the "trade_volume_24h_btc" field.
@@ -766,10 +852,24 @@ func (m *ExchangeMutation) AddedTradeVolume24hBtc() (r float64, exists bool) {
 	return *v, true
 }
 
+// ClearTradeVolume24hBtc clears the value of the "trade_volume_24h_btc" field.
+func (m *ExchangeMutation) ClearTradeVolume24hBtc() {
+	m.trade_volume_24h_btc = nil
+	m.addtrade_volume_24h_btc = nil
+	m.clearedFields[exchange.FieldTradeVolume24hBtc] = struct{}{}
+}
+
+// TradeVolume24hBtcCleared returns if the "trade_volume_24h_btc" field was cleared in this mutation.
+func (m *ExchangeMutation) TradeVolume24hBtcCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldTradeVolume24hBtc]
+	return ok
+}
+
 // ResetTradeVolume24hBtc resets all changes to the "trade_volume_24h_btc" field.
 func (m *ExchangeMutation) ResetTradeVolume24hBtc() {
 	m.trade_volume_24h_btc = nil
 	m.addtrade_volume_24h_btc = nil
+	delete(m.clearedFields, exchange.FieldTradeVolume24hBtc)
 }
 
 // SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
@@ -822,10 +922,78 @@ func (m *ExchangeMutation) AddedTradeVolume24hBtcNormalized() (r float64, exists
 	return *v, true
 }
 
+// ClearTradeVolume24hBtcNormalized clears the value of the "trade_volume_24h_btc_normalized" field.
+func (m *ExchangeMutation) ClearTradeVolume24hBtcNormalized() {
+	m.trade_volume_24h_btc_normalized = nil
+	m.addtrade_volume_24h_btc_normalized = nil
+	m.clearedFields[exchange.FieldTradeVolume24hBtcNormalized] = struct{}{}
+}
+
+// TradeVolume24hBtcNormalizedCleared returns if the "trade_volume_24h_btc_normalized" field was cleared in this mutation.
+func (m *ExchangeMutation) TradeVolume24hBtcNormalizedCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldTradeVolume24hBtcNormalized]
+	return ok
+}
+
 // ResetTradeVolume24hBtcNormalized resets all changes to the "trade_volume_24h_btc_normalized" field.
 func (m *ExchangeMutation) ResetTradeVolume24hBtcNormalized() {
 	m.trade_volume_24h_btc_normalized = nil
 	m.addtrade_volume_24h_btc_normalized = nil
+	delete(m.clearedFields, exchange.FieldTradeVolume24hBtcNormalized)
+}
+
+// AddTickerIDs adds the "ticker" edge to the Ticker entity by ids.
+func (m *ExchangeMutation) AddTickerIDs(ids ...int) {
+	if m.ticker == nil {
+		m.ticker = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.ticker[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTicker clears the "ticker" edge to the Ticker entity.
+func (m *ExchangeMutation) ClearTicker() {
+	m.clearedticker = true
+}
+
+// TickerCleared reports if the "ticker" edge to the Ticker entity was cleared.
+func (m *ExchangeMutation) TickerCleared() bool {
+	return m.clearedticker
+}
+
+// RemoveTickerIDs removes the "ticker" edge to the Ticker entity by IDs.
+func (m *ExchangeMutation) RemoveTickerIDs(ids ...int) {
+	if m.removedticker == nil {
+		m.removedticker = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.ticker, ids[i])
+		m.removedticker[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTicker returns the removed IDs of the "ticker" edge to the Ticker entity.
+func (m *ExchangeMutation) RemovedTickerIDs() (ids []int) {
+	for id := range m.removedticker {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TickerIDs returns the "ticker" edge IDs in the mutation.
+func (m *ExchangeMutation) TickerIDs() (ids []int) {
+	for id := range m.ticker {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTicker resets all changes to the "ticker" edge.
+func (m *ExchangeMutation) ResetTicker() {
+	m.ticker = nil
+	m.clearedticker = false
+	m.removedticker = nil
 }
 
 // Where appends a list predicates to the ExchangeMutation builder.
@@ -1178,6 +1346,30 @@ func (m *ExchangeMutation) ClearedFields() []string {
 	if m.FieldCleared(exchange.FieldLinks) {
 		fields = append(fields, exchange.FieldLinks)
 	}
+	if m.FieldCleared(exchange.FieldHasTradingIncentive) {
+		fields = append(fields, exchange.FieldHasTradingIncentive)
+	}
+	if m.FieldCleared(exchange.FieldCentralized) {
+		fields = append(fields, exchange.FieldCentralized)
+	}
+	if m.FieldCleared(exchange.FieldPublicNotice) {
+		fields = append(fields, exchange.FieldPublicNotice)
+	}
+	if m.FieldCleared(exchange.FieldAlertNotice) {
+		fields = append(fields, exchange.FieldAlertNotice)
+	}
+	if m.FieldCleared(exchange.FieldTrustScore) {
+		fields = append(fields, exchange.FieldTrustScore)
+	}
+	if m.FieldCleared(exchange.FieldTrustScoreRank) {
+		fields = append(fields, exchange.FieldTrustScoreRank)
+	}
+	if m.FieldCleared(exchange.FieldTradeVolume24hBtc) {
+		fields = append(fields, exchange.FieldTradeVolume24hBtc)
+	}
+	if m.FieldCleared(exchange.FieldTradeVolume24hBtcNormalized) {
+		fields = append(fields, exchange.FieldTradeVolume24hBtcNormalized)
+	}
 	return fields
 }
 
@@ -1206,6 +1398,30 @@ func (m *ExchangeMutation) ClearField(name string) error {
 		return nil
 	case exchange.FieldLinks:
 		m.ClearLinks()
+		return nil
+	case exchange.FieldHasTradingIncentive:
+		m.ClearHasTradingIncentive()
+		return nil
+	case exchange.FieldCentralized:
+		m.ClearCentralized()
+		return nil
+	case exchange.FieldPublicNotice:
+		m.ClearPublicNotice()
+		return nil
+	case exchange.FieldAlertNotice:
+		m.ClearAlertNotice()
+		return nil
+	case exchange.FieldTrustScore:
+		m.ClearTrustScore()
+		return nil
+	case exchange.FieldTrustScoreRank:
+		m.ClearTrustScoreRank()
+		return nil
+	case exchange.FieldTradeVolume24hBtc:
+		m.ClearTradeVolume24hBtc()
+		return nil
+	case exchange.FieldTradeVolume24hBtcNormalized:
+		m.ClearTradeVolume24hBtcNormalized()
 		return nil
 	}
 	return fmt.Errorf("unknown Exchange nullable field %s", name)
@@ -1263,49 +1479,85 @@ func (m *ExchangeMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ExchangeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.ticker != nil {
+		edges = append(edges, exchange.EdgeTicker)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *ExchangeMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case exchange.EdgeTicker:
+		ids := make([]ent.Value, 0, len(m.ticker))
+		for id := range m.ticker {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ExchangeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedticker != nil {
+		edges = append(edges, exchange.EdgeTicker)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *ExchangeMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case exchange.EdgeTicker:
+		ids := make([]ent.Value, 0, len(m.removedticker))
+		for id := range m.removedticker {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ExchangeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedticker {
+		edges = append(edges, exchange.EdgeTicker)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *ExchangeMutation) EdgeCleared(name string) bool {
+	switch name {
+	case exchange.EdgeTicker:
+		return m.clearedticker
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *ExchangeMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Exchange unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *ExchangeMutation) ResetEdge(name string) error {
+	switch name {
+	case exchange.EdgeTicker:
+		m.ResetTicker()
+		return nil
+	}
 	return fmt.Errorf("unknown Exchange edge %s", name)
 }
 
@@ -2127,4 +2379,1445 @@ func (m *OutboxMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *OutboxMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Outbox edge %s", name)
+}
+
+// TickerMutation represents an operation that mutates the Ticker nodes in the graph.
+type TickerMutation struct {
+	config
+	op                           Op
+	typ                          string
+	id                           *int
+	base                         *string
+	target                       *string
+	market                       *models.Market
+	last                         *float64
+	addlast                      *float64
+	volume                       *float64
+	addvolume                    *float64
+	converted_last               *models.ConvertedDetails
+	converted_volume             *models.ConvertedDetails
+	trust_score                  *string
+	bid_ask_spread_percentage    *float64
+	addbid_ask_spread_percentage *float64
+	timestamp                    *time.Time
+	last_traded_at               *time.Time
+	last_fetch_at                *time.Time
+	is_anomaly                   *bool
+	is_stale                     *bool
+	trade_url                    *string
+	token_info_url               *string
+	coin_id                      *string
+	target_coin_id               *string
+	clearedFields                map[string]struct{}
+	exchange                     *int
+	clearedexchange              bool
+	done                         bool
+	oldValue                     func(context.Context) (*Ticker, error)
+	predicates                   []predicate.Ticker
+}
+
+var _ ent.Mutation = (*TickerMutation)(nil)
+
+// tickerOption allows management of the mutation configuration using functional options.
+type tickerOption func(*TickerMutation)
+
+// newTickerMutation creates new mutation for the Ticker entity.
+func newTickerMutation(c config, op Op, opts ...tickerOption) *TickerMutation {
+	m := &TickerMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTicker,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTickerID sets the ID field of the mutation.
+func withTickerID(id int) tickerOption {
+	return func(m *TickerMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Ticker
+		)
+		m.oldValue = func(ctx context.Context) (*Ticker, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Ticker.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTicker sets the old Ticker of the mutation.
+func withTicker(node *Ticker) tickerOption {
+	return func(m *TickerMutation) {
+		m.oldValue = func(context.Context) (*Ticker, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TickerMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TickerMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("repositories: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *TickerMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *TickerMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Ticker.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetBase sets the "base" field.
+func (m *TickerMutation) SetBase(s string) {
+	m.base = &s
+}
+
+// Base returns the value of the "base" field in the mutation.
+func (m *TickerMutation) Base() (r string, exists bool) {
+	v := m.base
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBase returns the old "base" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldBase(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBase is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBase requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBase: %w", err)
+	}
+	return oldValue.Base, nil
+}
+
+// ResetBase resets all changes to the "base" field.
+func (m *TickerMutation) ResetBase() {
+	m.base = nil
+}
+
+// SetTarget sets the "target" field.
+func (m *TickerMutation) SetTarget(s string) {
+	m.target = &s
+}
+
+// Target returns the value of the "target" field in the mutation.
+func (m *TickerMutation) Target() (r string, exists bool) {
+	v := m.target
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTarget returns the old "target" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldTarget(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTarget is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTarget requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTarget: %w", err)
+	}
+	return oldValue.Target, nil
+}
+
+// ResetTarget resets all changes to the "target" field.
+func (m *TickerMutation) ResetTarget() {
+	m.target = nil
+}
+
+// SetMarket sets the "market" field.
+func (m *TickerMutation) SetMarket(value models.Market) {
+	m.market = &value
+}
+
+// Market returns the value of the "market" field in the mutation.
+func (m *TickerMutation) Market() (r models.Market, exists bool) {
+	v := m.market
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMarket returns the old "market" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldMarket(ctx context.Context) (v models.Market, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMarket is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMarket requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMarket: %w", err)
+	}
+	return oldValue.Market, nil
+}
+
+// ResetMarket resets all changes to the "market" field.
+func (m *TickerMutation) ResetMarket() {
+	m.market = nil
+}
+
+// SetLast sets the "last" field.
+func (m *TickerMutation) SetLast(f float64) {
+	m.last = &f
+	m.addlast = nil
+}
+
+// Last returns the value of the "last" field in the mutation.
+func (m *TickerMutation) Last() (r float64, exists bool) {
+	v := m.last
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLast returns the old "last" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldLast(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLast is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLast requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLast: %w", err)
+	}
+	return oldValue.Last, nil
+}
+
+// AddLast adds f to the "last" field.
+func (m *TickerMutation) AddLast(f float64) {
+	if m.addlast != nil {
+		*m.addlast += f
+	} else {
+		m.addlast = &f
+	}
+}
+
+// AddedLast returns the value that was added to the "last" field in this mutation.
+func (m *TickerMutation) AddedLast() (r float64, exists bool) {
+	v := m.addlast
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLast resets all changes to the "last" field.
+func (m *TickerMutation) ResetLast() {
+	m.last = nil
+	m.addlast = nil
+}
+
+// SetVolume sets the "volume" field.
+func (m *TickerMutation) SetVolume(f float64) {
+	m.volume = &f
+	m.addvolume = nil
+}
+
+// Volume returns the value of the "volume" field in the mutation.
+func (m *TickerMutation) Volume() (r float64, exists bool) {
+	v := m.volume
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVolume returns the old "volume" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldVolume(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVolume is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVolume requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVolume: %w", err)
+	}
+	return oldValue.Volume, nil
+}
+
+// AddVolume adds f to the "volume" field.
+func (m *TickerMutation) AddVolume(f float64) {
+	if m.addvolume != nil {
+		*m.addvolume += f
+	} else {
+		m.addvolume = &f
+	}
+}
+
+// AddedVolume returns the value that was added to the "volume" field in this mutation.
+func (m *TickerMutation) AddedVolume() (r float64, exists bool) {
+	v := m.addvolume
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetVolume resets all changes to the "volume" field.
+func (m *TickerMutation) ResetVolume() {
+	m.volume = nil
+	m.addvolume = nil
+}
+
+// SetConvertedLast sets the "converted_last" field.
+func (m *TickerMutation) SetConvertedLast(md models.ConvertedDetails) {
+	m.converted_last = &md
+}
+
+// ConvertedLast returns the value of the "converted_last" field in the mutation.
+func (m *TickerMutation) ConvertedLast() (r models.ConvertedDetails, exists bool) {
+	v := m.converted_last
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldConvertedLast returns the old "converted_last" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldConvertedLast(ctx context.Context) (v models.ConvertedDetails, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldConvertedLast is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldConvertedLast requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldConvertedLast: %w", err)
+	}
+	return oldValue.ConvertedLast, nil
+}
+
+// ResetConvertedLast resets all changes to the "converted_last" field.
+func (m *TickerMutation) ResetConvertedLast() {
+	m.converted_last = nil
+}
+
+// SetConvertedVolume sets the "converted_volume" field.
+func (m *TickerMutation) SetConvertedVolume(md models.ConvertedDetails) {
+	m.converted_volume = &md
+}
+
+// ConvertedVolume returns the value of the "converted_volume" field in the mutation.
+func (m *TickerMutation) ConvertedVolume() (r models.ConvertedDetails, exists bool) {
+	v := m.converted_volume
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldConvertedVolume returns the old "converted_volume" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldConvertedVolume(ctx context.Context) (v models.ConvertedDetails, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldConvertedVolume is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldConvertedVolume requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldConvertedVolume: %w", err)
+	}
+	return oldValue.ConvertedVolume, nil
+}
+
+// ResetConvertedVolume resets all changes to the "converted_volume" field.
+func (m *TickerMutation) ResetConvertedVolume() {
+	m.converted_volume = nil
+}
+
+// SetTrustScore sets the "trust_score" field.
+func (m *TickerMutation) SetTrustScore(s string) {
+	m.trust_score = &s
+}
+
+// TrustScore returns the value of the "trust_score" field in the mutation.
+func (m *TickerMutation) TrustScore() (r string, exists bool) {
+	v := m.trust_score
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTrustScore returns the old "trust_score" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldTrustScore(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTrustScore is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTrustScore requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTrustScore: %w", err)
+	}
+	return oldValue.TrustScore, nil
+}
+
+// ResetTrustScore resets all changes to the "trust_score" field.
+func (m *TickerMutation) ResetTrustScore() {
+	m.trust_score = nil
+}
+
+// SetBidAskSpreadPercentage sets the "bid_ask_spread_percentage" field.
+func (m *TickerMutation) SetBidAskSpreadPercentage(f float64) {
+	m.bid_ask_spread_percentage = &f
+	m.addbid_ask_spread_percentage = nil
+}
+
+// BidAskSpreadPercentage returns the value of the "bid_ask_spread_percentage" field in the mutation.
+func (m *TickerMutation) BidAskSpreadPercentage() (r float64, exists bool) {
+	v := m.bid_ask_spread_percentage
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBidAskSpreadPercentage returns the old "bid_ask_spread_percentage" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldBidAskSpreadPercentage(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBidAskSpreadPercentage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBidAskSpreadPercentage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBidAskSpreadPercentage: %w", err)
+	}
+	return oldValue.BidAskSpreadPercentage, nil
+}
+
+// AddBidAskSpreadPercentage adds f to the "bid_ask_spread_percentage" field.
+func (m *TickerMutation) AddBidAskSpreadPercentage(f float64) {
+	if m.addbid_ask_spread_percentage != nil {
+		*m.addbid_ask_spread_percentage += f
+	} else {
+		m.addbid_ask_spread_percentage = &f
+	}
+}
+
+// AddedBidAskSpreadPercentage returns the value that was added to the "bid_ask_spread_percentage" field in this mutation.
+func (m *TickerMutation) AddedBidAskSpreadPercentage() (r float64, exists bool) {
+	v := m.addbid_ask_spread_percentage
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBidAskSpreadPercentage resets all changes to the "bid_ask_spread_percentage" field.
+func (m *TickerMutation) ResetBidAskSpreadPercentage() {
+	m.bid_ask_spread_percentage = nil
+	m.addbid_ask_spread_percentage = nil
+}
+
+// SetTimestamp sets the "timestamp" field.
+func (m *TickerMutation) SetTimestamp(t time.Time) {
+	m.timestamp = &t
+}
+
+// Timestamp returns the value of the "timestamp" field in the mutation.
+func (m *TickerMutation) Timestamp() (r time.Time, exists bool) {
+	v := m.timestamp
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimestamp returns the old "timestamp" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldTimestamp(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimestamp is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimestamp requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimestamp: %w", err)
+	}
+	return oldValue.Timestamp, nil
+}
+
+// ResetTimestamp resets all changes to the "timestamp" field.
+func (m *TickerMutation) ResetTimestamp() {
+	m.timestamp = nil
+}
+
+// SetLastTradedAt sets the "last_traded_at" field.
+func (m *TickerMutation) SetLastTradedAt(t time.Time) {
+	m.last_traded_at = &t
+}
+
+// LastTradedAt returns the value of the "last_traded_at" field in the mutation.
+func (m *TickerMutation) LastTradedAt() (r time.Time, exists bool) {
+	v := m.last_traded_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastTradedAt returns the old "last_traded_at" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldLastTradedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastTradedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastTradedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastTradedAt: %w", err)
+	}
+	return oldValue.LastTradedAt, nil
+}
+
+// ResetLastTradedAt resets all changes to the "last_traded_at" field.
+func (m *TickerMutation) ResetLastTradedAt() {
+	m.last_traded_at = nil
+}
+
+// SetLastFetchAt sets the "last_fetch_at" field.
+func (m *TickerMutation) SetLastFetchAt(t time.Time) {
+	m.last_fetch_at = &t
+}
+
+// LastFetchAt returns the value of the "last_fetch_at" field in the mutation.
+func (m *TickerMutation) LastFetchAt() (r time.Time, exists bool) {
+	v := m.last_fetch_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastFetchAt returns the old "last_fetch_at" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldLastFetchAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastFetchAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastFetchAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastFetchAt: %w", err)
+	}
+	return oldValue.LastFetchAt, nil
+}
+
+// ResetLastFetchAt resets all changes to the "last_fetch_at" field.
+func (m *TickerMutation) ResetLastFetchAt() {
+	m.last_fetch_at = nil
+}
+
+// SetIsAnomaly sets the "is_anomaly" field.
+func (m *TickerMutation) SetIsAnomaly(b bool) {
+	m.is_anomaly = &b
+}
+
+// IsAnomaly returns the value of the "is_anomaly" field in the mutation.
+func (m *TickerMutation) IsAnomaly() (r bool, exists bool) {
+	v := m.is_anomaly
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsAnomaly returns the old "is_anomaly" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldIsAnomaly(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsAnomaly is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsAnomaly requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsAnomaly: %w", err)
+	}
+	return oldValue.IsAnomaly, nil
+}
+
+// ResetIsAnomaly resets all changes to the "is_anomaly" field.
+func (m *TickerMutation) ResetIsAnomaly() {
+	m.is_anomaly = nil
+}
+
+// SetIsStale sets the "is_stale" field.
+func (m *TickerMutation) SetIsStale(b bool) {
+	m.is_stale = &b
+}
+
+// IsStale returns the value of the "is_stale" field in the mutation.
+func (m *TickerMutation) IsStale() (r bool, exists bool) {
+	v := m.is_stale
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsStale returns the old "is_stale" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldIsStale(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsStale is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsStale requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsStale: %w", err)
+	}
+	return oldValue.IsStale, nil
+}
+
+// ResetIsStale resets all changes to the "is_stale" field.
+func (m *TickerMutation) ResetIsStale() {
+	m.is_stale = nil
+}
+
+// SetTradeURL sets the "trade_url" field.
+func (m *TickerMutation) SetTradeURL(s string) {
+	m.trade_url = &s
+}
+
+// TradeURL returns the value of the "trade_url" field in the mutation.
+func (m *TickerMutation) TradeURL() (r string, exists bool) {
+	v := m.trade_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTradeURL returns the old "trade_url" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldTradeURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTradeURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTradeURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTradeURL: %w", err)
+	}
+	return oldValue.TradeURL, nil
+}
+
+// ClearTradeURL clears the value of the "trade_url" field.
+func (m *TickerMutation) ClearTradeURL() {
+	m.trade_url = nil
+	m.clearedFields[ticker.FieldTradeURL] = struct{}{}
+}
+
+// TradeURLCleared returns if the "trade_url" field was cleared in this mutation.
+func (m *TickerMutation) TradeURLCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldTradeURL]
+	return ok
+}
+
+// ResetTradeURL resets all changes to the "trade_url" field.
+func (m *TickerMutation) ResetTradeURL() {
+	m.trade_url = nil
+	delete(m.clearedFields, ticker.FieldTradeURL)
+}
+
+// SetTokenInfoURL sets the "token_info_url" field.
+func (m *TickerMutation) SetTokenInfoURL(s string) {
+	m.token_info_url = &s
+}
+
+// TokenInfoURL returns the value of the "token_info_url" field in the mutation.
+func (m *TickerMutation) TokenInfoURL() (r string, exists bool) {
+	v := m.token_info_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTokenInfoURL returns the old "token_info_url" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldTokenInfoURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTokenInfoURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTokenInfoURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTokenInfoURL: %w", err)
+	}
+	return oldValue.TokenInfoURL, nil
+}
+
+// ClearTokenInfoURL clears the value of the "token_info_url" field.
+func (m *TickerMutation) ClearTokenInfoURL() {
+	m.token_info_url = nil
+	m.clearedFields[ticker.FieldTokenInfoURL] = struct{}{}
+}
+
+// TokenInfoURLCleared returns if the "token_info_url" field was cleared in this mutation.
+func (m *TickerMutation) TokenInfoURLCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldTokenInfoURL]
+	return ok
+}
+
+// ResetTokenInfoURL resets all changes to the "token_info_url" field.
+func (m *TickerMutation) ResetTokenInfoURL() {
+	m.token_info_url = nil
+	delete(m.clearedFields, ticker.FieldTokenInfoURL)
+}
+
+// SetCoinID sets the "coin_id" field.
+func (m *TickerMutation) SetCoinID(s string) {
+	m.coin_id = &s
+}
+
+// CoinID returns the value of the "coin_id" field in the mutation.
+func (m *TickerMutation) CoinID() (r string, exists bool) {
+	v := m.coin_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCoinID returns the old "coin_id" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldCoinID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCoinID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCoinID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCoinID: %w", err)
+	}
+	return oldValue.CoinID, nil
+}
+
+// ResetCoinID resets all changes to the "coin_id" field.
+func (m *TickerMutation) ResetCoinID() {
+	m.coin_id = nil
+}
+
+// SetTargetCoinID sets the "target_coin_id" field.
+func (m *TickerMutation) SetTargetCoinID(s string) {
+	m.target_coin_id = &s
+}
+
+// TargetCoinID returns the value of the "target_coin_id" field in the mutation.
+func (m *TickerMutation) TargetCoinID() (r string, exists bool) {
+	v := m.target_coin_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTargetCoinID returns the old "target_coin_id" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldTargetCoinID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTargetCoinID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTargetCoinID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTargetCoinID: %w", err)
+	}
+	return oldValue.TargetCoinID, nil
+}
+
+// ResetTargetCoinID resets all changes to the "target_coin_id" field.
+func (m *TickerMutation) ResetTargetCoinID() {
+	m.target_coin_id = nil
+}
+
+// SetExchangeID sets the "exchange" edge to the Exchange entity by id.
+func (m *TickerMutation) SetExchangeID(id int) {
+	m.exchange = &id
+}
+
+// ClearExchange clears the "exchange" edge to the Exchange entity.
+func (m *TickerMutation) ClearExchange() {
+	m.clearedexchange = true
+}
+
+// ExchangeCleared reports if the "exchange" edge to the Exchange entity was cleared.
+func (m *TickerMutation) ExchangeCleared() bool {
+	return m.clearedexchange
+}
+
+// ExchangeID returns the "exchange" edge ID in the mutation.
+func (m *TickerMutation) ExchangeID() (id int, exists bool) {
+	if m.exchange != nil {
+		return *m.exchange, true
+	}
+	return
+}
+
+// ExchangeIDs returns the "exchange" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ExchangeID instead. It exists only for internal usage by the builders.
+func (m *TickerMutation) ExchangeIDs() (ids []int) {
+	if id := m.exchange; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetExchange resets all changes to the "exchange" edge.
+func (m *TickerMutation) ResetExchange() {
+	m.exchange = nil
+	m.clearedexchange = false
+}
+
+// Where appends a list predicates to the TickerMutation builder.
+func (m *TickerMutation) Where(ps ...predicate.Ticker) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *TickerMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Ticker).
+func (m *TickerMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TickerMutation) Fields() []string {
+	fields := make([]string, 0, 18)
+	if m.base != nil {
+		fields = append(fields, ticker.FieldBase)
+	}
+	if m.target != nil {
+		fields = append(fields, ticker.FieldTarget)
+	}
+	if m.market != nil {
+		fields = append(fields, ticker.FieldMarket)
+	}
+	if m.last != nil {
+		fields = append(fields, ticker.FieldLast)
+	}
+	if m.volume != nil {
+		fields = append(fields, ticker.FieldVolume)
+	}
+	if m.converted_last != nil {
+		fields = append(fields, ticker.FieldConvertedLast)
+	}
+	if m.converted_volume != nil {
+		fields = append(fields, ticker.FieldConvertedVolume)
+	}
+	if m.trust_score != nil {
+		fields = append(fields, ticker.FieldTrustScore)
+	}
+	if m.bid_ask_spread_percentage != nil {
+		fields = append(fields, ticker.FieldBidAskSpreadPercentage)
+	}
+	if m.timestamp != nil {
+		fields = append(fields, ticker.FieldTimestamp)
+	}
+	if m.last_traded_at != nil {
+		fields = append(fields, ticker.FieldLastTradedAt)
+	}
+	if m.last_fetch_at != nil {
+		fields = append(fields, ticker.FieldLastFetchAt)
+	}
+	if m.is_anomaly != nil {
+		fields = append(fields, ticker.FieldIsAnomaly)
+	}
+	if m.is_stale != nil {
+		fields = append(fields, ticker.FieldIsStale)
+	}
+	if m.trade_url != nil {
+		fields = append(fields, ticker.FieldTradeURL)
+	}
+	if m.token_info_url != nil {
+		fields = append(fields, ticker.FieldTokenInfoURL)
+	}
+	if m.coin_id != nil {
+		fields = append(fields, ticker.FieldCoinID)
+	}
+	if m.target_coin_id != nil {
+		fields = append(fields, ticker.FieldTargetCoinID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TickerMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case ticker.FieldBase:
+		return m.Base()
+	case ticker.FieldTarget:
+		return m.Target()
+	case ticker.FieldMarket:
+		return m.Market()
+	case ticker.FieldLast:
+		return m.Last()
+	case ticker.FieldVolume:
+		return m.Volume()
+	case ticker.FieldConvertedLast:
+		return m.ConvertedLast()
+	case ticker.FieldConvertedVolume:
+		return m.ConvertedVolume()
+	case ticker.FieldTrustScore:
+		return m.TrustScore()
+	case ticker.FieldBidAskSpreadPercentage:
+		return m.BidAskSpreadPercentage()
+	case ticker.FieldTimestamp:
+		return m.Timestamp()
+	case ticker.FieldLastTradedAt:
+		return m.LastTradedAt()
+	case ticker.FieldLastFetchAt:
+		return m.LastFetchAt()
+	case ticker.FieldIsAnomaly:
+		return m.IsAnomaly()
+	case ticker.FieldIsStale:
+		return m.IsStale()
+	case ticker.FieldTradeURL:
+		return m.TradeURL()
+	case ticker.FieldTokenInfoURL:
+		return m.TokenInfoURL()
+	case ticker.FieldCoinID:
+		return m.CoinID()
+	case ticker.FieldTargetCoinID:
+		return m.TargetCoinID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TickerMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case ticker.FieldBase:
+		return m.OldBase(ctx)
+	case ticker.FieldTarget:
+		return m.OldTarget(ctx)
+	case ticker.FieldMarket:
+		return m.OldMarket(ctx)
+	case ticker.FieldLast:
+		return m.OldLast(ctx)
+	case ticker.FieldVolume:
+		return m.OldVolume(ctx)
+	case ticker.FieldConvertedLast:
+		return m.OldConvertedLast(ctx)
+	case ticker.FieldConvertedVolume:
+		return m.OldConvertedVolume(ctx)
+	case ticker.FieldTrustScore:
+		return m.OldTrustScore(ctx)
+	case ticker.FieldBidAskSpreadPercentage:
+		return m.OldBidAskSpreadPercentage(ctx)
+	case ticker.FieldTimestamp:
+		return m.OldTimestamp(ctx)
+	case ticker.FieldLastTradedAt:
+		return m.OldLastTradedAt(ctx)
+	case ticker.FieldLastFetchAt:
+		return m.OldLastFetchAt(ctx)
+	case ticker.FieldIsAnomaly:
+		return m.OldIsAnomaly(ctx)
+	case ticker.FieldIsStale:
+		return m.OldIsStale(ctx)
+	case ticker.FieldTradeURL:
+		return m.OldTradeURL(ctx)
+	case ticker.FieldTokenInfoURL:
+		return m.OldTokenInfoURL(ctx)
+	case ticker.FieldCoinID:
+		return m.OldCoinID(ctx)
+	case ticker.FieldTargetCoinID:
+		return m.OldTargetCoinID(ctx)
+	}
+	return nil, fmt.Errorf("unknown Ticker field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TickerMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case ticker.FieldBase:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBase(v)
+		return nil
+	case ticker.FieldTarget:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTarget(v)
+		return nil
+	case ticker.FieldMarket:
+		v, ok := value.(models.Market)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMarket(v)
+		return nil
+	case ticker.FieldLast:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLast(v)
+		return nil
+	case ticker.FieldVolume:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVolume(v)
+		return nil
+	case ticker.FieldConvertedLast:
+		v, ok := value.(models.ConvertedDetails)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetConvertedLast(v)
+		return nil
+	case ticker.FieldConvertedVolume:
+		v, ok := value.(models.ConvertedDetails)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetConvertedVolume(v)
+		return nil
+	case ticker.FieldTrustScore:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTrustScore(v)
+		return nil
+	case ticker.FieldBidAskSpreadPercentage:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBidAskSpreadPercentage(v)
+		return nil
+	case ticker.FieldTimestamp:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimestamp(v)
+		return nil
+	case ticker.FieldLastTradedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastTradedAt(v)
+		return nil
+	case ticker.FieldLastFetchAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastFetchAt(v)
+		return nil
+	case ticker.FieldIsAnomaly:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsAnomaly(v)
+		return nil
+	case ticker.FieldIsStale:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsStale(v)
+		return nil
+	case ticker.FieldTradeURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTradeURL(v)
+		return nil
+	case ticker.FieldTokenInfoURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTokenInfoURL(v)
+		return nil
+	case ticker.FieldCoinID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCoinID(v)
+		return nil
+	case ticker.FieldTargetCoinID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTargetCoinID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Ticker field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TickerMutation) AddedFields() []string {
+	var fields []string
+	if m.addlast != nil {
+		fields = append(fields, ticker.FieldLast)
+	}
+	if m.addvolume != nil {
+		fields = append(fields, ticker.FieldVolume)
+	}
+	if m.addbid_ask_spread_percentage != nil {
+		fields = append(fields, ticker.FieldBidAskSpreadPercentage)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TickerMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case ticker.FieldLast:
+		return m.AddedLast()
+	case ticker.FieldVolume:
+		return m.AddedVolume()
+	case ticker.FieldBidAskSpreadPercentage:
+		return m.AddedBidAskSpreadPercentage()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TickerMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case ticker.FieldLast:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLast(v)
+		return nil
+	case ticker.FieldVolume:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddVolume(v)
+		return nil
+	case ticker.FieldBidAskSpreadPercentage:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBidAskSpreadPercentage(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Ticker numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TickerMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(ticker.FieldTradeURL) {
+		fields = append(fields, ticker.FieldTradeURL)
+	}
+	if m.FieldCleared(ticker.FieldTokenInfoURL) {
+		fields = append(fields, ticker.FieldTokenInfoURL)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TickerMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TickerMutation) ClearField(name string) error {
+	switch name {
+	case ticker.FieldTradeURL:
+		m.ClearTradeURL()
+		return nil
+	case ticker.FieldTokenInfoURL:
+		m.ClearTokenInfoURL()
+		return nil
+	}
+	return fmt.Errorf("unknown Ticker nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TickerMutation) ResetField(name string) error {
+	switch name {
+	case ticker.FieldBase:
+		m.ResetBase()
+		return nil
+	case ticker.FieldTarget:
+		m.ResetTarget()
+		return nil
+	case ticker.FieldMarket:
+		m.ResetMarket()
+		return nil
+	case ticker.FieldLast:
+		m.ResetLast()
+		return nil
+	case ticker.FieldVolume:
+		m.ResetVolume()
+		return nil
+	case ticker.FieldConvertedLast:
+		m.ResetConvertedLast()
+		return nil
+	case ticker.FieldConvertedVolume:
+		m.ResetConvertedVolume()
+		return nil
+	case ticker.FieldTrustScore:
+		m.ResetTrustScore()
+		return nil
+	case ticker.FieldBidAskSpreadPercentage:
+		m.ResetBidAskSpreadPercentage()
+		return nil
+	case ticker.FieldTimestamp:
+		m.ResetTimestamp()
+		return nil
+	case ticker.FieldLastTradedAt:
+		m.ResetLastTradedAt()
+		return nil
+	case ticker.FieldLastFetchAt:
+		m.ResetLastFetchAt()
+		return nil
+	case ticker.FieldIsAnomaly:
+		m.ResetIsAnomaly()
+		return nil
+	case ticker.FieldIsStale:
+		m.ResetIsStale()
+		return nil
+	case ticker.FieldTradeURL:
+		m.ResetTradeURL()
+		return nil
+	case ticker.FieldTokenInfoURL:
+		m.ResetTokenInfoURL()
+		return nil
+	case ticker.FieldCoinID:
+		m.ResetCoinID()
+		return nil
+	case ticker.FieldTargetCoinID:
+		m.ResetTargetCoinID()
+		return nil
+	}
+	return fmt.Errorf("unknown Ticker field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TickerMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.exchange != nil {
+		edges = append(edges, ticker.EdgeExchange)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TickerMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case ticker.EdgeExchange:
+		if id := m.exchange; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TickerMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TickerMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TickerMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedexchange {
+		edges = append(edges, ticker.EdgeExchange)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TickerMutation) EdgeCleared(name string) bool {
+	switch name {
+	case ticker.EdgeExchange:
+		return m.clearedexchange
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TickerMutation) ClearEdge(name string) error {
+	switch name {
+	case ticker.EdgeExchange:
+		m.ClearExchange()
+		return nil
+	}
+	return fmt.Errorf("unknown Ticker unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TickerMutation) ResetEdge(name string) error {
+	switch name {
+	case ticker.EdgeExchange:
+		m.ResetExchange()
+		return nil
+	}
+	return fmt.Errorf("unknown Ticker edge %s", name)
 }

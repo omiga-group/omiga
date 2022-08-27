@@ -44,6 +44,31 @@ type Exchange struct {
 	TradeVolume24hBtc float64 `json:"trade_volume_24h_btc,omitempty"`
 	// TradeVolume24hBtcNormalized holds the value of the "trade_volume_24h_btc_normalized" field.
 	TradeVolume24hBtcNormalized float64 `json:"trade_volume_24h_btc_normalized,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the ExchangeQuery when eager-loading is set.
+	Edges ExchangeEdges `json:"edges"`
+}
+
+// ExchangeEdges holds the relations/edges for other nodes in the graph.
+type ExchangeEdges struct {
+	// Ticker holds the value of the ticker edge.
+	Ticker []*Ticker `json:"ticker,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+	// totalCount holds the count of the edges above.
+	totalCount [1]map[string]int
+
+	namedTicker map[string][]*Ticker
+}
+
+// TickerOrErr returns the Ticker value or an error if the edge
+// was not loaded in eager-loading.
+func (e ExchangeEdges) TickerOrErr() ([]*Ticker, error) {
+	if e.loadedTypes[0] {
+		return e.Ticker, nil
+	}
+	return nil, &NotLoadedError{edge: "ticker"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -173,6 +198,11 @@ func (e *Exchange) assignValues(columns []string, values []interface{}) error {
 	return nil
 }
 
+// QueryTicker queries the "ticker" edge of the Exchange entity.
+func (e *Exchange) QueryTicker() *TickerQuery {
+	return (&ExchangeClient{config: e.config}).QueryTicker(e)
+}
+
 // Update returns a builder for updating this Exchange.
 // Note that you need to call Exchange.Unwrap() before calling this method if this Exchange
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -239,6 +269,30 @@ func (e *Exchange) String() string {
 	builder.WriteString(fmt.Sprintf("%v", e.TradeVolume24hBtcNormalized))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedTicker returns the Ticker named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (e *Exchange) NamedTicker(name string) ([]*Ticker, error) {
+	if e.Edges.namedTicker == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := e.Edges.namedTicker[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (e *Exchange) appendNamedTicker(name string, edges ...*Ticker) {
+	if e.Edges.namedTicker == nil {
+		e.Edges.namedTicker = make(map[string][]*Ticker)
+	}
+	if len(edges) == 0 {
+		e.Edges.namedTicker[name] = []*Ticker{}
+	} else {
+		e.Edges.namedTicker[name] = append(e.Edges.namedTicker[name], edges...)
+	}
 }
 
 // Exchanges is a parsable slice of Exchange.

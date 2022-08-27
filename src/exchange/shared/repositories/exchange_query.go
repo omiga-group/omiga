@@ -4,6 +4,7 @@ package repositories
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -14,19 +15,22 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/predicate"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 )
 
 // ExchangeQuery is the builder for querying Exchange entities.
 type ExchangeQuery struct {
 	config
-	limit      *int
-	offset     *int
-	unique     *bool
-	order      []OrderFunc
-	fields     []string
-	predicates []predicate.Exchange
-	loadTotal  []func(context.Context, []*Exchange) error
-	modifiers  []func(*sql.Selector)
+	limit           *int
+	offset          *int
+	unique          *bool
+	order           []OrderFunc
+	fields          []string
+	predicates      []predicate.Exchange
+	withTicker      *TickerQuery
+	loadTotal       []func(context.Context, []*Exchange) error
+	modifiers       []func(*sql.Selector)
+	withNamedTicker map[string]*TickerQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -61,6 +65,31 @@ func (eq *ExchangeQuery) Unique(unique bool) *ExchangeQuery {
 func (eq *ExchangeQuery) Order(o ...OrderFunc) *ExchangeQuery {
 	eq.order = append(eq.order, o...)
 	return eq
+}
+
+// QueryTicker chains the current query on the "ticker" edge.
+func (eq *ExchangeQuery) QueryTicker() *TickerQuery {
+	query := &TickerQuery{config: eq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(exchange.Table, exchange.FieldID, selector),
+			sqlgraph.To(ticker.Table, ticker.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, exchange.TickerTable, exchange.TickerColumn),
+		)
+		schemaConfig := eq.schemaConfig
+		step.To.Schema = schemaConfig.Ticker
+		step.Edge.Schema = schemaConfig.Ticker
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Exchange entity from the query.
@@ -244,11 +273,23 @@ func (eq *ExchangeQuery) Clone() *ExchangeQuery {
 		offset:     eq.offset,
 		order:      append([]OrderFunc{}, eq.order...),
 		predicates: append([]predicate.Exchange{}, eq.predicates...),
+		withTicker: eq.withTicker.Clone(),
 		// clone intermediate query.
 		sql:    eq.sql.Clone(),
 		path:   eq.path,
 		unique: eq.unique,
 	}
+}
+
+// WithTicker tells the query-builder to eager-load the nodes that are connected to
+// the "ticker" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *ExchangeQuery) WithTicker(opts ...func(*TickerQuery)) *ExchangeQuery {
+	query := &TickerQuery{config: eq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withTicker = query
+	return eq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -317,8 +358,11 @@ func (eq *ExchangeQuery) prepareQuery(ctx context.Context) error {
 
 func (eq *ExchangeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Exchange, error) {
 	var (
-		nodes = []*Exchange{}
-		_spec = eq.querySpec()
+		nodes       = []*Exchange{}
+		_spec       = eq.querySpec()
+		loadedTypes = [1]bool{
+			eq.withTicker != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		return (*Exchange).scanValues(nil, columns)
@@ -326,6 +370,7 @@ func (eq *ExchangeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Exc
 	_spec.Assign = func(columns []string, values []interface{}) error {
 		node := &Exchange{config: eq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	_spec.Node.Schema = eq.schemaConfig.Exchange
@@ -342,12 +387,58 @@ func (eq *ExchangeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Exc
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := eq.withTicker; query != nil {
+		if err := eq.loadTicker(ctx, query, nodes,
+			func(n *Exchange) { n.Edges.Ticker = []*Ticker{} },
+			func(n *Exchange, e *Ticker) { n.Edges.Ticker = append(n.Edges.Ticker, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range eq.withNamedTicker {
+		if err := eq.loadTicker(ctx, query, nodes,
+			func(n *Exchange) { n.appendNamedTicker(name) },
+			func(n *Exchange, e *Ticker) { n.appendNamedTicker(name, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for i := range eq.loadTotal {
 		if err := eq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
+}
+
+func (eq *ExchangeQuery) loadTicker(ctx context.Context, query *TickerQuery, nodes []*Exchange, init func(*Exchange), assign func(*Exchange, *Ticker)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Exchange)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.InValues(exchange.TickerColumn, fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.exchange_ticker
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "exchange_ticker" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "exchange_ticker" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
 }
 
 func (eq *ExchangeQuery) sqlCount(ctx context.Context) (int, error) {
@@ -488,6 +579,20 @@ func (eq *ExchangeQuery) ForShare(opts ...sql.LockOption) *ExchangeQuery {
 func (eq *ExchangeQuery) Modify(modifiers ...func(s *sql.Selector)) *ExchangeSelect {
 	eq.modifiers = append(eq.modifiers, modifiers...)
 	return eq.Select()
+}
+
+// WithNamedTicker tells the query-builder to eager-load the nodes that are connected to the "ticker"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (eq *ExchangeQuery) WithNamedTicker(name string, opts ...func(*TickerQuery)) *ExchangeQuery {
+	query := &TickerQuery{config: eq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	if eq.withNamedTicker == nil {
+		eq.withNamedTicker = make(map[string]*TickerQuery)
+	}
+	eq.withNamedTicker[name] = query
+	return eq
 }
 
 // ExchangeGroupBy is the group-by builder for Exchange entities.

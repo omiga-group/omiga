@@ -4,6 +4,8 @@ package exchange
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/predicate"
 )
 
@@ -713,6 +715,20 @@ func HasTradingIncentiveNEQ(v bool) predicate.Exchange {
 	})
 }
 
+// HasTradingIncentiveIsNil applies the IsNil predicate on the "has_trading_incentive" field.
+func HasTradingIncentiveIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldHasTradingIncentive)))
+	})
+}
+
+// HasTradingIncentiveNotNil applies the NotNil predicate on the "has_trading_incentive" field.
+func HasTradingIncentiveNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldHasTradingIncentive)))
+	})
+}
+
 // CentralizedEQ applies the EQ predicate on the "centralized" field.
 func CentralizedEQ(v bool) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
@@ -724,6 +740,20 @@ func CentralizedEQ(v bool) predicate.Exchange {
 func CentralizedNEQ(v bool) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldCentralized), v))
+	})
+}
+
+// CentralizedIsNil applies the IsNil predicate on the "centralized" field.
+func CentralizedIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCentralized)))
+	})
+}
+
+// CentralizedNotNil applies the NotNil predicate on the "centralized" field.
+func CentralizedNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCentralized)))
 	})
 }
 
@@ -809,6 +839,20 @@ func PublicNoticeHasPrefix(v string) predicate.Exchange {
 func PublicNoticeHasSuffix(v string) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldPublicNotice), v))
+	})
+}
+
+// PublicNoticeIsNil applies the IsNil predicate on the "public_notice" field.
+func PublicNoticeIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldPublicNotice)))
+	})
+}
+
+// PublicNoticeNotNil applies the NotNil predicate on the "public_notice" field.
+func PublicNoticeNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldPublicNotice)))
 	})
 }
 
@@ -911,6 +955,20 @@ func AlertNoticeHasSuffix(v string) predicate.Exchange {
 	})
 }
 
+// AlertNoticeIsNil applies the IsNil predicate on the "alert_notice" field.
+func AlertNoticeIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAlertNotice)))
+	})
+}
+
+// AlertNoticeNotNil applies the NotNil predicate on the "alert_notice" field.
+func AlertNoticeNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAlertNotice)))
+	})
+}
+
 // AlertNoticeEqualFold applies the EqualFold predicate on the "alert_notice" field.
 func AlertNoticeEqualFold(v string) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
@@ -989,6 +1047,20 @@ func TrustScoreLTE(v int) predicate.Exchange {
 	})
 }
 
+// TrustScoreIsNil applies the IsNil predicate on the "trust_score" field.
+func TrustScoreIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTrustScore)))
+	})
+}
+
+// TrustScoreNotNil applies the NotNil predicate on the "trust_score" field.
+func TrustScoreNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTrustScore)))
+	})
+}
+
 // TrustScoreRankEQ applies the EQ predicate on the "trust_score_rank" field.
 func TrustScoreRankEQ(v int) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
@@ -1050,6 +1122,20 @@ func TrustScoreRankLT(v int) predicate.Exchange {
 func TrustScoreRankLTE(v int) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTrustScoreRank), v))
+	})
+}
+
+// TrustScoreRankIsNil applies the IsNil predicate on the "trust_score_rank" field.
+func TrustScoreRankIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTrustScoreRank)))
+	})
+}
+
+// TrustScoreRankNotNil applies the NotNil predicate on the "trust_score_rank" field.
+func TrustScoreRankNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTrustScoreRank)))
 	})
 }
 
@@ -1117,6 +1203,20 @@ func TradeVolume24hBtcLTE(v float64) predicate.Exchange {
 	})
 }
 
+// TradeVolume24hBtcIsNil applies the IsNil predicate on the "trade_volume_24h_btc" field.
+func TradeVolume24hBtcIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTradeVolume24hBtc)))
+	})
+}
+
+// TradeVolume24hBtcNotNil applies the NotNil predicate on the "trade_volume_24h_btc" field.
+func TradeVolume24hBtcNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTradeVolume24hBtc)))
+	})
+}
+
 // TradeVolume24hBtcNormalizedEQ applies the EQ predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedEQ(v float64) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
@@ -1178,6 +1278,54 @@ func TradeVolume24hBtcNormalizedLT(v float64) predicate.Exchange {
 func TradeVolume24hBtcNormalizedLTE(v float64) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTradeVolume24hBtcNormalized), v))
+	})
+}
+
+// TradeVolume24hBtcNormalizedIsNil applies the IsNil predicate on the "trade_volume_24h_btc_normalized" field.
+func TradeVolume24hBtcNormalizedIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTradeVolume24hBtcNormalized)))
+	})
+}
+
+// TradeVolume24hBtcNormalizedNotNil applies the NotNil predicate on the "trade_volume_24h_btc_normalized" field.
+func TradeVolume24hBtcNormalizedNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTradeVolume24hBtcNormalized)))
+	})
+}
+
+// HasTicker applies the HasEdge predicate on the "ticker" edge.
+func HasTicker() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TickerTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TickerTable, TickerColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Ticker
+		step.Edge.Schema = schemaConfig.Ticker
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTickerWith applies the HasEdge predicate on the "ticker" edge with a given conditions (other predicates).
+func HasTickerWith(preds ...predicate.Ticker) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TickerInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TickerTable, TickerColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Ticker
+		step.Edge.Schema = schemaConfig.Ticker
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

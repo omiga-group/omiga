@@ -10,6 +10,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/predicate"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 )
 
 // ExchangeWhereInput represents a where input for filtering Exchange queries.
@@ -108,12 +109,16 @@ type ExchangeWhereInput struct {
 	ImageContainsFold *string  `json:"imageContainsFold,omitempty"`
 
 	// "has_trading_incentive" field predicates.
-	HasTradingIncentive    *bool `json:"hasTradingIncentive,omitempty"`
-	HasTradingIncentiveNEQ *bool `json:"hasTradingIncentiveNEQ,omitempty"`
+	HasTradingIncentive       *bool `json:"hasTradingIncentive,omitempty"`
+	HasTradingIncentiveNEQ    *bool `json:"hasTradingIncentiveNEQ,omitempty"`
+	HasTradingIncentiveIsNil  bool  `json:"hasTradingIncentiveIsNil,omitempty"`
+	HasTradingIncentiveNotNil bool  `json:"hasTradingIncentiveNotNil,omitempty"`
 
 	// "centralized" field predicates.
-	Centralized    *bool `json:"centralized,omitempty"`
-	CentralizedNEQ *bool `json:"centralizedNEQ,omitempty"`
+	Centralized       *bool `json:"centralized,omitempty"`
+	CentralizedNEQ    *bool `json:"centralizedNEQ,omitempty"`
+	CentralizedIsNil  bool  `json:"centralizedIsNil,omitempty"`
+	CentralizedNotNil bool  `json:"centralizedNotNil,omitempty"`
 
 	// "public_notice" field predicates.
 	PublicNotice             *string  `json:"publicNotice,omitempty"`
@@ -127,6 +132,8 @@ type ExchangeWhereInput struct {
 	PublicNoticeContains     *string  `json:"publicNoticeContains,omitempty"`
 	PublicNoticeHasPrefix    *string  `json:"publicNoticeHasPrefix,omitempty"`
 	PublicNoticeHasSuffix    *string  `json:"publicNoticeHasSuffix,omitempty"`
+	PublicNoticeIsNil        bool     `json:"publicNoticeIsNil,omitempty"`
+	PublicNoticeNotNil       bool     `json:"publicNoticeNotNil,omitempty"`
 	PublicNoticeEqualFold    *string  `json:"publicNoticeEqualFold,omitempty"`
 	PublicNoticeContainsFold *string  `json:"publicNoticeContainsFold,omitempty"`
 
@@ -142,48 +149,62 @@ type ExchangeWhereInput struct {
 	AlertNoticeContains     *string  `json:"alertNoticeContains,omitempty"`
 	AlertNoticeHasPrefix    *string  `json:"alertNoticeHasPrefix,omitempty"`
 	AlertNoticeHasSuffix    *string  `json:"alertNoticeHasSuffix,omitempty"`
+	AlertNoticeIsNil        bool     `json:"alertNoticeIsNil,omitempty"`
+	AlertNoticeNotNil       bool     `json:"alertNoticeNotNil,omitempty"`
 	AlertNoticeEqualFold    *string  `json:"alertNoticeEqualFold,omitempty"`
 	AlertNoticeContainsFold *string  `json:"alertNoticeContainsFold,omitempty"`
 
 	// "trust_score" field predicates.
-	TrustScore      *int  `json:"trustScore,omitempty"`
-	TrustScoreNEQ   *int  `json:"trustScoreNEQ,omitempty"`
-	TrustScoreIn    []int `json:"trustScoreIn,omitempty"`
-	TrustScoreNotIn []int `json:"trustScoreNotIn,omitempty"`
-	TrustScoreGT    *int  `json:"trustScoreGT,omitempty"`
-	TrustScoreGTE   *int  `json:"trustScoreGTE,omitempty"`
-	TrustScoreLT    *int  `json:"trustScoreLT,omitempty"`
-	TrustScoreLTE   *int  `json:"trustScoreLTE,omitempty"`
+	TrustScore       *int  `json:"trustScore,omitempty"`
+	TrustScoreNEQ    *int  `json:"trustScoreNEQ,omitempty"`
+	TrustScoreIn     []int `json:"trustScoreIn,omitempty"`
+	TrustScoreNotIn  []int `json:"trustScoreNotIn,omitempty"`
+	TrustScoreGT     *int  `json:"trustScoreGT,omitempty"`
+	TrustScoreGTE    *int  `json:"trustScoreGTE,omitempty"`
+	TrustScoreLT     *int  `json:"trustScoreLT,omitempty"`
+	TrustScoreLTE    *int  `json:"trustScoreLTE,omitempty"`
+	TrustScoreIsNil  bool  `json:"trustScoreIsNil,omitempty"`
+	TrustScoreNotNil bool  `json:"trustScoreNotNil,omitempty"`
 
 	// "trust_score_rank" field predicates.
-	TrustScoreRank      *int  `json:"trustScoreRank,omitempty"`
-	TrustScoreRankNEQ   *int  `json:"trustScoreRankNEQ,omitempty"`
-	TrustScoreRankIn    []int `json:"trustScoreRankIn,omitempty"`
-	TrustScoreRankNotIn []int `json:"trustScoreRankNotIn,omitempty"`
-	TrustScoreRankGT    *int  `json:"trustScoreRankGT,omitempty"`
-	TrustScoreRankGTE   *int  `json:"trustScoreRankGTE,omitempty"`
-	TrustScoreRankLT    *int  `json:"trustScoreRankLT,omitempty"`
-	TrustScoreRankLTE   *int  `json:"trustScoreRankLTE,omitempty"`
+	TrustScoreRank       *int  `json:"trustScoreRank,omitempty"`
+	TrustScoreRankNEQ    *int  `json:"trustScoreRankNEQ,omitempty"`
+	TrustScoreRankIn     []int `json:"trustScoreRankIn,omitempty"`
+	TrustScoreRankNotIn  []int `json:"trustScoreRankNotIn,omitempty"`
+	TrustScoreRankGT     *int  `json:"trustScoreRankGT,omitempty"`
+	TrustScoreRankGTE    *int  `json:"trustScoreRankGTE,omitempty"`
+	TrustScoreRankLT     *int  `json:"trustScoreRankLT,omitempty"`
+	TrustScoreRankLTE    *int  `json:"trustScoreRankLTE,omitempty"`
+	TrustScoreRankIsNil  bool  `json:"trustScoreRankIsNil,omitempty"`
+	TrustScoreRankNotNil bool  `json:"trustScoreRankNotNil,omitempty"`
 
 	// "trade_volume_24h_btc" field predicates.
-	TradeVolume24hBtc      *float64  `json:"tradeVolume24hBtc,omitempty"`
-	TradeVolume24hBtcNEQ   *float64  `json:"tradeVolume24hBtcNEQ,omitempty"`
-	TradeVolume24hBtcIn    []float64 `json:"tradeVolume24hBtcIn,omitempty"`
-	TradeVolume24hBtcNotIn []float64 `json:"tradeVolume24hBtcNotIn,omitempty"`
-	TradeVolume24hBtcGT    *float64  `json:"tradeVolume24hBtcGT,omitempty"`
-	TradeVolume24hBtcGTE   *float64  `json:"tradeVolume24hBtcGTE,omitempty"`
-	TradeVolume24hBtcLT    *float64  `json:"tradeVolume24hBtcLT,omitempty"`
-	TradeVolume24hBtcLTE   *float64  `json:"tradeVolume24hBtcLTE,omitempty"`
+	TradeVolume24hBtc       *float64  `json:"tradeVolume24hBtc,omitempty"`
+	TradeVolume24hBtcNEQ    *float64  `json:"tradeVolume24hBtcNEQ,omitempty"`
+	TradeVolume24hBtcIn     []float64 `json:"tradeVolume24hBtcIn,omitempty"`
+	TradeVolume24hBtcNotIn  []float64 `json:"tradeVolume24hBtcNotIn,omitempty"`
+	TradeVolume24hBtcGT     *float64  `json:"tradeVolume24hBtcGT,omitempty"`
+	TradeVolume24hBtcGTE    *float64  `json:"tradeVolume24hBtcGTE,omitempty"`
+	TradeVolume24hBtcLT     *float64  `json:"tradeVolume24hBtcLT,omitempty"`
+	TradeVolume24hBtcLTE    *float64  `json:"tradeVolume24hBtcLTE,omitempty"`
+	TradeVolume24hBtcIsNil  bool      `json:"tradeVolume24hBtcIsNil,omitempty"`
+	TradeVolume24hBtcNotNil bool      `json:"tradeVolume24hBtcNotNil,omitempty"`
 
 	// "trade_volume_24h_btc_normalized" field predicates.
-	TradeVolume24hBtcNormalized      *float64  `json:"tradeVolume24hBtcNormalized,omitempty"`
-	TradeVolume24hBtcNormalizedNEQ   *float64  `json:"tradeVolume24hBtcNormalizedNEQ,omitempty"`
-	TradeVolume24hBtcNormalizedIn    []float64 `json:"tradeVolume24hBtcNormalizedIn,omitempty"`
-	TradeVolume24hBtcNormalizedNotIn []float64 `json:"tradeVolume24hBtcNormalizedNotIn,omitempty"`
-	TradeVolume24hBtcNormalizedGT    *float64  `json:"tradeVolume24hBtcNormalizedGT,omitempty"`
-	TradeVolume24hBtcNormalizedGTE   *float64  `json:"tradeVolume24hBtcNormalizedGTE,omitempty"`
-	TradeVolume24hBtcNormalizedLT    *float64  `json:"tradeVolume24hBtcNormalizedLT,omitempty"`
-	TradeVolume24hBtcNormalizedLTE   *float64  `json:"tradeVolume24hBtcNormalizedLTE,omitempty"`
+	TradeVolume24hBtcNormalized       *float64  `json:"tradeVolume24hBtcNormalized,omitempty"`
+	TradeVolume24hBtcNormalizedNEQ    *float64  `json:"tradeVolume24hBtcNormalizedNEQ,omitempty"`
+	TradeVolume24hBtcNormalizedIn     []float64 `json:"tradeVolume24hBtcNormalizedIn,omitempty"`
+	TradeVolume24hBtcNormalizedNotIn  []float64 `json:"tradeVolume24hBtcNormalizedNotIn,omitempty"`
+	TradeVolume24hBtcNormalizedGT     *float64  `json:"tradeVolume24hBtcNormalizedGT,omitempty"`
+	TradeVolume24hBtcNormalizedGTE    *float64  `json:"tradeVolume24hBtcNormalizedGTE,omitempty"`
+	TradeVolume24hBtcNormalizedLT     *float64  `json:"tradeVolume24hBtcNormalizedLT,omitempty"`
+	TradeVolume24hBtcNormalizedLTE    *float64  `json:"tradeVolume24hBtcNormalizedLTE,omitempty"`
+	TradeVolume24hBtcNormalizedIsNil  bool      `json:"tradeVolume24hBtcNormalizedIsNil,omitempty"`
+	TradeVolume24hBtcNormalizedNotNil bool      `json:"tradeVolume24hBtcNormalizedNotNil,omitempty"`
+
+	// "ticker" edge predicates.
+	HasTicker     *bool               `json:"hasTicker,omitempty"`
+	HasTickerWith []*TickerWhereInput `json:"hasTickerWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -491,11 +512,23 @@ func (i *ExchangeWhereInput) P() (predicate.Exchange, error) {
 	if i.HasTradingIncentiveNEQ != nil {
 		predicates = append(predicates, exchange.HasTradingIncentiveNEQ(*i.HasTradingIncentiveNEQ))
 	}
+	if i.HasTradingIncentiveIsNil {
+		predicates = append(predicates, exchange.HasTradingIncentiveIsNil())
+	}
+	if i.HasTradingIncentiveNotNil {
+		predicates = append(predicates, exchange.HasTradingIncentiveNotNil())
+	}
 	if i.Centralized != nil {
 		predicates = append(predicates, exchange.CentralizedEQ(*i.Centralized))
 	}
 	if i.CentralizedNEQ != nil {
 		predicates = append(predicates, exchange.CentralizedNEQ(*i.CentralizedNEQ))
+	}
+	if i.CentralizedIsNil {
+		predicates = append(predicates, exchange.CentralizedIsNil())
+	}
+	if i.CentralizedNotNil {
+		predicates = append(predicates, exchange.CentralizedNotNil())
 	}
 	if i.PublicNotice != nil {
 		predicates = append(predicates, exchange.PublicNoticeEQ(*i.PublicNotice))
@@ -529,6 +562,12 @@ func (i *ExchangeWhereInput) P() (predicate.Exchange, error) {
 	}
 	if i.PublicNoticeHasSuffix != nil {
 		predicates = append(predicates, exchange.PublicNoticeHasSuffix(*i.PublicNoticeHasSuffix))
+	}
+	if i.PublicNoticeIsNil {
+		predicates = append(predicates, exchange.PublicNoticeIsNil())
+	}
+	if i.PublicNoticeNotNil {
+		predicates = append(predicates, exchange.PublicNoticeNotNil())
 	}
 	if i.PublicNoticeEqualFold != nil {
 		predicates = append(predicates, exchange.PublicNoticeEqualFold(*i.PublicNoticeEqualFold))
@@ -569,6 +608,12 @@ func (i *ExchangeWhereInput) P() (predicate.Exchange, error) {
 	if i.AlertNoticeHasSuffix != nil {
 		predicates = append(predicates, exchange.AlertNoticeHasSuffix(*i.AlertNoticeHasSuffix))
 	}
+	if i.AlertNoticeIsNil {
+		predicates = append(predicates, exchange.AlertNoticeIsNil())
+	}
+	if i.AlertNoticeNotNil {
+		predicates = append(predicates, exchange.AlertNoticeNotNil())
+	}
 	if i.AlertNoticeEqualFold != nil {
 		predicates = append(predicates, exchange.AlertNoticeEqualFold(*i.AlertNoticeEqualFold))
 	}
@@ -599,6 +644,12 @@ func (i *ExchangeWhereInput) P() (predicate.Exchange, error) {
 	if i.TrustScoreLTE != nil {
 		predicates = append(predicates, exchange.TrustScoreLTE(*i.TrustScoreLTE))
 	}
+	if i.TrustScoreIsNil {
+		predicates = append(predicates, exchange.TrustScoreIsNil())
+	}
+	if i.TrustScoreNotNil {
+		predicates = append(predicates, exchange.TrustScoreNotNil())
+	}
 	if i.TrustScoreRank != nil {
 		predicates = append(predicates, exchange.TrustScoreRankEQ(*i.TrustScoreRank))
 	}
@@ -622,6 +673,12 @@ func (i *ExchangeWhereInput) P() (predicate.Exchange, error) {
 	}
 	if i.TrustScoreRankLTE != nil {
 		predicates = append(predicates, exchange.TrustScoreRankLTE(*i.TrustScoreRankLTE))
+	}
+	if i.TrustScoreRankIsNil {
+		predicates = append(predicates, exchange.TrustScoreRankIsNil())
+	}
+	if i.TrustScoreRankNotNil {
+		predicates = append(predicates, exchange.TrustScoreRankNotNil())
 	}
 	if i.TradeVolume24hBtc != nil {
 		predicates = append(predicates, exchange.TradeVolume24hBtcEQ(*i.TradeVolume24hBtc))
@@ -647,6 +704,12 @@ func (i *ExchangeWhereInput) P() (predicate.Exchange, error) {
 	if i.TradeVolume24hBtcLTE != nil {
 		predicates = append(predicates, exchange.TradeVolume24hBtcLTE(*i.TradeVolume24hBtcLTE))
 	}
+	if i.TradeVolume24hBtcIsNil {
+		predicates = append(predicates, exchange.TradeVolume24hBtcIsNil())
+	}
+	if i.TradeVolume24hBtcNotNil {
+		predicates = append(predicates, exchange.TradeVolume24hBtcNotNil())
+	}
 	if i.TradeVolume24hBtcNormalized != nil {
 		predicates = append(predicates, exchange.TradeVolume24hBtcNormalizedEQ(*i.TradeVolume24hBtcNormalized))
 	}
@@ -671,7 +734,31 @@ func (i *ExchangeWhereInput) P() (predicate.Exchange, error) {
 	if i.TradeVolume24hBtcNormalizedLTE != nil {
 		predicates = append(predicates, exchange.TradeVolume24hBtcNormalizedLTE(*i.TradeVolume24hBtcNormalizedLTE))
 	}
+	if i.TradeVolume24hBtcNormalizedIsNil {
+		predicates = append(predicates, exchange.TradeVolume24hBtcNormalizedIsNil())
+	}
+	if i.TradeVolume24hBtcNormalizedNotNil {
+		predicates = append(predicates, exchange.TradeVolume24hBtcNormalizedNotNil())
+	}
 
+	if i.HasTicker != nil {
+		p := exchange.HasTicker()
+		if !*i.HasTicker {
+			p = exchange.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasTickerWith) > 0 {
+		with := make([]predicate.Ticker, 0, len(i.HasTickerWith))
+		for _, w := range i.HasTickerWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasTickerWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, exchange.HasTickerWith(with...))
+	}
 	switch len(predicates) {
 	case 0:
 		return nil, ErrEmptyExchangeWhereInput
@@ -1039,5 +1126,769 @@ func (i *OutboxWhereInput) P() (predicate.Outbox, error) {
 		return predicates[0], nil
 	default:
 		return outbox.And(predicates...), nil
+	}
+}
+
+// TickerWhereInput represents a where input for filtering Ticker queries.
+type TickerWhereInput struct {
+	Predicates []predicate.Ticker  `json:"-"`
+	Not        *TickerWhereInput   `json:"not,omitempty"`
+	Or         []*TickerWhereInput `json:"or,omitempty"`
+	And        []*TickerWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *int  `json:"id,omitempty"`
+	IDNEQ   *int  `json:"idNEQ,omitempty"`
+	IDIn    []int `json:"idIn,omitempty"`
+	IDNotIn []int `json:"idNotIn,omitempty"`
+	IDGT    *int  `json:"idGT,omitempty"`
+	IDGTE   *int  `json:"idGTE,omitempty"`
+	IDLT    *int  `json:"idLT,omitempty"`
+	IDLTE   *int  `json:"idLTE,omitempty"`
+
+	// "base" field predicates.
+	Base             *string  `json:"base,omitempty"`
+	BaseNEQ          *string  `json:"baseNEQ,omitempty"`
+	BaseIn           []string `json:"baseIn,omitempty"`
+	BaseNotIn        []string `json:"baseNotIn,omitempty"`
+	BaseGT           *string  `json:"baseGT,omitempty"`
+	BaseGTE          *string  `json:"baseGTE,omitempty"`
+	BaseLT           *string  `json:"baseLT,omitempty"`
+	BaseLTE          *string  `json:"baseLTE,omitempty"`
+	BaseContains     *string  `json:"baseContains,omitempty"`
+	BaseHasPrefix    *string  `json:"baseHasPrefix,omitempty"`
+	BaseHasSuffix    *string  `json:"baseHasSuffix,omitempty"`
+	BaseEqualFold    *string  `json:"baseEqualFold,omitempty"`
+	BaseContainsFold *string  `json:"baseContainsFold,omitempty"`
+
+	// "target" field predicates.
+	Target             *string  `json:"target,omitempty"`
+	TargetNEQ          *string  `json:"targetNEQ,omitempty"`
+	TargetIn           []string `json:"targetIn,omitempty"`
+	TargetNotIn        []string `json:"targetNotIn,omitempty"`
+	TargetGT           *string  `json:"targetGT,omitempty"`
+	TargetGTE          *string  `json:"targetGTE,omitempty"`
+	TargetLT           *string  `json:"targetLT,omitempty"`
+	TargetLTE          *string  `json:"targetLTE,omitempty"`
+	TargetContains     *string  `json:"targetContains,omitempty"`
+	TargetHasPrefix    *string  `json:"targetHasPrefix,omitempty"`
+	TargetHasSuffix    *string  `json:"targetHasSuffix,omitempty"`
+	TargetEqualFold    *string  `json:"targetEqualFold,omitempty"`
+	TargetContainsFold *string  `json:"targetContainsFold,omitempty"`
+
+	// "last" field predicates.
+	Last      *float64  `json:"last,omitempty"`
+	LastNEQ   *float64  `json:"lastNEQ,omitempty"`
+	LastIn    []float64 `json:"lastIn,omitempty"`
+	LastNotIn []float64 `json:"lastNotIn,omitempty"`
+	LastGT    *float64  `json:"lastGT,omitempty"`
+	LastGTE   *float64  `json:"lastGTE,omitempty"`
+	LastLT    *float64  `json:"lastLT,omitempty"`
+	LastLTE   *float64  `json:"lastLTE,omitempty"`
+
+	// "volume" field predicates.
+	Volume      *float64  `json:"volume,omitempty"`
+	VolumeNEQ   *float64  `json:"volumeNEQ,omitempty"`
+	VolumeIn    []float64 `json:"volumeIn,omitempty"`
+	VolumeNotIn []float64 `json:"volumeNotIn,omitempty"`
+	VolumeGT    *float64  `json:"volumeGT,omitempty"`
+	VolumeGTE   *float64  `json:"volumeGTE,omitempty"`
+	VolumeLT    *float64  `json:"volumeLT,omitempty"`
+	VolumeLTE   *float64  `json:"volumeLTE,omitempty"`
+
+	// "trust_score" field predicates.
+	TrustScore             *string  `json:"trustScore,omitempty"`
+	TrustScoreNEQ          *string  `json:"trustScoreNEQ,omitempty"`
+	TrustScoreIn           []string `json:"trustScoreIn,omitempty"`
+	TrustScoreNotIn        []string `json:"trustScoreNotIn,omitempty"`
+	TrustScoreGT           *string  `json:"trustScoreGT,omitempty"`
+	TrustScoreGTE          *string  `json:"trustScoreGTE,omitempty"`
+	TrustScoreLT           *string  `json:"trustScoreLT,omitempty"`
+	TrustScoreLTE          *string  `json:"trustScoreLTE,omitempty"`
+	TrustScoreContains     *string  `json:"trustScoreContains,omitempty"`
+	TrustScoreHasPrefix    *string  `json:"trustScoreHasPrefix,omitempty"`
+	TrustScoreHasSuffix    *string  `json:"trustScoreHasSuffix,omitempty"`
+	TrustScoreEqualFold    *string  `json:"trustScoreEqualFold,omitempty"`
+	TrustScoreContainsFold *string  `json:"trustScoreContainsFold,omitempty"`
+
+	// "bid_ask_spread_percentage" field predicates.
+	BidAskSpreadPercentage      *float64  `json:"bidAskSpreadPercentage,omitempty"`
+	BidAskSpreadPercentageNEQ   *float64  `json:"bidAskSpreadPercentageNEQ,omitempty"`
+	BidAskSpreadPercentageIn    []float64 `json:"bidAskSpreadPercentageIn,omitempty"`
+	BidAskSpreadPercentageNotIn []float64 `json:"bidAskSpreadPercentageNotIn,omitempty"`
+	BidAskSpreadPercentageGT    *float64  `json:"bidAskSpreadPercentageGT,omitempty"`
+	BidAskSpreadPercentageGTE   *float64  `json:"bidAskSpreadPercentageGTE,omitempty"`
+	BidAskSpreadPercentageLT    *float64  `json:"bidAskSpreadPercentageLT,omitempty"`
+	BidAskSpreadPercentageLTE   *float64  `json:"bidAskSpreadPercentageLTE,omitempty"`
+
+	// "timestamp" field predicates.
+	Timestamp      *time.Time  `json:"timestamp,omitempty"`
+	TimestampNEQ   *time.Time  `json:"timestampNEQ,omitempty"`
+	TimestampIn    []time.Time `json:"timestampIn,omitempty"`
+	TimestampNotIn []time.Time `json:"timestampNotIn,omitempty"`
+	TimestampGT    *time.Time  `json:"timestampGT,omitempty"`
+	TimestampGTE   *time.Time  `json:"timestampGTE,omitempty"`
+	TimestampLT    *time.Time  `json:"timestampLT,omitempty"`
+	TimestampLTE   *time.Time  `json:"timestampLTE,omitempty"`
+
+	// "last_traded_at" field predicates.
+	LastTradedAt      *time.Time  `json:"lastTradedAt,omitempty"`
+	LastTradedAtNEQ   *time.Time  `json:"lastTradedAtNEQ,omitempty"`
+	LastTradedAtIn    []time.Time `json:"lastTradedAtIn,omitempty"`
+	LastTradedAtNotIn []time.Time `json:"lastTradedAtNotIn,omitempty"`
+	LastTradedAtGT    *time.Time  `json:"lastTradedAtGT,omitempty"`
+	LastTradedAtGTE   *time.Time  `json:"lastTradedAtGTE,omitempty"`
+	LastTradedAtLT    *time.Time  `json:"lastTradedAtLT,omitempty"`
+	LastTradedAtLTE   *time.Time  `json:"lastTradedAtLTE,omitempty"`
+
+	// "last_fetch_at" field predicates.
+	LastFetchAt      *time.Time  `json:"lastFetchAt,omitempty"`
+	LastFetchAtNEQ   *time.Time  `json:"lastFetchAtNEQ,omitempty"`
+	LastFetchAtIn    []time.Time `json:"lastFetchAtIn,omitempty"`
+	LastFetchAtNotIn []time.Time `json:"lastFetchAtNotIn,omitempty"`
+	LastFetchAtGT    *time.Time  `json:"lastFetchAtGT,omitempty"`
+	LastFetchAtGTE   *time.Time  `json:"lastFetchAtGTE,omitempty"`
+	LastFetchAtLT    *time.Time  `json:"lastFetchAtLT,omitempty"`
+	LastFetchAtLTE   *time.Time  `json:"lastFetchAtLTE,omitempty"`
+
+	// "is_anomaly" field predicates.
+	IsAnomaly    *bool `json:"isAnomaly,omitempty"`
+	IsAnomalyNEQ *bool `json:"isAnomalyNEQ,omitempty"`
+
+	// "is_stale" field predicates.
+	IsStale    *bool `json:"isStale,omitempty"`
+	IsStaleNEQ *bool `json:"isStaleNEQ,omitempty"`
+
+	// "trade_url" field predicates.
+	TradeURL             *string  `json:"tradeURL,omitempty"`
+	TradeURLNEQ          *string  `json:"tradeURLNEQ,omitempty"`
+	TradeURLIn           []string `json:"tradeURLIn,omitempty"`
+	TradeURLNotIn        []string `json:"tradeURLNotIn,omitempty"`
+	TradeURLGT           *string  `json:"tradeURLGT,omitempty"`
+	TradeURLGTE          *string  `json:"tradeURLGTE,omitempty"`
+	TradeURLLT           *string  `json:"tradeURLLT,omitempty"`
+	TradeURLLTE          *string  `json:"tradeURLLTE,omitempty"`
+	TradeURLContains     *string  `json:"tradeURLContains,omitempty"`
+	TradeURLHasPrefix    *string  `json:"tradeURLHasPrefix,omitempty"`
+	TradeURLHasSuffix    *string  `json:"tradeURLHasSuffix,omitempty"`
+	TradeURLIsNil        bool     `json:"tradeURLIsNil,omitempty"`
+	TradeURLNotNil       bool     `json:"tradeURLNotNil,omitempty"`
+	TradeURLEqualFold    *string  `json:"tradeURLEqualFold,omitempty"`
+	TradeURLContainsFold *string  `json:"tradeURLContainsFold,omitempty"`
+
+	// "token_info_url" field predicates.
+	TokenInfoURL             *string  `json:"tokenInfoURL,omitempty"`
+	TokenInfoURLNEQ          *string  `json:"tokenInfoURLNEQ,omitempty"`
+	TokenInfoURLIn           []string `json:"tokenInfoURLIn,omitempty"`
+	TokenInfoURLNotIn        []string `json:"tokenInfoURLNotIn,omitempty"`
+	TokenInfoURLGT           *string  `json:"tokenInfoURLGT,omitempty"`
+	TokenInfoURLGTE          *string  `json:"tokenInfoURLGTE,omitempty"`
+	TokenInfoURLLT           *string  `json:"tokenInfoURLLT,omitempty"`
+	TokenInfoURLLTE          *string  `json:"tokenInfoURLLTE,omitempty"`
+	TokenInfoURLContains     *string  `json:"tokenInfoURLContains,omitempty"`
+	TokenInfoURLHasPrefix    *string  `json:"tokenInfoURLHasPrefix,omitempty"`
+	TokenInfoURLHasSuffix    *string  `json:"tokenInfoURLHasSuffix,omitempty"`
+	TokenInfoURLIsNil        bool     `json:"tokenInfoURLIsNil,omitempty"`
+	TokenInfoURLNotNil       bool     `json:"tokenInfoURLNotNil,omitempty"`
+	TokenInfoURLEqualFold    *string  `json:"tokenInfoURLEqualFold,omitempty"`
+	TokenInfoURLContainsFold *string  `json:"tokenInfoURLContainsFold,omitempty"`
+
+	// "coin_id" field predicates.
+	CoinID             *string  `json:"coinID,omitempty"`
+	CoinIDNEQ          *string  `json:"coinIDNEQ,omitempty"`
+	CoinIDIn           []string `json:"coinIDIn,omitempty"`
+	CoinIDNotIn        []string `json:"coinIDNotIn,omitempty"`
+	CoinIDGT           *string  `json:"coinIDGT,omitempty"`
+	CoinIDGTE          *string  `json:"coinIDGTE,omitempty"`
+	CoinIDLT           *string  `json:"coinIDLT,omitempty"`
+	CoinIDLTE          *string  `json:"coinIDLTE,omitempty"`
+	CoinIDContains     *string  `json:"coinIDContains,omitempty"`
+	CoinIDHasPrefix    *string  `json:"coinIDHasPrefix,omitempty"`
+	CoinIDHasSuffix    *string  `json:"coinIDHasSuffix,omitempty"`
+	CoinIDEqualFold    *string  `json:"coinIDEqualFold,omitempty"`
+	CoinIDContainsFold *string  `json:"coinIDContainsFold,omitempty"`
+
+	// "target_coin_id" field predicates.
+	TargetCoinID             *string  `json:"targetCoinID,omitempty"`
+	TargetCoinIDNEQ          *string  `json:"targetCoinIDNEQ,omitempty"`
+	TargetCoinIDIn           []string `json:"targetCoinIDIn,omitempty"`
+	TargetCoinIDNotIn        []string `json:"targetCoinIDNotIn,omitempty"`
+	TargetCoinIDGT           *string  `json:"targetCoinIDGT,omitempty"`
+	TargetCoinIDGTE          *string  `json:"targetCoinIDGTE,omitempty"`
+	TargetCoinIDLT           *string  `json:"targetCoinIDLT,omitempty"`
+	TargetCoinIDLTE          *string  `json:"targetCoinIDLTE,omitempty"`
+	TargetCoinIDContains     *string  `json:"targetCoinIDContains,omitempty"`
+	TargetCoinIDHasPrefix    *string  `json:"targetCoinIDHasPrefix,omitempty"`
+	TargetCoinIDHasSuffix    *string  `json:"targetCoinIDHasSuffix,omitempty"`
+	TargetCoinIDEqualFold    *string  `json:"targetCoinIDEqualFold,omitempty"`
+	TargetCoinIDContainsFold *string  `json:"targetCoinIDContainsFold,omitempty"`
+
+	// "exchange" edge predicates.
+	HasExchange     *bool                 `json:"hasExchange,omitempty"`
+	HasExchangeWith []*ExchangeWhereInput `json:"hasExchangeWith,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *TickerWhereInput) AddPredicates(predicates ...predicate.Ticker) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the TickerWhereInput filter on the TickerQuery builder.
+func (i *TickerWhereInput) Filter(q *TickerQuery) (*TickerQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyTickerWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyTickerWhereInput is returned in case the TickerWhereInput is empty.
+var ErrEmptyTickerWhereInput = errors.New("repositories: empty predicate TickerWhereInput")
+
+// P returns a predicate for filtering tickers.
+// An error is returned if the input is empty or invalid.
+func (i *TickerWhereInput) P() (predicate.Ticker, error) {
+	var predicates []predicate.Ticker
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, ticker.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.Ticker, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, ticker.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.Ticker, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, ticker.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, ticker.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, ticker.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, ticker.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, ticker.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, ticker.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, ticker.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, ticker.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, ticker.IDLTE(*i.IDLTE))
+	}
+	if i.Base != nil {
+		predicates = append(predicates, ticker.BaseEQ(*i.Base))
+	}
+	if i.BaseNEQ != nil {
+		predicates = append(predicates, ticker.BaseNEQ(*i.BaseNEQ))
+	}
+	if len(i.BaseIn) > 0 {
+		predicates = append(predicates, ticker.BaseIn(i.BaseIn...))
+	}
+	if len(i.BaseNotIn) > 0 {
+		predicates = append(predicates, ticker.BaseNotIn(i.BaseNotIn...))
+	}
+	if i.BaseGT != nil {
+		predicates = append(predicates, ticker.BaseGT(*i.BaseGT))
+	}
+	if i.BaseGTE != nil {
+		predicates = append(predicates, ticker.BaseGTE(*i.BaseGTE))
+	}
+	if i.BaseLT != nil {
+		predicates = append(predicates, ticker.BaseLT(*i.BaseLT))
+	}
+	if i.BaseLTE != nil {
+		predicates = append(predicates, ticker.BaseLTE(*i.BaseLTE))
+	}
+	if i.BaseContains != nil {
+		predicates = append(predicates, ticker.BaseContains(*i.BaseContains))
+	}
+	if i.BaseHasPrefix != nil {
+		predicates = append(predicates, ticker.BaseHasPrefix(*i.BaseHasPrefix))
+	}
+	if i.BaseHasSuffix != nil {
+		predicates = append(predicates, ticker.BaseHasSuffix(*i.BaseHasSuffix))
+	}
+	if i.BaseEqualFold != nil {
+		predicates = append(predicates, ticker.BaseEqualFold(*i.BaseEqualFold))
+	}
+	if i.BaseContainsFold != nil {
+		predicates = append(predicates, ticker.BaseContainsFold(*i.BaseContainsFold))
+	}
+	if i.Target != nil {
+		predicates = append(predicates, ticker.TargetEQ(*i.Target))
+	}
+	if i.TargetNEQ != nil {
+		predicates = append(predicates, ticker.TargetNEQ(*i.TargetNEQ))
+	}
+	if len(i.TargetIn) > 0 {
+		predicates = append(predicates, ticker.TargetIn(i.TargetIn...))
+	}
+	if len(i.TargetNotIn) > 0 {
+		predicates = append(predicates, ticker.TargetNotIn(i.TargetNotIn...))
+	}
+	if i.TargetGT != nil {
+		predicates = append(predicates, ticker.TargetGT(*i.TargetGT))
+	}
+	if i.TargetGTE != nil {
+		predicates = append(predicates, ticker.TargetGTE(*i.TargetGTE))
+	}
+	if i.TargetLT != nil {
+		predicates = append(predicates, ticker.TargetLT(*i.TargetLT))
+	}
+	if i.TargetLTE != nil {
+		predicates = append(predicates, ticker.TargetLTE(*i.TargetLTE))
+	}
+	if i.TargetContains != nil {
+		predicates = append(predicates, ticker.TargetContains(*i.TargetContains))
+	}
+	if i.TargetHasPrefix != nil {
+		predicates = append(predicates, ticker.TargetHasPrefix(*i.TargetHasPrefix))
+	}
+	if i.TargetHasSuffix != nil {
+		predicates = append(predicates, ticker.TargetHasSuffix(*i.TargetHasSuffix))
+	}
+	if i.TargetEqualFold != nil {
+		predicates = append(predicates, ticker.TargetEqualFold(*i.TargetEqualFold))
+	}
+	if i.TargetContainsFold != nil {
+		predicates = append(predicates, ticker.TargetContainsFold(*i.TargetContainsFold))
+	}
+	if i.Last != nil {
+		predicates = append(predicates, ticker.LastEQ(*i.Last))
+	}
+	if i.LastNEQ != nil {
+		predicates = append(predicates, ticker.LastNEQ(*i.LastNEQ))
+	}
+	if len(i.LastIn) > 0 {
+		predicates = append(predicates, ticker.LastIn(i.LastIn...))
+	}
+	if len(i.LastNotIn) > 0 {
+		predicates = append(predicates, ticker.LastNotIn(i.LastNotIn...))
+	}
+	if i.LastGT != nil {
+		predicates = append(predicates, ticker.LastGT(*i.LastGT))
+	}
+	if i.LastGTE != nil {
+		predicates = append(predicates, ticker.LastGTE(*i.LastGTE))
+	}
+	if i.LastLT != nil {
+		predicates = append(predicates, ticker.LastLT(*i.LastLT))
+	}
+	if i.LastLTE != nil {
+		predicates = append(predicates, ticker.LastLTE(*i.LastLTE))
+	}
+	if i.Volume != nil {
+		predicates = append(predicates, ticker.VolumeEQ(*i.Volume))
+	}
+	if i.VolumeNEQ != nil {
+		predicates = append(predicates, ticker.VolumeNEQ(*i.VolumeNEQ))
+	}
+	if len(i.VolumeIn) > 0 {
+		predicates = append(predicates, ticker.VolumeIn(i.VolumeIn...))
+	}
+	if len(i.VolumeNotIn) > 0 {
+		predicates = append(predicates, ticker.VolumeNotIn(i.VolumeNotIn...))
+	}
+	if i.VolumeGT != nil {
+		predicates = append(predicates, ticker.VolumeGT(*i.VolumeGT))
+	}
+	if i.VolumeGTE != nil {
+		predicates = append(predicates, ticker.VolumeGTE(*i.VolumeGTE))
+	}
+	if i.VolumeLT != nil {
+		predicates = append(predicates, ticker.VolumeLT(*i.VolumeLT))
+	}
+	if i.VolumeLTE != nil {
+		predicates = append(predicates, ticker.VolumeLTE(*i.VolumeLTE))
+	}
+	if i.TrustScore != nil {
+		predicates = append(predicates, ticker.TrustScoreEQ(*i.TrustScore))
+	}
+	if i.TrustScoreNEQ != nil {
+		predicates = append(predicates, ticker.TrustScoreNEQ(*i.TrustScoreNEQ))
+	}
+	if len(i.TrustScoreIn) > 0 {
+		predicates = append(predicates, ticker.TrustScoreIn(i.TrustScoreIn...))
+	}
+	if len(i.TrustScoreNotIn) > 0 {
+		predicates = append(predicates, ticker.TrustScoreNotIn(i.TrustScoreNotIn...))
+	}
+	if i.TrustScoreGT != nil {
+		predicates = append(predicates, ticker.TrustScoreGT(*i.TrustScoreGT))
+	}
+	if i.TrustScoreGTE != nil {
+		predicates = append(predicates, ticker.TrustScoreGTE(*i.TrustScoreGTE))
+	}
+	if i.TrustScoreLT != nil {
+		predicates = append(predicates, ticker.TrustScoreLT(*i.TrustScoreLT))
+	}
+	if i.TrustScoreLTE != nil {
+		predicates = append(predicates, ticker.TrustScoreLTE(*i.TrustScoreLTE))
+	}
+	if i.TrustScoreContains != nil {
+		predicates = append(predicates, ticker.TrustScoreContains(*i.TrustScoreContains))
+	}
+	if i.TrustScoreHasPrefix != nil {
+		predicates = append(predicates, ticker.TrustScoreHasPrefix(*i.TrustScoreHasPrefix))
+	}
+	if i.TrustScoreHasSuffix != nil {
+		predicates = append(predicates, ticker.TrustScoreHasSuffix(*i.TrustScoreHasSuffix))
+	}
+	if i.TrustScoreEqualFold != nil {
+		predicates = append(predicates, ticker.TrustScoreEqualFold(*i.TrustScoreEqualFold))
+	}
+	if i.TrustScoreContainsFold != nil {
+		predicates = append(predicates, ticker.TrustScoreContainsFold(*i.TrustScoreContainsFold))
+	}
+	if i.BidAskSpreadPercentage != nil {
+		predicates = append(predicates, ticker.BidAskSpreadPercentageEQ(*i.BidAskSpreadPercentage))
+	}
+	if i.BidAskSpreadPercentageNEQ != nil {
+		predicates = append(predicates, ticker.BidAskSpreadPercentageNEQ(*i.BidAskSpreadPercentageNEQ))
+	}
+	if len(i.BidAskSpreadPercentageIn) > 0 {
+		predicates = append(predicates, ticker.BidAskSpreadPercentageIn(i.BidAskSpreadPercentageIn...))
+	}
+	if len(i.BidAskSpreadPercentageNotIn) > 0 {
+		predicates = append(predicates, ticker.BidAskSpreadPercentageNotIn(i.BidAskSpreadPercentageNotIn...))
+	}
+	if i.BidAskSpreadPercentageGT != nil {
+		predicates = append(predicates, ticker.BidAskSpreadPercentageGT(*i.BidAskSpreadPercentageGT))
+	}
+	if i.BidAskSpreadPercentageGTE != nil {
+		predicates = append(predicates, ticker.BidAskSpreadPercentageGTE(*i.BidAskSpreadPercentageGTE))
+	}
+	if i.BidAskSpreadPercentageLT != nil {
+		predicates = append(predicates, ticker.BidAskSpreadPercentageLT(*i.BidAskSpreadPercentageLT))
+	}
+	if i.BidAskSpreadPercentageLTE != nil {
+		predicates = append(predicates, ticker.BidAskSpreadPercentageLTE(*i.BidAskSpreadPercentageLTE))
+	}
+	if i.Timestamp != nil {
+		predicates = append(predicates, ticker.TimestampEQ(*i.Timestamp))
+	}
+	if i.TimestampNEQ != nil {
+		predicates = append(predicates, ticker.TimestampNEQ(*i.TimestampNEQ))
+	}
+	if len(i.TimestampIn) > 0 {
+		predicates = append(predicates, ticker.TimestampIn(i.TimestampIn...))
+	}
+	if len(i.TimestampNotIn) > 0 {
+		predicates = append(predicates, ticker.TimestampNotIn(i.TimestampNotIn...))
+	}
+	if i.TimestampGT != nil {
+		predicates = append(predicates, ticker.TimestampGT(*i.TimestampGT))
+	}
+	if i.TimestampGTE != nil {
+		predicates = append(predicates, ticker.TimestampGTE(*i.TimestampGTE))
+	}
+	if i.TimestampLT != nil {
+		predicates = append(predicates, ticker.TimestampLT(*i.TimestampLT))
+	}
+	if i.TimestampLTE != nil {
+		predicates = append(predicates, ticker.TimestampLTE(*i.TimestampLTE))
+	}
+	if i.LastTradedAt != nil {
+		predicates = append(predicates, ticker.LastTradedAtEQ(*i.LastTradedAt))
+	}
+	if i.LastTradedAtNEQ != nil {
+		predicates = append(predicates, ticker.LastTradedAtNEQ(*i.LastTradedAtNEQ))
+	}
+	if len(i.LastTradedAtIn) > 0 {
+		predicates = append(predicates, ticker.LastTradedAtIn(i.LastTradedAtIn...))
+	}
+	if len(i.LastTradedAtNotIn) > 0 {
+		predicates = append(predicates, ticker.LastTradedAtNotIn(i.LastTradedAtNotIn...))
+	}
+	if i.LastTradedAtGT != nil {
+		predicates = append(predicates, ticker.LastTradedAtGT(*i.LastTradedAtGT))
+	}
+	if i.LastTradedAtGTE != nil {
+		predicates = append(predicates, ticker.LastTradedAtGTE(*i.LastTradedAtGTE))
+	}
+	if i.LastTradedAtLT != nil {
+		predicates = append(predicates, ticker.LastTradedAtLT(*i.LastTradedAtLT))
+	}
+	if i.LastTradedAtLTE != nil {
+		predicates = append(predicates, ticker.LastTradedAtLTE(*i.LastTradedAtLTE))
+	}
+	if i.LastFetchAt != nil {
+		predicates = append(predicates, ticker.LastFetchAtEQ(*i.LastFetchAt))
+	}
+	if i.LastFetchAtNEQ != nil {
+		predicates = append(predicates, ticker.LastFetchAtNEQ(*i.LastFetchAtNEQ))
+	}
+	if len(i.LastFetchAtIn) > 0 {
+		predicates = append(predicates, ticker.LastFetchAtIn(i.LastFetchAtIn...))
+	}
+	if len(i.LastFetchAtNotIn) > 0 {
+		predicates = append(predicates, ticker.LastFetchAtNotIn(i.LastFetchAtNotIn...))
+	}
+	if i.LastFetchAtGT != nil {
+		predicates = append(predicates, ticker.LastFetchAtGT(*i.LastFetchAtGT))
+	}
+	if i.LastFetchAtGTE != nil {
+		predicates = append(predicates, ticker.LastFetchAtGTE(*i.LastFetchAtGTE))
+	}
+	if i.LastFetchAtLT != nil {
+		predicates = append(predicates, ticker.LastFetchAtLT(*i.LastFetchAtLT))
+	}
+	if i.LastFetchAtLTE != nil {
+		predicates = append(predicates, ticker.LastFetchAtLTE(*i.LastFetchAtLTE))
+	}
+	if i.IsAnomaly != nil {
+		predicates = append(predicates, ticker.IsAnomalyEQ(*i.IsAnomaly))
+	}
+	if i.IsAnomalyNEQ != nil {
+		predicates = append(predicates, ticker.IsAnomalyNEQ(*i.IsAnomalyNEQ))
+	}
+	if i.IsStale != nil {
+		predicates = append(predicates, ticker.IsStaleEQ(*i.IsStale))
+	}
+	if i.IsStaleNEQ != nil {
+		predicates = append(predicates, ticker.IsStaleNEQ(*i.IsStaleNEQ))
+	}
+	if i.TradeURL != nil {
+		predicates = append(predicates, ticker.TradeURLEQ(*i.TradeURL))
+	}
+	if i.TradeURLNEQ != nil {
+		predicates = append(predicates, ticker.TradeURLNEQ(*i.TradeURLNEQ))
+	}
+	if len(i.TradeURLIn) > 0 {
+		predicates = append(predicates, ticker.TradeURLIn(i.TradeURLIn...))
+	}
+	if len(i.TradeURLNotIn) > 0 {
+		predicates = append(predicates, ticker.TradeURLNotIn(i.TradeURLNotIn...))
+	}
+	if i.TradeURLGT != nil {
+		predicates = append(predicates, ticker.TradeURLGT(*i.TradeURLGT))
+	}
+	if i.TradeURLGTE != nil {
+		predicates = append(predicates, ticker.TradeURLGTE(*i.TradeURLGTE))
+	}
+	if i.TradeURLLT != nil {
+		predicates = append(predicates, ticker.TradeURLLT(*i.TradeURLLT))
+	}
+	if i.TradeURLLTE != nil {
+		predicates = append(predicates, ticker.TradeURLLTE(*i.TradeURLLTE))
+	}
+	if i.TradeURLContains != nil {
+		predicates = append(predicates, ticker.TradeURLContains(*i.TradeURLContains))
+	}
+	if i.TradeURLHasPrefix != nil {
+		predicates = append(predicates, ticker.TradeURLHasPrefix(*i.TradeURLHasPrefix))
+	}
+	if i.TradeURLHasSuffix != nil {
+		predicates = append(predicates, ticker.TradeURLHasSuffix(*i.TradeURLHasSuffix))
+	}
+	if i.TradeURLIsNil {
+		predicates = append(predicates, ticker.TradeURLIsNil())
+	}
+	if i.TradeURLNotNil {
+		predicates = append(predicates, ticker.TradeURLNotNil())
+	}
+	if i.TradeURLEqualFold != nil {
+		predicates = append(predicates, ticker.TradeURLEqualFold(*i.TradeURLEqualFold))
+	}
+	if i.TradeURLContainsFold != nil {
+		predicates = append(predicates, ticker.TradeURLContainsFold(*i.TradeURLContainsFold))
+	}
+	if i.TokenInfoURL != nil {
+		predicates = append(predicates, ticker.TokenInfoURLEQ(*i.TokenInfoURL))
+	}
+	if i.TokenInfoURLNEQ != nil {
+		predicates = append(predicates, ticker.TokenInfoURLNEQ(*i.TokenInfoURLNEQ))
+	}
+	if len(i.TokenInfoURLIn) > 0 {
+		predicates = append(predicates, ticker.TokenInfoURLIn(i.TokenInfoURLIn...))
+	}
+	if len(i.TokenInfoURLNotIn) > 0 {
+		predicates = append(predicates, ticker.TokenInfoURLNotIn(i.TokenInfoURLNotIn...))
+	}
+	if i.TokenInfoURLGT != nil {
+		predicates = append(predicates, ticker.TokenInfoURLGT(*i.TokenInfoURLGT))
+	}
+	if i.TokenInfoURLGTE != nil {
+		predicates = append(predicates, ticker.TokenInfoURLGTE(*i.TokenInfoURLGTE))
+	}
+	if i.TokenInfoURLLT != nil {
+		predicates = append(predicates, ticker.TokenInfoURLLT(*i.TokenInfoURLLT))
+	}
+	if i.TokenInfoURLLTE != nil {
+		predicates = append(predicates, ticker.TokenInfoURLLTE(*i.TokenInfoURLLTE))
+	}
+	if i.TokenInfoURLContains != nil {
+		predicates = append(predicates, ticker.TokenInfoURLContains(*i.TokenInfoURLContains))
+	}
+	if i.TokenInfoURLHasPrefix != nil {
+		predicates = append(predicates, ticker.TokenInfoURLHasPrefix(*i.TokenInfoURLHasPrefix))
+	}
+	if i.TokenInfoURLHasSuffix != nil {
+		predicates = append(predicates, ticker.TokenInfoURLHasSuffix(*i.TokenInfoURLHasSuffix))
+	}
+	if i.TokenInfoURLIsNil {
+		predicates = append(predicates, ticker.TokenInfoURLIsNil())
+	}
+	if i.TokenInfoURLNotNil {
+		predicates = append(predicates, ticker.TokenInfoURLNotNil())
+	}
+	if i.TokenInfoURLEqualFold != nil {
+		predicates = append(predicates, ticker.TokenInfoURLEqualFold(*i.TokenInfoURLEqualFold))
+	}
+	if i.TokenInfoURLContainsFold != nil {
+		predicates = append(predicates, ticker.TokenInfoURLContainsFold(*i.TokenInfoURLContainsFold))
+	}
+	if i.CoinID != nil {
+		predicates = append(predicates, ticker.CoinIDEQ(*i.CoinID))
+	}
+	if i.CoinIDNEQ != nil {
+		predicates = append(predicates, ticker.CoinIDNEQ(*i.CoinIDNEQ))
+	}
+	if len(i.CoinIDIn) > 0 {
+		predicates = append(predicates, ticker.CoinIDIn(i.CoinIDIn...))
+	}
+	if len(i.CoinIDNotIn) > 0 {
+		predicates = append(predicates, ticker.CoinIDNotIn(i.CoinIDNotIn...))
+	}
+	if i.CoinIDGT != nil {
+		predicates = append(predicates, ticker.CoinIDGT(*i.CoinIDGT))
+	}
+	if i.CoinIDGTE != nil {
+		predicates = append(predicates, ticker.CoinIDGTE(*i.CoinIDGTE))
+	}
+	if i.CoinIDLT != nil {
+		predicates = append(predicates, ticker.CoinIDLT(*i.CoinIDLT))
+	}
+	if i.CoinIDLTE != nil {
+		predicates = append(predicates, ticker.CoinIDLTE(*i.CoinIDLTE))
+	}
+	if i.CoinIDContains != nil {
+		predicates = append(predicates, ticker.CoinIDContains(*i.CoinIDContains))
+	}
+	if i.CoinIDHasPrefix != nil {
+		predicates = append(predicates, ticker.CoinIDHasPrefix(*i.CoinIDHasPrefix))
+	}
+	if i.CoinIDHasSuffix != nil {
+		predicates = append(predicates, ticker.CoinIDHasSuffix(*i.CoinIDHasSuffix))
+	}
+	if i.CoinIDEqualFold != nil {
+		predicates = append(predicates, ticker.CoinIDEqualFold(*i.CoinIDEqualFold))
+	}
+	if i.CoinIDContainsFold != nil {
+		predicates = append(predicates, ticker.CoinIDContainsFold(*i.CoinIDContainsFold))
+	}
+	if i.TargetCoinID != nil {
+		predicates = append(predicates, ticker.TargetCoinIDEQ(*i.TargetCoinID))
+	}
+	if i.TargetCoinIDNEQ != nil {
+		predicates = append(predicates, ticker.TargetCoinIDNEQ(*i.TargetCoinIDNEQ))
+	}
+	if len(i.TargetCoinIDIn) > 0 {
+		predicates = append(predicates, ticker.TargetCoinIDIn(i.TargetCoinIDIn...))
+	}
+	if len(i.TargetCoinIDNotIn) > 0 {
+		predicates = append(predicates, ticker.TargetCoinIDNotIn(i.TargetCoinIDNotIn...))
+	}
+	if i.TargetCoinIDGT != nil {
+		predicates = append(predicates, ticker.TargetCoinIDGT(*i.TargetCoinIDGT))
+	}
+	if i.TargetCoinIDGTE != nil {
+		predicates = append(predicates, ticker.TargetCoinIDGTE(*i.TargetCoinIDGTE))
+	}
+	if i.TargetCoinIDLT != nil {
+		predicates = append(predicates, ticker.TargetCoinIDLT(*i.TargetCoinIDLT))
+	}
+	if i.TargetCoinIDLTE != nil {
+		predicates = append(predicates, ticker.TargetCoinIDLTE(*i.TargetCoinIDLTE))
+	}
+	if i.TargetCoinIDContains != nil {
+		predicates = append(predicates, ticker.TargetCoinIDContains(*i.TargetCoinIDContains))
+	}
+	if i.TargetCoinIDHasPrefix != nil {
+		predicates = append(predicates, ticker.TargetCoinIDHasPrefix(*i.TargetCoinIDHasPrefix))
+	}
+	if i.TargetCoinIDHasSuffix != nil {
+		predicates = append(predicates, ticker.TargetCoinIDHasSuffix(*i.TargetCoinIDHasSuffix))
+	}
+	if i.TargetCoinIDEqualFold != nil {
+		predicates = append(predicates, ticker.TargetCoinIDEqualFold(*i.TargetCoinIDEqualFold))
+	}
+	if i.TargetCoinIDContainsFold != nil {
+		predicates = append(predicates, ticker.TargetCoinIDContainsFold(*i.TargetCoinIDContainsFold))
+	}
+
+	if i.HasExchange != nil {
+		p := ticker.HasExchange()
+		if !*i.HasExchange {
+			p = ticker.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasExchangeWith) > 0 {
+		with := make([]predicate.Exchange, 0, len(i.HasExchangeWith))
+		for _, w := range i.HasExchangeWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasExchangeWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, ticker.HasExchangeWith(with...))
+	}
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyTickerWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return ticker.And(predicates...), nil
 	}
 }

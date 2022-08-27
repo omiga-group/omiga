@@ -198,6 +198,30 @@ func (f OutboxMutationRuleFunc) EvalMutation(ctx context.Context, m repositories
 	return Denyf("repositories/privacy: unexpected mutation type %T, expect *repositories.OutboxMutation", m)
 }
 
+// The TickerQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type TickerQueryRuleFunc func(context.Context, *repositories.TickerQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f TickerQueryRuleFunc) EvalQuery(ctx context.Context, q repositories.Query) error {
+	if q, ok := q.(*repositories.TickerQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("repositories/privacy: unexpected query type %T, expect *repositories.TickerQuery", q)
+}
+
+// The TickerMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type TickerMutationRuleFunc func(context.Context, *repositories.TickerMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f TickerMutationRuleFunc) EvalMutation(ctx context.Context, m repositories.Mutation) error {
+	if m, ok := m.(*repositories.TickerMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("repositories/privacy: unexpected mutation type %T, expect *repositories.TickerMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -237,6 +261,8 @@ func queryFilter(q repositories.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *repositories.OutboxQuery:
 		return q.Filter(), nil
+	case *repositories.TickerQuery:
+		return q.Filter(), nil
 	default:
 		return nil, Denyf("repositories/privacy: unexpected query type %T for query filter", q)
 	}
@@ -247,6 +273,8 @@ func mutationFilter(m repositories.Mutation) (Filter, error) {
 	case *repositories.ExchangeMutation:
 		return m.Filter(), nil
 	case *repositories.OutboxMutation:
+		return m.Filter(), nil
+	case *repositories.TickerMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("repositories/privacy: unexpected mutation type %T for mutation filter", m)

@@ -9,6 +9,7 @@ import "context"
 type SchemaConfig struct {
 	Exchange string // Exchange table.
 	Outbox   string // Outbox table.
+	Ticker   string // Ticker table.
 }
 
 type schemaCtxKey struct{}

@@ -5,6 +5,8 @@ package repositories
 import (
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/predicate"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -14,7 +16,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 2)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 3)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   exchange.Table,
@@ -64,6 +66,61 @@ var schemaGraph = func() *sqlgraph.Schema {
 			outbox.FieldProcessingErrors: {Type: field.TypeJSON, Column: outbox.FieldProcessingErrors},
 		},
 	}
+	graph.Nodes[2] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   ticker.Table,
+			Columns: ticker.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt,
+				Column: ticker.FieldID,
+			},
+		},
+		Type: "Ticker",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			ticker.FieldBase:                   {Type: field.TypeString, Column: ticker.FieldBase},
+			ticker.FieldTarget:                 {Type: field.TypeString, Column: ticker.FieldTarget},
+			ticker.FieldMarket:                 {Type: field.TypeJSON, Column: ticker.FieldMarket},
+			ticker.FieldLast:                   {Type: field.TypeFloat64, Column: ticker.FieldLast},
+			ticker.FieldVolume:                 {Type: field.TypeFloat64, Column: ticker.FieldVolume},
+			ticker.FieldConvertedLast:          {Type: field.TypeJSON, Column: ticker.FieldConvertedLast},
+			ticker.FieldConvertedVolume:        {Type: field.TypeJSON, Column: ticker.FieldConvertedVolume},
+			ticker.FieldTrustScore:             {Type: field.TypeString, Column: ticker.FieldTrustScore},
+			ticker.FieldBidAskSpreadPercentage: {Type: field.TypeFloat64, Column: ticker.FieldBidAskSpreadPercentage},
+			ticker.FieldTimestamp:              {Type: field.TypeTime, Column: ticker.FieldTimestamp},
+			ticker.FieldLastTradedAt:           {Type: field.TypeTime, Column: ticker.FieldLastTradedAt},
+			ticker.FieldLastFetchAt:            {Type: field.TypeTime, Column: ticker.FieldLastFetchAt},
+			ticker.FieldIsAnomaly:              {Type: field.TypeBool, Column: ticker.FieldIsAnomaly},
+			ticker.FieldIsStale:                {Type: field.TypeBool, Column: ticker.FieldIsStale},
+			ticker.FieldTradeURL:               {Type: field.TypeString, Column: ticker.FieldTradeURL},
+			ticker.FieldTokenInfoURL:           {Type: field.TypeString, Column: ticker.FieldTokenInfoURL},
+			ticker.FieldCoinID:                 {Type: field.TypeString, Column: ticker.FieldCoinID},
+			ticker.FieldTargetCoinID:           {Type: field.TypeString, Column: ticker.FieldTargetCoinID},
+		},
+	}
+	graph.MustAddE(
+		"ticker",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.TickerTable,
+			Columns: []string{exchange.TickerColumn},
+			Bidi:    false,
+		},
+		"Exchange",
+		"Ticker",
+	)
+	graph.MustAddE(
+		"exchange",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   ticker.ExchangeTable,
+			Columns: []string{ticker.ExchangeColumn},
+			Bidi:    false,
+		},
+		"Ticker",
+		"Exchange",
+	)
 	return graph
 }()
 
@@ -183,6 +240,20 @@ func (f *ExchangeFilter) WhereTradeVolume24hBtcNormalized(p entql.Float64P) {
 	f.Where(p.Field(exchange.FieldTradeVolume24hBtcNormalized))
 }
 
+// WhereHasTicker applies a predicate to check if query has an edge ticker.
+func (f *ExchangeFilter) WhereHasTicker() {
+	f.Where(entql.HasEdge("ticker"))
+}
+
+// WhereHasTickerWith applies a predicate to check if query has an edge ticker with a given conditions (other predicates).
+func (f *ExchangeFilter) WhereHasTickerWith(preds ...predicate.Ticker) {
+	f.Where(entql.HasEdgeWith("ticker", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (oq *OutboxQuery) addPredicate(pred func(s *sql.Selector)) {
 	oq.predicates = append(oq.predicates, pred)
@@ -266,4 +337,148 @@ func (f *OutboxFilter) WhereLastRetry(p entql.TimeP) {
 // WhereProcessingErrors applies the entql json.RawMessage predicate on the processing_errors field.
 func (f *OutboxFilter) WhereProcessingErrors(p entql.BytesP) {
 	f.Where(p.Field(outbox.FieldProcessingErrors))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (tq *TickerQuery) addPredicate(pred func(s *sql.Selector)) {
+	tq.predicates = append(tq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the TickerQuery builder.
+func (tq *TickerQuery) Filter() *TickerFilter {
+	return &TickerFilter{config: tq.config, predicateAdder: tq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *TickerMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the TickerMutation builder.
+func (m *TickerMutation) Filter() *TickerFilter {
+	return &TickerFilter{config: m.config, predicateAdder: m}
+}
+
+// TickerFilter provides a generic filtering capability at runtime for TickerQuery.
+type TickerFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *TickerFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int predicate on the id field.
+func (f *TickerFilter) WhereID(p entql.IntP) {
+	f.Where(p.Field(ticker.FieldID))
+}
+
+// WhereBase applies the entql string predicate on the base field.
+func (f *TickerFilter) WhereBase(p entql.StringP) {
+	f.Where(p.Field(ticker.FieldBase))
+}
+
+// WhereTarget applies the entql string predicate on the target field.
+func (f *TickerFilter) WhereTarget(p entql.StringP) {
+	f.Where(p.Field(ticker.FieldTarget))
+}
+
+// WhereMarket applies the entql json.RawMessage predicate on the market field.
+func (f *TickerFilter) WhereMarket(p entql.BytesP) {
+	f.Where(p.Field(ticker.FieldMarket))
+}
+
+// WhereLast applies the entql float64 predicate on the last field.
+func (f *TickerFilter) WhereLast(p entql.Float64P) {
+	f.Where(p.Field(ticker.FieldLast))
+}
+
+// WhereVolume applies the entql float64 predicate on the volume field.
+func (f *TickerFilter) WhereVolume(p entql.Float64P) {
+	f.Where(p.Field(ticker.FieldVolume))
+}
+
+// WhereConvertedLast applies the entql json.RawMessage predicate on the converted_last field.
+func (f *TickerFilter) WhereConvertedLast(p entql.BytesP) {
+	f.Where(p.Field(ticker.FieldConvertedLast))
+}
+
+// WhereConvertedVolume applies the entql json.RawMessage predicate on the converted_volume field.
+func (f *TickerFilter) WhereConvertedVolume(p entql.BytesP) {
+	f.Where(p.Field(ticker.FieldConvertedVolume))
+}
+
+// WhereTrustScore applies the entql string predicate on the trust_score field.
+func (f *TickerFilter) WhereTrustScore(p entql.StringP) {
+	f.Where(p.Field(ticker.FieldTrustScore))
+}
+
+// WhereBidAskSpreadPercentage applies the entql float64 predicate on the bid_ask_spread_percentage field.
+func (f *TickerFilter) WhereBidAskSpreadPercentage(p entql.Float64P) {
+	f.Where(p.Field(ticker.FieldBidAskSpreadPercentage))
+}
+
+// WhereTimestamp applies the entql time.Time predicate on the timestamp field.
+func (f *TickerFilter) WhereTimestamp(p entql.TimeP) {
+	f.Where(p.Field(ticker.FieldTimestamp))
+}
+
+// WhereLastTradedAt applies the entql time.Time predicate on the last_traded_at field.
+func (f *TickerFilter) WhereLastTradedAt(p entql.TimeP) {
+	f.Where(p.Field(ticker.FieldLastTradedAt))
+}
+
+// WhereLastFetchAt applies the entql time.Time predicate on the last_fetch_at field.
+func (f *TickerFilter) WhereLastFetchAt(p entql.TimeP) {
+	f.Where(p.Field(ticker.FieldLastFetchAt))
+}
+
+// WhereIsAnomaly applies the entql bool predicate on the is_anomaly field.
+func (f *TickerFilter) WhereIsAnomaly(p entql.BoolP) {
+	f.Where(p.Field(ticker.FieldIsAnomaly))
+}
+
+// WhereIsStale applies the entql bool predicate on the is_stale field.
+func (f *TickerFilter) WhereIsStale(p entql.BoolP) {
+	f.Where(p.Field(ticker.FieldIsStale))
+}
+
+// WhereTradeURL applies the entql string predicate on the trade_url field.
+func (f *TickerFilter) WhereTradeURL(p entql.StringP) {
+	f.Where(p.Field(ticker.FieldTradeURL))
+}
+
+// WhereTokenInfoURL applies the entql string predicate on the token_info_url field.
+func (f *TickerFilter) WhereTokenInfoURL(p entql.StringP) {
+	f.Where(p.Field(ticker.FieldTokenInfoURL))
+}
+
+// WhereCoinID applies the entql string predicate on the coin_id field.
+func (f *TickerFilter) WhereCoinID(p entql.StringP) {
+	f.Where(p.Field(ticker.FieldCoinID))
+}
+
+// WhereTargetCoinID applies the entql string predicate on the target_coin_id field.
+func (f *TickerFilter) WhereTargetCoinID(p entql.StringP) {
+	f.Where(p.Field(ticker.FieldTargetCoinID))
+}
+
+// WhereHasExchange applies a predicate to check if query has an edge exchange.
+func (f *TickerFilter) WhereHasExchange() {
+	f.Where(entql.HasEdge("exchange"))
+}
+
+// WhereHasExchangeWith applies a predicate to check if query has an edge exchange with a given conditions (other predicates).
+func (f *TickerFilter) WhereHasExchangeWith(preds ...predicate.Exchange) {
+	f.Where(entql.HasEdgeWith("exchange", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
 }

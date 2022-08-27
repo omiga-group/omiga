@@ -12,9 +12,11 @@ import (
 
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // Client is the client that holds all ent builders.
@@ -26,6 +28,8 @@ type Client struct {
 	Exchange *ExchangeClient
 	// Outbox is the client for interacting with the Outbox builders.
 	Outbox *OutboxClient
+	// Ticker is the client for interacting with the Ticker builders.
+	Ticker *TickerClient
 	// additional fields for node api
 	tables tables
 }
@@ -43,6 +47,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Exchange = NewExchangeClient(c.config)
 	c.Outbox = NewOutboxClient(c.config)
+	c.Ticker = NewTickerClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -78,6 +83,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:   cfg,
 		Exchange: NewExchangeClient(cfg),
 		Outbox:   NewOutboxClient(cfg),
+		Ticker:   NewTickerClient(cfg),
 	}, nil
 }
 
@@ -99,6 +105,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:   cfg,
 		Exchange: NewExchangeClient(cfg),
 		Outbox:   NewOutboxClient(cfg),
+		Ticker:   NewTickerClient(cfg),
 	}, nil
 }
 
@@ -129,6 +136,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Exchange.Use(hooks...)
 	c.Outbox.Use(hooks...)
+	c.Ticker.Use(hooks...)
 }
 
 // ExchangeClient is a client for the Exchange schema.
@@ -214,6 +222,25 @@ func (c *ExchangeClient) GetX(ctx context.Context, id int) *Exchange {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryTicker queries the ticker edge of a Exchange.
+func (c *ExchangeClient) QueryTicker(e *Exchange) *TickerQuery {
+	query := &TickerQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(exchange.Table, exchange.FieldID, id),
+			sqlgraph.To(ticker.Table, ticker.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, exchange.TickerTable, exchange.TickerColumn),
+		)
+		schemaConfig := e.schemaConfig
+		step.To.Schema = schemaConfig.Ticker
+		step.Edge.Schema = schemaConfig.Ticker
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -309,4 +336,113 @@ func (c *OutboxClient) GetX(ctx context.Context, id int) *Outbox {
 // Hooks returns the client hooks.
 func (c *OutboxClient) Hooks() []Hook {
 	return c.hooks.Outbox
+}
+
+// TickerClient is a client for the Ticker schema.
+type TickerClient struct {
+	config
+}
+
+// NewTickerClient returns a client for the Ticker from the given config.
+func NewTickerClient(c config) *TickerClient {
+	return &TickerClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `ticker.Hooks(f(g(h())))`.
+func (c *TickerClient) Use(hooks ...Hook) {
+	c.hooks.Ticker = append(c.hooks.Ticker, hooks...)
+}
+
+// Create returns a builder for creating a Ticker entity.
+func (c *TickerClient) Create() *TickerCreate {
+	mutation := newTickerMutation(c.config, OpCreate)
+	return &TickerCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Ticker entities.
+func (c *TickerClient) CreateBulk(builders ...*TickerCreate) *TickerCreateBulk {
+	return &TickerCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Ticker.
+func (c *TickerClient) Update() *TickerUpdate {
+	mutation := newTickerMutation(c.config, OpUpdate)
+	return &TickerUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TickerClient) UpdateOne(t *Ticker) *TickerUpdateOne {
+	mutation := newTickerMutation(c.config, OpUpdateOne, withTicker(t))
+	return &TickerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TickerClient) UpdateOneID(id int) *TickerUpdateOne {
+	mutation := newTickerMutation(c.config, OpUpdateOne, withTickerID(id))
+	return &TickerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Ticker.
+func (c *TickerClient) Delete() *TickerDelete {
+	mutation := newTickerMutation(c.config, OpDelete)
+	return &TickerDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TickerClient) DeleteOne(t *Ticker) *TickerDeleteOne {
+	return c.DeleteOneID(t.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *TickerClient) DeleteOneID(id int) *TickerDeleteOne {
+	builder := c.Delete().Where(ticker.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TickerDeleteOne{builder}
+}
+
+// Query returns a query builder for Ticker.
+func (c *TickerClient) Query() *TickerQuery {
+	return &TickerQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Ticker entity by its id.
+func (c *TickerClient) Get(ctx context.Context, id int) (*Ticker, error) {
+	return c.Query().Where(ticker.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TickerClient) GetX(ctx context.Context, id int) *Ticker {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryExchange queries the exchange edge of a Ticker.
+func (c *TickerClient) QueryExchange(t *Ticker) *ExchangeQuery {
+	query := &ExchangeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ticker.Table, ticker.FieldID, id),
+			sqlgraph.To(exchange.Table, exchange.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ticker.ExchangeTable, ticker.ExchangeColumn),
+		)
+		schemaConfig := t.schemaConfig
+		step.To.Schema = schemaConfig.Exchange
+		step.Edge.Schema = schemaConfig.Ticker
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TickerClient) Hooks() []Hook {
+	return c.hooks.Ticker
 }

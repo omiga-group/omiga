@@ -33,6 +33,7 @@ type config struct {
 type hooks struct {
 	Exchange []ent.Hook
 	Outbox   []ent.Hook
+	Ticker   []ent.Hook
 }
 
 // Options applies the options on the config object.

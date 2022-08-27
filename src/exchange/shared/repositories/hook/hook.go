@@ -35,6 +35,19 @@ func (f OutboxFunc) Mutate(ctx context.Context, m repositories.Mutation) (reposi
 	return f(ctx, mv)
 }
 
+// The TickerFunc type is an adapter to allow the use of ordinary
+// function as Ticker mutator.
+type TickerFunc func(context.Context, *repositories.TickerMutation) (repositories.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TickerFunc) Mutate(ctx context.Context, m repositories.Mutation) (repositories.Value, error) {
+	mv, ok := m.(*repositories.TickerMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *repositories.TickerMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, repositories.Mutation) bool
 

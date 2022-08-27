@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 )
 
 // ExchangeCreate is the builder for creating a Exchange entity.
@@ -95,9 +96,25 @@ func (ec *ExchangeCreate) SetHasTradingIncentive(b bool) *ExchangeCreate {
 	return ec
 }
 
+// SetNillableHasTradingIncentive sets the "has_trading_incentive" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableHasTradingIncentive(b *bool) *ExchangeCreate {
+	if b != nil {
+		ec.SetHasTradingIncentive(*b)
+	}
+	return ec
+}
+
 // SetCentralized sets the "centralized" field.
 func (ec *ExchangeCreate) SetCentralized(b bool) *ExchangeCreate {
 	ec.mutation.SetCentralized(b)
+	return ec
+}
+
+// SetNillableCentralized sets the "centralized" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableCentralized(b *bool) *ExchangeCreate {
+	if b != nil {
+		ec.SetCentralized(*b)
+	}
 	return ec
 }
 
@@ -107,9 +124,25 @@ func (ec *ExchangeCreate) SetPublicNotice(s string) *ExchangeCreate {
 	return ec
 }
 
+// SetNillablePublicNotice sets the "public_notice" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillablePublicNotice(s *string) *ExchangeCreate {
+	if s != nil {
+		ec.SetPublicNotice(*s)
+	}
+	return ec
+}
+
 // SetAlertNotice sets the "alert_notice" field.
 func (ec *ExchangeCreate) SetAlertNotice(s string) *ExchangeCreate {
 	ec.mutation.SetAlertNotice(s)
+	return ec
+}
+
+// SetNillableAlertNotice sets the "alert_notice" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableAlertNotice(s *string) *ExchangeCreate {
+	if s != nil {
+		ec.SetAlertNotice(*s)
+	}
 	return ec
 }
 
@@ -119,9 +152,25 @@ func (ec *ExchangeCreate) SetTrustScore(i int) *ExchangeCreate {
 	return ec
 }
 
+// SetNillableTrustScore sets the "trust_score" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableTrustScore(i *int) *ExchangeCreate {
+	if i != nil {
+		ec.SetTrustScore(*i)
+	}
+	return ec
+}
+
 // SetTrustScoreRank sets the "trust_score_rank" field.
 func (ec *ExchangeCreate) SetTrustScoreRank(i int) *ExchangeCreate {
 	ec.mutation.SetTrustScoreRank(i)
+	return ec
+}
+
+// SetNillableTrustScoreRank sets the "trust_score_rank" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableTrustScoreRank(i *int) *ExchangeCreate {
+	if i != nil {
+		ec.SetTrustScoreRank(*i)
+	}
 	return ec
 }
 
@@ -131,10 +180,41 @@ func (ec *ExchangeCreate) SetTradeVolume24hBtc(f float64) *ExchangeCreate {
 	return ec
 }
 
+// SetNillableTradeVolume24hBtc sets the "trade_volume_24h_btc" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableTradeVolume24hBtc(f *float64) *ExchangeCreate {
+	if f != nil {
+		ec.SetTradeVolume24hBtc(*f)
+	}
+	return ec
+}
+
 // SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
 func (ec *ExchangeCreate) SetTradeVolume24hBtcNormalized(f float64) *ExchangeCreate {
 	ec.mutation.SetTradeVolume24hBtcNormalized(f)
 	return ec
+}
+
+// SetNillableTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableTradeVolume24hBtcNormalized(f *float64) *ExchangeCreate {
+	if f != nil {
+		ec.SetTradeVolume24hBtcNormalized(*f)
+	}
+	return ec
+}
+
+// AddTickerIDs adds the "ticker" edge to the Ticker entity by IDs.
+func (ec *ExchangeCreate) AddTickerIDs(ids ...int) *ExchangeCreate {
+	ec.mutation.AddTickerIDs(ids...)
+	return ec
+}
+
+// AddTicker adds the "ticker" edges to the Ticker entity.
+func (ec *ExchangeCreate) AddTicker(t ...*Ticker) *ExchangeCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ec.AddTickerIDs(ids...)
 }
 
 // Mutation returns the ExchangeMutation object of the builder.
@@ -215,30 +295,6 @@ func (ec *ExchangeCreate) ExecX(ctx context.Context) {
 func (ec *ExchangeCreate) check() error {
 	if _, ok := ec.mutation.ExchangeID(); !ok {
 		return &ValidationError{Name: "exchange_id", err: errors.New(`repositories: missing required field "Exchange.exchange_id"`)}
-	}
-	if _, ok := ec.mutation.HasTradingIncentive(); !ok {
-		return &ValidationError{Name: "has_trading_incentive", err: errors.New(`repositories: missing required field "Exchange.has_trading_incentive"`)}
-	}
-	if _, ok := ec.mutation.Centralized(); !ok {
-		return &ValidationError{Name: "centralized", err: errors.New(`repositories: missing required field "Exchange.centralized"`)}
-	}
-	if _, ok := ec.mutation.PublicNotice(); !ok {
-		return &ValidationError{Name: "public_notice", err: errors.New(`repositories: missing required field "Exchange.public_notice"`)}
-	}
-	if _, ok := ec.mutation.AlertNotice(); !ok {
-		return &ValidationError{Name: "alert_notice", err: errors.New(`repositories: missing required field "Exchange.alert_notice"`)}
-	}
-	if _, ok := ec.mutation.TrustScore(); !ok {
-		return &ValidationError{Name: "trust_score", err: errors.New(`repositories: missing required field "Exchange.trust_score"`)}
-	}
-	if _, ok := ec.mutation.TrustScoreRank(); !ok {
-		return &ValidationError{Name: "trust_score_rank", err: errors.New(`repositories: missing required field "Exchange.trust_score_rank"`)}
-	}
-	if _, ok := ec.mutation.TradeVolume24hBtc(); !ok {
-		return &ValidationError{Name: "trade_volume_24h_btc", err: errors.New(`repositories: missing required field "Exchange.trade_volume_24h_btc"`)}
-	}
-	if _, ok := ec.mutation.TradeVolume24hBtcNormalized(); !ok {
-		return &ValidationError{Name: "trade_volume_24h_btc_normalized", err: errors.New(`repositories: missing required field "Exchange.trade_volume_24h_btc_normalized"`)}
 	}
 	return nil
 }
@@ -380,6 +436,26 @@ func (ec *ExchangeCreate) createSpec() (*Exchange, *sqlgraph.CreateSpec) {
 			Column: exchange.FieldTradeVolume24hBtcNormalized,
 		})
 		_node.TradeVolume24hBtcNormalized = value
+	}
+	if nodes := ec.mutation.TickerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.TickerTable,
+			Columns: []string{exchange.TickerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ticker.FieldID,
+				},
+			},
+		}
+		edge.Schema = ec.schemaConfig.Ticker
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -553,6 +629,12 @@ func (u *ExchangeUpsert) UpdateHasTradingIncentive() *ExchangeUpsert {
 	return u
 }
 
+// ClearHasTradingIncentive clears the value of the "has_trading_incentive" field.
+func (u *ExchangeUpsert) ClearHasTradingIncentive() *ExchangeUpsert {
+	u.SetNull(exchange.FieldHasTradingIncentive)
+	return u
+}
+
 // SetCentralized sets the "centralized" field.
 func (u *ExchangeUpsert) SetCentralized(v bool) *ExchangeUpsert {
 	u.Set(exchange.FieldCentralized, v)
@@ -562,6 +644,12 @@ func (u *ExchangeUpsert) SetCentralized(v bool) *ExchangeUpsert {
 // UpdateCentralized sets the "centralized" field to the value that was provided on create.
 func (u *ExchangeUpsert) UpdateCentralized() *ExchangeUpsert {
 	u.SetExcluded(exchange.FieldCentralized)
+	return u
+}
+
+// ClearCentralized clears the value of the "centralized" field.
+func (u *ExchangeUpsert) ClearCentralized() *ExchangeUpsert {
+	u.SetNull(exchange.FieldCentralized)
 	return u
 }
 
@@ -577,6 +665,12 @@ func (u *ExchangeUpsert) UpdatePublicNotice() *ExchangeUpsert {
 	return u
 }
 
+// ClearPublicNotice clears the value of the "public_notice" field.
+func (u *ExchangeUpsert) ClearPublicNotice() *ExchangeUpsert {
+	u.SetNull(exchange.FieldPublicNotice)
+	return u
+}
+
 // SetAlertNotice sets the "alert_notice" field.
 func (u *ExchangeUpsert) SetAlertNotice(v string) *ExchangeUpsert {
 	u.Set(exchange.FieldAlertNotice, v)
@@ -586,6 +680,12 @@ func (u *ExchangeUpsert) SetAlertNotice(v string) *ExchangeUpsert {
 // UpdateAlertNotice sets the "alert_notice" field to the value that was provided on create.
 func (u *ExchangeUpsert) UpdateAlertNotice() *ExchangeUpsert {
 	u.SetExcluded(exchange.FieldAlertNotice)
+	return u
+}
+
+// ClearAlertNotice clears the value of the "alert_notice" field.
+func (u *ExchangeUpsert) ClearAlertNotice() *ExchangeUpsert {
+	u.SetNull(exchange.FieldAlertNotice)
 	return u
 }
 
@@ -607,6 +707,12 @@ func (u *ExchangeUpsert) AddTrustScore(v int) *ExchangeUpsert {
 	return u
 }
 
+// ClearTrustScore clears the value of the "trust_score" field.
+func (u *ExchangeUpsert) ClearTrustScore() *ExchangeUpsert {
+	u.SetNull(exchange.FieldTrustScore)
+	return u
+}
+
 // SetTrustScoreRank sets the "trust_score_rank" field.
 func (u *ExchangeUpsert) SetTrustScoreRank(v int) *ExchangeUpsert {
 	u.Set(exchange.FieldTrustScoreRank, v)
@@ -622,6 +728,12 @@ func (u *ExchangeUpsert) UpdateTrustScoreRank() *ExchangeUpsert {
 // AddTrustScoreRank adds v to the "trust_score_rank" field.
 func (u *ExchangeUpsert) AddTrustScoreRank(v int) *ExchangeUpsert {
 	u.Add(exchange.FieldTrustScoreRank, v)
+	return u
+}
+
+// ClearTrustScoreRank clears the value of the "trust_score_rank" field.
+func (u *ExchangeUpsert) ClearTrustScoreRank() *ExchangeUpsert {
+	u.SetNull(exchange.FieldTrustScoreRank)
 	return u
 }
 
@@ -643,6 +755,12 @@ func (u *ExchangeUpsert) AddTradeVolume24hBtc(v float64) *ExchangeUpsert {
 	return u
 }
 
+// ClearTradeVolume24hBtc clears the value of the "trade_volume_24h_btc" field.
+func (u *ExchangeUpsert) ClearTradeVolume24hBtc() *ExchangeUpsert {
+	u.SetNull(exchange.FieldTradeVolume24hBtc)
+	return u
+}
+
 // SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
 func (u *ExchangeUpsert) SetTradeVolume24hBtcNormalized(v float64) *ExchangeUpsert {
 	u.Set(exchange.FieldTradeVolume24hBtcNormalized, v)
@@ -658,6 +776,12 @@ func (u *ExchangeUpsert) UpdateTradeVolume24hBtcNormalized() *ExchangeUpsert {
 // AddTradeVolume24hBtcNormalized adds v to the "trade_volume_24h_btc_normalized" field.
 func (u *ExchangeUpsert) AddTradeVolume24hBtcNormalized(v float64) *ExchangeUpsert {
 	u.Add(exchange.FieldTradeVolume24hBtcNormalized, v)
+	return u
+}
+
+// ClearTradeVolume24hBtcNormalized clears the value of the "trade_volume_24h_btc_normalized" field.
+func (u *ExchangeUpsert) ClearTradeVolume24hBtcNormalized() *ExchangeUpsert {
+	u.SetNull(exchange.FieldTradeVolume24hBtcNormalized)
 	return u
 }
 
@@ -841,6 +965,13 @@ func (u *ExchangeUpsertOne) UpdateHasTradingIncentive() *ExchangeUpsertOne {
 	})
 }
 
+// ClearHasTradingIncentive clears the value of the "has_trading_incentive" field.
+func (u *ExchangeUpsertOne) ClearHasTradingIncentive() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearHasTradingIncentive()
+	})
+}
+
 // SetCentralized sets the "centralized" field.
 func (u *ExchangeUpsertOne) SetCentralized(v bool) *ExchangeUpsertOne {
 	return u.Update(func(s *ExchangeUpsert) {
@@ -852,6 +983,13 @@ func (u *ExchangeUpsertOne) SetCentralized(v bool) *ExchangeUpsertOne {
 func (u *ExchangeUpsertOne) UpdateCentralized() *ExchangeUpsertOne {
 	return u.Update(func(s *ExchangeUpsert) {
 		s.UpdateCentralized()
+	})
+}
+
+// ClearCentralized clears the value of the "centralized" field.
+func (u *ExchangeUpsertOne) ClearCentralized() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearCentralized()
 	})
 }
 
@@ -869,6 +1007,13 @@ func (u *ExchangeUpsertOne) UpdatePublicNotice() *ExchangeUpsertOne {
 	})
 }
 
+// ClearPublicNotice clears the value of the "public_notice" field.
+func (u *ExchangeUpsertOne) ClearPublicNotice() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearPublicNotice()
+	})
+}
+
 // SetAlertNotice sets the "alert_notice" field.
 func (u *ExchangeUpsertOne) SetAlertNotice(v string) *ExchangeUpsertOne {
 	return u.Update(func(s *ExchangeUpsert) {
@@ -880,6 +1025,13 @@ func (u *ExchangeUpsertOne) SetAlertNotice(v string) *ExchangeUpsertOne {
 func (u *ExchangeUpsertOne) UpdateAlertNotice() *ExchangeUpsertOne {
 	return u.Update(func(s *ExchangeUpsert) {
 		s.UpdateAlertNotice()
+	})
+}
+
+// ClearAlertNotice clears the value of the "alert_notice" field.
+func (u *ExchangeUpsertOne) ClearAlertNotice() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearAlertNotice()
 	})
 }
 
@@ -904,6 +1056,13 @@ func (u *ExchangeUpsertOne) UpdateTrustScore() *ExchangeUpsertOne {
 	})
 }
 
+// ClearTrustScore clears the value of the "trust_score" field.
+func (u *ExchangeUpsertOne) ClearTrustScore() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearTrustScore()
+	})
+}
+
 // SetTrustScoreRank sets the "trust_score_rank" field.
 func (u *ExchangeUpsertOne) SetTrustScoreRank(v int) *ExchangeUpsertOne {
 	return u.Update(func(s *ExchangeUpsert) {
@@ -922,6 +1081,13 @@ func (u *ExchangeUpsertOne) AddTrustScoreRank(v int) *ExchangeUpsertOne {
 func (u *ExchangeUpsertOne) UpdateTrustScoreRank() *ExchangeUpsertOne {
 	return u.Update(func(s *ExchangeUpsert) {
 		s.UpdateTrustScoreRank()
+	})
+}
+
+// ClearTrustScoreRank clears the value of the "trust_score_rank" field.
+func (u *ExchangeUpsertOne) ClearTrustScoreRank() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearTrustScoreRank()
 	})
 }
 
@@ -946,6 +1112,13 @@ func (u *ExchangeUpsertOne) UpdateTradeVolume24hBtc() *ExchangeUpsertOne {
 	})
 }
 
+// ClearTradeVolume24hBtc clears the value of the "trade_volume_24h_btc" field.
+func (u *ExchangeUpsertOne) ClearTradeVolume24hBtc() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearTradeVolume24hBtc()
+	})
+}
+
 // SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
 func (u *ExchangeUpsertOne) SetTradeVolume24hBtcNormalized(v float64) *ExchangeUpsertOne {
 	return u.Update(func(s *ExchangeUpsert) {
@@ -964,6 +1137,13 @@ func (u *ExchangeUpsertOne) AddTradeVolume24hBtcNormalized(v float64) *ExchangeU
 func (u *ExchangeUpsertOne) UpdateTradeVolume24hBtcNormalized() *ExchangeUpsertOne {
 	return u.Update(func(s *ExchangeUpsert) {
 		s.UpdateTradeVolume24hBtcNormalized()
+	})
+}
+
+// ClearTradeVolume24hBtcNormalized clears the value of the "trade_volume_24h_btc_normalized" field.
+func (u *ExchangeUpsertOne) ClearTradeVolume24hBtcNormalized() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearTradeVolume24hBtcNormalized()
 	})
 }
 
@@ -1306,6 +1486,13 @@ func (u *ExchangeUpsertBulk) UpdateHasTradingIncentive() *ExchangeUpsertBulk {
 	})
 }
 
+// ClearHasTradingIncentive clears the value of the "has_trading_incentive" field.
+func (u *ExchangeUpsertBulk) ClearHasTradingIncentive() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearHasTradingIncentive()
+	})
+}
+
 // SetCentralized sets the "centralized" field.
 func (u *ExchangeUpsertBulk) SetCentralized(v bool) *ExchangeUpsertBulk {
 	return u.Update(func(s *ExchangeUpsert) {
@@ -1317,6 +1504,13 @@ func (u *ExchangeUpsertBulk) SetCentralized(v bool) *ExchangeUpsertBulk {
 func (u *ExchangeUpsertBulk) UpdateCentralized() *ExchangeUpsertBulk {
 	return u.Update(func(s *ExchangeUpsert) {
 		s.UpdateCentralized()
+	})
+}
+
+// ClearCentralized clears the value of the "centralized" field.
+func (u *ExchangeUpsertBulk) ClearCentralized() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearCentralized()
 	})
 }
 
@@ -1334,6 +1528,13 @@ func (u *ExchangeUpsertBulk) UpdatePublicNotice() *ExchangeUpsertBulk {
 	})
 }
 
+// ClearPublicNotice clears the value of the "public_notice" field.
+func (u *ExchangeUpsertBulk) ClearPublicNotice() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearPublicNotice()
+	})
+}
+
 // SetAlertNotice sets the "alert_notice" field.
 func (u *ExchangeUpsertBulk) SetAlertNotice(v string) *ExchangeUpsertBulk {
 	return u.Update(func(s *ExchangeUpsert) {
@@ -1345,6 +1546,13 @@ func (u *ExchangeUpsertBulk) SetAlertNotice(v string) *ExchangeUpsertBulk {
 func (u *ExchangeUpsertBulk) UpdateAlertNotice() *ExchangeUpsertBulk {
 	return u.Update(func(s *ExchangeUpsert) {
 		s.UpdateAlertNotice()
+	})
+}
+
+// ClearAlertNotice clears the value of the "alert_notice" field.
+func (u *ExchangeUpsertBulk) ClearAlertNotice() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearAlertNotice()
 	})
 }
 
@@ -1369,6 +1577,13 @@ func (u *ExchangeUpsertBulk) UpdateTrustScore() *ExchangeUpsertBulk {
 	})
 }
 
+// ClearTrustScore clears the value of the "trust_score" field.
+func (u *ExchangeUpsertBulk) ClearTrustScore() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearTrustScore()
+	})
+}
+
 // SetTrustScoreRank sets the "trust_score_rank" field.
 func (u *ExchangeUpsertBulk) SetTrustScoreRank(v int) *ExchangeUpsertBulk {
 	return u.Update(func(s *ExchangeUpsert) {
@@ -1387,6 +1602,13 @@ func (u *ExchangeUpsertBulk) AddTrustScoreRank(v int) *ExchangeUpsertBulk {
 func (u *ExchangeUpsertBulk) UpdateTrustScoreRank() *ExchangeUpsertBulk {
 	return u.Update(func(s *ExchangeUpsert) {
 		s.UpdateTrustScoreRank()
+	})
+}
+
+// ClearTrustScoreRank clears the value of the "trust_score_rank" field.
+func (u *ExchangeUpsertBulk) ClearTrustScoreRank() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearTrustScoreRank()
 	})
 }
 
@@ -1411,6 +1633,13 @@ func (u *ExchangeUpsertBulk) UpdateTradeVolume24hBtc() *ExchangeUpsertBulk {
 	})
 }
 
+// ClearTradeVolume24hBtc clears the value of the "trade_volume_24h_btc" field.
+func (u *ExchangeUpsertBulk) ClearTradeVolume24hBtc() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearTradeVolume24hBtc()
+	})
+}
+
 // SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
 func (u *ExchangeUpsertBulk) SetTradeVolume24hBtcNormalized(v float64) *ExchangeUpsertBulk {
 	return u.Update(func(s *ExchangeUpsert) {
@@ -1429,6 +1658,13 @@ func (u *ExchangeUpsertBulk) AddTradeVolume24hBtcNormalized(v float64) *Exchange
 func (u *ExchangeUpsertBulk) UpdateTradeVolume24hBtcNormalized() *ExchangeUpsertBulk {
 	return u.Update(func(s *ExchangeUpsert) {
 		s.UpdateTradeVolume24hBtcNormalized()
+	})
+}
+
+// ClearTradeVolume24hBtcNormalized clears the value of the "trade_volume_24h_btc_normalized" field.
+func (u *ExchangeUpsertBulk) ClearTradeVolume24hBtcNormalized() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearTradeVolume24hBtcNormalized()
 	})
 }
 

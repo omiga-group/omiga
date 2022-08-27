@@ -13,6 +13,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/predicate"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 )
 
 // ExchangeUpdate is the builder for updating Exchange entities.
@@ -140,9 +141,37 @@ func (eu *ExchangeUpdate) SetHasTradingIncentive(b bool) *ExchangeUpdate {
 	return eu
 }
 
+// SetNillableHasTradingIncentive sets the "has_trading_incentive" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableHasTradingIncentive(b *bool) *ExchangeUpdate {
+	if b != nil {
+		eu.SetHasTradingIncentive(*b)
+	}
+	return eu
+}
+
+// ClearHasTradingIncentive clears the value of the "has_trading_incentive" field.
+func (eu *ExchangeUpdate) ClearHasTradingIncentive() *ExchangeUpdate {
+	eu.mutation.ClearHasTradingIncentive()
+	return eu
+}
+
 // SetCentralized sets the "centralized" field.
 func (eu *ExchangeUpdate) SetCentralized(b bool) *ExchangeUpdate {
 	eu.mutation.SetCentralized(b)
+	return eu
+}
+
+// SetNillableCentralized sets the "centralized" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableCentralized(b *bool) *ExchangeUpdate {
+	if b != nil {
+		eu.SetCentralized(*b)
+	}
+	return eu
+}
+
+// ClearCentralized clears the value of the "centralized" field.
+func (eu *ExchangeUpdate) ClearCentralized() *ExchangeUpdate {
+	eu.mutation.ClearCentralized()
 	return eu
 }
 
@@ -152,9 +181,37 @@ func (eu *ExchangeUpdate) SetPublicNotice(s string) *ExchangeUpdate {
 	return eu
 }
 
+// SetNillablePublicNotice sets the "public_notice" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillablePublicNotice(s *string) *ExchangeUpdate {
+	if s != nil {
+		eu.SetPublicNotice(*s)
+	}
+	return eu
+}
+
+// ClearPublicNotice clears the value of the "public_notice" field.
+func (eu *ExchangeUpdate) ClearPublicNotice() *ExchangeUpdate {
+	eu.mutation.ClearPublicNotice()
+	return eu
+}
+
 // SetAlertNotice sets the "alert_notice" field.
 func (eu *ExchangeUpdate) SetAlertNotice(s string) *ExchangeUpdate {
 	eu.mutation.SetAlertNotice(s)
+	return eu
+}
+
+// SetNillableAlertNotice sets the "alert_notice" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableAlertNotice(s *string) *ExchangeUpdate {
+	if s != nil {
+		eu.SetAlertNotice(*s)
+	}
+	return eu
+}
+
+// ClearAlertNotice clears the value of the "alert_notice" field.
+func (eu *ExchangeUpdate) ClearAlertNotice() *ExchangeUpdate {
+	eu.mutation.ClearAlertNotice()
 	return eu
 }
 
@@ -165,9 +222,23 @@ func (eu *ExchangeUpdate) SetTrustScore(i int) *ExchangeUpdate {
 	return eu
 }
 
+// SetNillableTrustScore sets the "trust_score" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableTrustScore(i *int) *ExchangeUpdate {
+	if i != nil {
+		eu.SetTrustScore(*i)
+	}
+	return eu
+}
+
 // AddTrustScore adds i to the "trust_score" field.
 func (eu *ExchangeUpdate) AddTrustScore(i int) *ExchangeUpdate {
 	eu.mutation.AddTrustScore(i)
+	return eu
+}
+
+// ClearTrustScore clears the value of the "trust_score" field.
+func (eu *ExchangeUpdate) ClearTrustScore() *ExchangeUpdate {
+	eu.mutation.ClearTrustScore()
 	return eu
 }
 
@@ -178,9 +249,23 @@ func (eu *ExchangeUpdate) SetTrustScoreRank(i int) *ExchangeUpdate {
 	return eu
 }
 
+// SetNillableTrustScoreRank sets the "trust_score_rank" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableTrustScoreRank(i *int) *ExchangeUpdate {
+	if i != nil {
+		eu.SetTrustScoreRank(*i)
+	}
+	return eu
+}
+
 // AddTrustScoreRank adds i to the "trust_score_rank" field.
 func (eu *ExchangeUpdate) AddTrustScoreRank(i int) *ExchangeUpdate {
 	eu.mutation.AddTrustScoreRank(i)
+	return eu
+}
+
+// ClearTrustScoreRank clears the value of the "trust_score_rank" field.
+func (eu *ExchangeUpdate) ClearTrustScoreRank() *ExchangeUpdate {
+	eu.mutation.ClearTrustScoreRank()
 	return eu
 }
 
@@ -191,9 +276,23 @@ func (eu *ExchangeUpdate) SetTradeVolume24hBtc(f float64) *ExchangeUpdate {
 	return eu
 }
 
+// SetNillableTradeVolume24hBtc sets the "trade_volume_24h_btc" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableTradeVolume24hBtc(f *float64) *ExchangeUpdate {
+	if f != nil {
+		eu.SetTradeVolume24hBtc(*f)
+	}
+	return eu
+}
+
 // AddTradeVolume24hBtc adds f to the "trade_volume_24h_btc" field.
 func (eu *ExchangeUpdate) AddTradeVolume24hBtc(f float64) *ExchangeUpdate {
 	eu.mutation.AddTradeVolume24hBtc(f)
+	return eu
+}
+
+// ClearTradeVolume24hBtc clears the value of the "trade_volume_24h_btc" field.
+func (eu *ExchangeUpdate) ClearTradeVolume24hBtc() *ExchangeUpdate {
+	eu.mutation.ClearTradeVolume24hBtc()
 	return eu
 }
 
@@ -204,15 +303,65 @@ func (eu *ExchangeUpdate) SetTradeVolume24hBtcNormalized(f float64) *ExchangeUpd
 	return eu
 }
 
+// SetNillableTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableTradeVolume24hBtcNormalized(f *float64) *ExchangeUpdate {
+	if f != nil {
+		eu.SetTradeVolume24hBtcNormalized(*f)
+	}
+	return eu
+}
+
 // AddTradeVolume24hBtcNormalized adds f to the "trade_volume_24h_btc_normalized" field.
 func (eu *ExchangeUpdate) AddTradeVolume24hBtcNormalized(f float64) *ExchangeUpdate {
 	eu.mutation.AddTradeVolume24hBtcNormalized(f)
 	return eu
 }
 
+// ClearTradeVolume24hBtcNormalized clears the value of the "trade_volume_24h_btc_normalized" field.
+func (eu *ExchangeUpdate) ClearTradeVolume24hBtcNormalized() *ExchangeUpdate {
+	eu.mutation.ClearTradeVolume24hBtcNormalized()
+	return eu
+}
+
+// AddTickerIDs adds the "ticker" edge to the Ticker entity by IDs.
+func (eu *ExchangeUpdate) AddTickerIDs(ids ...int) *ExchangeUpdate {
+	eu.mutation.AddTickerIDs(ids...)
+	return eu
+}
+
+// AddTicker adds the "ticker" edges to the Ticker entity.
+func (eu *ExchangeUpdate) AddTicker(t ...*Ticker) *ExchangeUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return eu.AddTickerIDs(ids...)
+}
+
 // Mutation returns the ExchangeMutation object of the builder.
 func (eu *ExchangeUpdate) Mutation() *ExchangeMutation {
 	return eu.mutation
+}
+
+// ClearTicker clears all "ticker" edges to the Ticker entity.
+func (eu *ExchangeUpdate) ClearTicker() *ExchangeUpdate {
+	eu.mutation.ClearTicker()
+	return eu
+}
+
+// RemoveTickerIDs removes the "ticker" edge to Ticker entities by IDs.
+func (eu *ExchangeUpdate) RemoveTickerIDs(ids ...int) *ExchangeUpdate {
+	eu.mutation.RemoveTickerIDs(ids...)
+	return eu
+}
+
+// RemoveTicker removes "ticker" edges to Ticker entities.
+func (eu *ExchangeUpdate) RemoveTicker(t ...*Ticker) *ExchangeUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return eu.RemoveTickerIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -379,10 +528,22 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: exchange.FieldHasTradingIncentive,
 		})
 	}
+	if eu.mutation.HasTradingIncentiveCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: exchange.FieldHasTradingIncentive,
+		})
+	}
 	if value, ok := eu.mutation.Centralized(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
+			Column: exchange.FieldCentralized,
+		})
+	}
+	if eu.mutation.CentralizedCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
 			Column: exchange.FieldCentralized,
 		})
 	}
@@ -393,10 +554,22 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: exchange.FieldPublicNotice,
 		})
 	}
+	if eu.mutation.PublicNoticeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: exchange.FieldPublicNotice,
+		})
+	}
 	if value, ok := eu.mutation.AlertNotice(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
+			Column: exchange.FieldAlertNotice,
+		})
+	}
+	if eu.mutation.AlertNoticeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
 			Column: exchange.FieldAlertNotice,
 		})
 	}
@@ -414,6 +587,12 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: exchange.FieldTrustScore,
 		})
 	}
+	if eu.mutation.TrustScoreCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: exchange.FieldTrustScore,
+		})
+	}
 	if value, ok := eu.mutation.TrustScoreRank(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
@@ -425,6 +604,12 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
+			Column: exchange.FieldTrustScoreRank,
+		})
+	}
+	if eu.mutation.TrustScoreRankCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
 			Column: exchange.FieldTrustScoreRank,
 		})
 	}
@@ -442,6 +627,12 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: exchange.FieldTradeVolume24hBtc,
 		})
 	}
+	if eu.mutation.TradeVolume24hBtcCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: exchange.FieldTradeVolume24hBtc,
+		})
+	}
 	if value, ok := eu.mutation.TradeVolume24hBtcNormalized(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
@@ -455,6 +646,69 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Value:  value,
 			Column: exchange.FieldTradeVolume24hBtcNormalized,
 		})
+	}
+	if eu.mutation.TradeVolume24hBtcNormalizedCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: exchange.FieldTradeVolume24hBtcNormalized,
+		})
+	}
+	if eu.mutation.TickerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.TickerTable,
+			Columns: []string{exchange.TickerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ticker.FieldID,
+				},
+			},
+		}
+		edge.Schema = eu.schemaConfig.Ticker
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedTickerIDs(); len(nodes) > 0 && !eu.mutation.TickerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.TickerTable,
+			Columns: []string{exchange.TickerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ticker.FieldID,
+				},
+			},
+		}
+		edge.Schema = eu.schemaConfig.Ticker
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.TickerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.TickerTable,
+			Columns: []string{exchange.TickerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ticker.FieldID,
+				},
+			},
+		}
+		edge.Schema = eu.schemaConfig.Ticker
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = eu.schemaConfig.Exchange
 	ctx = internal.NewSchemaConfigContext(ctx, eu.schemaConfig)
@@ -590,9 +844,37 @@ func (euo *ExchangeUpdateOne) SetHasTradingIncentive(b bool) *ExchangeUpdateOne 
 	return euo
 }
 
+// SetNillableHasTradingIncentive sets the "has_trading_incentive" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableHasTradingIncentive(b *bool) *ExchangeUpdateOne {
+	if b != nil {
+		euo.SetHasTradingIncentive(*b)
+	}
+	return euo
+}
+
+// ClearHasTradingIncentive clears the value of the "has_trading_incentive" field.
+func (euo *ExchangeUpdateOne) ClearHasTradingIncentive() *ExchangeUpdateOne {
+	euo.mutation.ClearHasTradingIncentive()
+	return euo
+}
+
 // SetCentralized sets the "centralized" field.
 func (euo *ExchangeUpdateOne) SetCentralized(b bool) *ExchangeUpdateOne {
 	euo.mutation.SetCentralized(b)
+	return euo
+}
+
+// SetNillableCentralized sets the "centralized" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableCentralized(b *bool) *ExchangeUpdateOne {
+	if b != nil {
+		euo.SetCentralized(*b)
+	}
+	return euo
+}
+
+// ClearCentralized clears the value of the "centralized" field.
+func (euo *ExchangeUpdateOne) ClearCentralized() *ExchangeUpdateOne {
+	euo.mutation.ClearCentralized()
 	return euo
 }
 
@@ -602,9 +884,37 @@ func (euo *ExchangeUpdateOne) SetPublicNotice(s string) *ExchangeUpdateOne {
 	return euo
 }
 
+// SetNillablePublicNotice sets the "public_notice" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillablePublicNotice(s *string) *ExchangeUpdateOne {
+	if s != nil {
+		euo.SetPublicNotice(*s)
+	}
+	return euo
+}
+
+// ClearPublicNotice clears the value of the "public_notice" field.
+func (euo *ExchangeUpdateOne) ClearPublicNotice() *ExchangeUpdateOne {
+	euo.mutation.ClearPublicNotice()
+	return euo
+}
+
 // SetAlertNotice sets the "alert_notice" field.
 func (euo *ExchangeUpdateOne) SetAlertNotice(s string) *ExchangeUpdateOne {
 	euo.mutation.SetAlertNotice(s)
+	return euo
+}
+
+// SetNillableAlertNotice sets the "alert_notice" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableAlertNotice(s *string) *ExchangeUpdateOne {
+	if s != nil {
+		euo.SetAlertNotice(*s)
+	}
+	return euo
+}
+
+// ClearAlertNotice clears the value of the "alert_notice" field.
+func (euo *ExchangeUpdateOne) ClearAlertNotice() *ExchangeUpdateOne {
+	euo.mutation.ClearAlertNotice()
 	return euo
 }
 
@@ -615,9 +925,23 @@ func (euo *ExchangeUpdateOne) SetTrustScore(i int) *ExchangeUpdateOne {
 	return euo
 }
 
+// SetNillableTrustScore sets the "trust_score" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableTrustScore(i *int) *ExchangeUpdateOne {
+	if i != nil {
+		euo.SetTrustScore(*i)
+	}
+	return euo
+}
+
 // AddTrustScore adds i to the "trust_score" field.
 func (euo *ExchangeUpdateOne) AddTrustScore(i int) *ExchangeUpdateOne {
 	euo.mutation.AddTrustScore(i)
+	return euo
+}
+
+// ClearTrustScore clears the value of the "trust_score" field.
+func (euo *ExchangeUpdateOne) ClearTrustScore() *ExchangeUpdateOne {
+	euo.mutation.ClearTrustScore()
 	return euo
 }
 
@@ -628,9 +952,23 @@ func (euo *ExchangeUpdateOne) SetTrustScoreRank(i int) *ExchangeUpdateOne {
 	return euo
 }
 
+// SetNillableTrustScoreRank sets the "trust_score_rank" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableTrustScoreRank(i *int) *ExchangeUpdateOne {
+	if i != nil {
+		euo.SetTrustScoreRank(*i)
+	}
+	return euo
+}
+
 // AddTrustScoreRank adds i to the "trust_score_rank" field.
 func (euo *ExchangeUpdateOne) AddTrustScoreRank(i int) *ExchangeUpdateOne {
 	euo.mutation.AddTrustScoreRank(i)
+	return euo
+}
+
+// ClearTrustScoreRank clears the value of the "trust_score_rank" field.
+func (euo *ExchangeUpdateOne) ClearTrustScoreRank() *ExchangeUpdateOne {
+	euo.mutation.ClearTrustScoreRank()
 	return euo
 }
 
@@ -641,9 +979,23 @@ func (euo *ExchangeUpdateOne) SetTradeVolume24hBtc(f float64) *ExchangeUpdateOne
 	return euo
 }
 
+// SetNillableTradeVolume24hBtc sets the "trade_volume_24h_btc" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableTradeVolume24hBtc(f *float64) *ExchangeUpdateOne {
+	if f != nil {
+		euo.SetTradeVolume24hBtc(*f)
+	}
+	return euo
+}
+
 // AddTradeVolume24hBtc adds f to the "trade_volume_24h_btc" field.
 func (euo *ExchangeUpdateOne) AddTradeVolume24hBtc(f float64) *ExchangeUpdateOne {
 	euo.mutation.AddTradeVolume24hBtc(f)
+	return euo
+}
+
+// ClearTradeVolume24hBtc clears the value of the "trade_volume_24h_btc" field.
+func (euo *ExchangeUpdateOne) ClearTradeVolume24hBtc() *ExchangeUpdateOne {
+	euo.mutation.ClearTradeVolume24hBtc()
 	return euo
 }
 
@@ -654,15 +1006,65 @@ func (euo *ExchangeUpdateOne) SetTradeVolume24hBtcNormalized(f float64) *Exchang
 	return euo
 }
 
+// SetNillableTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableTradeVolume24hBtcNormalized(f *float64) *ExchangeUpdateOne {
+	if f != nil {
+		euo.SetTradeVolume24hBtcNormalized(*f)
+	}
+	return euo
+}
+
 // AddTradeVolume24hBtcNormalized adds f to the "trade_volume_24h_btc_normalized" field.
 func (euo *ExchangeUpdateOne) AddTradeVolume24hBtcNormalized(f float64) *ExchangeUpdateOne {
 	euo.mutation.AddTradeVolume24hBtcNormalized(f)
 	return euo
 }
 
+// ClearTradeVolume24hBtcNormalized clears the value of the "trade_volume_24h_btc_normalized" field.
+func (euo *ExchangeUpdateOne) ClearTradeVolume24hBtcNormalized() *ExchangeUpdateOne {
+	euo.mutation.ClearTradeVolume24hBtcNormalized()
+	return euo
+}
+
+// AddTickerIDs adds the "ticker" edge to the Ticker entity by IDs.
+func (euo *ExchangeUpdateOne) AddTickerIDs(ids ...int) *ExchangeUpdateOne {
+	euo.mutation.AddTickerIDs(ids...)
+	return euo
+}
+
+// AddTicker adds the "ticker" edges to the Ticker entity.
+func (euo *ExchangeUpdateOne) AddTicker(t ...*Ticker) *ExchangeUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return euo.AddTickerIDs(ids...)
+}
+
 // Mutation returns the ExchangeMutation object of the builder.
 func (euo *ExchangeUpdateOne) Mutation() *ExchangeMutation {
 	return euo.mutation
+}
+
+// ClearTicker clears all "ticker" edges to the Ticker entity.
+func (euo *ExchangeUpdateOne) ClearTicker() *ExchangeUpdateOne {
+	euo.mutation.ClearTicker()
+	return euo
+}
+
+// RemoveTickerIDs removes the "ticker" edge to Ticker entities by IDs.
+func (euo *ExchangeUpdateOne) RemoveTickerIDs(ids ...int) *ExchangeUpdateOne {
+	euo.mutation.RemoveTickerIDs(ids...)
+	return euo
+}
+
+// RemoveTicker removes "ticker" edges to Ticker entities.
+func (euo *ExchangeUpdateOne) RemoveTicker(t ...*Ticker) *ExchangeUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return euo.RemoveTickerIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -859,10 +1261,22 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 			Column: exchange.FieldHasTradingIncentive,
 		})
 	}
+	if euo.mutation.HasTradingIncentiveCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: exchange.FieldHasTradingIncentive,
+		})
+	}
 	if value, ok := euo.mutation.Centralized(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
+			Column: exchange.FieldCentralized,
+		})
+	}
+	if euo.mutation.CentralizedCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
 			Column: exchange.FieldCentralized,
 		})
 	}
@@ -873,10 +1287,22 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 			Column: exchange.FieldPublicNotice,
 		})
 	}
+	if euo.mutation.PublicNoticeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: exchange.FieldPublicNotice,
+		})
+	}
 	if value, ok := euo.mutation.AlertNotice(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
+			Column: exchange.FieldAlertNotice,
+		})
+	}
+	if euo.mutation.AlertNoticeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
 			Column: exchange.FieldAlertNotice,
 		})
 	}
@@ -894,6 +1320,12 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 			Column: exchange.FieldTrustScore,
 		})
 	}
+	if euo.mutation.TrustScoreCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: exchange.FieldTrustScore,
+		})
+	}
 	if value, ok := euo.mutation.TrustScoreRank(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
@@ -905,6 +1337,12 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
+			Column: exchange.FieldTrustScoreRank,
+		})
+	}
+	if euo.mutation.TrustScoreRankCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
 			Column: exchange.FieldTrustScoreRank,
 		})
 	}
@@ -922,6 +1360,12 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 			Column: exchange.FieldTradeVolume24hBtc,
 		})
 	}
+	if euo.mutation.TradeVolume24hBtcCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: exchange.FieldTradeVolume24hBtc,
+		})
+	}
 	if value, ok := euo.mutation.TradeVolume24hBtcNormalized(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
@@ -935,6 +1379,69 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 			Value:  value,
 			Column: exchange.FieldTradeVolume24hBtcNormalized,
 		})
+	}
+	if euo.mutation.TradeVolume24hBtcNormalizedCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: exchange.FieldTradeVolume24hBtcNormalized,
+		})
+	}
+	if euo.mutation.TickerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.TickerTable,
+			Columns: []string{exchange.TickerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ticker.FieldID,
+				},
+			},
+		}
+		edge.Schema = euo.schemaConfig.Ticker
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedTickerIDs(); len(nodes) > 0 && !euo.mutation.TickerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.TickerTable,
+			Columns: []string{exchange.TickerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ticker.FieldID,
+				},
+			},
+		}
+		edge.Schema = euo.schemaConfig.Ticker
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.TickerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.TickerTable,
+			Columns: []string{exchange.TickerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ticker.FieldID,
+				},
+			},
+		}
+		edge.Schema = euo.schemaConfig.Ticker
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = euo.schemaConfig.Exchange
 	ctx = internal.NewSchemaConfigContext(ctx, euo.schemaConfig)
