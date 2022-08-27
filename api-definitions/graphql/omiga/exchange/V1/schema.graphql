@@ -44,8 +44,42 @@ extend type Query {
     """
     last: Int
 
+    """
+    Ordering directions
+    """
+    orderBy: [ExchangeOrder!]
+
+    """
+    Ordering directions
+    """
     where: ExchangeWhereInput
   ): ExchangeConnection
+}
+
+enum OrderDirection {
+  ASC
+  DESC
+}
+
+enum ExchangeOrderField {
+  exchangeId
+  name
+  yearEstablished
+  country
+  image
+  hasTradingIncentive
+  centralized
+  publicNotice
+  alertNotice
+  trustScore
+  trustScoreRank
+  tradeVolume24hBtc
+  tradeVolume24hBtcNormalized
+}
+
+input ExchangeOrder {
+  direction: OrderDirection!
+  field: ExchangeOrderField
 }
 
 """
@@ -80,6 +114,24 @@ type Exchange implements Node {
   yearEstablished: Int
   country: String
   image: String
+  links: Links!
+  hasTradingIncentive: Boolean
+  centralized: Boolean
+  publicNotice: String
+  alertNotice: String
+  trustScore: Int
+  trustScoreRank: Int
+  tradeVolume24hBtc: Float
+  tradeVolume24hBtcNormalized: Float
+}
+
+type Links {
+  website: String
+  facebook: String
+  reddit: String
+  twitter: String
+  slack: String
+  telegram: String
 }
 
 """

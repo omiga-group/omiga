@@ -8,6 +8,15 @@ import (
 	"strconv"
 )
 
+type Links struct {
+	Website  *string `json:"website"`
+	Facebook *string `json:"facebook"`
+	Reddit   *string `json:"reddit"`
+	Twitter  *string `json:"twitter"`
+	Slack    *string `json:"slack"`
+	Telegram *string `json:"telegram"`
+}
+
 type OutboxStatus string
 
 const (

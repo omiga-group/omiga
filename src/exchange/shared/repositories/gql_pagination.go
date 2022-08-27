@@ -440,6 +440,217 @@ func (e *ExchangeQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// ExchangeOrderFieldExchangeID orders Exchange by exchange_id.
+	ExchangeOrderFieldExchangeID = &ExchangeOrderField{
+		field: exchange.FieldExchangeID,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.ExchangeID,
+			}
+		},
+	}
+	// ExchangeOrderFieldName orders Exchange by name.
+	ExchangeOrderFieldName = &ExchangeOrderField{
+		field: exchange.FieldName,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.Name,
+			}
+		},
+	}
+	// ExchangeOrderFieldYearEstablished orders Exchange by year_established.
+	ExchangeOrderFieldYearEstablished = &ExchangeOrderField{
+		field: exchange.FieldYearEstablished,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.YearEstablished,
+			}
+		},
+	}
+	// ExchangeOrderFieldCountry orders Exchange by country.
+	ExchangeOrderFieldCountry = &ExchangeOrderField{
+		field: exchange.FieldCountry,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.Country,
+			}
+		},
+	}
+	// ExchangeOrderFieldImage orders Exchange by image.
+	ExchangeOrderFieldImage = &ExchangeOrderField{
+		field: exchange.FieldImage,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.Image,
+			}
+		},
+	}
+	// ExchangeOrderFieldHasTradingIncentive orders Exchange by has_trading_incentive.
+	ExchangeOrderFieldHasTradingIncentive = &ExchangeOrderField{
+		field: exchange.FieldHasTradingIncentive,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.HasTradingIncentive,
+			}
+		},
+	}
+	// ExchangeOrderFieldCentralized orders Exchange by centralized.
+	ExchangeOrderFieldCentralized = &ExchangeOrderField{
+		field: exchange.FieldCentralized,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.Centralized,
+			}
+		},
+	}
+	// ExchangeOrderFieldPublicNotice orders Exchange by public_notice.
+	ExchangeOrderFieldPublicNotice = &ExchangeOrderField{
+		field: exchange.FieldPublicNotice,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.PublicNotice,
+			}
+		},
+	}
+	// ExchangeOrderFieldAlertNotice orders Exchange by alert_notice.
+	ExchangeOrderFieldAlertNotice = &ExchangeOrderField{
+		field: exchange.FieldAlertNotice,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.AlertNotice,
+			}
+		},
+	}
+	// ExchangeOrderFieldTrustScore orders Exchange by trust_score.
+	ExchangeOrderFieldTrustScore = &ExchangeOrderField{
+		field: exchange.FieldTrustScore,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.TrustScore,
+			}
+		},
+	}
+	// ExchangeOrderFieldTrustScoreRank orders Exchange by trust_score_rank.
+	ExchangeOrderFieldTrustScoreRank = &ExchangeOrderField{
+		field: exchange.FieldTrustScoreRank,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.TrustScoreRank,
+			}
+		},
+	}
+	// ExchangeOrderFieldTradeVolume24hBtc orders Exchange by trade_volume_24h_btc.
+	ExchangeOrderFieldTradeVolume24hBtc = &ExchangeOrderField{
+		field: exchange.FieldTradeVolume24hBtc,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.TradeVolume24hBtc,
+			}
+		},
+	}
+	// ExchangeOrderFieldTradeVolume24hBtcNormalized orders Exchange by trade_volume_24h_btc_normalized.
+	ExchangeOrderFieldTradeVolume24hBtcNormalized = &ExchangeOrderField{
+		field: exchange.FieldTradeVolume24hBtcNormalized,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.TradeVolume24hBtcNormalized,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f ExchangeOrderField) String() string {
+	var str string
+	switch f.field {
+	case exchange.FieldExchangeID:
+		str = "exchangeId"
+	case exchange.FieldName:
+		str = "name"
+	case exchange.FieldYearEstablished:
+		str = "yearEstablished"
+	case exchange.FieldCountry:
+		str = "country"
+	case exchange.FieldImage:
+		str = "image"
+	case exchange.FieldHasTradingIncentive:
+		str = "hasTradingIncentive"
+	case exchange.FieldCentralized:
+		str = "centralized"
+	case exchange.FieldPublicNotice:
+		str = "publicNotice"
+	case exchange.FieldAlertNotice:
+		str = "alertNotice"
+	case exchange.FieldTrustScore:
+		str = "trustScore"
+	case exchange.FieldTrustScoreRank:
+		str = "trustScoreRank"
+	case exchange.FieldTradeVolume24hBtc:
+		str = "tradeVolume24hBtc"
+	case exchange.FieldTradeVolume24hBtcNormalized:
+		str = "tradeVolume24hBtcNormalized"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f ExchangeOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *ExchangeOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("ExchangeOrderField %T must be a string", v)
+	}
+	switch str {
+	case "exchangeId":
+		*f = *ExchangeOrderFieldExchangeID
+	case "name":
+		*f = *ExchangeOrderFieldName
+	case "yearEstablished":
+		*f = *ExchangeOrderFieldYearEstablished
+	case "country":
+		*f = *ExchangeOrderFieldCountry
+	case "image":
+		*f = *ExchangeOrderFieldImage
+	case "hasTradingIncentive":
+		*f = *ExchangeOrderFieldHasTradingIncentive
+	case "centralized":
+		*f = *ExchangeOrderFieldCentralized
+	case "publicNotice":
+		*f = *ExchangeOrderFieldPublicNotice
+	case "alertNotice":
+		*f = *ExchangeOrderFieldAlertNotice
+	case "trustScore":
+		*f = *ExchangeOrderFieldTrustScore
+	case "trustScoreRank":
+		*f = *ExchangeOrderFieldTrustScoreRank
+	case "tradeVolume24hBtc":
+		*f = *ExchangeOrderFieldTradeVolume24hBtc
+	case "tradeVolume24hBtcNormalized":
+		*f = *ExchangeOrderFieldTradeVolume24hBtcNormalized
+	default:
+		return fmt.Errorf("%s is not a valid ExchangeOrderField", str)
+	}
+	return nil
+}
+
 // ExchangeOrderField defines the ordering field of Exchange.
 type ExchangeOrderField struct {
 	field    string

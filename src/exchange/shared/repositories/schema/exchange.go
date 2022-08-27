@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
@@ -16,20 +17,20 @@ type Exchange struct {
 // Fields of the Exchange.
 func (Exchange) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("exchange_id"),
-		field.String("name").Optional(),
-		field.Int("year_established").Optional(),
-		field.String("country").Optional(),
-		field.String("image").Optional(),
+		field.String("exchange_id").Annotations(entgql.OrderField("exchangeId")),
+		field.String("name").Optional().Annotations(entgql.OrderField("name")),
+		field.Int("year_established").Optional().Annotations(entgql.OrderField("yearEstablished")),
+		field.String("country").Optional().Annotations(entgql.OrderField("country")),
+		field.String("image").Optional().Annotations(entgql.OrderField("image")),
 		field.JSON("links", map[string]string{}).Optional(),
-		field.Bool("has_trading_incentive").Optional(),
-		field.Bool("centralized").Optional(),
-		field.String("public_notice").Optional(),
-		field.String("alert_notice").Optional(),
-		field.Int("trust_score").Optional(),
-		field.Int("trust_score_rank").Optional(),
-		field.Float("trade_volume_24h_btc").Optional(),
-		field.Float("trade_volume_24h_btc_normalized").Optional(),
+		field.Bool("has_trading_incentive").Optional().Annotations(entgql.OrderField("hasTradingIncentive")),
+		field.Bool("centralized").Optional().Annotations(entgql.OrderField("centralized")),
+		field.String("public_notice").Optional().Annotations(entgql.OrderField("publicNotice")),
+		field.String("alert_notice").Optional().Annotations(entgql.OrderField("alertNotice")),
+		field.Int("trust_score").Optional().Annotations(entgql.OrderField("trustScore")),
+		field.Int("trust_score_rank").Optional().Annotations(entgql.OrderField("trustScoreRank")),
+		field.Float("trade_volume_24h_btc").Optional().Annotations(entgql.OrderField("tradeVolume24hBtc")),
+		field.Float("trade_volume_24h_btc_normalized").Optional().Annotations(entgql.OrderField("tradeVolume24hBtcNormalized")),
 	}
 }
 
@@ -46,5 +47,17 @@ func (Exchange) Edges() []ent.Edge {
 func (Exchange) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("exchange_id"),
+		index.Fields("name"),
+		index.Fields("year_established"),
+		index.Fields("country"),
+		index.Fields("image"),
+		index.Fields("has_trading_incentive"),
+		index.Fields("centralized"),
+		index.Fields("public_notice"),
+		index.Fields("alert_notice"),
+		index.Fields("trust_score"),
+		index.Fields("trust_score_rank"),
+		index.Fields("trade_volume_24h_btc"),
+		index.Fields("trade_volume_24h_btc_normalized"),
 	}
 }

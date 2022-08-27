@@ -37,6 +37,66 @@ var (
 				Unique:  false,
 				Columns: []*schema.Column{ExchangesColumns[1]},
 			},
+			{
+				Name:    "exchange_name",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[2]},
+			},
+			{
+				Name:    "exchange_year_established",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[3]},
+			},
+			{
+				Name:    "exchange_country",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[4]},
+			},
+			{
+				Name:    "exchange_image",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[5]},
+			},
+			{
+				Name:    "exchange_has_trading_incentive",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[7]},
+			},
+			{
+				Name:    "exchange_centralized",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[8]},
+			},
+			{
+				Name:    "exchange_public_notice",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[9]},
+			},
+			{
+				Name:    "exchange_alert_notice",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[10]},
+			},
+			{
+				Name:    "exchange_trust_score",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[11]},
+			},
+			{
+				Name:    "exchange_trust_score_rank",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[12]},
+			},
+			{
+				Name:    "exchange_trade_volume_24h_btc",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[13]},
+			},
+			{
+				Name:    "exchange_trade_volume_24h_btc_normalized",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[14]},
+			},
 		},
 	}
 	// OutboxesColumns holds the columns for the "outboxes" table.

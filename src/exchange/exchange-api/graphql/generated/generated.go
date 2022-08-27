@@ -39,6 +39,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Exchange() ExchangeResolver
 	Query() QueryResolver
 	OutboxWhereInput() OutboxWhereInputResolver
 }
@@ -48,12 +49,21 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Exchange struct {
-		Country         func(childComplexity int) int
-		ExchangeID      func(childComplexity int) int
-		ID              func(childComplexity int) int
-		Image           func(childComplexity int) int
-		Name            func(childComplexity int) int
-		YearEstablished func(childComplexity int) int
+		AlertNotice                 func(childComplexity int) int
+		Centralized                 func(childComplexity int) int
+		Country                     func(childComplexity int) int
+		ExchangeID                  func(childComplexity int) int
+		HasTradingIncentive         func(childComplexity int) int
+		ID                          func(childComplexity int) int
+		Image                       func(childComplexity int) int
+		Links                       func(childComplexity int) int
+		Name                        func(childComplexity int) int
+		PublicNotice                func(childComplexity int) int
+		TradeVolume24hBtc           func(childComplexity int) int
+		TradeVolume24hBtcNormalized func(childComplexity int) int
+		TrustScore                  func(childComplexity int) int
+		TrustScoreRank              func(childComplexity int) int
+		YearEstablished             func(childComplexity int) int
 	}
 
 	ExchangeConnection struct {
@@ -67,6 +77,15 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	Links struct {
+		Facebook func(childComplexity int) int
+		Reddit   func(childComplexity int) int
+		Slack    func(childComplexity int) int
+		Telegram func(childComplexity int) int
+		Twitter  func(childComplexity int) int
+		Website  func(childComplexity int) int
+	}
+
 	PageInfo struct {
 		EndCursor       func(childComplexity int) int
 		HasNextPage     func(childComplexity int) int
@@ -76,7 +95,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Exchange           func(childComplexity int, id int) int
-		Exchanges          func(childComplexity int, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, where *repositories.ExchangeWhereInput) int
+		Exchanges          func(childComplexity int, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, orderBy []*repositories.ExchangeOrder, where *repositories.ExchangeWhereInput) int
 		__resolve__service func(childComplexity int) int
 	}
 
@@ -85,9 +104,12 @@ type ComplexityRoot struct {
 	}
 }
 
+type ExchangeResolver interface {
+	Links(ctx context.Context, obj *repositories.Exchange) (*models.Links, error)
+}
 type QueryResolver interface {
 	Exchange(ctx context.Context, id int) (*repositories.Exchange, error)
-	Exchanges(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, where *repositories.ExchangeWhereInput) (*repositories.ExchangeConnection, error)
+	Exchanges(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, orderBy []*repositories.ExchangeOrder, where *repositories.ExchangeWhereInput) (*repositories.ExchangeConnection, error)
 }
 
 type OutboxWhereInputResolver interface {
@@ -112,6 +134,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
+	case "Exchange.alertNotice":
+		if e.complexity.Exchange.AlertNotice == nil {
+			break
+		}
+
+		return e.complexity.Exchange.AlertNotice(childComplexity), true
+
+	case "Exchange.centralized":
+		if e.complexity.Exchange.Centralized == nil {
+			break
+		}
+
+		return e.complexity.Exchange.Centralized(childComplexity), true
+
 	case "Exchange.country":
 		if e.complexity.Exchange.Country == nil {
 			break
@@ -125,6 +161,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exchange.ExchangeID(childComplexity), true
+
+	case "Exchange.hasTradingIncentive":
+		if e.complexity.Exchange.HasTradingIncentive == nil {
+			break
+		}
+
+		return e.complexity.Exchange.HasTradingIncentive(childComplexity), true
 
 	case "Exchange.id":
 		if e.complexity.Exchange.ID == nil {
@@ -140,12 +183,54 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Exchange.Image(childComplexity), true
 
+	case "Exchange.links":
+		if e.complexity.Exchange.Links == nil {
+			break
+		}
+
+		return e.complexity.Exchange.Links(childComplexity), true
+
 	case "Exchange.name":
 		if e.complexity.Exchange.Name == nil {
 			break
 		}
 
 		return e.complexity.Exchange.Name(childComplexity), true
+
+	case "Exchange.publicNotice":
+		if e.complexity.Exchange.PublicNotice == nil {
+			break
+		}
+
+		return e.complexity.Exchange.PublicNotice(childComplexity), true
+
+	case "Exchange.tradeVolume24hBtc":
+		if e.complexity.Exchange.TradeVolume24hBtc == nil {
+			break
+		}
+
+		return e.complexity.Exchange.TradeVolume24hBtc(childComplexity), true
+
+	case "Exchange.tradeVolume24hBtcNormalized":
+		if e.complexity.Exchange.TradeVolume24hBtcNormalized == nil {
+			break
+		}
+
+		return e.complexity.Exchange.TradeVolume24hBtcNormalized(childComplexity), true
+
+	case "Exchange.trustScore":
+		if e.complexity.Exchange.TrustScore == nil {
+			break
+		}
+
+		return e.complexity.Exchange.TrustScore(childComplexity), true
+
+	case "Exchange.trustScoreRank":
+		if e.complexity.Exchange.TrustScoreRank == nil {
+			break
+		}
+
+		return e.complexity.Exchange.TrustScoreRank(childComplexity), true
 
 	case "Exchange.yearEstablished":
 		if e.complexity.Exchange.YearEstablished == nil {
@@ -188,6 +273,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ExchangeEdge.Node(childComplexity), true
+
+	case "Links.facebook":
+		if e.complexity.Links.Facebook == nil {
+			break
+		}
+
+		return e.complexity.Links.Facebook(childComplexity), true
+
+	case "Links.reddit":
+		if e.complexity.Links.Reddit == nil {
+			break
+		}
+
+		return e.complexity.Links.Reddit(childComplexity), true
+
+	case "Links.slack":
+		if e.complexity.Links.Slack == nil {
+			break
+		}
+
+		return e.complexity.Links.Slack(childComplexity), true
+
+	case "Links.telegram":
+		if e.complexity.Links.Telegram == nil {
+			break
+		}
+
+		return e.complexity.Links.Telegram(childComplexity), true
+
+	case "Links.twitter":
+		if e.complexity.Links.Twitter == nil {
+			break
+		}
+
+		return e.complexity.Links.Twitter(childComplexity), true
+
+	case "Links.website":
+		if e.complexity.Links.Website == nil {
+			break
+		}
+
+		return e.complexity.Links.Website(childComplexity), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -239,7 +366,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Exchanges(childComplexity, args["after"].(*repositories.Cursor), args["first"].(*int), args["before"].(*repositories.Cursor), args["last"].(*int), args["where"].(*repositories.ExchangeWhereInput)), true
+		return e.complexity.Query.Exchanges(childComplexity, args["after"].(*repositories.Cursor), args["first"].(*int), args["before"].(*repositories.Cursor), args["last"].(*int), args["orderBy"].([]*repositories.ExchangeOrder), args["where"].(*repositories.ExchangeWhereInput)), true
 
 	case "Query._service":
 		if e.complexity.Query.__resolve__service == nil {
@@ -263,6 +390,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputExchangeOrder,
 		ec.unmarshalInputExchangeWhereInput,
 		ec.unmarshalInputOutboxWhereInput,
 		ec.unmarshalInputTickerWhereInput,
@@ -357,8 +485,42 @@ extend type Query {
     """
     last: Int
 
+    """
+    Ordering directions
+    """
+    orderBy: [ExchangeOrder!]
+
+    """
+    Ordering directions
+    """
     where: ExchangeWhereInput
   ): ExchangeConnection
+}
+
+enum OrderDirection {
+  ASC
+  DESC
+}
+
+enum ExchangeOrderField {
+  exchangeId
+  name
+  yearEstablished
+  country
+  image
+  hasTradingIncentive
+  centralized
+  publicNotice
+  alertNotice
+  trustScore
+  trustScoreRank
+  tradeVolume24hBtc
+  tradeVolume24hBtcNormalized
+}
+
+input ExchangeOrder {
+  direction: OrderDirection!
+  field: ExchangeOrderField
 }
 
 """
@@ -393,6 +555,24 @@ type Exchange implements Node {
   yearEstablished: Int
   country: String
   image: String
+  links: Links!
+  hasTradingIncentive: Boolean
+  centralized: Boolean
+  publicNotice: String
+  alertNotice: String
+  trustScore: Int
+  trustScoreRank: Int
+  tradeVolume24hBtc: Float
+  tradeVolume24hBtcNormalized: Float
+}
+
+type Links {
+  website: String
+  facebook: String
+  reddit: String
+  twitter: String
+  slack: String
+  telegram: String
 }
 
 """
@@ -1003,15 +1183,24 @@ func (ec *executionContext) field_Query_exchanges_args(ctx context.Context, rawA
 		}
 	}
 	args["last"] = arg3
-	var arg4 *repositories.ExchangeWhereInput
-	if tmp, ok := rawArgs["where"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg4, err = ec.unmarshalOExchangeWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐExchangeWhereInput(ctx, tmp)
+	var arg4 []*repositories.ExchangeOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOExchangeOrder2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐExchangeOrderᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["where"] = arg4
+	args["orderBy"] = arg4
+	var arg5 *repositories.ExchangeWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg5, err = ec.unmarshalOExchangeWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐExchangeWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg5
 	return args, nil
 }
 
@@ -1305,6 +1494,392 @@ func (ec *executionContext) fieldContext_Exchange_image(ctx context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _Exchange_links(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_links(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Exchange().Links(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Links)
+	fc.Result = res
+	return ec.marshalNLinks2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐLinks(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_links(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "website":
+				return ec.fieldContext_Links_website(ctx, field)
+			case "facebook":
+				return ec.fieldContext_Links_facebook(ctx, field)
+			case "reddit":
+				return ec.fieldContext_Links_reddit(ctx, field)
+			case "twitter":
+				return ec.fieldContext_Links_twitter(ctx, field)
+			case "slack":
+				return ec.fieldContext_Links_slack(ctx, field)
+			case "telegram":
+				return ec.fieldContext_Links_telegram(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Links", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_hasTradingIncentive(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_hasTradingIncentive(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasTradingIncentive, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_hasTradingIncentive(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_centralized(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_centralized(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Centralized, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_centralized(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_publicNotice(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_publicNotice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicNotice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_publicNotice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_alertNotice(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_alertNotice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AlertNotice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_alertNotice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_trustScore(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_trustScore(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TrustScore, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_trustScore(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_trustScoreRank(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_trustScoreRank(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TrustScoreRank, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_trustScoreRank(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_tradeVolume24hBtc(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_tradeVolume24hBtc(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TradeVolume24hBtc, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_tradeVolume24hBtc(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_tradeVolume24hBtcNormalized(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_tradeVolume24hBtcNormalized(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TradeVolume24hBtcNormalized, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_tradeVolume24hBtcNormalized(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ExchangeConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *repositories.ExchangeConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ExchangeConnection_pageInfo(ctx, field)
 	if err != nil {
@@ -1495,6 +2070,24 @@ func (ec *executionContext) fieldContext_ExchangeEdge_node(ctx context.Context, 
 				return ec.fieldContext_Exchange_country(ctx, field)
 			case "image":
 				return ec.fieldContext_Exchange_image(ctx, field)
+			case "links":
+				return ec.fieldContext_Exchange_links(ctx, field)
+			case "hasTradingIncentive":
+				return ec.fieldContext_Exchange_hasTradingIncentive(ctx, field)
+			case "centralized":
+				return ec.fieldContext_Exchange_centralized(ctx, field)
+			case "publicNotice":
+				return ec.fieldContext_Exchange_publicNotice(ctx, field)
+			case "alertNotice":
+				return ec.fieldContext_Exchange_alertNotice(ctx, field)
+			case "trustScore":
+				return ec.fieldContext_Exchange_trustScore(ctx, field)
+			case "trustScoreRank":
+				return ec.fieldContext_Exchange_trustScoreRank(ctx, field)
+			case "tradeVolume24hBtc":
+				return ec.fieldContext_Exchange_tradeVolume24hBtc(ctx, field)
+			case "tradeVolume24hBtcNormalized":
+				return ec.fieldContext_Exchange_tradeVolume24hBtcNormalized(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Exchange", field.Name)
 		},
@@ -1541,6 +2134,252 @@ func (ec *executionContext) fieldContext_ExchangeEdge_cursor(ctx context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Links_website(ctx context.Context, field graphql.CollectedField, obj *models.Links) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Links_website(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Website, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Links_website(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Links",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Links_facebook(ctx context.Context, field graphql.CollectedField, obj *models.Links) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Links_facebook(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Facebook, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Links_facebook(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Links",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Links_reddit(ctx context.Context, field graphql.CollectedField, obj *models.Links) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Links_reddit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reddit, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Links_reddit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Links",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Links_twitter(ctx context.Context, field graphql.CollectedField, obj *models.Links) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Links_twitter(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Twitter, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Links_twitter(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Links",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Links_slack(ctx context.Context, field graphql.CollectedField, obj *models.Links) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Links_slack(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Slack, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Links_slack(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Links",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Links_telegram(ctx context.Context, field graphql.CollectedField, obj *models.Links) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Links_telegram(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Telegram, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Links_telegram(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Links",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1764,6 +2603,24 @@ func (ec *executionContext) fieldContext_Query_exchange(ctx context.Context, fie
 				return ec.fieldContext_Exchange_country(ctx, field)
 			case "image":
 				return ec.fieldContext_Exchange_image(ctx, field)
+			case "links":
+				return ec.fieldContext_Exchange_links(ctx, field)
+			case "hasTradingIncentive":
+				return ec.fieldContext_Exchange_hasTradingIncentive(ctx, field)
+			case "centralized":
+				return ec.fieldContext_Exchange_centralized(ctx, field)
+			case "publicNotice":
+				return ec.fieldContext_Exchange_publicNotice(ctx, field)
+			case "alertNotice":
+				return ec.fieldContext_Exchange_alertNotice(ctx, field)
+			case "trustScore":
+				return ec.fieldContext_Exchange_trustScore(ctx, field)
+			case "trustScoreRank":
+				return ec.fieldContext_Exchange_trustScoreRank(ctx, field)
+			case "tradeVolume24hBtc":
+				return ec.fieldContext_Exchange_tradeVolume24hBtc(ctx, field)
+			case "tradeVolume24hBtcNormalized":
+				return ec.fieldContext_Exchange_tradeVolume24hBtcNormalized(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Exchange", field.Name)
 		},
@@ -1796,7 +2653,7 @@ func (ec *executionContext) _Query_exchanges(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Exchanges(rctx, fc.Args["after"].(*repositories.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*repositories.Cursor), fc.Args["last"].(*int), fc.Args["where"].(*repositories.ExchangeWhereInput))
+		return ec.resolvers.Query().Exchanges(rctx, fc.Args["after"].(*repositories.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*repositories.Cursor), fc.Args["last"].(*int), fc.Args["orderBy"].([]*repositories.ExchangeOrder), fc.Args["where"].(*repositories.ExchangeWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3832,6 +4689,42 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 // endregion **************************** field.gotpl *****************************
 
 // region    **************************** input.gotpl *****************************
+
+func (ec *executionContext) unmarshalInputExchangeOrder(ctx context.Context, obj interface{}) (repositories.ExchangeOrder, error) {
+	var it repositories.ExchangeOrder
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"direction", "field"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOExchangeOrderField2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐExchangeOrderField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
 
 func (ec *executionContext) unmarshalInputExchangeWhereInput(ctx context.Context, obj interface{}) (repositories.ExchangeWhereInput, error) {
 	var it repositories.ExchangeWhereInput
@@ -7206,14 +8099,14 @@ func (ec *executionContext) _Exchange(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._Exchange_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "exchangeId":
 
 			out.Values[i] = ec._Exchange_exchangeId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 
@@ -7230,6 +8123,58 @@ func (ec *executionContext) _Exchange(ctx context.Context, sel ast.SelectionSet,
 		case "image":
 
 			out.Values[i] = ec._Exchange_image(ctx, field, obj)
+
+		case "links":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Exchange_links(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "hasTradingIncentive":
+
+			out.Values[i] = ec._Exchange_hasTradingIncentive(ctx, field, obj)
+
+		case "centralized":
+
+			out.Values[i] = ec._Exchange_centralized(ctx, field, obj)
+
+		case "publicNotice":
+
+			out.Values[i] = ec._Exchange_publicNotice(ctx, field, obj)
+
+		case "alertNotice":
+
+			out.Values[i] = ec._Exchange_alertNotice(ctx, field, obj)
+
+		case "trustScore":
+
+			out.Values[i] = ec._Exchange_trustScore(ctx, field, obj)
+
+		case "trustScoreRank":
+
+			out.Values[i] = ec._Exchange_trustScoreRank(ctx, field, obj)
+
+		case "tradeVolume24hBtc":
+
+			out.Values[i] = ec._Exchange_tradeVolume24hBtc(ctx, field, obj)
+
+		case "tradeVolume24hBtcNormalized":
+
+			out.Values[i] = ec._Exchange_tradeVolume24hBtcNormalized(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -7299,6 +8244,51 @@ func (ec *executionContext) _ExchangeEdge(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var linksImplementors = []string{"Links"}
+
+func (ec *executionContext) _Links(ctx context.Context, sel ast.SelectionSet, obj *models.Links) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, linksImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Links")
+		case "website":
+
+			out.Values[i] = ec._Links_website(ctx, field, obj)
+
+		case "facebook":
+
+			out.Values[i] = ec._Links_facebook(ctx, field, obj)
+
+		case "reddit":
+
+			out.Values[i] = ec._Links_reddit(ctx, field, obj)
+
+		case "twitter":
+
+			out.Values[i] = ec._Links_twitter(ctx, field, obj)
+
+		case "slack":
+
+			out.Values[i] = ec._Links_slack(ctx, field, obj)
+
+		case "telegram":
+
+			out.Values[i] = ec._Links_telegram(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7826,6 +8816,11 @@ func (ec *executionContext) marshalNCursor2githubᚗcomᚋomigaᚑgroupᚋomiga�
 	return v
 }
 
+func (ec *executionContext) unmarshalNExchangeOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐExchangeOrder(ctx context.Context, v interface{}) (*repositories.ExchangeOrder, error) {
+	res, err := ec.unmarshalInputExchangeOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNExchangeWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐExchangeWhereInput(ctx context.Context, v interface{}) (*repositories.ExchangeWhereInput, error) {
 	res, err := ec.unmarshalInputExchangeWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -7874,6 +8869,30 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNLinks2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐLinks(ctx context.Context, sel ast.SelectionSet, v models.Links) graphql.Marshaler {
+	return ec._Links(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNLinks2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐLinks(ctx context.Context, sel ast.SelectionSet, v *models.Links) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Links(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNOrderDirection2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐOrderDirection(ctx context.Context, v interface{}) (repositories.OrderDirection, error) {
+	var res repositories.OrderDirection
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNOrderDirection2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐOrderDirection(ctx context.Context, sel ast.SelectionSet, v repositories.OrderDirection) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNOutboxStatus2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐOutboxStatus(ctx context.Context, v interface{}) (models.OutboxStatus, error) {
@@ -8306,6 +9325,42 @@ func (ec *executionContext) marshalOExchangeEdge2ᚖgithubᚗcomᚋomigaᚑgroup
 	return ec._ExchangeEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOExchangeOrder2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐExchangeOrderᚄ(ctx context.Context, v interface{}) ([]*repositories.ExchangeOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*repositories.ExchangeOrder, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNExchangeOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐExchangeOrder(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOExchangeOrderField2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐExchangeOrderField(ctx context.Context, v interface{}) (*repositories.ExchangeOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(repositories.ExchangeOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOExchangeOrderField2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐExchangeOrderField(ctx context.Context, sel ast.SelectionSet, v *repositories.ExchangeOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) unmarshalOExchangeWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐExchangeWhereInputᚄ(ctx context.Context, v interface{}) ([]*repositories.ExchangeWhereInput, error) {
 	if v == nil {
 		return nil, nil
@@ -8332,6 +9387,16 @@ func (ec *executionContext) unmarshalOExchangeWhereInput2ᚖgithubᚗcomᚋomiga
 	}
 	res, err := ec.unmarshalInputExchangeWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOFloat2float64(ctx context.Context, v interface{}) (float64, error) {
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	res := graphql.MarshalFloatContext(v)
+	return graphql.WrapContextMarshaler(ctx, res)
 }
 
 func (ec *executionContext) unmarshalOFloat2ᚕfloat64ᚄ(ctx context.Context, v interface{}) ([]float64, error) {
