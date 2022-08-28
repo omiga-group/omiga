@@ -1,3 +1,6 @@
+app:
+  source: "urn::omiga::ftx-processor"
+
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "ftx-processor"

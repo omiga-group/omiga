@@ -6,9 +6,15 @@ import (
 	"math"
 	"time"
 
-	"github.com/gorilla/websocket"
-	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
 	"go.uber.org/zap"
+
+	"github.com/gorilla/websocket"
+	"github.com/life4/genesis/slices"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/mappers"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/models"
+	exchangeModels "github.com/omiga-group/omiga/src/exchange/shared/models"
+	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
 )
 
 type FtxOrderBookSubscriber interface {
@@ -61,17 +67,18 @@ type ftxOrderBook struct {
 }
 
 type ftxOrderBookData struct {
-	Time     FtxTime     `json:"time"`
-	Checksum int         `json:"checksum"`
-	Bids     [][]float64 `json:"bids"`
-	Asks     [][]float64 `json:"asks"`
-	Action   string      `json:"action"`
+	Time     FtxTime      `json:"time"`
+	Checksum int          `json:"checksum"`
+	Bids     [][2]float64 `json:"bids"`
+	Asks     [][2]float64 `json:"asks"`
+	Action   string       `json:"action"`
 }
 
 type ftxOrderBookSubscriber struct {
-	logger    *zap.SugaredLogger
-	market    string
-	ftxConfig configuration.FtxConfig
+	logger             *zap.SugaredLogger
+	market             string
+	ftxConfig          configuration.FtxConfig
+	orderBookPublisher publishers.OrderBookPublisher
 }
 
 func NewFtxOrderBookSubscriber(
@@ -102,19 +109,14 @@ func (fobs *ftxOrderBookSubscriber) run(ctx context.Context) {
 }
 
 func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
-	connection, _, err := websocket.DefaultDialer.DialContext(
-		ctx,
-		fobs.ftxConfig.WebsocketUrl,
-		nil)
+	connection, _, err := websocket.DefaultDialer.DialContext(ctx, fobs.ftxConfig.WebsocketUrl, nil)
 	if err != nil {
 		fobs.logger.Errorf("Failed to dial FTX websocket. Error: %v", err)
-
 		return
 	}
 
 	if connection == nil {
 		fobs.logger.Error("websocket is not initialized")
-
 		return
 	}
 
@@ -125,13 +127,9 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
 	}()
 
 	channel := "orderbook"
-	if err := connection.WriteJSON(&ftxRequest{
-		Op:      OperationTypeSubscribe,
-		Channel: &channel,
-		Market:  &fobs.market,
-	}); err != nil {
+	req := &ftxRequest{Op: OperationTypeSubscribe, Channel: &channel, Market: &fobs.market}
+	if err := connection.WriteJSON(req); err != nil {
 		fobs.logger.Errorf("Failed to send request to FTX websocket. Error: %v", err)
-
 		return
 	}
 
@@ -142,18 +140,62 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
 			break
 		}
 
-		var orderBook ftxOrderBook
-
+		orderBook := ftxOrderBook{}
 		err := connection.ReadJSON(&orderBook)
 		if err != nil {
 			fobs.logger.Errorf("Failed to read OrderBook JSON. Error: %v", err)
-
 			break
 		}
+
+		fobs.publish(ctx, &orderBook)
 	}
 
 	if connectionCloseErr := connection.Close(); connectionCloseErr != nil {
 		fobs.logger.Errorf("Failed to close FTX websocket connection. Error: %v", connectionCloseErr)
+	}
+}
+
+func (fobs *ftxOrderBookSubscriber) publish(ctx context.Context, ob *ftxOrderBook) {
+	asks := slices.Map(ob.Data.Asks, func(ask [2]float64) models.OrderBookEntry {
+		return models.OrderBookEntry{
+			Symbol: ob.Market,
+			Time:   ob.Data.Time.Time,
+			Ask:    &models.PriceLevel{Price: ask[0], Quantity: ask[1]},
+			Bid:    nil,
+		}
+	})
+
+	bids := slices.Map(ob.Data.Bids, func(bid [2]float64) models.OrderBookEntry {
+		return models.OrderBookEntry{
+			Symbol: ob.Market,
+			Time:   ob.Data.Time.Time,
+			Ask:    nil,
+			Bid:    &models.PriceLevel{Price: bid[0], Quantity: bid[1]},
+		}
+	})
+
+	binanceOrderBook := slices.Concat(asks, bids)
+
+	orderBook := mappers.ToModelOrderBook(
+		exchangeModels.Currency{
+			Name:         "TODO",
+			Code:         "TODO",
+			MaxPrecision: 1,
+			Digital:      true,
+		},
+		exchangeModels.Currency{
+			Name:         "TODO",
+			Code:         "TODO",
+			MaxPrecision: 1,
+			Digital:      true,
+		},
+		binanceOrderBook,
+	)
+
+	orderBook.ExchangeId = "binance"
+
+	if err := fobs.orderBookPublisher.Publish(ctx, orderBook.ExchangeId, orderBook); err != nil {
+		fobs.logger.Errorf("Failed to publish order book for Binance exchange. Error: %v", err)
 	}
 }
 

@@ -265,6 +265,7 @@ func (oq *OrderQuery) Clone() *OrderQuery {
 //		GroupBy(order.FieldOrderDetails).
 //		Aggregate(repositories.Count()).
 //		Scan(ctx, &v)
+//
 func (oq *OrderQuery) GroupBy(field string, fields ...string) *OrderGroupBy {
 	grbuild := &OrderGroupBy{config: oq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,6 +292,7 @@ func (oq *OrderQuery) GroupBy(field string, fields ...string) *OrderGroupBy {
 //	client.Order.Query().
 //		Select(order.FieldOrderDetails).
 //		Scan(ctx, &v)
+//
 func (oq *OrderQuery) Select(fields ...string) *OrderSelect {
 	oq.fields = append(oq.fields, fields...)
 	selbuild := &OrderSelect{OrderQuery: oq}

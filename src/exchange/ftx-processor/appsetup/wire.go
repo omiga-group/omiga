@@ -55,12 +55,20 @@ func NewSyntheticOrderConsumer(
 	return nil, nil
 }
 
-func NewFtxOrderBookSubscriber(
+func NewBinanceOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	ftxConfig configuration.FtxConfig,
-	marketConfig configuration.MarketConfig) (subscribers.FtxOrderBookSubscriber, error) {
-	wire.Build(subscribers.NewFtxOrderBookSubscriber)
+	appConfig enterpriseConfiguration.AppConfig,
+	binanceConfig configuration.BinanceConfig,
+	symbolConfig configuration.SymbolConfig,
+	pulsarConfig pulsar.PulsarConfig,
+	topic string) (subscribers.BinanceOrderBookSubscriber, error) {
+	wire.Build(
+		orderbookv1.NewProducer,
+		pulsar.NewPulsarMessageProducer,
+		publishers.NewOrderBookPublisher,
+		subscribers.NewFtxOrderBookSubscriber,
+		services.NewSymbolEnricher)
 
 	return nil, nil
 }

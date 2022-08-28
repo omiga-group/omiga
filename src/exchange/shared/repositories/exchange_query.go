@@ -306,6 +306,7 @@ func (eq *ExchangeQuery) WithTicker(opts ...func(*TickerQuery)) *ExchangeQuery {
 //		GroupBy(exchange.FieldExchangeID).
 //		Aggregate(repositories.Count()).
 //		Scan(ctx, &v)
+//
 func (eq *ExchangeQuery) GroupBy(field string, fields ...string) *ExchangeGroupBy {
 	grbuild := &ExchangeGroupBy{config: eq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -332,6 +333,7 @@ func (eq *ExchangeQuery) GroupBy(field string, fields ...string) *ExchangeGroupB
 //	client.Exchange.Query().
 //		Select(exchange.FieldExchangeID).
 //		Scan(ctx, &v)
+//
 func (eq *ExchangeQuery) Select(fields ...string) *ExchangeSelect {
 	eq.fields = append(eq.fields, fields...)
 	selbuild := &ExchangeSelect{ExchangeQuery: eq}
