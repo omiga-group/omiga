@@ -146,19 +146,23 @@ input OrderDetailsInput {
   counterCurrency: CurrencyInput!
   type: OrderType!
   side: OrderSide!
-  quantity: MoneyInput!
+  quantity: QuantityInput!
   price: MoneyInput!
 }
 
-input MoneyInput {
-  amount: Float!
+input QuantityInput {
+  amount: Int!
   scale: Int!
+}
+
+input MoneyInput {
+  quantity: QuantityInput!
   currency: CurrencyInput!
 }
 
 input CurrencyInput {
-  name: String!
   code: String!
+  name: String!
   maxPrecision: Int!
   digital: Boolean!
 }

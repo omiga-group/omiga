@@ -13,8 +13,8 @@ func FromSubmitOrderInputToOrder(src graphqlmodels.SubmitOrderInput) models.Orde
 			CounterCurrency: fromCurrencyInputToCurrency(src.OrderDetails.CounterCurrency),
 			Type:            models.OrderType(src.OrderDetails.Type),
 			Side:            models.OrderSide(src.OrderDetails.Side),
-			Quantity:        fromMoneyInputToCurrency(src.OrderDetails.Quantity),
-			Price:           fromMoneyInputToCurrency(src.OrderDetails.Price),
+			Quantity:        fromQuantityInputToQuantity(src.OrderDetails.Quantity),
+			Price:           fromMoneyInputToMoney(src.OrderDetails.Price),
 		},
 	}
 
@@ -27,10 +27,16 @@ func FromSubmitOrderInputToOrder(src graphqlmodels.SubmitOrderInput) models.Orde
 	return order
 }
 
-func fromMoneyInputToCurrency(src *graphqlmodels.MoneyInput) models.Money {
+func fromQuantityInputToQuantity(src *graphqlmodels.QuantityInput) models.Quantity {
+	return models.Quantity{
+		Amount: int64(src.Amount),
+		Scale:  int32(src.Scale),
+	}
+}
+
+func fromMoneyInputToMoney(src *graphqlmodels.MoneyInput) models.Money {
 	return models.Money{
-		Amount:   src.Amount,
-		Scale:    src.Scale,
+		Quantity: fromQuantityInputToQuantity(src.Quantity),
 		Currency: fromCurrencyInputToCurrency(src.Currency),
 	}
 }
@@ -39,7 +45,7 @@ func fromCurrencyInputToCurrency(src *graphqlmodels.CurrencyInput) models.Curren
 	return models.Currency{
 		Name:         src.Name,
 		Code:         src.Code,
-		MaxPrecision: src.MaxPrecision,
+		MaxPrecision: int32(src.MaxPrecision),
 		Digital:      src.Digital,
 	}
 }

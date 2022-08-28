@@ -9,6 +9,7 @@ import (
 func FromOrderBookToEventOrderBook(src models.OrderBook) orderbookv1.OrderBook {
 	order := orderbookv1.OrderBook{
 		ExchangeId:      src.ExchangeId,
+		Time:            src.Time,
 		BaseCurrency:    fromCurrencyToEventCurrency(src.BaseCurrency),
 		CounterCurrency: fromCurrencyToEventCurrency(src.CounterCurrency),
 	}
@@ -30,15 +31,21 @@ func FromOrderBookToEventOrderBook(src models.OrderBook) orderbookv1.OrderBook {
 
 func fromOrderBookEntryToEventOrderBookEntry(src models.OrderBookEntry) orderbookv1.OrderBookEntry {
 	return orderbookv1.OrderBookEntry{
-		Quantity: fromMoneyToEventMoney(src.Quantity),
+		Quantity: fromQuantityToEventQuantity(src.Quantity),
 		Price:    fromMoneyToEventMoney(src.Price),
+	}
+}
+
+func fromQuantityToEventQuantity(src models.Quantity) orderbookv1.Quantity {
+	return orderbookv1.Quantity{
+		Amount: src.Amount,
+		Scale:  src.Scale,
 	}
 }
 
 func fromMoneyToEventMoney(src models.Money) orderbookv1.Money {
 	return orderbookv1.Money{
-		Amount:   src.Amount,
-		Scale:    src.Scale,
+		Quantity: fromQuantityToEventQuantity(src.Quantity),
 		Currency: fromCurrencyToEventCurrency(src.Currency),
 	}
 }

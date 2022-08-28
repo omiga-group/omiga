@@ -23,25 +23,35 @@ components:
         side:
           $ref: "#/components/schemas/orderSide"
         quantity:
-          $ref: "#/components/schemas/money"
+          $ref: "#/components/schemas/quantity"
         price:
           $ref: "#/components/schemas/money"
+
+    quantity:
+      $id: quantity
+      type: object
+      additionalProperties: false
+      required:
+        - amount
+        - scale
+      properties:
+        amount:
+          type: integer
+          format: int64
+        scale:
+          type: integer
+          format: int32
 
     money:
       $id: money
       type: object
       additionalProperties: false
       required:
-        - amount
+        - quantity
         - currency
-        - scale
       properties:
-        amount:
-          type: number
-          format: float
-        scale:
-          type: integer
-          format: int32
+        quantity:
+          $ref: "#/components/schemas/quantity"
         currency:
           $ref: "#/components/schemas/currency"
 
@@ -55,9 +65,9 @@ components:
         - maxPrecision
         - digital
       properties:
-        name:
-          type: string
         code:
+          type: string
+        name:
           type: string
         maxPrecision:
           type: integer

@@ -10,7 +10,6 @@ import (
 
 	"github.com/omiga-group/omiga/src/order/order-processor/appsetup"
 	"github.com/omiga-group/omiga/src/order/order-processor/configuration"
-	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
@@ -48,13 +47,6 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			entgoClient, err := appsetup.NewEntgoClient(
-				sugarLogger,
-				config.Postgres)
-			if err != nil {
-				sugarLogger.Fatal(err)
-			}
-
 			orderMessageConsumer, err := appsetup.NewMessageConsumer(
 				sugarLogger,
 				config.Pulsar,
@@ -73,29 +65,6 @@ func startCommand() *cobra.Command {
 			}
 
 			err = orderConsumer.StartAsync(ctx)
-			if err != nil {
-				sugarLogger.Fatal(err)
-			}
-
-			orderBookMessageConsumer, err := appsetup.NewMessageConsumer(
-				sugarLogger,
-				config.Pulsar,
-				orderbookv1.TopicName)
-			if err != nil {
-				sugarLogger.Fatal(err)
-			}
-
-			defer orderMessageConsumer.Close(ctx)
-
-			orderBookConsumer, err := appsetup.NewOrderBookConsumer(
-				sugarLogger,
-				orderBookMessageConsumer,
-				entgoClient)
-			if err != nil {
-				sugarLogger.Fatal(err)
-			}
-
-			err = orderBookConsumer.StartAsync(ctx)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

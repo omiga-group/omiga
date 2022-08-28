@@ -1,20 +1,26 @@
 package models
 
+import "time"
+
 type Currency struct {
 	Name         string
 	Code         string
-	MaxPrecision int
+	MaxPrecision int32
 	Digital      bool
 }
 
+type Quantity struct {
+	Amount int64
+	Scale  int32
+}
+
 type Money struct {
-	Amount   float64
-	Scale    int
+	Quantity Quantity
 	Currency Currency
 }
 
 type OrderBookEntry struct {
-	Quantity Money
+	Quantity Quantity
 	Price    Money
 }
 
@@ -22,6 +28,7 @@ type OrderBook struct {
 	ExchangeId      string
 	BaseCurrency    Currency
 	CounterCurrency Currency
+	Time            time.Time
 	Bids            []OrderBookEntry
 	Asks            []OrderBookEntry
 }

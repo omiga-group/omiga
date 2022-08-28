@@ -16,8 +16,8 @@ type CancelOrderInput struct {
 }
 
 type CurrencyInput struct {
-	Name         string `json:"name"`
 	Code         string `json:"code"`
+	Name         string `json:"name"`
 	MaxPrecision int    `json:"maxPrecision"`
 	Digital      bool   `json:"digital"`
 }
@@ -27,8 +27,7 @@ type ExchangeInput struct {
 }
 
 type MoneyInput struct {
-	Amount   float64        `json:"amount"`
-	Scale    int            `json:"scale"`
+	Quantity *QuantityInput `json:"quantity"`
 	Currency *CurrencyInput `json:"currency"`
 }
 
@@ -37,13 +36,18 @@ type OrderDetailsInput struct {
 	CounterCurrency *CurrencyInput `json:"counterCurrency"`
 	Type            OrderType      `json:"type"`
 	Side            OrderSide      `json:"side"`
-	Quantity        *MoneyInput    `json:"quantity"`
+	Quantity        *QuantityInput `json:"quantity"`
 	Price           *MoneyInput    `json:"price"`
 }
 
 type OrderPayload struct {
 	ClientMutationID *string             `json:"clientMutationId"`
 	Order            *repositories.Order `json:"order"`
+}
+
+type QuantityInput struct {
+	Amount int `json:"amount"`
+	Scale  int `json:"scale"`
 }
 
 type SubmitOrderInput struct {

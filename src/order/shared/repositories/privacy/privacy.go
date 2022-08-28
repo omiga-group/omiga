@@ -174,30 +174,6 @@ func (f OrderMutationRuleFunc) EvalMutation(ctx context.Context, m repositories.
 	return Denyf("repositories/privacy: unexpected mutation type %T, expect *repositories.OrderMutation", m)
 }
 
-// The OrderBookQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type OrderBookQueryRuleFunc func(context.Context, *repositories.OrderBookQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f OrderBookQueryRuleFunc) EvalQuery(ctx context.Context, q repositories.Query) error {
-	if q, ok := q.(*repositories.OrderBookQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("repositories/privacy: unexpected query type %T, expect *repositories.OrderBookQuery", q)
-}
-
-// The OrderBookMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type OrderBookMutationRuleFunc func(context.Context, *repositories.OrderBookMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f OrderBookMutationRuleFunc) EvalMutation(ctx context.Context, m repositories.Mutation) error {
-	if m, ok := m.(*repositories.OrderBookMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("repositories/privacy: unexpected mutation type %T, expect *repositories.OrderBookMutation", m)
-}
-
 // The OutboxQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OutboxQueryRuleFunc func(context.Context, *repositories.OutboxQuery) error
@@ -259,8 +235,6 @@ func queryFilter(q repositories.Query) (Filter, error) {
 	switch q := q.(type) {
 	case *repositories.OrderQuery:
 		return q.Filter(), nil
-	case *repositories.OrderBookQuery:
-		return q.Filter(), nil
 	case *repositories.OutboxQuery:
 		return q.Filter(), nil
 	default:
@@ -271,8 +245,6 @@ func queryFilter(q repositories.Query) (Filter, error) {
 func mutationFilter(m repositories.Mutation) (Filter, error) {
 	switch m := m.(type) {
 	case *repositories.OrderMutation:
-		return m.Filter(), nil
-	case *repositories.OrderBookMutation:
 		return m.Filter(), nil
 	case *repositories.OutboxMutation:
 		return m.Filter(), nil

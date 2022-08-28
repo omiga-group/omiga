@@ -2,7 +2,6 @@ package subscribers
 
 import (
 	"context"
-	"sort"
 	"time"
 
 	"github.com/adshao/go-binance/v2"
@@ -23,9 +22,7 @@ type binanceOrderBookSubscriber struct {
 	ctx                                                          context.Context
 	logger                                                       *zap.SugaredLogger
 	symbol                                                       string
-	purgeTime                                                    time.Duration
 	orderBookPublisher                                           publishers.OrderBookPublisher
-	binanceOrderBook                                             []models.BinanceOrderBookEntry
 	baseCoinCode, baseCoinName, counterCoinCode, counterCoinName string
 }
 
@@ -39,11 +36,6 @@ func NewBinanceOrderBookSubscriber(
 
 	binance.UseTestnet = binanceConfig.UseTestnet
 
-	purgeTime, err := time.ParseDuration(symbolConfig.PurgeTime)
-	if err != nil {
-		return nil, err
-	}
-
 	baseCoinCode, baseCoinName, counterCoinCode, counterCoinName, err := symbolEnricher.GetCoinPair(symbolConfig.Symbol)
 	if err != nil {
 		return nil, err
@@ -53,8 +45,6 @@ func NewBinanceOrderBookSubscriber(
 		ctx:                ctx,
 		logger:             logger,
 		symbol:             symbolConfig.Symbol,
-		binanceOrderBook:   make([]models.BinanceOrderBookEntry, 0),
-		purgeTime:          purgeTime,
 		orderBookPublisher: orderBookPublisher,
 		baseCoinCode:       baseCoinCode,
 		baseCoinName:       baseCoinName,
@@ -128,17 +118,7 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 		}
 	})
 
-	bobs.binanceOrderBook = slices.Concat(bobs.binanceOrderBook, asks, bids)
-
-	purgeTime := time.Now().Add(-1 * bobs.purgeTime)
-
-	bobs.binanceOrderBook = slices.Filter(bobs.binanceOrderBook, func(orderBookEntry models.BinanceOrderBookEntry) bool {
-		return orderBookEntry.Time.After(purgeTime)
-	})
-
-	sort.SliceStable(bobs.binanceOrderBook, func(i, j int) bool {
-		return bobs.binanceOrderBook[i].Time.Before(bobs.binanceOrderBook[j].Time)
-	})
+	binanceOrderBook := slices.Concat(asks, bids)
 
 	orderBook := mappers.FromBinanceOrderBookToModelOrderBook(
 		exchangeModels.Currency{
@@ -153,7 +133,7 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 			MaxPrecision: 1,
 			Digital:      true,
 		},
-		bobs.binanceOrderBook,
+		binanceOrderBook,
 	)
 
 	orderBook.ExchangeId = "binance"

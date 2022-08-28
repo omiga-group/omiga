@@ -60,19 +60,15 @@ func (obs *orderBookSimulator) Run() {
 		},
 		Asks: []models.OrderBookEntry{
 			{
-				Quantity: models.Money{
+				Quantity: models.Quantity{
 					Amount: 1,
 					Scale:  1,
-					Currency: models.Currency{
-						Name:         "Bitcoin",
-						Code:         "BTC",
-						MaxPrecision: 1,
-						Digital:      true,
-					},
 				},
 				Price: models.Money{
-					Amount: 1,
-					Scale:  1,
+					Quantity: models.Quantity{
+						Amount: 1,
+						Scale:  1,
+					},
 					Currency: models.Currency{
 						Name:         "Ethereum",
 						Code:         "ETH",
@@ -82,19 +78,15 @@ func (obs *orderBookSimulator) Run() {
 				},
 			},
 			{
-				Quantity: models.Money{
-					Amount: 2,
-					Scale:  2,
-					Currency: models.Currency{
-						Name:         "Bitcoin",
-						Code:         "BTC",
-						MaxPrecision: 1,
-						Digital:      true,
-					},
+				Quantity: models.Quantity{
+					Amount: 1,
+					Scale:  1,
 				},
 				Price: models.Money{
-					Amount: 2,
-					Scale:  2,
+					Quantity: models.Quantity{
+						Amount: 1,
+						Scale:  1,
+					},
 					Currency: models.Currency{
 						Name:         "Ethereum",
 						Code:         "ETH",
@@ -106,19 +98,15 @@ func (obs *orderBookSimulator) Run() {
 		},
 		Bids: []models.OrderBookEntry{
 			{
-				Quantity: models.Money{
-					Amount: 3,
-					Scale:  3,
-					Currency: models.Currency{
-						Name:         "Bitcoin",
-						Code:         "BTC",
-						MaxPrecision: 1,
-						Digital:      true,
-					},
-				},
-				Price: models.Money{
+				Quantity: models.Quantity{
 					Amount: 1,
 					Scale:  1,
+				},
+				Price: models.Money{
+					Quantity: models.Quantity{
+						Amount: 1,
+						Scale:  1,
+					},
 					Currency: models.Currency{
 						Name:         "Ethereum",
 						Code:         "ETH",
@@ -128,19 +116,15 @@ func (obs *orderBookSimulator) Run() {
 				},
 			},
 			{
-				Quantity: models.Money{
-					Amount: 4,
-					Scale:  4,
-					Currency: models.Currency{
-						Name:         "Bitcoin",
-						Code:         "BTC",
-						MaxPrecision: 1,
-						Digital:      true,
-					},
+				Quantity: models.Quantity{
+					Amount: 1,
+					Scale:  1,
 				},
 				Price: models.Money{
-					Amount: 2,
-					Scale:  2,
+					Quantity: models.Quantity{
+						Amount: 1,
+						Scale:  1,
+					},
 					Currency: models.Currency{
 						Name:         "Ethereum",
 						Code:         "ETH",
