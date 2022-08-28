@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
-	"github.com/omiga-group/omiga/src/order/shared/repositories/orderbook"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/outbox"
 )
 
@@ -33,9 +32,8 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		order.Table:     order.ValidColumn,
-		orderbook.Table: orderbook.ValidColumn,
-		outbox.Table:    outbox.ValidColumn,
+		order.Table:  order.ValidColumn,
+		outbox.Table: outbox.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

@@ -20,19 +20,6 @@ var (
 		Columns:    OrdersColumns,
 		PrimaryKey: []*schema.Column{OrdersColumns[0]},
 	}
-	// OrderBooksColumns holds the columns for the "order_books" table.
-	OrderBooksColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "exchange_id", Type: field.TypeString},
-		{Name: "last_updated", Type: field.TypeTime},
-		{Name: "order_book", Type: field.TypeJSON},
-	}
-	// OrderBooksTable holds the schema information for the "order_books" table.
-	OrderBooksTable = &schema.Table{
-		Name:       "order_books",
-		Columns:    OrderBooksColumns,
-		PrimaryKey: []*schema.Column{OrderBooksColumns[0]},
-	}
 	// OutboxesColumns holds the columns for the "outboxes" table.
 	OutboxesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -67,7 +54,6 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		OrdersTable,
-		OrderBooksTable,
 		OutboxesTable,
 	}
 )

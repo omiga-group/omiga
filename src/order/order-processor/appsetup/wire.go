@@ -20,12 +20,8 @@ package appsetup
 
 import (
 	"github.com/google/wire"
-	"github.com/omiga-group/omiga/src/order/order-processor/services"
 	"github.com/omiga-group/omiga/src/order/order-processor/subscribers"
-	"github.com/omiga-group/omiga/src/order/shared/repositories"
-	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
-	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -35,16 +31,6 @@ import (
 func NewTimeHelper() (time.TimeHelper, error) {
 	wire.Build(
 		time.NewTimeHelper)
-
-	return nil, nil
-}
-
-func NewEntgoClient(
-	logger *zap.SugaredLogger,
-	postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
-	wire.Build(
-		postgres.NewPostgres,
-		repositories.NewEntgoClient)
 
 	return nil, nil
 }
@@ -62,15 +48,6 @@ func NewOrderConsumer(
 	logger *zap.SugaredLogger,
 	messageConsumer messaging.MessageConsumer) (orderv1.Consumer, error) {
 	wire.Build(orderv1.NewConsumer, subscribers.NewOrderSubscriber)
-
-	return nil, nil
-}
-
-func NewOrderBookConsumer(
-	logger *zap.SugaredLogger,
-	messageConsumer messaging.MessageConsumer,
-	entgoClient repositories.EntgoClient) (orderbookv1.Consumer, error) {
-	wire.Build(orderbookv1.NewConsumer, subscribers.NewOrderBookSubscriber, services.NewOrderBookService)
 
 	return nil, nil
 }

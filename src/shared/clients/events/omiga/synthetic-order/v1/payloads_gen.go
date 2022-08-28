@@ -71,7 +71,7 @@ type OrderDetails struct {
   CounterCurrency Currency `json:"counterCurrency"` 
   Type OrderType `json:"type"` 
   Side OrderSide `json:"side"` 
-  Quantity Money `json:"quantity"` 
+  Quantity Quantity `json:"quantity"` 
   Price Money `json:"price"` 
   AdditionalProperties *[]interface{} `json:"additionalProperties,omitempty"`  // undefined
 }
@@ -79,9 +79,9 @@ type OrderDetails struct {
     
     // Currency represents a Currency model.
 type Currency struct {
-  Name string `json:"name"`  // undefined
   Code string `json:"code"`  // undefined
-  MaxPrecision int `json:"maxPrecision"`  // undefined
+  Name string `json:"name"`  // undefined
+  MaxPrecision int32 `json:"maxPrecision"`  // undefined
   Digital bool `json:"digital"`  // undefined
 }
     
@@ -109,10 +109,16 @@ const (
 )
     
     
+    // Quantity represents a Quantity model.
+type Quantity struct {
+  Amount int64 `json:"amount"`  // undefined
+  Scale int32 `json:"scale"`  // undefined
+}
+    
+    
     // Money represents a Money model.
 type Money struct {
-  Amount float64 `json:"amount"`  // undefined
-  Scale int `json:"scale"`  // undefined
+  Quantity Quantity `json:"quantity"` 
   Currency Currency `json:"currency"` 
 }
     

@@ -11,7 +11,6 @@ import (
 	"github.com/omiga-group/omiga/src/order/shared/repositories/migrate"
 
 	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
-	"github.com/omiga-group/omiga/src/order/shared/repositories/orderbook"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/outbox"
 
 	"entgo.io/ent/dialect"
@@ -25,8 +24,6 @@ type Client struct {
 	Schema *migrate.Schema
 	// Order is the client for interacting with the Order builders.
 	Order *OrderClient
-	// OrderBook is the client for interacting with the OrderBook builders.
-	OrderBook *OrderBookClient
 	// Outbox is the client for interacting with the Outbox builders.
 	Outbox *OutboxClient
 	// additional fields for node api
@@ -45,7 +42,6 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Order = NewOrderClient(c.config)
-	c.OrderBook = NewOrderBookClient(c.config)
 	c.Outbox = NewOutboxClient(c.config)
 }
 
@@ -78,11 +74,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:       ctx,
-		config:    cfg,
-		Order:     NewOrderClient(cfg),
-		OrderBook: NewOrderBookClient(cfg),
-		Outbox:    NewOutboxClient(cfg),
+		ctx:    ctx,
+		config: cfg,
+		Order:  NewOrderClient(cfg),
+		Outbox: NewOutboxClient(cfg),
 	}, nil
 }
 
@@ -100,11 +95,10 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:       ctx,
-		config:    cfg,
-		Order:     NewOrderClient(cfg),
-		OrderBook: NewOrderBookClient(cfg),
-		Outbox:    NewOutboxClient(cfg),
+		ctx:    ctx,
+		config: cfg,
+		Order:  NewOrderClient(cfg),
+		Outbox: NewOutboxClient(cfg),
 	}, nil
 }
 
@@ -134,7 +128,6 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Order.Use(hooks...)
-	c.OrderBook.Use(hooks...)
 	c.Outbox.Use(hooks...)
 }
 
@@ -226,96 +219,6 @@ func (c *OrderClient) GetX(ctx context.Context, id int) *Order {
 // Hooks returns the client hooks.
 func (c *OrderClient) Hooks() []Hook {
 	return c.hooks.Order
-}
-
-// OrderBookClient is a client for the OrderBook schema.
-type OrderBookClient struct {
-	config
-}
-
-// NewOrderBookClient returns a client for the OrderBook from the given config.
-func NewOrderBookClient(c config) *OrderBookClient {
-	return &OrderBookClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `orderbook.Hooks(f(g(h())))`.
-func (c *OrderBookClient) Use(hooks ...Hook) {
-	c.hooks.OrderBook = append(c.hooks.OrderBook, hooks...)
-}
-
-// Create returns a builder for creating a OrderBook entity.
-func (c *OrderBookClient) Create() *OrderBookCreate {
-	mutation := newOrderBookMutation(c.config, OpCreate)
-	return &OrderBookCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of OrderBook entities.
-func (c *OrderBookClient) CreateBulk(builders ...*OrderBookCreate) *OrderBookCreateBulk {
-	return &OrderBookCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for OrderBook.
-func (c *OrderBookClient) Update() *OrderBookUpdate {
-	mutation := newOrderBookMutation(c.config, OpUpdate)
-	return &OrderBookUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *OrderBookClient) UpdateOne(ob *OrderBook) *OrderBookUpdateOne {
-	mutation := newOrderBookMutation(c.config, OpUpdateOne, withOrderBook(ob))
-	return &OrderBookUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *OrderBookClient) UpdateOneID(id int) *OrderBookUpdateOne {
-	mutation := newOrderBookMutation(c.config, OpUpdateOne, withOrderBookID(id))
-	return &OrderBookUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for OrderBook.
-func (c *OrderBookClient) Delete() *OrderBookDelete {
-	mutation := newOrderBookMutation(c.config, OpDelete)
-	return &OrderBookDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *OrderBookClient) DeleteOne(ob *OrderBook) *OrderBookDeleteOne {
-	return c.DeleteOneID(ob.ID)
-}
-
-// DeleteOne returns a builder for deleting the given entity by its id.
-func (c *OrderBookClient) DeleteOneID(id int) *OrderBookDeleteOne {
-	builder := c.Delete().Where(orderbook.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &OrderBookDeleteOne{builder}
-}
-
-// Query returns a query builder for OrderBook.
-func (c *OrderBookClient) Query() *OrderBookQuery {
-	return &OrderBookQuery{
-		config: c.config,
-	}
-}
-
-// Get returns a OrderBook entity by its id.
-func (c *OrderBookClient) Get(ctx context.Context, id int) (*OrderBook, error) {
-	return c.Query().Where(orderbook.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *OrderBookClient) GetX(ctx context.Context, id int) *OrderBook {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *OrderBookClient) Hooks() []Hook {
-	return c.hooks.OrderBook
 }
 
 // OutboxClient is a client for the Outbox schema.

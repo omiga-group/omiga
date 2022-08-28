@@ -36,6 +36,16 @@ export default async function ({ asyncapi, params }) {
 
                 break;
 
+              case "int32":
+                finalFieldType = "int32";
+
+                break;
+
+              case "int64":
+                finalFieldType = "int64";
+
+                break;
+
               case "uuid":
                 finalFieldType = "ID";
                 foundIDTypeField = true;
