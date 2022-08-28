@@ -5,7 +5,7 @@ go 1.19
 require (
 	entgo.io/contrib v0.3.1
 	entgo.io/ent v0.11.2
-	github.com/99designs/gqlgen v0.17.15
+	github.com/99designs/gqlgen v0.17.16
 	github.com/adshao/go-binance/v2 v2.3.8
 	github.com/apache/pulsar-client-go v0.8.1
 	github.com/deepmap/oapi-codegen v1.11.0
@@ -14,16 +14,16 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/jackc/pgx/v4 v4.17.0
+	github.com/jackc/pgx/v4 v4.17.1
 	github.com/life4/genesis v1.1.0
 	github.com/lucsky/cuid v1.2.1
 	github.com/micro-business/go-core v0.6.3
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.20.0
+	github.com/onsi/gomega v1.20.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/cors v1.8.2
 	github.com/spf13/cobra v1.5.0
-	github.com/vektah/gqlparser/v2 v2.4.8
+	github.com/vektah/gqlparser/v2 v2.5.0
 	github.com/vmihailenco/msgpack/v5 v5.3.5
 	go.uber.org/zap v1.23.0
 	golang.org/x/sync v0.0.0-20220819030929-7fc1605a5dde
