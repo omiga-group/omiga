@@ -58,11 +58,11 @@ func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
-	orderBookAggregator, err := services.NewOrderBookAggregator(ctx, logger, orderBookPublisher)
+	symbolEnricher, err := services.NewSymbolEnricher()
 	if err != nil {
 		return nil, err
 	}
-	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, symbolConfig, orderBookAggregator)
+	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, symbolConfig, orderBookPublisher, symbolEnricher)
 	if err != nil {
 		return nil, err
 	}

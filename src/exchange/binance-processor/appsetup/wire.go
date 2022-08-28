@@ -72,7 +72,7 @@ func NewBinanceOrderBookSubscriber(
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
 		subscribers.NewBinanceOrderBookSubscriber,
-		services.NewOrderBookAggregator)
+		services.NewSymbolEnricher)
 
 	return nil, nil
 }

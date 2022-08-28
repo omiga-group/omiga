@@ -8,7 +8,11 @@ import (
 	"github.com/adshao/go-binance/v2"
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
+	"github.com/omiga-group/omiga/src/exchange/binance-processor/mappers"
+	"github.com/omiga-group/omiga/src/exchange/binance-processor/models"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/services"
+	exchangeModels "github.com/omiga-group/omiga/src/exchange/shared/models"
+	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
 	"go.uber.org/zap"
 )
 
@@ -16,11 +20,13 @@ type BinanceOrderBookSubscriber interface {
 }
 
 type binanceOrderBookSubscriber struct {
-	logger              *zap.SugaredLogger
-	symbol              string
-	purgeTime           time.Duration
-	orderBookAggregator services.OrderBookAggregator
-	binanceOrderBook    []services.BinanceOrderBookEntry
+	ctx                                                          context.Context
+	logger                                                       *zap.SugaredLogger
+	symbol                                                       string
+	purgeTime                                                    time.Duration
+	orderBookPublisher                                           publishers.OrderBookPublisher
+	binanceOrderBook                                             []models.BinanceOrderBookEntry
+	baseCoinCode, baseCoinName, counterCoinCode, counterCoinName string
 }
 
 func NewBinanceOrderBookSubscriber(
@@ -28,7 +34,8 @@ func NewBinanceOrderBookSubscriber(
 	logger *zap.SugaredLogger,
 	binanceConfig configuration.BinanceConfig,
 	symbolConfig configuration.SymbolConfig,
-	orderBookAggregator services.OrderBookAggregator) (BinanceOrderBookSubscriber, error) {
+	orderBookPublisher publishers.OrderBookPublisher,
+	symbolEnricher services.SymbolEnricher) (BinanceOrderBookSubscriber, error) {
 
 	binance.UseTestnet = binanceConfig.UseTestnet
 
@@ -37,30 +44,40 @@ func NewBinanceOrderBookSubscriber(
 		return nil, err
 	}
 
-	instance := &binanceOrderBookSubscriber{
-		logger:              logger,
-		symbol:              symbolConfig.Symbol,
-		binanceOrderBook:    make([]services.BinanceOrderBookEntry, 0),
-		purgeTime:           purgeTime,
-		orderBookAggregator: orderBookAggregator,
+	baseCoinCode, baseCoinName, counterCoinCode, counterCoinName, err := symbolEnricher.GetCoinPair(symbolConfig.Symbol)
+	if err != nil {
+		return nil, err
 	}
 
-	go instance.run(ctx)
+	instance := &binanceOrderBookSubscriber{
+		ctx:                ctx,
+		logger:             logger,
+		symbol:             symbolConfig.Symbol,
+		binanceOrderBook:   make([]models.BinanceOrderBookEntry, 0),
+		purgeTime:          purgeTime,
+		orderBookPublisher: orderBookPublisher,
+		baseCoinCode:       baseCoinCode,
+		baseCoinName:       baseCoinName,
+		counterCoinCode:    counterCoinCode,
+		counterCoinName:    counterCoinName,
+	}
+
+	go instance.run()
 
 	return instance, nil
 }
 
-func (bobs *binanceOrderBookSubscriber) run(ctx context.Context) {
+func (bobs *binanceOrderBookSubscriber) run() {
 	for {
-		bobs.connectAndSubscribe(ctx)
+		bobs.connectAndSubscribe()
 
-		if ctx.Err() == context.Canceled {
+		if bobs.ctx.Err() == context.Canceled {
 			return
 		}
 	}
 }
 
-func (bobs *binanceOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
+func (bobs *binanceOrderBookSubscriber) connectAndSubscribe() {
 	_, stopChannel, err := binance.WsDepthServe100Ms(
 		bobs.symbol,
 		bobs.wsDepthHandler,
@@ -74,7 +91,7 @@ func (bobs *binanceOrderBookSubscriber) connectAndSubscribe(ctx context.Context)
 	for {
 		time.Sleep(1 * time.Second)
 
-		if ctx.Err() == context.Canceled {
+		if bobs.ctx.Err() == context.Canceled {
 			stopChannel <- struct{}{}
 
 			return
@@ -93,16 +110,16 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 
 	entryTime := time.UnixMilli(event.Time)
 
-	asks := slices.Map(event.Asks, func(ask binance.Ask) services.BinanceOrderBookEntry {
-		return services.BinanceOrderBookEntry{
+	asks := slices.Map(event.Asks, func(ask binance.Ask) models.BinanceOrderBookEntry {
+		return models.BinanceOrderBookEntry{
 			Time: entryTime,
 			Ask:  &ask,
 			Bid:  nil,
 		}
 	})
 
-	bids := slices.Map(event.Bids, func(bid binance.Bid) services.BinanceOrderBookEntry {
-		return services.BinanceOrderBookEntry{
+	bids := slices.Map(event.Bids, func(bid binance.Bid) models.BinanceOrderBookEntry {
+		return models.BinanceOrderBookEntry{
 			Symbol: bobs.symbol,
 			Time:   entryTime,
 			Ask:    nil,
@@ -114,7 +131,7 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 
 	purgeTime := time.Now().Add(-1 * bobs.purgeTime)
 
-	bobs.binanceOrderBook = slices.Filter(bobs.binanceOrderBook, func(orderBookEntry services.BinanceOrderBookEntry) bool {
+	bobs.binanceOrderBook = slices.Filter(bobs.binanceOrderBook, func(orderBookEntry models.BinanceOrderBookEntry) bool {
 		return orderBookEntry.Time.After(purgeTime)
 	})
 
@@ -122,7 +139,28 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 		return bobs.binanceOrderBook[i].Time.Before(bobs.binanceOrderBook[j].Time)
 	})
 
-	bobs.orderBookAggregator.UpdateOrderBook(bobs.symbol, bobs.binanceOrderBook)
+	orderBook := mappers.FromBinanceOrderBookToModelOrderBook(
+		exchangeModels.Currency{
+			Name:         bobs.baseCoinName,
+			Code:         bobs.baseCoinCode,
+			MaxPrecision: 1,
+			Digital:      true,
+		},
+		exchangeModels.Currency{
+			Name:         bobs.counterCoinName,
+			Code:         bobs.counterCoinCode,
+			MaxPrecision: 1,
+			Digital:      true,
+		},
+		bobs.binanceOrderBook,
+	)
+
+	if err := bobs.orderBookPublisher.Publish(
+		bobs.ctx,
+		"binance",
+		orderBook); err != nil {
+		bobs.logger.Errorf("Failed to publish order book for Binance exchange. Error: %v", err)
+	}
 }
 
 func (bobs *binanceOrderBookSubscriber) wsErrorHandler(err error) {
