@@ -71,7 +71,6 @@ type ftxOrderBookData struct {
 type ftxOrderBookSubscriber struct {
 	logger    *zap.SugaredLogger
 	market    string
-	purgeTime time.Duration
 	ftxConfig configuration.FtxConfig
 }
 
@@ -81,16 +80,10 @@ func NewFtxOrderBookSubscriber(
 	ftxConfig configuration.FtxConfig,
 	marketConfig configuration.MarketConfig) (FtxOrderBookSubscriber, error) {
 
-	purgeTime, err := time.ParseDuration(marketConfig.PurgeTime)
-	if err != nil {
-		return nil, err
-	}
-
 	instance := &ftxOrderBookSubscriber{
 		logger:    logger,
 		market:    marketConfig.Market,
 		ftxConfig: ftxConfig,
-		purgeTime: purgeTime,
 	}
 
 	go instance.run(ctx)

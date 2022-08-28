@@ -21,6 +21,5 @@ type OrderBook struct {
 }
 
 type SymbolConfig struct {
-	Symbol    string `yaml:"symbol"`
-	PurgeTime string `yaml:"purgeTime"`
+	Symbol string `yaml:"symbol"`
 }

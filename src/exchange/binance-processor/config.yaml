@@ -11,4 +11,3 @@ binance:
   orderBook:
     symbols:
       - symbol: LTCBTC
-        purgeTime: 30m

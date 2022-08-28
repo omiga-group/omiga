@@ -19,6 +19,5 @@ type OrderBook struct {
 }
 
 type MarketConfig struct {
-	Market    string `yaml:"market"`
-	PurgeTime string `yaml:"purgeTime"`
+	Market string `yaml:"market"`
 }
