@@ -34,5 +34,5 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/order-database-migration /omiga
 COPY --from=build /src/order/shared/repositories/cli/config.yaml /omiga
-COPY --from=build /src/exchange/shared/repositories/cli/post-migration-script.sql /omiga
+COPY --from=build /src/order/shared/repositories/cli/post-migration-script.sql /omiga
 CMD ["/omiga/order-database-migration", "migrate", "--post-migration-script-path", "post-migration-script.sql"]
