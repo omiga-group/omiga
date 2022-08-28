@@ -1,6 +1,7 @@
 package mappers
 
 import (
+	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/order/shared/models"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
@@ -12,10 +13,11 @@ func FromOrderToEventOrder(src models.Order) orderv1.Order {
 		OrderDetails: fromOrderDetailsToEventOrderDetails(src.OrderDetails),
 	}
 
-	order.PreferredExchanges = make([]orderv1.Exchange, 0)
-	for _, preferredExchange := range src.PreferredExchanges {
-		order.PreferredExchanges = append(order.PreferredExchanges, fromExchangeToEventExchange(preferredExchange))
-	}
+	order.PreferredExchanges = slices.Map(
+		src.PreferredExchanges,
+		func(preferredExchange models.Exchange) orderv1.Exchange {
+			return fromExchangeToEventExchange(preferredExchange)
+		})
 
 	return order
 }
@@ -60,15 +62,17 @@ func FromEventOrderBookToOrderBook(src orderbookv1.OrderBook) models.OrderBook {
 		CounterCurrency: fromEventCurrencyToCurrency(src.CounterCurrency),
 	}
 
-	order.Bids = make([]models.OrderBookEntry, 0)
-	for _, bid := range src.Bids {
-		order.Bids = append(order.Bids, fromEventOrderBookEntryToOrderBookEntry(bid))
-	}
+	order.Bids = slices.Map(
+		src.Bids,
+		func(bid orderbookv1.OrderBookEntry) models.OrderBookEntry {
+			return fromEventOrderBookEntryToOrderBookEntry(bid)
+		})
 
-	order.Asks = make([]models.OrderBookEntry, 0)
-	for _, ask := range src.Asks {
-		order.Asks = append(order.Asks, fromEventOrderBookEntryToOrderBookEntry(ask))
-	}
+	order.Asks = slices.Map(
+		src.Asks,
+		func(ask orderbookv1.OrderBookEntry) models.OrderBookEntry {
+			return fromEventOrderBookEntryToOrderBookEntry(ask)
+		})
 
 	return order
 }

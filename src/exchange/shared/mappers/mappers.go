@@ -1,6 +1,7 @@
 package mappers
 
 import (
+	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 )
@@ -12,15 +13,17 @@ func FromOrderBookToEventOrderBook(src models.OrderBook) orderbookv1.OrderBook {
 		CounterCurrency: fromCurrencyToEventCurrency(src.CounterCurrency),
 	}
 
-	order.Bids = make([]orderbookv1.OrderBookEntry, 0)
-	for _, bid := range src.Bids {
-		order.Bids = append(order.Bids, fromOrderBookEntryToEventOrderBookEntry(bid))
-	}
+	order.Bids = slices.Map(
+		src.Bids,
+		func(bid models.OrderBookEntry) orderbookv1.OrderBookEntry {
+			return fromOrderBookEntryToEventOrderBookEntry(bid)
+		})
 
-	order.Asks = make([]orderbookv1.OrderBookEntry, 0)
-	for _, ask := range src.Asks {
-		order.Asks = append(order.Asks, fromOrderBookEntryToEventOrderBookEntry(ask))
-	}
+	order.Asks = slices.Map(
+		src.Asks,
+		func(ask models.OrderBookEntry) orderbookv1.OrderBookEntry {
+			return fromOrderBookEntryToEventOrderBookEntry(ask)
+		})
 
 	return order
 }

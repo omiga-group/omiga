@@ -1,6 +1,7 @@
 package mappers
 
 import (
+	"github.com/life4/genesis/slices"
 	graphqlmodels "github.com/omiga-group/omiga/src/order/order-api/graphql/models"
 	"github.com/omiga-group/omiga/src/order/shared/models"
 )
@@ -17,10 +18,11 @@ func FromSubmitOrderInputToOrder(src graphqlmodels.SubmitOrderInput) models.Orde
 		},
 	}
 
-	order.PreferredExchanges = make([]models.Exchange, 0)
-	for _, preferredExchange := range src.PreferredExchanges {
-		order.PreferredExchanges = append(order.PreferredExchanges, fromExchangeInputToExchange(preferredExchange))
-	}
+	order.PreferredExchanges = slices.Map(
+		src.PreferredExchanges,
+		func(preferredExchange *graphqlmodels.ExchangeInput) models.Exchange {
+			return fromExchangeInputToExchange(preferredExchange)
+		})
 
 	return order
 }
