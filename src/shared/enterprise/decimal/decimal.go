@@ -29,7 +29,7 @@ func StringToDecimal(str string) (Decimal, error) {
 			Input: ".1234567"
 			Expected Output: {
 			amount: 1234567
-			scale: 0
+			scale: 7
 			}
 		*/
 
@@ -41,14 +41,14 @@ func StringToDecimal(str string) (Decimal, error) {
 
 		return Decimal{
 			Amount: amount,
-			Scale:  0,
+			Scale:  int32(len(str)),
 		}, nil
 	} else if len(pieces) == 1 {
 		/*
 			Input: "1234567"
 			Expected Output: {
 			amount: 1234567
-			scale: 7
+			scale: 0
 			}
 		*/
 
@@ -59,14 +59,14 @@ func StringToDecimal(str string) (Decimal, error) {
 
 		return Decimal{
 			Amount: amount,
-			Scale:  int32(len(pieces[0])),
+			Scale:  0,
 		}, nil
 	} else {
 		/*
 			Input: "123.4567"
 			Expected Output: {
 			amount: 1234567
-			scale: 3
+			scale: 4
 			}
 		*/
 
@@ -77,7 +77,7 @@ func StringToDecimal(str string) (Decimal, error) {
 
 		return Decimal{
 			Amount: amount,
-			Scale:  int32(len(pieces[0])),
+			Scale:  int32(len(pieces[1])),
 		}, nil
 	}
 }
