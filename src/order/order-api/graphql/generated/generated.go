@@ -498,7 +498,7 @@ input OrderDetailsInput {
 }
 
 input MoneyInput {
-  amount: Int!
+  amount: Float!
   scale: Int!
   currency: CurrencyInput!
 }
@@ -3736,7 +3736,7 @@ func (ec *executionContext) unmarshalInputMoneyInput(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
-			it.Amount, err = ec.unmarshalNInt2int(ctx, v)
+			it.Amount, err = ec.unmarshalNFloat2float64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5544,6 +5544,21 @@ func (ec *executionContext) marshalNCursor2githubᚗcomᚋomigaᚑgroupᚋomiga�
 func (ec *executionContext) unmarshalNExchangeInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋorderᚑapiᚋgraphqlᚋmodelsᚐExchangeInput(ctx context.Context, v interface{}) (*models.ExchangeInput, error) {
 	res, err := ec.unmarshalInputExchangeInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	res := graphql.MarshalFloatContext(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return graphql.WrapContextMarshaler(ctx, res)
 }
 
 func (ec *executionContext) unmarshalNID2int(ctx context.Context, v interface{}) (int, error) {

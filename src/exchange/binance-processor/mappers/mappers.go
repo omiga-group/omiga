@@ -1,8 +1,6 @@
 package mappers
 
 import (
-	"strconv"
-
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/models"
 	exchangeModels "github.com/omiga-group/omiga/src/exchange/shared/models"
@@ -12,7 +10,6 @@ func FromBinanceOrderBookToModelOrderBook(
 	baseCurrency exchangeModels.Currency,
 	counterCurrency exchangeModels.Currency,
 	orderBook []models.BinanceOrderBookEntry) exchangeModels.OrderBook {
-
 	asks := slices.Filter(orderBook, func(entry models.BinanceOrderBookEntry) bool {
 		return entry.Ask != nil
 	})
@@ -22,14 +19,10 @@ func FromBinanceOrderBookToModelOrderBook(
 	})
 
 	convertedAsks := slices.Map(asks, func(ask models.BinanceOrderBookEntry) exchangeModels.OrderBookEntry {
-		quantity, err := strconv.Atoi(ask.Ask.Quantity)
+		quantity, amount, err := ask.Ask.Parse()
 		if err != nil {
 			quantity = -1
-		}
-
-		amount, err := strconv.Atoi(ask.Ask.Price)
-		if err != nil {
-			quantity = -1
+			amount = -1
 		}
 
 		return exchangeModels.OrderBookEntry{
@@ -47,14 +40,10 @@ func FromBinanceOrderBookToModelOrderBook(
 	})
 
 	convertedBids := slices.Map(bids, func(bid models.BinanceOrderBookEntry) exchangeModels.OrderBookEntry {
-		quantity, err := strconv.Atoi(bid.Bid.Quantity)
+		quantity, amount, err := bid.Bid.Parse()
 		if err != nil {
 			quantity = -1
-		}
-
-		amount, err := strconv.Atoi(bid.Bid.Price)
-		if err != nil {
-			quantity = -1
+			amount = -1
 		}
 
 		return exchangeModels.OrderBookEntry{

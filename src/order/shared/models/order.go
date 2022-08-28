@@ -33,7 +33,7 @@ type Currency struct {
 }
 
 type Money struct {
-	Amount   int
+	Amount   float64
 	Scale    int
 	Currency Currency
 }

@@ -111,7 +111,7 @@ const (
     
     // Money represents a Money model.
 type Money struct {
-  Amount int `json:"amount"`  // undefined
+  Amount float64 `json:"amount"`  // undefined
   Scale int `json:"scale"`  // undefined
   Currency Currency `json:"currency"` 
 }

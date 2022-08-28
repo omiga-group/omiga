@@ -387,7 +387,7 @@ input ExchangeWhereInput {
   hasTickerWith: [TickerWhereInput!]
 }
 input MoneyInput {
-  amount: Int!
+  amount: Float!
   scale: Int!
   currency: CurrencyInput!
 }

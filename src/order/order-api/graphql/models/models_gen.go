@@ -27,7 +27,7 @@ type ExchangeInput struct {
 }
 
 type MoneyInput struct {
-	Amount   int            `json:"amount"`
+	Amount   float64        `json:"amount"`
 	Scale    int            `json:"scale"`
 	Currency *CurrencyInput `json:"currency"`
 }

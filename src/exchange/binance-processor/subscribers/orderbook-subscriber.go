@@ -112,9 +112,10 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 
 	asks := slices.Map(event.Asks, func(ask binance.Ask) models.BinanceOrderBookEntry {
 		return models.BinanceOrderBookEntry{
-			Time: entryTime,
-			Ask:  &ask,
-			Bid:  nil,
+			Symbol: bobs.symbol,
+			Time:   entryTime,
+			Ask:    &ask,
+			Bid:    nil,
 		}
 	})
 

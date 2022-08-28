@@ -65,7 +65,7 @@ export default React.memo<SubmitOrderProps>(() => {
               name: 'XXX',
             },
             price: {
-              amount: parseInt(values.amount),
+              amount: parseFloat(values.amount),
               currency: {
                 code: '11',
                 digital: true,
@@ -75,7 +75,7 @@ export default React.memo<SubmitOrderProps>(() => {
               scale: 10,
             },
             quantity: {
-              amount: parseInt(values.amount),
+              amount: parseFloat(values.amount),
               currency: {
                 code: '11',
                 digital: true,

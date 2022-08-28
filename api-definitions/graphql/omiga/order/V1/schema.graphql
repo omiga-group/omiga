@@ -151,7 +151,7 @@ input OrderDetailsInput {
 }
 
 input MoneyInput {
-  amount: Int!
+  amount: Float!
   scale: Int!
   currency: CurrencyInput!
 }
