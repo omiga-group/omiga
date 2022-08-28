@@ -159,7 +159,7 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 
 	if err := bobs.orderBookPublisher.Publish(
 		bobs.ctx,
-		"binance",
+		orderBook.ExchangeId,
 		orderBook); err != nil {
 		bobs.logger.Errorf("Failed to publish order book for Binance exchange. Error: %v", err)
 	}
