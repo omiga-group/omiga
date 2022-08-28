@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/omiga-group/omiga/src/order/order-processor/appsetup"
 	"github.com/omiga-group/omiga/src/order/order-processor/configuration"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
@@ -47,14 +48,14 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			entgoClient, err := NewEntgoClient(
+			entgoClient, err := appsetup.NewEntgoClient(
 				sugarLogger,
 				config.Postgres)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
 
-			orderMessageConsumer, err := NewMessageConsumer(
+			orderMessageConsumer, err := appsetup.NewMessageConsumer(
 				sugarLogger,
 				config.Pulsar,
 				orderv1.TopicName)
@@ -64,7 +65,7 @@ func startCommand() *cobra.Command {
 
 			defer orderMessageConsumer.Close(ctx)
 
-			orderConsumer, err := NewOrderConsumer(
+			orderConsumer, err := appsetup.NewOrderConsumer(
 				sugarLogger,
 				orderMessageConsumer)
 			if err != nil {
@@ -76,7 +77,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			orderBookMessageConsumer, err := NewMessageConsumer(
+			orderBookMessageConsumer, err := appsetup.NewMessageConsumer(
 				sugarLogger,
 				config.Pulsar,
 				orderbookv1.TopicName)
@@ -86,7 +87,7 @@ func startCommand() *cobra.Command {
 
 			defer orderMessageConsumer.Close(ctx)
 
-			orderBookConsumer, err := NewOrderBookConsumer(
+			orderBookConsumer, err := appsetup.NewOrderBookConsumer(
 				sugarLogger,
 				orderBookMessageConsumer,
 				entgoClient)
@@ -99,7 +100,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			timeHelper, err := NewTimeHelper()
+			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

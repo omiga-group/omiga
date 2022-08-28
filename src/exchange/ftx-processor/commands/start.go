@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/appsetup"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
@@ -46,7 +47,7 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			syntheticMessageConsumer, err := NewMessageConsumer(
+			syntheticMessageConsumer, err := appsetup.NewMessageConsumer(
 				sugarLogger,
 				config.Pulsar,
 				syntheticorderv1.TopicName)
@@ -56,7 +57,7 @@ func startCommand() *cobra.Command {
 
 			defer syntheticMessageConsumer.Close(ctx)
 
-			syntheticOrderConsumer, err := NewSyntheticOrderConsumer(
+			syntheticOrderConsumer, err := appsetup.NewSyntheticOrderConsumer(
 				sugarLogger,
 				syntheticMessageConsumer)
 			if err != nil {
@@ -69,7 +70,7 @@ func startCommand() *cobra.Command {
 			}
 
 			for _, marketConfig := range config.Ftx.OrderBook.Markets {
-				_, err = NewFtxOrderBookSubscriber(
+				_, err = appsetup.NewFtxOrderBookSubscriber(
 					ctx,
 					sugarLogger,
 					config.Ftx,
@@ -78,7 +79,7 @@ func startCommand() *cobra.Command {
 					sugarLogger.Fatal(err)
 				}
 			}
-			timeHelper, err := NewTimeHelper()
+			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

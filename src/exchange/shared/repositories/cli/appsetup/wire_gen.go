@@ -4,7 +4,7 @@
 //go:build !wireinject
 // +build !wireinject
 
-package commands
+package appsetup
 
 import (
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"

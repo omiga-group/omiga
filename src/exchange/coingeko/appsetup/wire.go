@@ -16,35 +16,39 @@
 // +build wireinject
 
 // The build tag makes sure the stub is not built in the final build.
-package commands
+package appsetup
 
 import (
+	"context"
+
 	"github.com/google/wire"
+	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
+	"github.com/omiga-group/omiga/src/exchange/coingeko/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
-	"github.com/omiga-group/omiga/src/shared/enterprise/database"
+	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
-	"github.com/omiga-group/omiga/src/shared/enterprise/os"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
-func NewDatabase(
-	logger *zap.SugaredLogger,
-	postgresConfig postgres.PostgresConfig) (database.Database, error) {
-	wire.Build(postgres.NewPostgres)
+func NewTimeHelper() (time.TimeHelper, error) {
+	wire.Build(
+		time.NewTimeHelper)
 
 	return nil, nil
 }
 
-func NewEntgoClient(
+func NewCoingekoSubscriber(
+	ctx context.Context,
 	logger *zap.SugaredLogger,
-	postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
-	wire.Build(postgres.NewPostgres, repositories.NewEntgoClient)
-
-	return nil, nil
-}
-
-func NewOsHelper() (os.OsHelper, error) {
-	wire.Build(os.NewOsHelper)
+	coingekoConfig configuration.CoingekoConfig,
+	postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
+	wire.Build(
+		postgres.NewPostgres,
+		repositories.NewEntgoClient,
+		cron.NewCronService,
+		time.NewTimeHelper,
+		subscribers.NewCoingekoSubscriber)
 
 	return nil, nil
 }

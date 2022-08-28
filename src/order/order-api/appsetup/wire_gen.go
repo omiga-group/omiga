@@ -4,7 +4,7 @@
 //go:build !wireinject
 // +build !wireinject
 
-package commands
+package appsetup
 
 import (
 	"context"

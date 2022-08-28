@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/omiga-group/omiga/src/exchange/coingeko/appsetup"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
@@ -50,7 +51,7 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			if _, err = NewCoingekoSubscriber(
+			if _, err = appsetup.NewCoingekoSubscriber(
 				ctx,
 				sugarLogger,
 				config.Coingeko,
@@ -58,7 +59,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			timeHelper, err := NewTimeHelper()
+			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

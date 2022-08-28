@@ -4,17 +4,17 @@
 //go:build !wireinject
 // +build !wireinject
 
-package commands
+package appsetup
 
 import (
 	"context"
-	"github.com/omiga-group/omiga/src/exchange/omiga-processor/simulators"
-	"github.com/omiga-group/omiga/src/exchange/omiga-processor/subscribers"
+	configuration2 "github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
+	"github.com/omiga-group/omiga/src/exchange/binance-processor/services"
+	"github.com/omiga-group/omiga/src/exchange/binance-processor/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -48,15 +48,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	return consumer, nil
 }
 
-func NewOrderBookSimulator(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, pulsarConfig pulsar.PulsarConfig, topic string, orderBookSimulatorConfig simulators.OrderBookSimulatorConfig) (simulators.OrderBookSimulator, error) {
-	timeHelper, err := time.NewTimeHelper()
-	if err != nil {
-		return nil, err
-	}
-	cronService, err := cron.NewCronService(logger, timeHelper)
-	if err != nil {
-		return nil, err
-	}
+func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, binanceConfig configuration2.BinanceConfig, symbolConfig configuration2.SymbolConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.BinanceOrderBookSubscriber, error) {
 	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, topic)
 	if err != nil {
 		return nil, err
@@ -66,9 +58,13 @@ func NewOrderBookSimulator(ctx context.Context, logger *zap.SugaredLogger, appCo
 	if err != nil {
 		return nil, err
 	}
-	orderBookSimulator, err := simulators.NewOrderBookSimulator(ctx, logger, cronService, orderBookPublisher, orderBookSimulatorConfig)
+	orderBookAggregator, err := services.NewOrderBookAggregator(ctx, logger, orderBookPublisher)
 	if err != nil {
 		return nil, err
 	}
-	return orderBookSimulator, nil
+	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, symbolConfig, orderBookAggregator)
+	if err != nil {
+		return nil, err
+	}
+	return binanceOrderBookSubscriber, nil
 }

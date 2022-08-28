@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/omiga-group/omiga/src/exchange/omiga-processor/appsetup"
 	"github.com/omiga-group/omiga/src/exchange/omiga-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/omiga-processor/simulators"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
@@ -58,7 +59,7 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			_, err = NewOrderBookSimulator(
+			_, err = appsetup.NewOrderBookSimulator(
 				ctx,
 				sugarLogger,
 				config.App,
@@ -71,7 +72,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			syntheticMessageConsumer, err := NewMessageConsumer(
+			syntheticMessageConsumer, err := appsetup.NewMessageConsumer(
 				sugarLogger,
 				config.Pulsar,
 				syntheticorderv1.TopicName)
@@ -81,7 +82,7 @@ func startCommand() *cobra.Command {
 
 			defer syntheticMessageConsumer.Close(ctx)
 
-			syntheticOrderConsumer, err := NewSyntheticOrderConsumer(
+			syntheticOrderConsumer, err := appsetup.NewSyntheticOrderConsumer(
 				sugarLogger,
 				syntheticMessageConsumer)
 			if err != nil {
@@ -93,7 +94,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			timeHelper, err := NewTimeHelper()
+			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

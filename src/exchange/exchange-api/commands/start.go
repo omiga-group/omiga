@@ -3,6 +3,7 @@ package commands
 import (
 	"log"
 
+	"github.com/omiga-group/omiga/src/exchange/exchange-api/appsetup"
 	"github.com/omiga-group/omiga/src/exchange/exchange-api/configuration"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
@@ -27,14 +28,14 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			entgoClient, err := NewEntgoClient(
+			entgoClient, err := appsetup.NewEntgoClient(
 				sugarLogger,
 				config.Postgres)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
 
-			httpServer, err := NewHttpServer(
+			httpServer, err := appsetup.NewHttpServer(
 				sugarLogger,
 				config.App,
 				entgoClient)

@@ -16,19 +16,19 @@
 // +build wireinject
 
 // The build tag makes sure the stub is not built in the final build.
-package commands
+package appsetup
 
 import (
 	"context"
 
 	"github.com/google/wire"
-	"github.com/omiga-group/omiga/src/exchange/omiga-processor/simulators"
-	"github.com/omiga-group/omiga/src/exchange/omiga-processor/subscribers"
+	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
+	"github.com/omiga-group/omiga/src/exchange/binance-processor/services"
+	"github.com/omiga-group/omiga/src/exchange/binance-processor/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
-	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -54,27 +54,25 @@ func NewMessageConsumer(
 func NewSyntheticOrderConsumer(
 	logger *zap.SugaredLogger,
 	messageConsumer messaging.MessageConsumer) (syntheticorderv1.Consumer, error) {
-	wire.Build(
-		syntheticorderv1.NewConsumer,
-		subscribers.NewSyntheticOrderSubscriber)
+	wire.Build(syntheticorderv1.NewConsumer, subscribers.NewSyntheticOrderSubscriber)
 
 	return nil, nil
 }
 
-func NewOrderBookSimulator(
+func NewBinanceOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	appConfig configuration.AppConfig,
+	appConfig enterpriseConfiguration.AppConfig,
+	binanceConfig configuration.BinanceConfig,
+	symbolConfig configuration.SymbolConfig,
 	pulsarConfig pulsar.PulsarConfig,
-	topic string,
-	orderBookSimulatorConfig simulators.OrderBookSimulatorConfig) (simulators.OrderBookSimulator, error) {
+	topic string) (subscribers.BinanceOrderBookSubscriber, error) {
 	wire.Build(
-		simulators.NewOrderBookSimulator,
 		orderbookv1.NewProducer,
 		pulsar.NewPulsarMessageProducer,
-		cron.NewCronService,
-		time.NewTimeHelper,
-		publishers.NewOrderBookPublisher)
+		publishers.NewOrderBookPublisher,
+		subscribers.NewBinanceOrderBookSubscriber,
+		services.NewOrderBookAggregator)
 
 	return nil, nil
 }

@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/omiga-group/omiga/src/exchange/binance-processor/appsetup"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
@@ -47,7 +48,7 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			syntheticMessageConsumer, err := NewMessageConsumer(
+			syntheticMessageConsumer, err := appsetup.NewMessageConsumer(
 				sugarLogger,
 				config.Pulsar,
 				syntheticorderv1.TopicName)
@@ -57,7 +58,7 @@ func startCommand() *cobra.Command {
 
 			defer syntheticMessageConsumer.Close(ctx)
 
-			syntheticOrderConsumer, err := NewSyntheticOrderConsumer(
+			syntheticOrderConsumer, err := appsetup.NewSyntheticOrderConsumer(
 				sugarLogger,
 				syntheticMessageConsumer)
 			if err != nil {
@@ -70,7 +71,7 @@ func startCommand() *cobra.Command {
 			}
 
 			for _, symbolConfig := range config.Binance.OrderBook.Symbols {
-				_, err = NewBinanceOrderBookSubscriber(
+				_, err = appsetup.NewBinanceOrderBookSubscriber(
 					ctx,
 					sugarLogger,
 					config.App,
@@ -83,7 +84,7 @@ func startCommand() *cobra.Command {
 				}
 			}
 
-			timeHelper, err := NewTimeHelper()
+			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

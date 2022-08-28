@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/omiga-group/omiga/src/order/order-api/appsetup"
 	"github.com/omiga-group/omiga/src/order/order-api/configuration"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
@@ -31,14 +32,14 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			entgoClient, err := NewEntgoClient(
+			entgoClient, err := appsetup.NewEntgoClient(
 				sugarLogger,
 				config.Postgres)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
 
-			cronService, err := NewCronService(
+			cronService, err := appsetup.NewCronService(
 				sugarLogger)
 			if err != nil {
 				sugarLogger.Fatal(err)
@@ -46,7 +47,7 @@ func startCommand() *cobra.Command {
 
 			defer cronService.Close()
 
-			orderOutboxBackgroundService, err := NewOrderOutboxBackgroundService(
+			orderOutboxBackgroundService, err := appsetup.NewOrderOutboxBackgroundService(
 				ctx,
 				sugarLogger,
 				config.Pulsar,
@@ -58,7 +59,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			httpServer, err := NewHttpServer(
+			httpServer, err := appsetup.NewHttpServer(
 				sugarLogger,
 				config.App,
 				entgoClient,

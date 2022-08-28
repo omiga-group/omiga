@@ -16,24 +16,32 @@
 // +build wireinject
 
 // The build tag makes sure the stub is not built in the final build.
-package commands
+package appsetup
 
 import (
+	"context"
+
 	"github.com/google/wire"
-	"github.com/omiga-group/omiga/src/order/order-processor/services"
-	"github.com/omiga-group/omiga/src/order/order-processor/subscribers"
+	"github.com/omiga-group/omiga/src/order/order-api/graphql"
+	"github.com/omiga-group/omiga/src/order/order-api/http"
+	"github.com/omiga-group/omiga/src/order/order-api/publishers"
+	orderrepositories "github.com/omiga-group/omiga/src/order/order-api/repositories"
+	"github.com/omiga-group/omiga/src/order/order-api/services"
+	"github.com/omiga-group/omiga/src/order/shared/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
-	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
-	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
+	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
-	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	enterpriseOutbox "github.com/omiga-group/omiga/src/shared/enterprise/outbox"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
-func NewTimeHelper() (time.TimeHelper, error) {
+func NewCronService(
+	logger *zap.SugaredLogger) (cron.CronService, error) {
 	wire.Build(
+		cron.NewCronService,
 		time.NewTimeHelper)
 
 	return nil, nil
@@ -49,28 +57,33 @@ func NewEntgoClient(
 	return nil, nil
 }
 
-func NewMessageConsumer(
+func NewOrderOutboxBackgroundService(
+	ctx context.Context,
 	logger *zap.SugaredLogger,
 	pulsarConfig pulsar.PulsarConfig,
-	topic string) (messaging.MessageConsumer, error) {
-	wire.Build(pulsar.NewPulsarMessageConsumer)
+	outboxConfig enterpriseOutbox.OutboxConfig,
+	topic string,
+	entgoClient repositories.EntgoClient,
+	cronService cron.CronService) (outbox.OutboxBackgroundService, error) {
+	wire.Build(
+		pulsar.NewPulsarMessageProducer,
+		outbox.NewOutboxBackgroundService)
 
 	return nil, nil
 }
 
-func NewOrderConsumer(
+func NewHttpServer(
 	logger *zap.SugaredLogger,
-	messageConsumer messaging.MessageConsumer) (orderv1.Consumer, error) {
-	wire.Build(orderv1.NewConsumer, subscribers.NewOrderSubscriber)
-
-	return nil, nil
-}
-
-func NewOrderBookConsumer(
-	logger *zap.SugaredLogger,
-	messageConsumer messaging.MessageConsumer,
-	entgoClient repositories.EntgoClient) (orderbookv1.Consumer, error) {
-	wire.Build(orderbookv1.NewConsumer, subscribers.NewOrderBookSubscriber, services.NewOrderBookService)
+	appConfig configuration.AppConfig,
+	entgoClient repositories.EntgoClient,
+	orderOutboxBackgroundService outbox.OutboxBackgroundService) (http.HttpServer, error) {
+	wire.Build(
+		http.NewHttpServer,
+		graphql.NewGraphQLServer,
+		services.NewOrderService,
+		publishers.NewOrderPublisher,
+		outbox.NewOutboxPublisher,
+		orderrepositories.NewOrderRepository)
 
 	return nil, nil
 }

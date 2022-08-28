@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/omiga-group/omiga/src/order/shared/repositories/cli/appsetup"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/cli/configuration"
 	"github.com/omiga-group/omiga/src/order/shared/repositories/migrate"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
@@ -45,7 +46,7 @@ func migrateCommand() *cobra.Command {
 			connectionStringWithoutDatabase := config.Postgres.ConnectionString[:index]
 			databaseName := config.Postgres.ConnectionString[index+1:]
 
-			database, err := NewDatabase(
+			database, err := appsetup.NewDatabase(
 				sugarLogger,
 				postgres.PostgresConfig{
 					ConnectionString: connectionStringWithoutDatabase,
@@ -75,7 +76,7 @@ func migrateCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			entgoClient, err := NewEntgoClient(
+			entgoClient, err := appsetup.NewEntgoClient(
 				sugarLogger,
 				config.Postgres)
 			if err != nil {
@@ -84,7 +85,7 @@ func migrateCommand() *cobra.Command {
 
 			defer entgoClient.Close()
 
-			osHelper, err := NewOsHelper()
+			osHelper, err := appsetup.NewOsHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -118,7 +119,7 @@ func migrateCommand() *cobra.Command {
 
 				sugarLogger.Info("Applying post migration script...")
 
-				database, err = NewDatabase(
+				database, err = appsetup.NewDatabase(
 					sugarLogger,
 					config.Postgres)
 				if err != nil {
