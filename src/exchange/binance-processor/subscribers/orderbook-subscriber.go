@@ -155,6 +155,8 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 		bobs.binanceOrderBook,
 	)
 
+	orderBook.ExchangeId = "binance"
+
 	if err := bobs.orderBookPublisher.Publish(
 		bobs.ctx,
 		"binance",
