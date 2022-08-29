@@ -10,6 +10,7 @@ import (
 
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/appsetup"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
+	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
@@ -73,8 +74,11 @@ func startCommand() *cobra.Command {
 				_, err = appsetup.NewFtxOrderBookSubscriber(
 					ctx,
 					sugarLogger,
+					config.App,
 					config.Ftx,
-					marketConfig)
+					marketConfig,
+					config.Pulsar,
+					orderbookv1.TopicName)
 				if err != nil {
 					sugarLogger.Fatal(err)
 				}
