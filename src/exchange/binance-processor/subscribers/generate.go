@@ -1,3 +1,3 @@
 package subscribers
 
-//go:generate mockgen -source=orderbook-subscriber.go -destination=mock/mock-orderbook-subscriber.go
+//go:generate mockgen -source=order-book-subscriber.go -destination=mock/mock-order-book-subscriber.go

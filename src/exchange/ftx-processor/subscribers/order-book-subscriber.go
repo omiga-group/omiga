@@ -85,12 +85,14 @@ func NewFtxOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	ftxConfig configuration.FtxConfig,
-	marketConfig configuration.MarketConfig) (FtxOrderBookSubscriber, error) {
+	marketConfig configuration.MarketConfig,
+	orderBookPublisher publishers.OrderBookPublisher) (FtxOrderBookSubscriber, error) {
 
 	instance := &ftxOrderBookSubscriber{
-		logger:    logger,
-		market:    marketConfig.Market,
-		ftxConfig: ftxConfig,
+		logger:             logger,
+		market:             marketConfig.Market,
+		ftxConfig:          ftxConfig,
+		orderBookPublisher: orderBookPublisher,
 	}
 
 	go instance.run(ctx)

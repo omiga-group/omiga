@@ -24,7 +24,10 @@ import (
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/subscribers"
+	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
+	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
+	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -55,20 +58,19 @@ func NewSyntheticOrderConsumer(
 	return nil, nil
 }
 
-func NewBinanceOrderBookSubscriber(
+func NewFtxOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	appConfig enterpriseConfiguration.AppConfig,
-	binanceConfig configuration.BinanceConfig,
-	symbolConfig configuration.SymbolConfig,
+	ftxConfig configuration.FtxConfig,
+	marketConfig configuration.MarketConfig,
 	pulsarConfig pulsar.PulsarConfig,
-	topic string) (subscribers.BinanceOrderBookSubscriber, error) {
+	topic string) (subscribers.FtxOrderBookSubscriber, error) {
 	wire.Build(
 		orderbookv1.NewProducer,
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
-		subscribers.NewFtxOrderBookSubscriber,
-		services.NewSymbolEnricher)
+		subscribers.NewFtxOrderBookSubscriber)
 
 	return nil, nil
 }
