@@ -29,7 +29,7 @@ CMD ["/bin/binance-processor", "start"]
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
-RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -v -covermode=count -coverprofile="/coverage/reports/coverage.out" ./...
+RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -coverpkg=./... -v -covermode=count -coverprofile="/coverage/reports/coverage.out" ./...
 
 FROM base AS final
 
