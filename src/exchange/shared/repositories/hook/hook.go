@@ -143,6 +143,7 @@ func HasFields(field string, fields ...string) Condition {
 // If executes the given hook under condition.
 //
 //	hook.If(ComputeAverage, And(HasFields(...), HasAddedFields(...)))
+//
 func If(hk repositories.Hook, cond Condition) repositories.Hook {
 	return func(next repositories.Mutator) repositories.Mutator {
 		return repositories.MutateFunc(func(ctx context.Context, m repositories.Mutation) (repositories.Value, error) {
@@ -157,6 +158,7 @@ func If(hk repositories.Hook, cond Condition) repositories.Hook {
 // On executes the given hook only for the given operation.
 //
 //	hook.On(Log, repositories.Delete|repositories.Create)
+//
 func On(hk repositories.Hook, op repositories.Op) repositories.Hook {
 	return If(hk, HasOp(op))
 }
@@ -164,6 +166,7 @@ func On(hk repositories.Hook, op repositories.Op) repositories.Hook {
 // Unless skips the given hook only for the given operation.
 //
 //	hook.Unless(Log, repositories.Update|repositories.UpdateOne)
+//
 func Unless(hk repositories.Hook, op repositories.Op) repositories.Hook {
 	return If(hk, Not(HasOp(op)))
 }
@@ -184,6 +187,7 @@ func FixedError(err error) repositories.Hook {
 //			Reject(repositories.Delete|repositories.Update),
 //		}
 //	}
+//
 func Reject(op repositories.Op) repositories.Hook {
 	hk := FixedError(fmt.Errorf("%s operation is not allowed", op))
 	return On(hk, op)

@@ -8,6 +8,7 @@ package appsetup
 
 import (
 	"context"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/client"
 	configuration2 "github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
@@ -47,7 +48,8 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	return consumer, nil
 }
 
-func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, ftxConfig configuration2.FtxConfig, marketConfig configuration2.MarketConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.FtxOrderBookSubscriber, error) {
+func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, ftxConfig configuration2.FtxConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.FtxOrderBookSubscriber, error) {
+	apiClient := client.NewFtxApiClient(ftxConfig)
 	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, topic)
 	if err != nil {
 		return nil, err
@@ -57,7 +59,7 @@ func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, a
 	if err != nil {
 		return nil, err
 	}
-	ftxOrderBookSubscriber, err := subscribers.NewFtxOrderBookSubscriber(ctx, logger, ftxConfig, marketConfig, orderBookPublisher)
+	ftxOrderBookSubscriber, err := subscribers.NewFtxOrderBookSubscriber(ctx, logger, apiClient, ftxConfig, orderBookPublisher)
 	if err != nil {
 		return nil, err
 	}

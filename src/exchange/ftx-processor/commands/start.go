@@ -70,19 +70,18 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			for _, marketConfig := range config.Ftx.OrderBook.Markets {
-				_, err = appsetup.NewFtxOrderBookSubscriber(
-					ctx,
-					sugarLogger,
-					config.App,
-					config.Ftx,
-					marketConfig,
-					config.Pulsar,
-					orderbookv1.TopicName)
-				if err != nil {
-					sugarLogger.Fatal(err)
-				}
+			_, err = appsetup.NewFtxOrderBookSubscriber(
+				ctx,
+				sugarLogger,
+				config.App,
+				config.Ftx,
+				config.Pulsar,
+				orderbookv1.TopicName,
+			)
+			if err != nil {
+				sugarLogger.Fatal(err)
 			}
+
 			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)

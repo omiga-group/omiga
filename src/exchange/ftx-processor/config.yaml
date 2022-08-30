@@ -7,7 +7,9 @@ pulsar:
   producerName: "ftx-processor"
 
 ftx:
+  apiUrl: https://ftx.com/api
   websocketUrl: "wss://ftx.com/ws/"
+  timeout: 10
   orderBook:
     markets:
       - market: ETH-PERP

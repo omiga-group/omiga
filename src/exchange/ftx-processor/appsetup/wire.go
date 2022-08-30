@@ -15,6 +15,8 @@
 //go:build wireinject
 // +build wireinject
 
+// juses fucking christ, kiram dahanet mori!
+
 // The build tag makes sure the stub is not built in the final build.
 package appsetup
 
@@ -22,6 +24,9 @@ import (
 	"context"
 
 	"github.com/google/wire"
+	"go.uber.org/zap"
+
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/client"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
@@ -31,7 +36,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
-	"go.uber.org/zap"
 )
 
 func NewTimeHelper() (time.TimeHelper, error) {
@@ -63,14 +67,15 @@ func NewFtxOrderBookSubscriber(
 	logger *zap.SugaredLogger,
 	appConfig enterpriseConfiguration.AppConfig,
 	ftxConfig configuration.FtxConfig,
-	marketConfig configuration.MarketConfig,
 	pulsarConfig pulsar.PulsarConfig,
 	topic string) (subscribers.FtxOrderBookSubscriber, error) {
 	wire.Build(
 		orderbookv1.NewProducer,
+		client.NewFtxApiClient,
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
-		subscribers.NewFtxOrderBookSubscriber)
+		subscribers.NewFtxOrderBookSubscriber,
+	)
 
 	return nil, nil
 }

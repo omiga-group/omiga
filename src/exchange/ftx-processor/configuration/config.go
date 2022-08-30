@@ -12,7 +12,9 @@ type Config struct {
 }
 
 type FtxConfig struct {
+	ApiUrl       string    `yaml:"apiUrl" env:"OMIGA_FTX_APIURL"`
 	WebsocketUrl string    `yaml:"websocketUrl" env:"OMIGA_FTX_WEBSOCKETURL"`
+	Timeout      int       `yaml:"timeout"`
 	OrderBook    OrderBook `yaml:"orderBook"`
 }
 

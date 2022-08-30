@@ -569,6 +569,7 @@ func (tc *TickerCreate) createSpec() (*Ticker, *sqlgraph.CreateSpec) {
 //			SetBase(v+v).
 //		}).
 //		Exec(ctx)
+//
 func (tc *TickerCreate) OnConflict(opts ...sql.ConflictOption) *TickerUpsertOne {
 	tc.conflict = opts
 	return &TickerUpsertOne{
@@ -582,6 +583,7 @@ func (tc *TickerCreate) OnConflict(opts ...sql.ConflictOption) *TickerUpsertOne 
 //	client.Ticker.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
+//
 func (tc *TickerCreate) OnConflictColumns(columns ...string) *TickerUpsertOne {
 	tc.conflict = append(tc.conflict, sql.ConflictColumns(columns...))
 	return &TickerUpsertOne{
@@ -940,6 +942,7 @@ func (u *TickerUpsert) ClearTargetCoinID() *TickerUpsert {
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
+//
 func (u *TickerUpsertOne) UpdateNewValues() *TickerUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
@@ -948,9 +951,10 @@ func (u *TickerUpsertOne) UpdateNewValues() *TickerUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Ticker.Create().
-//	    OnConflict(sql.ResolveWithIgnore()).
-//	    Exec(ctx)
+//  client.Ticker.Create().
+//      OnConflict(sql.ResolveWithIgnore()).
+//      Exec(ctx)
+//
 func (u *TickerUpsertOne) Ignore() *TickerUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1490,6 +1494,7 @@ func (tcb *TickerCreateBulk) ExecX(ctx context.Context) {
 //			SetBase(v+v).
 //		}).
 //		Exec(ctx)
+//
 func (tcb *TickerCreateBulk) OnConflict(opts ...sql.ConflictOption) *TickerUpsertBulk {
 	tcb.conflict = opts
 	return &TickerUpsertBulk{
@@ -1503,6 +1508,7 @@ func (tcb *TickerCreateBulk) OnConflict(opts ...sql.ConflictOption) *TickerUpser
 //	client.Ticker.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
+//
 func (tcb *TickerCreateBulk) OnConflictColumns(columns ...string) *TickerUpsertBulk {
 	tcb.conflict = append(tcb.conflict, sql.ConflictColumns(columns...))
 	return &TickerUpsertBulk{
@@ -1524,6 +1530,7 @@ type TickerUpsertBulk struct {
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
+//
 func (u *TickerUpsertBulk) UpdateNewValues() *TickerUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
@@ -1535,6 +1542,7 @@ func (u *TickerUpsertBulk) UpdateNewValues() *TickerUpsertBulk {
 //	client.Ticker.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
+//
 func (u *TickerUpsertBulk) Ignore() *TickerUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

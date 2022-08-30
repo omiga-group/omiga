@@ -306,6 +306,7 @@ func (oc *OutboxCreate) createSpec() (*Outbox, *sqlgraph.CreateSpec) {
 //			SetTimestamp(v+v).
 //		}).
 //		Exec(ctx)
+//
 func (oc *OutboxCreate) OnConflict(opts ...sql.ConflictOption) *OutboxUpsertOne {
 	oc.conflict = opts
 	return &OutboxUpsertOne{
@@ -319,6 +320,7 @@ func (oc *OutboxCreate) OnConflict(opts ...sql.ConflictOption) *OutboxUpsertOne 
 //	client.Outbox.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
+//
 func (oc *OutboxCreate) OnConflictColumns(columns ...string) *OutboxUpsertOne {
 	oc.conflict = append(oc.conflict, sql.ConflictColumns(columns...))
 	return &OutboxUpsertOne{
@@ -473,6 +475,7 @@ func (u *OutboxUpsert) ClearProcessingErrors() *OutboxUpsert {
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
+//
 func (u *OutboxUpsertOne) UpdateNewValues() *OutboxUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
@@ -481,9 +484,10 @@ func (u *OutboxUpsertOne) UpdateNewValues() *OutboxUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Outbox.Create().
-//	    OnConflict(sql.ResolveWithIgnore()).
-//	    Exec(ctx)
+//  client.Outbox.Create().
+//      OnConflict(sql.ResolveWithIgnore()).
+//      Exec(ctx)
+//
 func (u *OutboxUpsertOne) Ignore() *OutboxUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -785,6 +789,7 @@ func (ocb *OutboxCreateBulk) ExecX(ctx context.Context) {
 //			SetTimestamp(v+v).
 //		}).
 //		Exec(ctx)
+//
 func (ocb *OutboxCreateBulk) OnConflict(opts ...sql.ConflictOption) *OutboxUpsertBulk {
 	ocb.conflict = opts
 	return &OutboxUpsertBulk{
@@ -798,6 +803,7 @@ func (ocb *OutboxCreateBulk) OnConflict(opts ...sql.ConflictOption) *OutboxUpser
 //	client.Outbox.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
+//
 func (ocb *OutboxCreateBulk) OnConflictColumns(columns ...string) *OutboxUpsertBulk {
 	ocb.conflict = append(ocb.conflict, sql.ConflictColumns(columns...))
 	return &OutboxUpsertBulk{
@@ -819,6 +825,7 @@ type OutboxUpsertBulk struct {
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
+//
 func (u *OutboxUpsertBulk) UpdateNewValues() *OutboxUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
@@ -830,6 +837,7 @@ func (u *OutboxUpsertBulk) UpdateNewValues() *OutboxUpsertBulk {
 //	client.Outbox.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
+//
 func (u *OutboxUpsertBulk) Ignore() *OutboxUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
