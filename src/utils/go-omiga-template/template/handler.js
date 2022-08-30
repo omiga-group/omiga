@@ -19,5 +19,5 @@ type Subscriber interface {
 }
 `;
 
-  return <File name="handler_gen.go">{payloadContent}</File>;
+  return <File name="handler_eventgen.go">{payloadContent}</File>;
 }
