@@ -638,6 +638,7 @@ paths:
           content: {}
   /exchanges:
     get:
+      operationId: getExchanges
       tags:
         - exchanges
       summary: List all exchanges (Active with trading volumes)
@@ -668,6 +669,7 @@ paths:
 
   /exchanges/list:
     get:
+      operationId: getExchangesList
       tags:
         - exchanges
       summary: List all supported markets id and name (no pagination required)
@@ -684,6 +686,7 @@ paths:
 
   /exchanges/{id}:
     get:
+      operationId: getExchange
       tags:
         - exchanges
       summary: Get exchange volume in BTC and top 100 tickers only

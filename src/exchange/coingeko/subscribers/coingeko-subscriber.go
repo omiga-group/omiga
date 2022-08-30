@@ -84,7 +84,7 @@ func (cs *coingekoSubscriber) Run() {
 			break
 		}
 
-		exchangeIdResponse, err := coingekoClient.GetExchangesIdWithResponse(
+		exchangeIdResponse, err := coingekoClient.GetExchangeWithResponse(
 			cs.ctx,
 			exchangeId)
 		if err != nil {

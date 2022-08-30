@@ -2002,8 +2002,8 @@ type ClientInterface interface {
 	// GetExchangesList request
 	GetExchangesList(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetExchangesId request
-	GetExchangesId(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetExchange request
+	GetExchange(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetExchangesIdTickers request
 	GetExchangesIdTickers(ctx context.Context, id string, params *GetExchangesIdTickersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -2291,8 +2291,8 @@ func (c *Client) GetExchangesList(ctx context.Context, reqEditors ...RequestEdit
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetExchangesId(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetExchangesIdRequest(c.Server, id)
+func (c *Client) GetExchange(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetExchangeRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -3785,8 +3785,8 @@ func NewGetExchangesListRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewGetExchangesIdRequest generates requests for GetExchangesId
-func NewGetExchangesIdRequest(server string, id string) (*http.Request, error) {
+// NewGetExchangeRequest generates requests for GetExchange
+func NewGetExchangeRequest(server string, id string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -4577,8 +4577,8 @@ type ClientWithResponsesInterface interface {
 	// GetExchangesList request
 	GetExchangesListWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetExchangesListResponse, error)
 
-	// GetExchangesId request
-	GetExchangesIdWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetExchangesIdResponse, error)
+	// GetExchange request
+	GetExchangeWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetExchangeResponse, error)
 
 	// GetExchangesIdTickers request
 	GetExchangesIdTickersWithResponse(ctx context.Context, id string, params *GetExchangesIdTickersParams, reqEditors ...RequestEditorFn) (*GetExchangesIdTickersResponse, error)
@@ -5058,14 +5058,14 @@ func (r GetExchangesListResponse) StatusCode() int {
 	return 0
 }
 
-type GetExchangesIdResponse struct {
+type GetExchangeResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *ExchangeDetails
 }
 
 // Status returns HTTPResponse.Status
-func (r GetExchangesIdResponse) Status() string {
+func (r GetExchangeResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -5073,7 +5073,7 @@ func (r GetExchangesIdResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetExchangesIdResponse) StatusCode() int {
+func (r GetExchangeResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5500,13 +5500,13 @@ func (c *ClientWithResponses) GetExchangesListWithResponse(ctx context.Context, 
 	return ParseGetExchangesListResponse(rsp)
 }
 
-// GetExchangesIdWithResponse request returning *GetExchangesIdResponse
-func (c *ClientWithResponses) GetExchangesIdWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetExchangesIdResponse, error) {
-	rsp, err := c.GetExchangesId(ctx, id, reqEditors...)
+// GetExchangeWithResponse request returning *GetExchangeResponse
+func (c *ClientWithResponses) GetExchangeWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetExchangeResponse, error) {
+	rsp, err := c.GetExchange(ctx, id, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetExchangesIdResponse(rsp)
+	return ParseGetExchangeResponse(rsp)
 }
 
 // GetExchangesIdTickersWithResponse request returning *GetExchangesIdTickersResponse
@@ -5974,15 +5974,15 @@ func ParseGetExchangesListResponse(rsp *http.Response) (*GetExchangesListRespons
 	return response, nil
 }
 
-// ParseGetExchangesIdResponse parses an HTTP response from a GetExchangesIdWithResponse call
-func ParseGetExchangesIdResponse(rsp *http.Response) (*GetExchangesIdResponse, error) {
+// ParseGetExchangeResponse parses an HTTP response from a GetExchangeWithResponse call
+func ParseGetExchangeResponse(rsp *http.Response) (*GetExchangeResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetExchangesIdResponse{
+	response := &GetExchangeResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
