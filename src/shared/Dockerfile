@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.4.1
+# syntax = docker/dockerfile:1.4.1
 ARG BUILD_IMAGE=golang:1.19
 
 FROM $BUILD_IMAGE as test
