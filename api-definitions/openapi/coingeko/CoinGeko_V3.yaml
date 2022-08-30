@@ -656,7 +656,7 @@ paths:
           in: query
           description: page through results
           schema:
-            type: string
+            type: integer
       responses:
         200:
           description: List all exchanges

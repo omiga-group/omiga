@@ -313,7 +313,7 @@ type GetExchangesParams struct {
 	PerPage *int `form:"per_page,omitempty" json:"per_page,omitempty"`
 
 	// page through results
-	Page *string `form:"page,omitempty" json:"page,omitempty"`
+	Page *int `form:"page,omitempty" json:"page,omitempty"`
 }
 
 // GetExchangesIdTickersParams defines parameters for GetExchangesIdTickers.
