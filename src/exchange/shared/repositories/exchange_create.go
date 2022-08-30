@@ -202,6 +202,62 @@ func (ec *ExchangeCreate) SetNillableTradeVolume24hBtcNormalized(f *float64) *Ex
 	return ec
 }
 
+// SetMakerFee sets the "maker_fee" field.
+func (ec *ExchangeCreate) SetMakerFee(f float64) *ExchangeCreate {
+	ec.mutation.SetMakerFee(f)
+	return ec
+}
+
+// SetNillableMakerFee sets the "maker_fee" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableMakerFee(f *float64) *ExchangeCreate {
+	if f != nil {
+		ec.SetMakerFee(*f)
+	}
+	return ec
+}
+
+// SetTakerFee sets the "taker_fee" field.
+func (ec *ExchangeCreate) SetTakerFee(f float64) *ExchangeCreate {
+	ec.mutation.SetTakerFee(f)
+	return ec
+}
+
+// SetNillableTakerFee sets the "taker_fee" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableTakerFee(f *float64) *ExchangeCreate {
+	if f != nil {
+		ec.SetTakerFee(*f)
+	}
+	return ec
+}
+
+// SetSpreadFee sets the "spread_fee" field.
+func (ec *ExchangeCreate) SetSpreadFee(b bool) *ExchangeCreate {
+	ec.mutation.SetSpreadFee(b)
+	return ec
+}
+
+// SetNillableSpreadFee sets the "spread_fee" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableSpreadFee(b *bool) *ExchangeCreate {
+	if b != nil {
+		ec.SetSpreadFee(*b)
+	}
+	return ec
+}
+
+// SetSupportAPI sets the "support_api" field.
+func (ec *ExchangeCreate) SetSupportAPI(b bool) *ExchangeCreate {
+	ec.mutation.SetSupportAPI(b)
+	return ec
+}
+
+// SetNillableSupportAPI sets the "support_api" field if the given value is not nil.
+func (ec *ExchangeCreate) SetNillableSupportAPI(b *bool) *ExchangeCreate {
+	if b != nil {
+		ec.SetSupportAPI(*b)
+	}
+	return ec
+}
+
 // AddTickerIDs adds the "ticker" edge to the Ticker entity by IDs.
 func (ec *ExchangeCreate) AddTickerIDs(ids ...int) *ExchangeCreate {
 	ec.mutation.AddTickerIDs(ids...)
@@ -436,6 +492,38 @@ func (ec *ExchangeCreate) createSpec() (*Exchange, *sqlgraph.CreateSpec) {
 			Column: exchange.FieldTradeVolume24hBtcNormalized,
 		})
 		_node.TradeVolume24hBtcNormalized = value
+	}
+	if value, ok := ec.mutation.MakerFee(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldMakerFee,
+		})
+		_node.MakerFee = value
+	}
+	if value, ok := ec.mutation.TakerFee(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTakerFee,
+		})
+		_node.TakerFee = value
+	}
+	if value, ok := ec.mutation.SpreadFee(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: exchange.FieldSpreadFee,
+		})
+		_node.SpreadFee = value
+	}
+	if value, ok := ec.mutation.SupportAPI(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: exchange.FieldSupportAPI,
+		})
+		_node.SupportAPI = value
 	}
 	if nodes := ec.mutation.TickerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -782,6 +870,90 @@ func (u *ExchangeUpsert) AddTradeVolume24hBtcNormalized(v float64) *ExchangeUpse
 // ClearTradeVolume24hBtcNormalized clears the value of the "trade_volume_24h_btc_normalized" field.
 func (u *ExchangeUpsert) ClearTradeVolume24hBtcNormalized() *ExchangeUpsert {
 	u.SetNull(exchange.FieldTradeVolume24hBtcNormalized)
+	return u
+}
+
+// SetMakerFee sets the "maker_fee" field.
+func (u *ExchangeUpsert) SetMakerFee(v float64) *ExchangeUpsert {
+	u.Set(exchange.FieldMakerFee, v)
+	return u
+}
+
+// UpdateMakerFee sets the "maker_fee" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateMakerFee() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldMakerFee)
+	return u
+}
+
+// AddMakerFee adds v to the "maker_fee" field.
+func (u *ExchangeUpsert) AddMakerFee(v float64) *ExchangeUpsert {
+	u.Add(exchange.FieldMakerFee, v)
+	return u
+}
+
+// ClearMakerFee clears the value of the "maker_fee" field.
+func (u *ExchangeUpsert) ClearMakerFee() *ExchangeUpsert {
+	u.SetNull(exchange.FieldMakerFee)
+	return u
+}
+
+// SetTakerFee sets the "taker_fee" field.
+func (u *ExchangeUpsert) SetTakerFee(v float64) *ExchangeUpsert {
+	u.Set(exchange.FieldTakerFee, v)
+	return u
+}
+
+// UpdateTakerFee sets the "taker_fee" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateTakerFee() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldTakerFee)
+	return u
+}
+
+// AddTakerFee adds v to the "taker_fee" field.
+func (u *ExchangeUpsert) AddTakerFee(v float64) *ExchangeUpsert {
+	u.Add(exchange.FieldTakerFee, v)
+	return u
+}
+
+// ClearTakerFee clears the value of the "taker_fee" field.
+func (u *ExchangeUpsert) ClearTakerFee() *ExchangeUpsert {
+	u.SetNull(exchange.FieldTakerFee)
+	return u
+}
+
+// SetSpreadFee sets the "spread_fee" field.
+func (u *ExchangeUpsert) SetSpreadFee(v bool) *ExchangeUpsert {
+	u.Set(exchange.FieldSpreadFee, v)
+	return u
+}
+
+// UpdateSpreadFee sets the "spread_fee" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateSpreadFee() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldSpreadFee)
+	return u
+}
+
+// ClearSpreadFee clears the value of the "spread_fee" field.
+func (u *ExchangeUpsert) ClearSpreadFee() *ExchangeUpsert {
+	u.SetNull(exchange.FieldSpreadFee)
+	return u
+}
+
+// SetSupportAPI sets the "support_api" field.
+func (u *ExchangeUpsert) SetSupportAPI(v bool) *ExchangeUpsert {
+	u.Set(exchange.FieldSupportAPI, v)
+	return u
+}
+
+// UpdateSupportAPI sets the "support_api" field to the value that was provided on create.
+func (u *ExchangeUpsert) UpdateSupportAPI() *ExchangeUpsert {
+	u.SetExcluded(exchange.FieldSupportAPI)
+	return u
+}
+
+// ClearSupportAPI clears the value of the "support_api" field.
+func (u *ExchangeUpsert) ClearSupportAPI() *ExchangeUpsert {
+	u.SetNull(exchange.FieldSupportAPI)
 	return u
 }
 
@@ -1144,6 +1316,104 @@ func (u *ExchangeUpsertOne) UpdateTradeVolume24hBtcNormalized() *ExchangeUpsertO
 func (u *ExchangeUpsertOne) ClearTradeVolume24hBtcNormalized() *ExchangeUpsertOne {
 	return u.Update(func(s *ExchangeUpsert) {
 		s.ClearTradeVolume24hBtcNormalized()
+	})
+}
+
+// SetMakerFee sets the "maker_fee" field.
+func (u *ExchangeUpsertOne) SetMakerFee(v float64) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetMakerFee(v)
+	})
+}
+
+// AddMakerFee adds v to the "maker_fee" field.
+func (u *ExchangeUpsertOne) AddMakerFee(v float64) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddMakerFee(v)
+	})
+}
+
+// UpdateMakerFee sets the "maker_fee" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateMakerFee() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateMakerFee()
+	})
+}
+
+// ClearMakerFee clears the value of the "maker_fee" field.
+func (u *ExchangeUpsertOne) ClearMakerFee() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearMakerFee()
+	})
+}
+
+// SetTakerFee sets the "taker_fee" field.
+func (u *ExchangeUpsertOne) SetTakerFee(v float64) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetTakerFee(v)
+	})
+}
+
+// AddTakerFee adds v to the "taker_fee" field.
+func (u *ExchangeUpsertOne) AddTakerFee(v float64) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddTakerFee(v)
+	})
+}
+
+// UpdateTakerFee sets the "taker_fee" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateTakerFee() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateTakerFee()
+	})
+}
+
+// ClearTakerFee clears the value of the "taker_fee" field.
+func (u *ExchangeUpsertOne) ClearTakerFee() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearTakerFee()
+	})
+}
+
+// SetSpreadFee sets the "spread_fee" field.
+func (u *ExchangeUpsertOne) SetSpreadFee(v bool) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetSpreadFee(v)
+	})
+}
+
+// UpdateSpreadFee sets the "spread_fee" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateSpreadFee() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateSpreadFee()
+	})
+}
+
+// ClearSpreadFee clears the value of the "spread_fee" field.
+func (u *ExchangeUpsertOne) ClearSpreadFee() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearSpreadFee()
+	})
+}
+
+// SetSupportAPI sets the "support_api" field.
+func (u *ExchangeUpsertOne) SetSupportAPI(v bool) *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetSupportAPI(v)
+	})
+}
+
+// UpdateSupportAPI sets the "support_api" field to the value that was provided on create.
+func (u *ExchangeUpsertOne) UpdateSupportAPI() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateSupportAPI()
+	})
+}
+
+// ClearSupportAPI clears the value of the "support_api" field.
+func (u *ExchangeUpsertOne) ClearSupportAPI() *ExchangeUpsertOne {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearSupportAPI()
 	})
 }
 
@@ -1665,6 +1935,104 @@ func (u *ExchangeUpsertBulk) UpdateTradeVolume24hBtcNormalized() *ExchangeUpsert
 func (u *ExchangeUpsertBulk) ClearTradeVolume24hBtcNormalized() *ExchangeUpsertBulk {
 	return u.Update(func(s *ExchangeUpsert) {
 		s.ClearTradeVolume24hBtcNormalized()
+	})
+}
+
+// SetMakerFee sets the "maker_fee" field.
+func (u *ExchangeUpsertBulk) SetMakerFee(v float64) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetMakerFee(v)
+	})
+}
+
+// AddMakerFee adds v to the "maker_fee" field.
+func (u *ExchangeUpsertBulk) AddMakerFee(v float64) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddMakerFee(v)
+	})
+}
+
+// UpdateMakerFee sets the "maker_fee" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateMakerFee() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateMakerFee()
+	})
+}
+
+// ClearMakerFee clears the value of the "maker_fee" field.
+func (u *ExchangeUpsertBulk) ClearMakerFee() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearMakerFee()
+	})
+}
+
+// SetTakerFee sets the "taker_fee" field.
+func (u *ExchangeUpsertBulk) SetTakerFee(v float64) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetTakerFee(v)
+	})
+}
+
+// AddTakerFee adds v to the "taker_fee" field.
+func (u *ExchangeUpsertBulk) AddTakerFee(v float64) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.AddTakerFee(v)
+	})
+}
+
+// UpdateTakerFee sets the "taker_fee" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateTakerFee() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateTakerFee()
+	})
+}
+
+// ClearTakerFee clears the value of the "taker_fee" field.
+func (u *ExchangeUpsertBulk) ClearTakerFee() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearTakerFee()
+	})
+}
+
+// SetSpreadFee sets the "spread_fee" field.
+func (u *ExchangeUpsertBulk) SetSpreadFee(v bool) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetSpreadFee(v)
+	})
+}
+
+// UpdateSpreadFee sets the "spread_fee" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateSpreadFee() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateSpreadFee()
+	})
+}
+
+// ClearSpreadFee clears the value of the "spread_fee" field.
+func (u *ExchangeUpsertBulk) ClearSpreadFee() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearSpreadFee()
+	})
+}
+
+// SetSupportAPI sets the "support_api" field.
+func (u *ExchangeUpsertBulk) SetSupportAPI(v bool) *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.SetSupportAPI(v)
+	})
+}
+
+// UpdateSupportAPI sets the "support_api" field to the value that was provided on create.
+func (u *ExchangeUpsertBulk) UpdateSupportAPI() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.UpdateSupportAPI()
+	})
+}
+
+// ClearSupportAPI clears the value of the "support_api" field.
+func (u *ExchangeUpsertBulk) ClearSupportAPI() *ExchangeUpsertBulk {
+	return u.Update(func(s *ExchangeUpsert) {
+		s.ClearSupportAPI()
 	})
 }
 

@@ -64,8 +64,12 @@ type ComplexityRoot struct {
 		ID                          func(childComplexity int) int
 		Image                       func(childComplexity int) int
 		Links                       func(childComplexity int) int
+		MakerFee                    func(childComplexity int) int
 		Name                        func(childComplexity int) int
 		PublicNotice                func(childComplexity int) int
+		SpreadFee                   func(childComplexity int) int
+		SupportAPI                  func(childComplexity int) int
+		TakerFee                    func(childComplexity int) int
 		Tickers                     func(childComplexity int) int
 		TradeVolume24hBtc           func(childComplexity int) int
 		TradeVolume24hBtcNormalized func(childComplexity int) int
@@ -255,6 +259,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Exchange.Links(childComplexity), true
 
+	case "Exchange.makerFee":
+		if e.complexity.Exchange.MakerFee == nil {
+			break
+		}
+
+		return e.complexity.Exchange.MakerFee(childComplexity), true
+
 	case "Exchange.name":
 		if e.complexity.Exchange.Name == nil {
 			break
@@ -268,6 +279,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exchange.PublicNotice(childComplexity), true
+
+	case "Exchange.spreadFee":
+		if e.complexity.Exchange.SpreadFee == nil {
+			break
+		}
+
+		return e.complexity.Exchange.SpreadFee(childComplexity), true
+
+	case "Exchange.supportAPI":
+		if e.complexity.Exchange.SupportAPI == nil {
+			break
+		}
+
+		return e.complexity.Exchange.SupportAPI(childComplexity), true
+
+	case "Exchange.takerFee":
+		if e.complexity.Exchange.TakerFee == nil {
+			break
+		}
+
+		return e.complexity.Exchange.TakerFee(childComplexity), true
 
 	case "Exchange.tickers":
 		if e.complexity.Exchange.Tickers == nil {
@@ -791,6 +823,10 @@ type Exchange implements Node {
   tradeVolume24hBtc: Float
   tradeVolume24hBtcNormalized: Float
   tickers: [Ticker!]!
+  makerFee: Float
+  takerFee: Float
+  spreadFee: Boolean
+  supportAPI: Boolean
 }
 
 type Links {
@@ -2357,6 +2393,170 @@ func (ec *executionContext) fieldContext_Exchange_tickers(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Exchange_makerFee(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_makerFee(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MakerFee, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_makerFee(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_takerFee(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_takerFee(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TakerFee, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_takerFee(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_spreadFee(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_spreadFee(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SpreadFee, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_spreadFee(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_supportAPI(ctx context.Context, field graphql.CollectedField, obj *repositories.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_supportAPI(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SupportAPI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_supportAPI(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ExchangeConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *repositories.ExchangeConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ExchangeConnection_pageInfo(ctx, field)
 	if err != nil {
@@ -2567,6 +2767,14 @@ func (ec *executionContext) fieldContext_ExchangeEdge_node(ctx context.Context, 
 				return ec.fieldContext_Exchange_tradeVolume24hBtcNormalized(ctx, field)
 			case "tickers":
 				return ec.fieldContext_Exchange_tickers(ctx, field)
+			case "makerFee":
+				return ec.fieldContext_Exchange_makerFee(ctx, field)
+			case "takerFee":
+				return ec.fieldContext_Exchange_takerFee(ctx, field)
+			case "spreadFee":
+				return ec.fieldContext_Exchange_spreadFee(ctx, field)
+			case "supportAPI":
+				return ec.fieldContext_Exchange_supportAPI(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Exchange", field.Name)
 		},
@@ -3231,6 +3439,14 @@ func (ec *executionContext) fieldContext_Query_exchange(ctx context.Context, fie
 				return ec.fieldContext_Exchange_tradeVolume24hBtcNormalized(ctx, field)
 			case "tickers":
 				return ec.fieldContext_Exchange_tickers(ctx, field)
+			case "makerFee":
+				return ec.fieldContext_Exchange_makerFee(ctx, field)
+			case "takerFee":
+				return ec.fieldContext_Exchange_takerFee(ctx, field)
+			case "spreadFee":
+				return ec.fieldContext_Exchange_spreadFee(ctx, field)
+			case "supportAPI":
+				return ec.fieldContext_Exchange_supportAPI(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Exchange", field.Name)
 		},
@@ -9665,6 +9881,22 @@ func (ec *executionContext) _Exchange(ctx context.Context, sel ast.SelectionSet,
 				return innerFunc(ctx)
 
 			})
+		case "makerFee":
+
+			out.Values[i] = ec._Exchange_makerFee(ctx, field, obj)
+
+		case "takerFee":
+
+			out.Values[i] = ec._Exchange_takerFee(ctx, field, obj)
+
+		case "spreadFee":
+
+			out.Values[i] = ec._Exchange_spreadFee(ctx, field, obj)
+
+		case "supportAPI":
+
+			out.Values[i] = ec._Exchange_supportAPI(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

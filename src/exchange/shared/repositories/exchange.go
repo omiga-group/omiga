@@ -44,6 +44,14 @@ type Exchange struct {
 	TradeVolume24hBtc float64 `json:"trade_volume_24h_btc,omitempty"`
 	// TradeVolume24hBtcNormalized holds the value of the "trade_volume_24h_btc_normalized" field.
 	TradeVolume24hBtcNormalized float64 `json:"trade_volume_24h_btc_normalized,omitempty"`
+	// MakerFee holds the value of the "maker_fee" field.
+	MakerFee float64 `json:"maker_fee,omitempty"`
+	// TakerFee holds the value of the "taker_fee" field.
+	TakerFee float64 `json:"taker_fee,omitempty"`
+	// SpreadFee holds the value of the "spread_fee" field.
+	SpreadFee bool `json:"spread_fee,omitempty"`
+	// SupportAPI holds the value of the "support_api" field.
+	SupportAPI bool `json:"support_api,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ExchangeQuery when eager-loading is set.
 	Edges ExchangeEdges `json:"edges"`
@@ -78,9 +86,9 @@ func (*Exchange) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case exchange.FieldLinks:
 			values[i] = new([]byte)
-		case exchange.FieldHasTradingIncentive, exchange.FieldCentralized:
+		case exchange.FieldHasTradingIncentive, exchange.FieldCentralized, exchange.FieldSpreadFee, exchange.FieldSupportAPI:
 			values[i] = new(sql.NullBool)
-		case exchange.FieldTradeVolume24hBtc, exchange.FieldTradeVolume24hBtcNormalized:
+		case exchange.FieldTradeVolume24hBtc, exchange.FieldTradeVolume24hBtcNormalized, exchange.FieldMakerFee, exchange.FieldTakerFee:
 			values[i] = new(sql.NullFloat64)
 		case exchange.FieldID, exchange.FieldYearEstablished, exchange.FieldTrustScore, exchange.FieldTrustScoreRank:
 			values[i] = new(sql.NullInt64)
@@ -193,6 +201,30 @@ func (e *Exchange) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				e.TradeVolume24hBtcNormalized = value.Float64
 			}
+		case exchange.FieldMakerFee:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field maker_fee", values[i])
+			} else if value.Valid {
+				e.MakerFee = value.Float64
+			}
+		case exchange.FieldTakerFee:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field taker_fee", values[i])
+			} else if value.Valid {
+				e.TakerFee = value.Float64
+			}
+		case exchange.FieldSpreadFee:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field spread_fee", values[i])
+			} else if value.Valid {
+				e.SpreadFee = value.Bool
+			}
+		case exchange.FieldSupportAPI:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field support_api", values[i])
+			} else if value.Valid {
+				e.SupportAPI = value.Bool
+			}
 		}
 	}
 	return nil
@@ -267,6 +299,18 @@ func (e *Exchange) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("trade_volume_24h_btc_normalized=")
 	builder.WriteString(fmt.Sprintf("%v", e.TradeVolume24hBtcNormalized))
+	builder.WriteString(", ")
+	builder.WriteString("maker_fee=")
+	builder.WriteString(fmt.Sprintf("%v", e.MakerFee))
+	builder.WriteString(", ")
+	builder.WriteString("taker_fee=")
+	builder.WriteString(fmt.Sprintf("%v", e.TakerFee))
+	builder.WriteString(", ")
+	builder.WriteString("spread_fee=")
+	builder.WriteString(fmt.Sprintf("%v", e.SpreadFee))
+	builder.WriteString(", ")
+	builder.WriteString("support_api=")
+	builder.WriteString(fmt.Sprintf("%v", e.SupportAPI))
 	builder.WriteByte(')')
 	return builder.String()
 }

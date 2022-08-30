@@ -171,6 +171,34 @@ func TradeVolume24hBtcNormalized(v float64) predicate.Exchange {
 	})
 }
 
+// MakerFee applies equality check predicate on the "maker_fee" field. It's identical to MakerFeeEQ.
+func MakerFee(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMakerFee), v))
+	})
+}
+
+// TakerFee applies equality check predicate on the "taker_fee" field. It's identical to TakerFeeEQ.
+func TakerFee(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTakerFee), v))
+	})
+}
+
+// SpreadFee applies equality check predicate on the "spread_fee" field. It's identical to SpreadFeeEQ.
+func SpreadFee(v bool) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSpreadFee), v))
+	})
+}
+
+// SupportAPI applies equality check predicate on the "support_api" field. It's identical to SupportAPIEQ.
+func SupportAPI(v bool) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSupportAPI), v))
+	})
+}
+
 // ExchangeIDEQ applies the EQ predicate on the "exchange_id" field.
 func ExchangeIDEQ(v string) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
@@ -1292,6 +1320,218 @@ func TradeVolume24hBtcNormalizedIsNil() predicate.Exchange {
 func TradeVolume24hBtcNormalizedNotNil() predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldTradeVolume24hBtcNormalized)))
+	})
+}
+
+// MakerFeeEQ applies the EQ predicate on the "maker_fee" field.
+func MakerFeeEQ(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMakerFee), v))
+	})
+}
+
+// MakerFeeNEQ applies the NEQ predicate on the "maker_fee" field.
+func MakerFeeNEQ(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMakerFee), v))
+	})
+}
+
+// MakerFeeIn applies the In predicate on the "maker_fee" field.
+func MakerFeeIn(vs ...float64) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldMakerFee), v...))
+	})
+}
+
+// MakerFeeNotIn applies the NotIn predicate on the "maker_fee" field.
+func MakerFeeNotIn(vs ...float64) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldMakerFee), v...))
+	})
+}
+
+// MakerFeeGT applies the GT predicate on the "maker_fee" field.
+func MakerFeeGT(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldMakerFee), v))
+	})
+}
+
+// MakerFeeGTE applies the GTE predicate on the "maker_fee" field.
+func MakerFeeGTE(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldMakerFee), v))
+	})
+}
+
+// MakerFeeLT applies the LT predicate on the "maker_fee" field.
+func MakerFeeLT(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldMakerFee), v))
+	})
+}
+
+// MakerFeeLTE applies the LTE predicate on the "maker_fee" field.
+func MakerFeeLTE(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldMakerFee), v))
+	})
+}
+
+// MakerFeeIsNil applies the IsNil predicate on the "maker_fee" field.
+func MakerFeeIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldMakerFee)))
+	})
+}
+
+// MakerFeeNotNil applies the NotNil predicate on the "maker_fee" field.
+func MakerFeeNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldMakerFee)))
+	})
+}
+
+// TakerFeeEQ applies the EQ predicate on the "taker_fee" field.
+func TakerFeeEQ(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTakerFee), v))
+	})
+}
+
+// TakerFeeNEQ applies the NEQ predicate on the "taker_fee" field.
+func TakerFeeNEQ(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTakerFee), v))
+	})
+}
+
+// TakerFeeIn applies the In predicate on the "taker_fee" field.
+func TakerFeeIn(vs ...float64) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldTakerFee), v...))
+	})
+}
+
+// TakerFeeNotIn applies the NotIn predicate on the "taker_fee" field.
+func TakerFeeNotIn(vs ...float64) predicate.Exchange {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldTakerFee), v...))
+	})
+}
+
+// TakerFeeGT applies the GT predicate on the "taker_fee" field.
+func TakerFeeGT(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTakerFee), v))
+	})
+}
+
+// TakerFeeGTE applies the GTE predicate on the "taker_fee" field.
+func TakerFeeGTE(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTakerFee), v))
+	})
+}
+
+// TakerFeeLT applies the LT predicate on the "taker_fee" field.
+func TakerFeeLT(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTakerFee), v))
+	})
+}
+
+// TakerFeeLTE applies the LTE predicate on the "taker_fee" field.
+func TakerFeeLTE(v float64) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTakerFee), v))
+	})
+}
+
+// TakerFeeIsNil applies the IsNil predicate on the "taker_fee" field.
+func TakerFeeIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTakerFee)))
+	})
+}
+
+// TakerFeeNotNil applies the NotNil predicate on the "taker_fee" field.
+func TakerFeeNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTakerFee)))
+	})
+}
+
+// SpreadFeeEQ applies the EQ predicate on the "spread_fee" field.
+func SpreadFeeEQ(v bool) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSpreadFee), v))
+	})
+}
+
+// SpreadFeeNEQ applies the NEQ predicate on the "spread_fee" field.
+func SpreadFeeNEQ(v bool) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSpreadFee), v))
+	})
+}
+
+// SpreadFeeIsNil applies the IsNil predicate on the "spread_fee" field.
+func SpreadFeeIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSpreadFee)))
+	})
+}
+
+// SpreadFeeNotNil applies the NotNil predicate on the "spread_fee" field.
+func SpreadFeeNotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSpreadFee)))
+	})
+}
+
+// SupportAPIEQ applies the EQ predicate on the "support_api" field.
+func SupportAPIEQ(v bool) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSupportAPI), v))
+	})
+}
+
+// SupportAPINEQ applies the NEQ predicate on the "support_api" field.
+func SupportAPINEQ(v bool) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSupportAPI), v))
+	})
+}
+
+// SupportAPIIsNil applies the IsNil predicate on the "support_api" field.
+func SupportAPIIsNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSupportAPI)))
+	})
+}
+
+// SupportAPINotNil applies the NotNil predicate on the "support_api" field.
+func SupportAPINotNil() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSupportAPI)))
 	})
 }
 

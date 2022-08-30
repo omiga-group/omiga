@@ -202,6 +202,42 @@ type ExchangeWhereInput struct {
 	TradeVolume24hBtcNormalizedIsNil  bool      `json:"tradeVolume24hBtcNormalizedIsNil,omitempty"`
 	TradeVolume24hBtcNormalizedNotNil bool      `json:"tradeVolume24hBtcNormalizedNotNil,omitempty"`
 
+	// "maker_fee" field predicates.
+	MakerFee       *float64  `json:"makerFee,omitempty"`
+	MakerFeeNEQ    *float64  `json:"makerFeeNEQ,omitempty"`
+	MakerFeeIn     []float64 `json:"makerFeeIn,omitempty"`
+	MakerFeeNotIn  []float64 `json:"makerFeeNotIn,omitempty"`
+	MakerFeeGT     *float64  `json:"makerFeeGT,omitempty"`
+	MakerFeeGTE    *float64  `json:"makerFeeGTE,omitempty"`
+	MakerFeeLT     *float64  `json:"makerFeeLT,omitempty"`
+	MakerFeeLTE    *float64  `json:"makerFeeLTE,omitempty"`
+	MakerFeeIsNil  bool      `json:"makerFeeIsNil,omitempty"`
+	MakerFeeNotNil bool      `json:"makerFeeNotNil,omitempty"`
+
+	// "taker_fee" field predicates.
+	TakerFee       *float64  `json:"takerFee,omitempty"`
+	TakerFeeNEQ    *float64  `json:"takerFeeNEQ,omitempty"`
+	TakerFeeIn     []float64 `json:"takerFeeIn,omitempty"`
+	TakerFeeNotIn  []float64 `json:"takerFeeNotIn,omitempty"`
+	TakerFeeGT     *float64  `json:"takerFeeGT,omitempty"`
+	TakerFeeGTE    *float64  `json:"takerFeeGTE,omitempty"`
+	TakerFeeLT     *float64  `json:"takerFeeLT,omitempty"`
+	TakerFeeLTE    *float64  `json:"takerFeeLTE,omitempty"`
+	TakerFeeIsNil  bool      `json:"takerFeeIsNil,omitempty"`
+	TakerFeeNotNil bool      `json:"takerFeeNotNil,omitempty"`
+
+	// "spread_fee" field predicates.
+	SpreadFee       *bool `json:"spreadFee,omitempty"`
+	SpreadFeeNEQ    *bool `json:"spreadFeeNEQ,omitempty"`
+	SpreadFeeIsNil  bool  `json:"spreadFeeIsNil,omitempty"`
+	SpreadFeeNotNil bool  `json:"spreadFeeNotNil,omitempty"`
+
+	// "support_api" field predicates.
+	SupportAPI       *bool `json:"supportAPI,omitempty"`
+	SupportAPINEQ    *bool `json:"supportAPINEQ,omitempty"`
+	SupportAPIIsNil  bool  `json:"supportAPIIsNil,omitempty"`
+	SupportAPINotNil bool  `json:"supportAPINotNil,omitempty"`
+
 	// "ticker" edge predicates.
 	HasTicker     *bool               `json:"hasTicker,omitempty"`
 	HasTickerWith []*TickerWhereInput `json:"hasTickerWith,omitempty"`
@@ -739,6 +775,90 @@ func (i *ExchangeWhereInput) P() (predicate.Exchange, error) {
 	}
 	if i.TradeVolume24hBtcNormalizedNotNil {
 		predicates = append(predicates, exchange.TradeVolume24hBtcNormalizedNotNil())
+	}
+	if i.MakerFee != nil {
+		predicates = append(predicates, exchange.MakerFeeEQ(*i.MakerFee))
+	}
+	if i.MakerFeeNEQ != nil {
+		predicates = append(predicates, exchange.MakerFeeNEQ(*i.MakerFeeNEQ))
+	}
+	if len(i.MakerFeeIn) > 0 {
+		predicates = append(predicates, exchange.MakerFeeIn(i.MakerFeeIn...))
+	}
+	if len(i.MakerFeeNotIn) > 0 {
+		predicates = append(predicates, exchange.MakerFeeNotIn(i.MakerFeeNotIn...))
+	}
+	if i.MakerFeeGT != nil {
+		predicates = append(predicates, exchange.MakerFeeGT(*i.MakerFeeGT))
+	}
+	if i.MakerFeeGTE != nil {
+		predicates = append(predicates, exchange.MakerFeeGTE(*i.MakerFeeGTE))
+	}
+	if i.MakerFeeLT != nil {
+		predicates = append(predicates, exchange.MakerFeeLT(*i.MakerFeeLT))
+	}
+	if i.MakerFeeLTE != nil {
+		predicates = append(predicates, exchange.MakerFeeLTE(*i.MakerFeeLTE))
+	}
+	if i.MakerFeeIsNil {
+		predicates = append(predicates, exchange.MakerFeeIsNil())
+	}
+	if i.MakerFeeNotNil {
+		predicates = append(predicates, exchange.MakerFeeNotNil())
+	}
+	if i.TakerFee != nil {
+		predicates = append(predicates, exchange.TakerFeeEQ(*i.TakerFee))
+	}
+	if i.TakerFeeNEQ != nil {
+		predicates = append(predicates, exchange.TakerFeeNEQ(*i.TakerFeeNEQ))
+	}
+	if len(i.TakerFeeIn) > 0 {
+		predicates = append(predicates, exchange.TakerFeeIn(i.TakerFeeIn...))
+	}
+	if len(i.TakerFeeNotIn) > 0 {
+		predicates = append(predicates, exchange.TakerFeeNotIn(i.TakerFeeNotIn...))
+	}
+	if i.TakerFeeGT != nil {
+		predicates = append(predicates, exchange.TakerFeeGT(*i.TakerFeeGT))
+	}
+	if i.TakerFeeGTE != nil {
+		predicates = append(predicates, exchange.TakerFeeGTE(*i.TakerFeeGTE))
+	}
+	if i.TakerFeeLT != nil {
+		predicates = append(predicates, exchange.TakerFeeLT(*i.TakerFeeLT))
+	}
+	if i.TakerFeeLTE != nil {
+		predicates = append(predicates, exchange.TakerFeeLTE(*i.TakerFeeLTE))
+	}
+	if i.TakerFeeIsNil {
+		predicates = append(predicates, exchange.TakerFeeIsNil())
+	}
+	if i.TakerFeeNotNil {
+		predicates = append(predicates, exchange.TakerFeeNotNil())
+	}
+	if i.SpreadFee != nil {
+		predicates = append(predicates, exchange.SpreadFeeEQ(*i.SpreadFee))
+	}
+	if i.SpreadFeeNEQ != nil {
+		predicates = append(predicates, exchange.SpreadFeeNEQ(*i.SpreadFeeNEQ))
+	}
+	if i.SpreadFeeIsNil {
+		predicates = append(predicates, exchange.SpreadFeeIsNil())
+	}
+	if i.SpreadFeeNotNil {
+		predicates = append(predicates, exchange.SpreadFeeNotNil())
+	}
+	if i.SupportAPI != nil {
+		predicates = append(predicates, exchange.SupportAPIEQ(*i.SupportAPI))
+	}
+	if i.SupportAPINEQ != nil {
+		predicates = append(predicates, exchange.SupportAPINEQ(*i.SupportAPINEQ))
+	}
+	if i.SupportAPIIsNil {
+		predicates = append(predicates, exchange.SupportAPIIsNil())
+	}
+	if i.SupportAPINotNil {
+		predicates = append(predicates, exchange.SupportAPINotNil())
 	}
 
 	if i.HasTicker != nil {

@@ -52,7 +52,7 @@ func (e *Exchange) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     e.ID,
 		Type:   "Exchange",
-		Fields: make([]*Field, 14),
+		Fields: make([]*Field, 18),
 		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
@@ -166,6 +166,38 @@ func (e *Exchange) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[13] = &Field{
 		Type:  "float64",
 		Name:  "trade_volume_24h_btc_normalized",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.MakerFee); err != nil {
+		return nil, err
+	}
+	node.Fields[14] = &Field{
+		Type:  "float64",
+		Name:  "maker_fee",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.TakerFee); err != nil {
+		return nil, err
+	}
+	node.Fields[15] = &Field{
+		Type:  "float64",
+		Name:  "taker_fee",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.SpreadFee); err != nil {
+		return nil, err
+	}
+	node.Fields[16] = &Field{
+		Type:  "bool",
+		Name:  "spread_fee",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(e.SupportAPI); err != nil {
+		return nil, err
+	}
+	node.Fields[17] = &Field{
+		Type:  "bool",
+		Name:  "support_api",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
