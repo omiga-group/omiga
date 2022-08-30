@@ -135,5 +135,5 @@ package ${params.packageName}
     `;
   });
 
-  return <File name="payloads_gen.go">{payloadContent}</File>;
+  return <File name="payloads_eventgen.go">{payloadContent}</File>;
 }

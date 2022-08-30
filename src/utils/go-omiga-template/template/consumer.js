@@ -77,5 +77,5 @@ func (c *consumer) StartAsync(ctx context.Context) error {
 }
 `;
 
-  return <File name="consumer_gen.go">{payloadContent}</File>;
+  return <File name="consumer_eventgen.go">{payloadContent}</File>;
 }
