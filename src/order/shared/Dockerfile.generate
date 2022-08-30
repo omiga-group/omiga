@@ -25,6 +25,5 @@ COPY src/order/order-api /src/order/order-api
 
 WORKDIR /src/order/shared
 
-RUN find . ! -name "wire_gen.go" -name "*_gen.go" -name "*_test.go" -delete
 ENV GOFLAGS -mod=mod
 RUN --mount=type=cache,target=/go go generate ./...

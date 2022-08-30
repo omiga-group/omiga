@@ -21,6 +21,5 @@ COPY exchange/exchange-api /src/exchange/exchange-api
 
 WORKDIR /src/exchange/exchange-api
 
-RUN find . ! -name "wire_gen.go" -name "*_gen.go" -name "*_test.go" -delete
 ENV GOFLAGS -mod=mod
 RUN --mount=type=cache,target=/go go generate ./...

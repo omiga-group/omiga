@@ -21,6 +21,5 @@ COPY exchange/omiga-processor /src/exchange/omiga-processor
 
 WORKDIR /src/exchange/omiga-processor
 
-RUN find . ! -name "wire_gen.go" -name "*_gen.go" -name "*_test.go" -delete
 ENV GOFLAGS -mod=mod
 RUN --mount=type=cache,target=/go go generate ./...

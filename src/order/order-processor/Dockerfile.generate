@@ -21,6 +21,5 @@ COPY order/order-processor /src/order/order-processor
 
 WORKDIR /src/order/order-processor
 
-RUN find . ! -name "wire_gen.go" -name "*_gen.go" -name "*_test.go" -delete
 ENV GOFLAGS -mod=mod
 RUN --mount=type=cache,target=/go go generate ./...
