@@ -14,17 +14,17 @@ dep: ## Install dependencies
 .PHONY: generate
 generate: ## Generate code
 	@../api-definitions/asyncapi/scripts/generate-all.sh
-# @GOFLAGS=-mod=mod go generate ./...
-	@./shared/scripts/generate.sh
-	@./exchange/shared/scripts/generate.sh
-	@./exchange/exchange-api/scripts/generate.sh
-	@./exchange/binance-processor/scripts/generate.sh
-	@./exchange/coingeko/scripts/generate.sh
-	@./exchange/ftx-processor/scripts/generate.sh
-	@./exchange/omiga-processor/scripts/generate.sh
-	@./order/shared/scripts/generate.sh
-	@./order/order-api/scripts/generate.sh
-	@./order/order-processor/scripts/generate.sh
+	@GOFLAGS=-mod=mod go generate ./...
+	# @./shared/scripts/generate.sh
+	# @./exchange/shared/scripts/generate.sh
+	# @./exchange/exchange-api/scripts/generate.sh
+	# @./exchange/binance-processor/scripts/generate.sh
+	# @./exchange/coingeko/scripts/generate.sh
+	# @./exchange/ftx-processor/scripts/generate.sh
+	# @./exchange/omiga-processor/scripts/generate.sh
+	# @./order/shared/scripts/generate.sh
+	# @./order/order-api/scripts/generate.sh
+	# @./order/order-processor/scripts/generate.sh
 
 .PHONY: lint
 lint: ## run golanci-lint locally

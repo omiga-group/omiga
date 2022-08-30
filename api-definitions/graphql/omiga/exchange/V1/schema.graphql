@@ -18,9 +18,9 @@ interface Node {
 extend type Query {
   exchange(
     """
-    ID
+    Ordering directions
     """
-    id: ID!
+    where: ExchangeWhereInput
   ): Exchange
 
   exchanges(

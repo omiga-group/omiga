@@ -11,7 +11,6 @@ import (
 	"github.com/omiga-group/omiga/src/order/order-api/graphql/models"
 	"github.com/omiga-group/omiga/src/order/order-api/mappers"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
-	"github.com/omiga-group/omiga/src/order/shared/repositories/order"
 )
 
 // SubmitOrder is the resolver for the submitOrder field.
@@ -39,9 +38,11 @@ func (r *mutationResolver) CancelOrder(ctx context.Context, input models.CancelO
 }
 
 // Order is the resolver for the order field.
-func (r *queryResolver) Order(ctx context.Context, id int) (*repositories.Order, error) {
-	query := r.client.Order.Query()
-	query = query.Where(order.IDEQ(id))
+func (r *queryResolver) Order(ctx context.Context, where *repositories.OrderWhereInput) (*repositories.Order, error) {
+	query, err := where.Filter(r.client.Order.Query())
+	if err != nil {
+		return nil, err
+	}
 
 	result, err := query.First(ctx)
 	if _, ok := err.(*repositories.NotFoundError); ok {

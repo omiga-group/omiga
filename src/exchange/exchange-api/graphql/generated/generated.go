@@ -112,7 +112,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Exchange           func(childComplexity int, id int) int
+		Exchange           func(childComplexity int, where *repositories.ExchangeWhereInput) int
 		Exchanges          func(childComplexity int, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, orderBy []*repositories.ExchangeOrder, where *repositories.ExchangeWhereInput) int
 		__resolve__service func(childComplexity int) int
 	}
@@ -150,7 +150,7 @@ type ExchangeResolver interface {
 	Tickers(ctx context.Context, obj *repositories.Exchange) ([]*repositories.Ticker, error)
 }
 type QueryResolver interface {
-	Exchange(ctx context.Context, id int) (*repositories.Exchange, error)
+	Exchange(ctx context.Context, where *repositories.ExchangeWhereInput) (*repositories.Exchange, error)
 	Exchanges(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, orderBy []*repositories.ExchangeOrder, where *repositories.ExchangeWhereInput) (*repositories.ExchangeConnection, error)
 }
 type TickerResolver interface {
@@ -479,7 +479,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Exchange(childComplexity, args["id"].(int)), true
+		return e.complexity.Query.Exchange(childComplexity, args["where"].(*repositories.ExchangeWhereInput)), true
 
 	case "Query.exchanges":
 		if e.complexity.Query.Exchanges == nil {
@@ -717,9 +717,9 @@ interface Node {
 extend type Query {
   exchange(
     """
-    ID
+    Ordering directions
     """
-    id: ID!
+    where: ExchangeWhereInput
   ): Exchange
 
   exchanges(
@@ -1089,6 +1089,38 @@ input ExchangeWhereInput {
   tradeVolume24hBtcNormalizedLTE: Float
   tradeVolume24hBtcNormalizedIsNil: Boolean
   tradeVolume24hBtcNormalizedNotNil: Boolean
+  """maker_fee field predicates"""
+  makerFee: Float
+  makerFeeNEQ: Float
+  makerFeeIn: [Float!]
+  makerFeeNotIn: [Float!]
+  makerFeeGT: Float
+  makerFeeGTE: Float
+  makerFeeLT: Float
+  makerFeeLTE: Float
+  makerFeeIsNil: Boolean
+  makerFeeNotNil: Boolean
+  """taker_fee field predicates"""
+  takerFee: Float
+  takerFeeNEQ: Float
+  takerFeeIn: [Float!]
+  takerFeeNotIn: [Float!]
+  takerFeeGT: Float
+  takerFeeGTE: Float
+  takerFeeLT: Float
+  takerFeeLTE: Float
+  takerFeeIsNil: Boolean
+  takerFeeNotNil: Boolean
+  """spread_fee field predicates"""
+  spreadFee: Boolean
+  spreadFeeNEQ: Boolean
+  spreadFeeIsNil: Boolean
+  spreadFeeNotNil: Boolean
+  """support_api field predicates"""
+  supportAPI: Boolean
+  supportAPINEQ: Boolean
+  supportAPIIsNil: Boolean
+  supportAPINotNil: Boolean
   """ticker edge predicates"""
   hasTicker: Boolean
   hasTickerWith: [TickerWhereInput!]
@@ -1429,15 +1461,15 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_exchange_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+	var arg0 *repositories.ExchangeWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg0, err = ec.unmarshalOExchangeWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋrepositoriesᚐExchangeWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["where"] = arg0
 	return args, nil
 }
 
@@ -3385,7 +3417,7 @@ func (ec *executionContext) _Query_exchange(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Exchange(rctx, fc.Args["id"].(int))
+		return ec.resolvers.Query().Exchange(rctx, fc.Args["where"].(*repositories.ExchangeWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6371,7 +6403,7 @@ func (ec *executionContext) unmarshalInputExchangeWhereInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "exchangeID", "exchangeIDNEQ", "exchangeIDIn", "exchangeIDNotIn", "exchangeIDGT", "exchangeIDGTE", "exchangeIDLT", "exchangeIDLTE", "exchangeIDContains", "exchangeIDHasPrefix", "exchangeIDHasSuffix", "exchangeIDEqualFold", "exchangeIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "yearEstablished", "yearEstablishedNEQ", "yearEstablishedIn", "yearEstablishedNotIn", "yearEstablishedGT", "yearEstablishedGTE", "yearEstablishedLT", "yearEstablishedLTE", "yearEstablishedIsNil", "yearEstablishedNotNil", "country", "countryNEQ", "countryIn", "countryNotIn", "countryGT", "countryGTE", "countryLT", "countryLTE", "countryContains", "countryHasPrefix", "countryHasSuffix", "countryIsNil", "countryNotNil", "countryEqualFold", "countryContainsFold", "image", "imageNEQ", "imageIn", "imageNotIn", "imageGT", "imageGTE", "imageLT", "imageLTE", "imageContains", "imageHasPrefix", "imageHasSuffix", "imageIsNil", "imageNotNil", "imageEqualFold", "imageContainsFold", "hasTradingIncentive", "hasTradingIncentiveNEQ", "hasTradingIncentiveIsNil", "hasTradingIncentiveNotNil", "centralized", "centralizedNEQ", "centralizedIsNil", "centralizedNotNil", "publicNotice", "publicNoticeNEQ", "publicNoticeIn", "publicNoticeNotIn", "publicNoticeGT", "publicNoticeGTE", "publicNoticeLT", "publicNoticeLTE", "publicNoticeContains", "publicNoticeHasPrefix", "publicNoticeHasSuffix", "publicNoticeIsNil", "publicNoticeNotNil", "publicNoticeEqualFold", "publicNoticeContainsFold", "alertNotice", "alertNoticeNEQ", "alertNoticeIn", "alertNoticeNotIn", "alertNoticeGT", "alertNoticeGTE", "alertNoticeLT", "alertNoticeLTE", "alertNoticeContains", "alertNoticeHasPrefix", "alertNoticeHasSuffix", "alertNoticeIsNil", "alertNoticeNotNil", "alertNoticeEqualFold", "alertNoticeContainsFold", "trustScore", "trustScoreNEQ", "trustScoreIn", "trustScoreNotIn", "trustScoreGT", "trustScoreGTE", "trustScoreLT", "trustScoreLTE", "trustScoreIsNil", "trustScoreNotNil", "trustScoreRank", "trustScoreRankNEQ", "trustScoreRankIn", "trustScoreRankNotIn", "trustScoreRankGT", "trustScoreRankGTE", "trustScoreRankLT", "trustScoreRankLTE", "trustScoreRankIsNil", "trustScoreRankNotNil", "tradeVolume24hBtc", "tradeVolume24hBtcNEQ", "tradeVolume24hBtcIn", "tradeVolume24hBtcNotIn", "tradeVolume24hBtcGT", "tradeVolume24hBtcGTE", "tradeVolume24hBtcLT", "tradeVolume24hBtcLTE", "tradeVolume24hBtcIsNil", "tradeVolume24hBtcNotNil", "tradeVolume24hBtcNormalized", "tradeVolume24hBtcNormalizedNEQ", "tradeVolume24hBtcNormalizedIn", "tradeVolume24hBtcNormalizedNotIn", "tradeVolume24hBtcNormalizedGT", "tradeVolume24hBtcNormalizedGTE", "tradeVolume24hBtcNormalizedLT", "tradeVolume24hBtcNormalizedLTE", "tradeVolume24hBtcNormalizedIsNil", "tradeVolume24hBtcNormalizedNotNil", "hasTicker", "hasTickerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "exchangeID", "exchangeIDNEQ", "exchangeIDIn", "exchangeIDNotIn", "exchangeIDGT", "exchangeIDGTE", "exchangeIDLT", "exchangeIDLTE", "exchangeIDContains", "exchangeIDHasPrefix", "exchangeIDHasSuffix", "exchangeIDEqualFold", "exchangeIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "yearEstablished", "yearEstablishedNEQ", "yearEstablishedIn", "yearEstablishedNotIn", "yearEstablishedGT", "yearEstablishedGTE", "yearEstablishedLT", "yearEstablishedLTE", "yearEstablishedIsNil", "yearEstablishedNotNil", "country", "countryNEQ", "countryIn", "countryNotIn", "countryGT", "countryGTE", "countryLT", "countryLTE", "countryContains", "countryHasPrefix", "countryHasSuffix", "countryIsNil", "countryNotNil", "countryEqualFold", "countryContainsFold", "image", "imageNEQ", "imageIn", "imageNotIn", "imageGT", "imageGTE", "imageLT", "imageLTE", "imageContains", "imageHasPrefix", "imageHasSuffix", "imageIsNil", "imageNotNil", "imageEqualFold", "imageContainsFold", "hasTradingIncentive", "hasTradingIncentiveNEQ", "hasTradingIncentiveIsNil", "hasTradingIncentiveNotNil", "centralized", "centralizedNEQ", "centralizedIsNil", "centralizedNotNil", "publicNotice", "publicNoticeNEQ", "publicNoticeIn", "publicNoticeNotIn", "publicNoticeGT", "publicNoticeGTE", "publicNoticeLT", "publicNoticeLTE", "publicNoticeContains", "publicNoticeHasPrefix", "publicNoticeHasSuffix", "publicNoticeIsNil", "publicNoticeNotNil", "publicNoticeEqualFold", "publicNoticeContainsFold", "alertNotice", "alertNoticeNEQ", "alertNoticeIn", "alertNoticeNotIn", "alertNoticeGT", "alertNoticeGTE", "alertNoticeLT", "alertNoticeLTE", "alertNoticeContains", "alertNoticeHasPrefix", "alertNoticeHasSuffix", "alertNoticeIsNil", "alertNoticeNotNil", "alertNoticeEqualFold", "alertNoticeContainsFold", "trustScore", "trustScoreNEQ", "trustScoreIn", "trustScoreNotIn", "trustScoreGT", "trustScoreGTE", "trustScoreLT", "trustScoreLTE", "trustScoreIsNil", "trustScoreNotNil", "trustScoreRank", "trustScoreRankNEQ", "trustScoreRankIn", "trustScoreRankNotIn", "trustScoreRankGT", "trustScoreRankGTE", "trustScoreRankLT", "trustScoreRankLTE", "trustScoreRankIsNil", "trustScoreRankNotNil", "tradeVolume24hBtc", "tradeVolume24hBtcNEQ", "tradeVolume24hBtcIn", "tradeVolume24hBtcNotIn", "tradeVolume24hBtcGT", "tradeVolume24hBtcGTE", "tradeVolume24hBtcLT", "tradeVolume24hBtcLTE", "tradeVolume24hBtcIsNil", "tradeVolume24hBtcNotNil", "tradeVolume24hBtcNormalized", "tradeVolume24hBtcNormalizedNEQ", "tradeVolume24hBtcNormalizedIn", "tradeVolume24hBtcNormalizedNotIn", "tradeVolume24hBtcNormalizedGT", "tradeVolume24hBtcNormalizedGTE", "tradeVolume24hBtcNormalizedLT", "tradeVolume24hBtcNormalizedLTE", "tradeVolume24hBtcNormalizedIsNil", "tradeVolume24hBtcNormalizedNotNil", "makerFee", "makerFeeNEQ", "makerFeeIn", "makerFeeNotIn", "makerFeeGT", "makerFeeGTE", "makerFeeLT", "makerFeeLTE", "makerFeeIsNil", "makerFeeNotNil", "takerFee", "takerFeeNEQ", "takerFeeIn", "takerFeeNotIn", "takerFeeGT", "takerFeeGTE", "takerFeeLT", "takerFeeLTE", "takerFeeIsNil", "takerFeeNotNil", "spreadFee", "spreadFeeNEQ", "spreadFeeIsNil", "spreadFeeNotNil", "supportAPI", "supportAPINEQ", "supportAPIIsNil", "supportAPINotNil", "hasTicker", "hasTickerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7631,6 +7663,230 @@ func (ec *executionContext) unmarshalInputExchangeWhereInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradeVolume24hBtcNormalizedNotNil"))
 			it.TradeVolume24hBtcNormalizedNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "makerFee":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("makerFee"))
+			it.MakerFee, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "makerFeeNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("makerFeeNEQ"))
+			it.MakerFeeNEQ, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "makerFeeIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("makerFeeIn"))
+			it.MakerFeeIn, err = ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "makerFeeNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("makerFeeNotIn"))
+			it.MakerFeeNotIn, err = ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "makerFeeGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("makerFeeGT"))
+			it.MakerFeeGT, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "makerFeeGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("makerFeeGTE"))
+			it.MakerFeeGTE, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "makerFeeLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("makerFeeLT"))
+			it.MakerFeeLT, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "makerFeeLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("makerFeeLTE"))
+			it.MakerFeeLTE, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "makerFeeIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("makerFeeIsNil"))
+			it.MakerFeeIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "makerFeeNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("makerFeeNotNil"))
+			it.MakerFeeNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "takerFee":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("takerFee"))
+			it.TakerFee, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "takerFeeNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("takerFeeNEQ"))
+			it.TakerFeeNEQ, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "takerFeeIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("takerFeeIn"))
+			it.TakerFeeIn, err = ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "takerFeeNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("takerFeeNotIn"))
+			it.TakerFeeNotIn, err = ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "takerFeeGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("takerFeeGT"))
+			it.TakerFeeGT, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "takerFeeGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("takerFeeGTE"))
+			it.TakerFeeGTE, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "takerFeeLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("takerFeeLT"))
+			it.TakerFeeLT, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "takerFeeLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("takerFeeLTE"))
+			it.TakerFeeLTE, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "takerFeeIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("takerFeeIsNil"))
+			it.TakerFeeIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "takerFeeNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("takerFeeNotNil"))
+			it.TakerFeeNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "spreadFee":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spreadFee"))
+			it.SpreadFee, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "spreadFeeNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spreadFeeNEQ"))
+			it.SpreadFeeNEQ, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "spreadFeeIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spreadFeeIsNil"))
+			it.SpreadFeeIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "spreadFeeNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spreadFeeNotNil"))
+			it.SpreadFeeNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "supportAPI":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supportAPI"))
+			it.SupportAPI, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "supportAPINEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supportAPINEQ"))
+			it.SupportAPINEQ, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "supportAPIIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supportAPIIsNil"))
+			it.SupportAPIIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "supportAPINotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supportAPINotNil"))
+			it.SupportAPINotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}

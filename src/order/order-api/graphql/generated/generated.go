@@ -81,7 +81,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Order              func(childComplexity int, id int) int
+		Order              func(childComplexity int, where *repositories.OrderWhereInput) int
 		Orders             func(childComplexity int, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, where *repositories.OrderWhereInput) int
 		__resolve__service func(childComplexity int) int
 	}
@@ -96,7 +96,7 @@ type MutationResolver interface {
 	CancelOrder(ctx context.Context, input models.CancelOrderInput) (*models.OrderPayload, error)
 }
 type QueryResolver interface {
-	Order(ctx context.Context, id int) (*repositories.Order, error)
+	Order(ctx context.Context, where *repositories.OrderWhereInput) (*repositories.Order, error)
 	Orders(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, where *repositories.OrderWhereInput) (*repositories.OrderConnection, error)
 }
 
@@ -240,7 +240,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Order(childComplexity, args["id"].(int)), true
+		return e.complexity.Query.Order(childComplexity, args["where"].(*repositories.OrderWhereInput)), true
 
 	case "Query.orders":
 		if e.complexity.Query.Orders == nil {
@@ -366,10 +366,7 @@ interface Node {
 
 extend type Query {
   order(
-    """
-    ID
-    """
-    id: ID!
+    where: OrderWhereInput
   ): Order
 
   orders(
@@ -710,15 +707,15 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_order_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+	var arg0 *repositories.OrderWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg0, err = ec.unmarshalOOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["where"] = arg0
 	return args, nil
 }
 
@@ -1472,7 +1469,7 @@ func (ec *executionContext) _Query_order(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Order(rctx, fc.Args["id"].(int))
+		return ec.resolvers.Query().Order(rctx, fc.Args["where"].(*repositories.OrderWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

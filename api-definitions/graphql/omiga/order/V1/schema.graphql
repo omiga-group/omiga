@@ -19,10 +19,7 @@ interface Node {
 
 extend type Query {
   order(
-    """
-    ID
-    """
-    id: ID!
+    where: OrderWhereInput
   ): Order
 
   orders(

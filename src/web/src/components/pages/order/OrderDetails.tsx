@@ -36,7 +36,7 @@ const Order = React.memo<OrderProps>(({ response }) => {
 const OrderRelayed = createFragmentContainer(Order, {
   response: graphql`
     fragment OrderDetails_Query on Query {
-      order(id: $id) {
+      order(where: { id: $id }) {
         id
       }
     }

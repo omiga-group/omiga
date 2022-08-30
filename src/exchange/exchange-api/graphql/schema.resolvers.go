@@ -54,9 +54,11 @@ func (r *exchangeResolver) Tickers(ctx context.Context, obj *repositories.Exchan
 }
 
 // Exchange is the resolver for the exchange field.
-func (r *queryResolver) Exchange(ctx context.Context, id int) (*repositories.Exchange, error) {
-	query := r.client.Exchange.Query()
-	query = query.Where(exchange.IDEQ(id))
+func (r *queryResolver) Exchange(ctx context.Context, where *repositories.ExchangeWhereInput) (*repositories.Exchange, error) {
+	query, err := where.Filter(r.client.Exchange.Query())
+	if err != nil {
+		return nil, err
+	}
 
 	result, err := query.First(ctx)
 	if _, ok := err.(*repositories.NotFoundError); ok {
