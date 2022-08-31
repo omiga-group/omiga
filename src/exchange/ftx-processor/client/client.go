@@ -3,7 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"time"
@@ -14,7 +14,7 @@ import (
 
 type apiResult[T any] struct {
 	Success bool `json:"success"`
-	Result  T    `json:"result`
+	Result  T    `json:"result"`
 }
 
 func NewFtxApiClient(cfg configuration.FtxConfig) ApiClient {
@@ -36,7 +36,7 @@ func (ftx ftxApiClient) GetMarkets() (models.MarketsMap, error) {
 		return nil, err
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
