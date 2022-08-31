@@ -564,6 +564,7 @@ func (ec *ExchangeCreate) createSpec() (*Exchange, *sqlgraph.CreateSpec) {
 //			SetExchangeID(v+v).
 //		}).
 //		Exec(ctx)
+//
 func (ec *ExchangeCreate) OnConflict(opts ...sql.ConflictOption) *ExchangeUpsertOne {
 	ec.conflict = opts
 	return &ExchangeUpsertOne{
@@ -577,6 +578,7 @@ func (ec *ExchangeCreate) OnConflict(opts ...sql.ConflictOption) *ExchangeUpsert
 //	client.Exchange.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
+//
 func (ec *ExchangeCreate) OnConflictColumns(columns ...string) *ExchangeUpsertOne {
 	ec.conflict = append(ec.conflict, sql.ConflictColumns(columns...))
 	return &ExchangeUpsertOne{
@@ -965,6 +967,7 @@ func (u *ExchangeUpsert) ClearSupportAPI() *ExchangeUpsert {
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
+//
 func (u *ExchangeUpsertOne) UpdateNewValues() *ExchangeUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
@@ -973,9 +976,10 @@ func (u *ExchangeUpsertOne) UpdateNewValues() *ExchangeUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Exchange.Create().
-//	    OnConflict(sql.ResolveWithIgnore()).
-//	    Exec(ctx)
+//  client.Exchange.Create().
+//      OnConflict(sql.ResolveWithIgnore()).
+//      Exec(ctx)
+//
 func (u *ExchangeUpsertOne) Ignore() *ExchangeUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1550,6 +1554,7 @@ func (ecb *ExchangeCreateBulk) ExecX(ctx context.Context) {
 //			SetExchangeID(v+v).
 //		}).
 //		Exec(ctx)
+//
 func (ecb *ExchangeCreateBulk) OnConflict(opts ...sql.ConflictOption) *ExchangeUpsertBulk {
 	ecb.conflict = opts
 	return &ExchangeUpsertBulk{
@@ -1563,6 +1568,7 @@ func (ecb *ExchangeCreateBulk) OnConflict(opts ...sql.ConflictOption) *ExchangeU
 //	client.Exchange.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
+//
 func (ecb *ExchangeCreateBulk) OnConflictColumns(columns ...string) *ExchangeUpsertBulk {
 	ecb.conflict = append(ecb.conflict, sql.ConflictColumns(columns...))
 	return &ExchangeUpsertBulk{
@@ -1584,6 +1590,7 @@ type ExchangeUpsertBulk struct {
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
+//
 func (u *ExchangeUpsertBulk) UpdateNewValues() *ExchangeUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
@@ -1595,6 +1602,7 @@ func (u *ExchangeUpsertBulk) UpdateNewValues() *ExchangeUpsertBulk {
 //	client.Exchange.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
+//
 func (u *ExchangeUpsertBulk) Ignore() *ExchangeUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

@@ -305,6 +305,7 @@ func (tq *TickerQuery) WithExchange(opts ...func(*ExchangeQuery)) *TickerQuery {
 //		GroupBy(ticker.FieldBase).
 //		Aggregate(repositories.Count()).
 //		Scan(ctx, &v)
+//
 func (tq *TickerQuery) GroupBy(field string, fields ...string) *TickerGroupBy {
 	grbuild := &TickerGroupBy{config: tq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -331,6 +332,7 @@ func (tq *TickerQuery) GroupBy(field string, fields ...string) *TickerGroupBy {
 //	client.Ticker.Query().
 //		Select(ticker.FieldBase).
 //		Scan(ctx, &v)
+//
 func (tq *TickerQuery) Select(fields ...string) *TickerSelect {
 	tq.fields = append(tq.fields, fields...)
 	selbuild := &TickerSelect{TickerQuery: tq}

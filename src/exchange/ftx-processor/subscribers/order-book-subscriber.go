@@ -2,14 +2,13 @@ package subscribers
 
 import (
 	"context"
-	"encoding/json"
-	"math"
 	"time"
 
 	"go.uber.org/zap"
 
 	"github.com/gorilla/websocket"
 	"github.com/life4/genesis/slices"
+	"github.com/omiga-group/omiga/src/exchange/ftx-processor/client"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/mappers"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/models"
@@ -20,77 +19,22 @@ import (
 type FtxOrderBookSubscriber interface {
 }
 
-type FtxTime struct {
-	Time time.Time
-}
-
-func (p *FtxTime) UnmarshalJSON(data []byte) error {
-	var f float64
-	if err := json.Unmarshal(data, &f); err != nil {
-		return err
-	}
-
-	sec, nsec := math.Modf(f)
-	p.Time = time.Unix(int64(sec), int64(nsec))
-	return nil
-}
-
-type operationType string
-
-const (
-	OperationTypeSubscribe   operationType = "subscribe"
-	OperationTypeUnsubscribe operationType = "unsubscribe"
-)
-
-type ftxRequest struct {
-	Op      operationType `json:"op"`
-	Channel *string       `json:"channel,omitempty"`
-	Market  *string       `json:"market,omitempty"`
-}
-
-type responseType string
-
-const (
-	ResponseTypeError        responseType = "error"
-	ResponseTypeSubscribed   responseType = "subscribed"
-	ResponseTypeUnsubscribed responseType = "unsubscribed"
-	ResponseTypeInfo         responseType = "info"
-	ResponseTypePartial      responseType = "partial"
-	ResponseTypeUpdate       responseType = "update"
-)
-
-type ftxOrderBook struct {
-	Channel string            `json:"channel"`
-	Market  string            `json:"market"`
-	Type    responseType      `json:"type"`
-	Data    *ftxOrderBookData `json:"data,omitempty"`
-}
-
-type ftxOrderBookData struct {
-	Time     FtxTime      `json:"time"`
-	Checksum int          `json:"checksum"`
-	Bids     [][2]float64 `json:"bids"`
-	Asks     [][2]float64 `json:"asks"`
-	Action   string       `json:"action"`
-}
-
 type ftxOrderBookSubscriber struct {
 	logger             *zap.SugaredLogger
-	market             string
 	ftxConfig          configuration.FtxConfig
 	orderBookPublisher publishers.OrderBookPublisher
+	apiClient          client.ApiClient
 }
 
 func NewFtxOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
+	apiClient client.ApiClient,
 	ftxConfig configuration.FtxConfig,
-	marketConfig configuration.MarketConfig,
 	orderBookPublisher publishers.OrderBookPublisher) (FtxOrderBookSubscriber, error) {
 
 	instance := &ftxOrderBookSubscriber{
 		logger:             logger,
-		market:             marketConfig.Market,
 		ftxConfig:          ftxConfig,
 		orderBookPublisher: orderBookPublisher,
 	}
@@ -128,11 +72,19 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
 		}
 	}()
 
-	channel := "orderbook"
-	req := &ftxRequest{Op: OperationTypeSubscribe, Channel: &channel, Market: &fobs.market}
-	if err := connection.WriteJSON(req); err != nil {
-		fobs.logger.Errorf("Failed to send request to FTX websocket. Error: %v", err)
+	mm, err := fobs.apiClient.GetMarkets()
+	if err != nil {
+		fobs.logger.Errorf("Failed to get FTX markets list. Error: %v", err)
 		return
+	}
+
+	channel := "orderbook"
+	for name := range mm {
+		req := &ftxRequest{Op: OperationTypeSubscribe, Channel: &channel, Market: name}
+		if err := connection.WriteJSON(req); err != nil {
+			fobs.logger.Errorf("Failed to send request to FTX websocket. Error: %v", err)
+			return
+		}
 	}
 
 	go fobs.ping(ctx, connection)
@@ -149,7 +101,10 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
 			break
 		}
 
-		fobs.publish(ctx, &orderBook)
+		if market, ok := mm[orderBook.Market]; ok {
+			fobs.publish(ctx, &orderBook, market)
+		}
+
 	}
 
 	if connectionCloseErr := connection.Close(); connectionCloseErr != nil {
@@ -157,7 +112,10 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
 	}
 }
 
-func (fobs *ftxOrderBookSubscriber) publish(ctx context.Context, ob *ftxOrderBook) {
+func (fobs *ftxOrderBookSubscriber) publish(
+	ctx context.Context,
+	ob *ftxOrderBook,
+	market models.Market) {
 	asks := slices.Map(ob.Data.Asks, func(ask [2]float64) models.OrderBookEntry {
 		return models.OrderBookEntry{
 			Symbol: ob.Market,
@@ -176,22 +134,22 @@ func (fobs *ftxOrderBookSubscriber) publish(ctx context.Context, ob *ftxOrderBoo
 		}
 	})
 
-	binanceOrderBook := slices.Concat(asks, bids)
+	asksBids := slices.Concat(asks, bids)
 
 	orderBook := mappers.ToModelOrderBook(
 		exchangeModels.Currency{
-			Name:         "TODO",
-			Code:         "TODO",
-			MaxPrecision: 1,
-			Digital:      true,
+			Name:         market.BaseCurrency,
+			Code:         market.BaseCurrency,
+			MaxPrecision: 1,    //WHY SEND PRECISION?
+			Digital:      true, //WHAT IS THIS?
 		},
 		exchangeModels.Currency{
-			Name:         "TODO",
-			Code:         "TODO",
+			Name:         market.QuoteCurrency,
+			Code:         market.QuoteCurrency,
 			MaxPrecision: 1,
 			Digital:      true,
 		},
-		binanceOrderBook,
+		asksBids,
 	)
 
 	orderBook.ExchangeId = "binance"
@@ -210,11 +168,8 @@ func (fobs *ftxOrderBookSubscriber) ping(
 	for {
 		select {
 		case <-ticker.C:
-			if err := connection.WriteJSON(&ftxRequest{
-				Op: "ping",
-			}); err != nil {
+			if err := connection.WriteJSON(&ftxRequest{Op: "ping"}); err != nil {
 				fobs.logger.Errorf("Failed to send ping request. Error: %v", err)
-
 				return
 			}
 		case <-ctx.Done():
