@@ -37,6 +37,7 @@ func NewFtxOrderBookSubscriber(
 		logger:             logger,
 		ftxConfig:          ftxConfig,
 		orderBookPublisher: orderBookPublisher,
+		apiClient:          apiClient,
 	}
 
 	go instance.run(ctx)
@@ -101,8 +102,10 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
 			break
 		}
 
-		if market, ok := mm[orderBook.Market]; ok {
-			fobs.publish(ctx, &orderBook, market)
+		if orderBook.Data != nil {
+			if market, ok := mm[orderBook.Market]; ok {
+				fobs.publish(ctx, &orderBook, market)
+			}
 		}
 
 	}
