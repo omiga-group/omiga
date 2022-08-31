@@ -18,9 +18,9 @@ interface Node {
 extend type Query {
   exchange(
     """
-    ID
+    Ordering directions
     """
-    id: ID!
+    where: ExchangeWhereInput
   ): Exchange
 
   exchanges(
@@ -124,6 +124,10 @@ type Exchange implements Node {
   tradeVolume24hBtc: Float
   tradeVolume24hBtcNormalized: Float
   tickers: [Ticker!]!
+  makerFee: Float
+  takerFee: Float
+  spreadFee: Boolean
+  supportAPI: Boolean
 }
 
 type Links {

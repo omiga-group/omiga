@@ -23,6 +23,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
+	coingekorepositories "github.com/omiga-group/omiga/src/exchange/coingeko/repositories"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
@@ -42,13 +43,15 @@ func NewCoingekoSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	coingekoConfig configuration.CoingekoConfig,
+	exchanges map[string]configuration.Exchange,
 	postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,
 		repositories.NewEntgoClient,
 		cron.NewCronService,
 		time.NewTimeHelper,
-		subscribers.NewCoingekoSubscriber)
+		subscribers.NewCoingekoSubscriber,
+		coingekorepositories.NewExchangeRepository)
 
 	return nil, nil
 }

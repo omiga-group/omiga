@@ -2,14 +2,13 @@ SHELL = /bin/bash
 CURRENT_DIRECTORY = $(shell pwd)
 
 # Go variables
-GOFILES = $(shell find . -type f -name '*.go' -not -path "*/mock/*.go" -not -path "*.pb.go" -not -path "*_gen.go")
+GOFILES = $(shell find . -type f -name '*.go' -not -path "*/mock/*.go" -not -path "*.pb.go" -not -path "*_eventgen.go" -not -path "*_gen.go")
 
 .PHONY: all
 all: dep generate ## Runs dep generate
 
 .PHONY: dep
 dep: ## Install dependencies
-	@go install github.com/golang/mock/mockgen@v1.6.0
 	@go mod tidy
 
 .PHONY: generate
@@ -19,6 +18,16 @@ generate: ## Generate code
 	@go install entgo.io/ent/cmd/ent@latest
 	@go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
 	@GOFLAGS=-mod=mod go generate ./...
+	# @./shared/scripts/generate.sh
+	# @./exchange/shared/scripts/generate.sh
+	# @./exchange/exchange-api/scripts/generate.sh
+	# @./exchange/binance-processor/scripts/generate.sh
+	# @./exchange/coingeko/scripts/generate.sh
+	# @./exchange/ftx-processor/scripts/generate.sh
+	# @./exchange/omiga-processor/scripts/generate.sh
+	# @./order/shared/scripts/generate.sh
+	# @./order/order-api/scripts/generate.sh
+	# @./order/order-processor/scripts/generate.sh
 
 .PHONY: lint
 lint: ## run golanci-lint locally

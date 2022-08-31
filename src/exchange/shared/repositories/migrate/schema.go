@@ -25,6 +25,10 @@ var (
 		{Name: "trust_score_rank", Type: field.TypeInt, Nullable: true},
 		{Name: "trade_volume_24h_btc", Type: field.TypeFloat64, Nullable: true},
 		{Name: "trade_volume_24h_btc_normalized", Type: field.TypeFloat64, Nullable: true},
+		{Name: "maker_fee", Type: field.TypeFloat64, Nullable: true},
+		{Name: "taker_fee", Type: field.TypeFloat64, Nullable: true},
+		{Name: "spread_fee", Type: field.TypeBool, Nullable: true},
+		{Name: "support_api", Type: field.TypeBool, Nullable: true},
 	}
 	// ExchangesTable holds the schema information for the "exchanges" table.
 	ExchangesTable = &schema.Table{
@@ -96,6 +100,26 @@ var (
 				Name:    "exchange_trade_volume_24h_btc_normalized",
 				Unique:  false,
 				Columns: []*schema.Column{ExchangesColumns[14]},
+			},
+			{
+				Name:    "exchange_maker_fee",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[15]},
+			},
+			{
+				Name:    "exchange_taker_fee",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[16]},
+			},
+			{
+				Name:    "exchange_spread_fee",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[17]},
+			},
+			{
+				Name:    "exchange_support_api",
+				Unique:  false,
+				Columns: []*schema.Column{ExchangesColumns[18]},
 			},
 		},
 	}

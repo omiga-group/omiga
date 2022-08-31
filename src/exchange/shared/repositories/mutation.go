@@ -57,6 +57,12 @@ type ExchangeMutation struct {
 	addtrade_volume_24h_btc            *float64
 	trade_volume_24h_btc_normalized    *float64
 	addtrade_volume_24h_btc_normalized *float64
+	maker_fee                          *float64
+	addmaker_fee                       *float64
+	taker_fee                          *float64
+	addtaker_fee                       *float64
+	spread_fee                         *bool
+	support_api                        *bool
 	clearedFields                      map[string]struct{}
 	ticker                             map[int]struct{}
 	removedticker                      map[int]struct{}
@@ -942,6 +948,244 @@ func (m *ExchangeMutation) ResetTradeVolume24hBtcNormalized() {
 	delete(m.clearedFields, exchange.FieldTradeVolume24hBtcNormalized)
 }
 
+// SetMakerFee sets the "maker_fee" field.
+func (m *ExchangeMutation) SetMakerFee(f float64) {
+	m.maker_fee = &f
+	m.addmaker_fee = nil
+}
+
+// MakerFee returns the value of the "maker_fee" field in the mutation.
+func (m *ExchangeMutation) MakerFee() (r float64, exists bool) {
+	v := m.maker_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMakerFee returns the old "maker_fee" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldMakerFee(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMakerFee is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMakerFee requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMakerFee: %w", err)
+	}
+	return oldValue.MakerFee, nil
+}
+
+// AddMakerFee adds f to the "maker_fee" field.
+func (m *ExchangeMutation) AddMakerFee(f float64) {
+	if m.addmaker_fee != nil {
+		*m.addmaker_fee += f
+	} else {
+		m.addmaker_fee = &f
+	}
+}
+
+// AddedMakerFee returns the value that was added to the "maker_fee" field in this mutation.
+func (m *ExchangeMutation) AddedMakerFee() (r float64, exists bool) {
+	v := m.addmaker_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMakerFee clears the value of the "maker_fee" field.
+func (m *ExchangeMutation) ClearMakerFee() {
+	m.maker_fee = nil
+	m.addmaker_fee = nil
+	m.clearedFields[exchange.FieldMakerFee] = struct{}{}
+}
+
+// MakerFeeCleared returns if the "maker_fee" field was cleared in this mutation.
+func (m *ExchangeMutation) MakerFeeCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldMakerFee]
+	return ok
+}
+
+// ResetMakerFee resets all changes to the "maker_fee" field.
+func (m *ExchangeMutation) ResetMakerFee() {
+	m.maker_fee = nil
+	m.addmaker_fee = nil
+	delete(m.clearedFields, exchange.FieldMakerFee)
+}
+
+// SetTakerFee sets the "taker_fee" field.
+func (m *ExchangeMutation) SetTakerFee(f float64) {
+	m.taker_fee = &f
+	m.addtaker_fee = nil
+}
+
+// TakerFee returns the value of the "taker_fee" field in the mutation.
+func (m *ExchangeMutation) TakerFee() (r float64, exists bool) {
+	v := m.taker_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTakerFee returns the old "taker_fee" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldTakerFee(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTakerFee is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTakerFee requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTakerFee: %w", err)
+	}
+	return oldValue.TakerFee, nil
+}
+
+// AddTakerFee adds f to the "taker_fee" field.
+func (m *ExchangeMutation) AddTakerFee(f float64) {
+	if m.addtaker_fee != nil {
+		*m.addtaker_fee += f
+	} else {
+		m.addtaker_fee = &f
+	}
+}
+
+// AddedTakerFee returns the value that was added to the "taker_fee" field in this mutation.
+func (m *ExchangeMutation) AddedTakerFee() (r float64, exists bool) {
+	v := m.addtaker_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTakerFee clears the value of the "taker_fee" field.
+func (m *ExchangeMutation) ClearTakerFee() {
+	m.taker_fee = nil
+	m.addtaker_fee = nil
+	m.clearedFields[exchange.FieldTakerFee] = struct{}{}
+}
+
+// TakerFeeCleared returns if the "taker_fee" field was cleared in this mutation.
+func (m *ExchangeMutation) TakerFeeCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldTakerFee]
+	return ok
+}
+
+// ResetTakerFee resets all changes to the "taker_fee" field.
+func (m *ExchangeMutation) ResetTakerFee() {
+	m.taker_fee = nil
+	m.addtaker_fee = nil
+	delete(m.clearedFields, exchange.FieldTakerFee)
+}
+
+// SetSpreadFee sets the "spread_fee" field.
+func (m *ExchangeMutation) SetSpreadFee(b bool) {
+	m.spread_fee = &b
+}
+
+// SpreadFee returns the value of the "spread_fee" field in the mutation.
+func (m *ExchangeMutation) SpreadFee() (r bool, exists bool) {
+	v := m.spread_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSpreadFee returns the old "spread_fee" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldSpreadFee(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSpreadFee is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSpreadFee requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSpreadFee: %w", err)
+	}
+	return oldValue.SpreadFee, nil
+}
+
+// ClearSpreadFee clears the value of the "spread_fee" field.
+func (m *ExchangeMutation) ClearSpreadFee() {
+	m.spread_fee = nil
+	m.clearedFields[exchange.FieldSpreadFee] = struct{}{}
+}
+
+// SpreadFeeCleared returns if the "spread_fee" field was cleared in this mutation.
+func (m *ExchangeMutation) SpreadFeeCleared() bool {
+	_, ok := m.clearedFields[exchange.FieldSpreadFee]
+	return ok
+}
+
+// ResetSpreadFee resets all changes to the "spread_fee" field.
+func (m *ExchangeMutation) ResetSpreadFee() {
+	m.spread_fee = nil
+	delete(m.clearedFields, exchange.FieldSpreadFee)
+}
+
+// SetSupportAPI sets the "support_api" field.
+func (m *ExchangeMutation) SetSupportAPI(b bool) {
+	m.support_api = &b
+}
+
+// SupportAPI returns the value of the "support_api" field in the mutation.
+func (m *ExchangeMutation) SupportAPI() (r bool, exists bool) {
+	v := m.support_api
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSupportAPI returns the old "support_api" field's value of the Exchange entity.
+// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExchangeMutation) OldSupportAPI(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSupportAPI is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSupportAPI requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSupportAPI: %w", err)
+	}
+	return oldValue.SupportAPI, nil
+}
+
+// ClearSupportAPI clears the value of the "support_api" field.
+func (m *ExchangeMutation) ClearSupportAPI() {
+	m.support_api = nil
+	m.clearedFields[exchange.FieldSupportAPI] = struct{}{}
+}
+
+// SupportAPICleared returns if the "support_api" field was cleared in this mutation.
+func (m *ExchangeMutation) SupportAPICleared() bool {
+	_, ok := m.clearedFields[exchange.FieldSupportAPI]
+	return ok
+}
+
+// ResetSupportAPI resets all changes to the "support_api" field.
+func (m *ExchangeMutation) ResetSupportAPI() {
+	m.support_api = nil
+	delete(m.clearedFields, exchange.FieldSupportAPI)
+}
+
 // AddTickerIDs adds the "ticker" edge to the Ticker entity by ids.
 func (m *ExchangeMutation) AddTickerIDs(ids ...int) {
 	if m.ticker == nil {
@@ -1015,7 +1259,7 @@ func (m *ExchangeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ExchangeMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 18)
 	if m.exchange_id != nil {
 		fields = append(fields, exchange.FieldExchangeID)
 	}
@@ -1058,6 +1302,18 @@ func (m *ExchangeMutation) Fields() []string {
 	if m.trade_volume_24h_btc_normalized != nil {
 		fields = append(fields, exchange.FieldTradeVolume24hBtcNormalized)
 	}
+	if m.maker_fee != nil {
+		fields = append(fields, exchange.FieldMakerFee)
+	}
+	if m.taker_fee != nil {
+		fields = append(fields, exchange.FieldTakerFee)
+	}
+	if m.spread_fee != nil {
+		fields = append(fields, exchange.FieldSpreadFee)
+	}
+	if m.support_api != nil {
+		fields = append(fields, exchange.FieldSupportAPI)
+	}
 	return fields
 }
 
@@ -1094,6 +1350,14 @@ func (m *ExchangeMutation) Field(name string) (ent.Value, bool) {
 		return m.TradeVolume24hBtc()
 	case exchange.FieldTradeVolume24hBtcNormalized:
 		return m.TradeVolume24hBtcNormalized()
+	case exchange.FieldMakerFee:
+		return m.MakerFee()
+	case exchange.FieldTakerFee:
+		return m.TakerFee()
+	case exchange.FieldSpreadFee:
+		return m.SpreadFee()
+	case exchange.FieldSupportAPI:
+		return m.SupportAPI()
 	}
 	return nil, false
 }
@@ -1131,6 +1395,14 @@ func (m *ExchangeMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldTradeVolume24hBtc(ctx)
 	case exchange.FieldTradeVolume24hBtcNormalized:
 		return m.OldTradeVolume24hBtcNormalized(ctx)
+	case exchange.FieldMakerFee:
+		return m.OldMakerFee(ctx)
+	case exchange.FieldTakerFee:
+		return m.OldTakerFee(ctx)
+	case exchange.FieldSpreadFee:
+		return m.OldSpreadFee(ctx)
+	case exchange.FieldSupportAPI:
+		return m.OldSupportAPI(ctx)
 	}
 	return nil, fmt.Errorf("unknown Exchange field %s", name)
 }
@@ -1238,6 +1510,34 @@ func (m *ExchangeMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTradeVolume24hBtcNormalized(v)
 		return nil
+	case exchange.FieldMakerFee:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMakerFee(v)
+		return nil
+	case exchange.FieldTakerFee:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTakerFee(v)
+		return nil
+	case exchange.FieldSpreadFee:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSpreadFee(v)
+		return nil
+	case exchange.FieldSupportAPI:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSupportAPI(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Exchange field %s", name)
 }
@@ -1261,6 +1561,12 @@ func (m *ExchangeMutation) AddedFields() []string {
 	if m.addtrade_volume_24h_btc_normalized != nil {
 		fields = append(fields, exchange.FieldTradeVolume24hBtcNormalized)
 	}
+	if m.addmaker_fee != nil {
+		fields = append(fields, exchange.FieldMakerFee)
+	}
+	if m.addtaker_fee != nil {
+		fields = append(fields, exchange.FieldTakerFee)
+	}
 	return fields
 }
 
@@ -1279,6 +1585,10 @@ func (m *ExchangeMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedTradeVolume24hBtc()
 	case exchange.FieldTradeVolume24hBtcNormalized:
 		return m.AddedTradeVolume24hBtcNormalized()
+	case exchange.FieldMakerFee:
+		return m.AddedMakerFee()
+	case exchange.FieldTakerFee:
+		return m.AddedTakerFee()
 	}
 	return nil, false
 }
@@ -1322,6 +1632,20 @@ func (m *ExchangeMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddTradeVolume24hBtcNormalized(v)
+		return nil
+	case exchange.FieldMakerFee:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMakerFee(v)
+		return nil
+	case exchange.FieldTakerFee:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTakerFee(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Exchange numeric field %s", name)
@@ -1369,6 +1693,18 @@ func (m *ExchangeMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(exchange.FieldTradeVolume24hBtcNormalized) {
 		fields = append(fields, exchange.FieldTradeVolume24hBtcNormalized)
+	}
+	if m.FieldCleared(exchange.FieldMakerFee) {
+		fields = append(fields, exchange.FieldMakerFee)
+	}
+	if m.FieldCleared(exchange.FieldTakerFee) {
+		fields = append(fields, exchange.FieldTakerFee)
+	}
+	if m.FieldCleared(exchange.FieldSpreadFee) {
+		fields = append(fields, exchange.FieldSpreadFee)
+	}
+	if m.FieldCleared(exchange.FieldSupportAPI) {
+		fields = append(fields, exchange.FieldSupportAPI)
 	}
 	return fields
 }
@@ -1423,6 +1759,18 @@ func (m *ExchangeMutation) ClearField(name string) error {
 	case exchange.FieldTradeVolume24hBtcNormalized:
 		m.ClearTradeVolume24hBtcNormalized()
 		return nil
+	case exchange.FieldMakerFee:
+		m.ClearMakerFee()
+		return nil
+	case exchange.FieldTakerFee:
+		m.ClearTakerFee()
+		return nil
+	case exchange.FieldSpreadFee:
+		m.ClearSpreadFee()
+		return nil
+	case exchange.FieldSupportAPI:
+		m.ClearSupportAPI()
+		return nil
 	}
 	return fmt.Errorf("unknown Exchange nullable field %s", name)
 }
@@ -1472,6 +1820,18 @@ func (m *ExchangeMutation) ResetField(name string) error {
 		return nil
 	case exchange.FieldTradeVolume24hBtcNormalized:
 		m.ResetTradeVolume24hBtcNormalized()
+		return nil
+	case exchange.FieldMakerFee:
+		m.ResetMakerFee()
+		return nil
+	case exchange.FieldTakerFee:
+		m.ResetTakerFee()
+		return nil
+	case exchange.FieldSpreadFee:
+		m.ResetSpreadFee()
+		return nil
+	case exchange.FieldSupportAPI:
+		m.ResetSupportAPI()
 		return nil
 	}
 	return fmt.Errorf("unknown Exchange field %s", name)

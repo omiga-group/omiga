@@ -323,6 +323,100 @@ func (eu *ExchangeUpdate) ClearTradeVolume24hBtcNormalized() *ExchangeUpdate {
 	return eu
 }
 
+// SetMakerFee sets the "maker_fee" field.
+func (eu *ExchangeUpdate) SetMakerFee(f float64) *ExchangeUpdate {
+	eu.mutation.ResetMakerFee()
+	eu.mutation.SetMakerFee(f)
+	return eu
+}
+
+// SetNillableMakerFee sets the "maker_fee" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableMakerFee(f *float64) *ExchangeUpdate {
+	if f != nil {
+		eu.SetMakerFee(*f)
+	}
+	return eu
+}
+
+// AddMakerFee adds f to the "maker_fee" field.
+func (eu *ExchangeUpdate) AddMakerFee(f float64) *ExchangeUpdate {
+	eu.mutation.AddMakerFee(f)
+	return eu
+}
+
+// ClearMakerFee clears the value of the "maker_fee" field.
+func (eu *ExchangeUpdate) ClearMakerFee() *ExchangeUpdate {
+	eu.mutation.ClearMakerFee()
+	return eu
+}
+
+// SetTakerFee sets the "taker_fee" field.
+func (eu *ExchangeUpdate) SetTakerFee(f float64) *ExchangeUpdate {
+	eu.mutation.ResetTakerFee()
+	eu.mutation.SetTakerFee(f)
+	return eu
+}
+
+// SetNillableTakerFee sets the "taker_fee" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableTakerFee(f *float64) *ExchangeUpdate {
+	if f != nil {
+		eu.SetTakerFee(*f)
+	}
+	return eu
+}
+
+// AddTakerFee adds f to the "taker_fee" field.
+func (eu *ExchangeUpdate) AddTakerFee(f float64) *ExchangeUpdate {
+	eu.mutation.AddTakerFee(f)
+	return eu
+}
+
+// ClearTakerFee clears the value of the "taker_fee" field.
+func (eu *ExchangeUpdate) ClearTakerFee() *ExchangeUpdate {
+	eu.mutation.ClearTakerFee()
+	return eu
+}
+
+// SetSpreadFee sets the "spread_fee" field.
+func (eu *ExchangeUpdate) SetSpreadFee(b bool) *ExchangeUpdate {
+	eu.mutation.SetSpreadFee(b)
+	return eu
+}
+
+// SetNillableSpreadFee sets the "spread_fee" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableSpreadFee(b *bool) *ExchangeUpdate {
+	if b != nil {
+		eu.SetSpreadFee(*b)
+	}
+	return eu
+}
+
+// ClearSpreadFee clears the value of the "spread_fee" field.
+func (eu *ExchangeUpdate) ClearSpreadFee() *ExchangeUpdate {
+	eu.mutation.ClearSpreadFee()
+	return eu
+}
+
+// SetSupportAPI sets the "support_api" field.
+func (eu *ExchangeUpdate) SetSupportAPI(b bool) *ExchangeUpdate {
+	eu.mutation.SetSupportAPI(b)
+	return eu
+}
+
+// SetNillableSupportAPI sets the "support_api" field if the given value is not nil.
+func (eu *ExchangeUpdate) SetNillableSupportAPI(b *bool) *ExchangeUpdate {
+	if b != nil {
+		eu.SetSupportAPI(*b)
+	}
+	return eu
+}
+
+// ClearSupportAPI clears the value of the "support_api" field.
+func (eu *ExchangeUpdate) ClearSupportAPI() *ExchangeUpdate {
+	eu.mutation.ClearSupportAPI()
+	return eu
+}
+
 // AddTickerIDs adds the "ticker" edge to the Ticker entity by IDs.
 func (eu *ExchangeUpdate) AddTickerIDs(ids ...int) *ExchangeUpdate {
 	eu.mutation.AddTickerIDs(ids...)
@@ -651,6 +745,72 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Column: exchange.FieldTradeVolume24hBtcNormalized,
+		})
+	}
+	if value, ok := eu.mutation.MakerFee(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldMakerFee,
+		})
+	}
+	if value, ok := eu.mutation.AddedMakerFee(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldMakerFee,
+		})
+	}
+	if eu.mutation.MakerFeeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: exchange.FieldMakerFee,
+		})
+	}
+	if value, ok := eu.mutation.TakerFee(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTakerFee,
+		})
+	}
+	if value, ok := eu.mutation.AddedTakerFee(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTakerFee,
+		})
+	}
+	if eu.mutation.TakerFeeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: exchange.FieldTakerFee,
+		})
+	}
+	if value, ok := eu.mutation.SpreadFee(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: exchange.FieldSpreadFee,
+		})
+	}
+	if eu.mutation.SpreadFeeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: exchange.FieldSpreadFee,
+		})
+	}
+	if value, ok := eu.mutation.SupportAPI(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: exchange.FieldSupportAPI,
+		})
+	}
+	if eu.mutation.SupportAPICleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: exchange.FieldSupportAPI,
 		})
 	}
 	if eu.mutation.TickerCleared() {
@@ -1026,6 +1186,100 @@ func (euo *ExchangeUpdateOne) ClearTradeVolume24hBtcNormalized() *ExchangeUpdate
 	return euo
 }
 
+// SetMakerFee sets the "maker_fee" field.
+func (euo *ExchangeUpdateOne) SetMakerFee(f float64) *ExchangeUpdateOne {
+	euo.mutation.ResetMakerFee()
+	euo.mutation.SetMakerFee(f)
+	return euo
+}
+
+// SetNillableMakerFee sets the "maker_fee" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableMakerFee(f *float64) *ExchangeUpdateOne {
+	if f != nil {
+		euo.SetMakerFee(*f)
+	}
+	return euo
+}
+
+// AddMakerFee adds f to the "maker_fee" field.
+func (euo *ExchangeUpdateOne) AddMakerFee(f float64) *ExchangeUpdateOne {
+	euo.mutation.AddMakerFee(f)
+	return euo
+}
+
+// ClearMakerFee clears the value of the "maker_fee" field.
+func (euo *ExchangeUpdateOne) ClearMakerFee() *ExchangeUpdateOne {
+	euo.mutation.ClearMakerFee()
+	return euo
+}
+
+// SetTakerFee sets the "taker_fee" field.
+func (euo *ExchangeUpdateOne) SetTakerFee(f float64) *ExchangeUpdateOne {
+	euo.mutation.ResetTakerFee()
+	euo.mutation.SetTakerFee(f)
+	return euo
+}
+
+// SetNillableTakerFee sets the "taker_fee" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableTakerFee(f *float64) *ExchangeUpdateOne {
+	if f != nil {
+		euo.SetTakerFee(*f)
+	}
+	return euo
+}
+
+// AddTakerFee adds f to the "taker_fee" field.
+func (euo *ExchangeUpdateOne) AddTakerFee(f float64) *ExchangeUpdateOne {
+	euo.mutation.AddTakerFee(f)
+	return euo
+}
+
+// ClearTakerFee clears the value of the "taker_fee" field.
+func (euo *ExchangeUpdateOne) ClearTakerFee() *ExchangeUpdateOne {
+	euo.mutation.ClearTakerFee()
+	return euo
+}
+
+// SetSpreadFee sets the "spread_fee" field.
+func (euo *ExchangeUpdateOne) SetSpreadFee(b bool) *ExchangeUpdateOne {
+	euo.mutation.SetSpreadFee(b)
+	return euo
+}
+
+// SetNillableSpreadFee sets the "spread_fee" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableSpreadFee(b *bool) *ExchangeUpdateOne {
+	if b != nil {
+		euo.SetSpreadFee(*b)
+	}
+	return euo
+}
+
+// ClearSpreadFee clears the value of the "spread_fee" field.
+func (euo *ExchangeUpdateOne) ClearSpreadFee() *ExchangeUpdateOne {
+	euo.mutation.ClearSpreadFee()
+	return euo
+}
+
+// SetSupportAPI sets the "support_api" field.
+func (euo *ExchangeUpdateOne) SetSupportAPI(b bool) *ExchangeUpdateOne {
+	euo.mutation.SetSupportAPI(b)
+	return euo
+}
+
+// SetNillableSupportAPI sets the "support_api" field if the given value is not nil.
+func (euo *ExchangeUpdateOne) SetNillableSupportAPI(b *bool) *ExchangeUpdateOne {
+	if b != nil {
+		euo.SetSupportAPI(*b)
+	}
+	return euo
+}
+
+// ClearSupportAPI clears the value of the "support_api" field.
+func (euo *ExchangeUpdateOne) ClearSupportAPI() *ExchangeUpdateOne {
+	euo.mutation.ClearSupportAPI()
+	return euo
+}
+
 // AddTickerIDs adds the "ticker" edge to the Ticker entity by IDs.
 func (euo *ExchangeUpdateOne) AddTickerIDs(ids ...int) *ExchangeUpdateOne {
 	euo.mutation.AddTickerIDs(ids...)
@@ -1384,6 +1638,72 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Column: exchange.FieldTradeVolume24hBtcNormalized,
+		})
+	}
+	if value, ok := euo.mutation.MakerFee(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldMakerFee,
+		})
+	}
+	if value, ok := euo.mutation.AddedMakerFee(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldMakerFee,
+		})
+	}
+	if euo.mutation.MakerFeeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: exchange.FieldMakerFee,
+		})
+	}
+	if value, ok := euo.mutation.TakerFee(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTakerFee,
+		})
+	}
+	if value, ok := euo.mutation.AddedTakerFee(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: exchange.FieldTakerFee,
+		})
+	}
+	if euo.mutation.TakerFeeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: exchange.FieldTakerFee,
+		})
+	}
+	if value, ok := euo.mutation.SpreadFee(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: exchange.FieldSpreadFee,
+		})
+	}
+	if euo.mutation.SpreadFeeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: exchange.FieldSpreadFee,
+		})
+	}
+	if value, ok := euo.mutation.SupportAPI(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: exchange.FieldSupportAPI,
+		})
+	}
+	if euo.mutation.SupportAPICleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: exchange.FieldSupportAPI,
 		})
 	}
 	if euo.mutation.TickerCleared() {

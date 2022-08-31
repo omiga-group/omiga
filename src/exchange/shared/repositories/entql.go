@@ -42,6 +42,10 @@ var schemaGraph = func() *sqlgraph.Schema {
 			exchange.FieldTrustScoreRank:              {Type: field.TypeInt, Column: exchange.FieldTrustScoreRank},
 			exchange.FieldTradeVolume24hBtc:           {Type: field.TypeFloat64, Column: exchange.FieldTradeVolume24hBtc},
 			exchange.FieldTradeVolume24hBtcNormalized: {Type: field.TypeFloat64, Column: exchange.FieldTradeVolume24hBtcNormalized},
+			exchange.FieldMakerFee:                    {Type: field.TypeFloat64, Column: exchange.FieldMakerFee},
+			exchange.FieldTakerFee:                    {Type: field.TypeFloat64, Column: exchange.FieldTakerFee},
+			exchange.FieldSpreadFee:                   {Type: field.TypeBool, Column: exchange.FieldSpreadFee},
+			exchange.FieldSupportAPI:                  {Type: field.TypeBool, Column: exchange.FieldSupportAPI},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -238,6 +242,26 @@ func (f *ExchangeFilter) WhereTradeVolume24hBtc(p entql.Float64P) {
 // WhereTradeVolume24hBtcNormalized applies the entql float64 predicate on the trade_volume_24h_btc_normalized field.
 func (f *ExchangeFilter) WhereTradeVolume24hBtcNormalized(p entql.Float64P) {
 	f.Where(p.Field(exchange.FieldTradeVolume24hBtcNormalized))
+}
+
+// WhereMakerFee applies the entql float64 predicate on the maker_fee field.
+func (f *ExchangeFilter) WhereMakerFee(p entql.Float64P) {
+	f.Where(p.Field(exchange.FieldMakerFee))
+}
+
+// WhereTakerFee applies the entql float64 predicate on the taker_fee field.
+func (f *ExchangeFilter) WhereTakerFee(p entql.Float64P) {
+	f.Where(p.Field(exchange.FieldTakerFee))
+}
+
+// WhereSpreadFee applies the entql bool predicate on the spread_fee field.
+func (f *ExchangeFilter) WhereSpreadFee(p entql.BoolP) {
+	f.Where(p.Field(exchange.FieldSpreadFee))
+}
+
+// WhereSupportAPI applies the entql bool predicate on the support_api field.
+func (f *ExchangeFilter) WhereSupportAPI(p entql.BoolP) {
+	f.Where(p.Field(exchange.FieldSupportAPI))
 }
 
 // WhereHasTicker applies a predicate to check if query has an edge ticker.

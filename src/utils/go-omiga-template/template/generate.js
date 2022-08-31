@@ -7,11 +7,10 @@ export default async function ({ asyncapi, params }) {
 
 package ${params.packageName}
 
-//go:generate mockgen -source=consumer_gen.go -destination=mock/mock-consumer_gen.go
-//go:generate mockgen -source=handler_gen.go -destination=mock/mock-handler_gen.go
-//go:generate mockgen -source=producer_gen.go -destination=mock/mock-producer_gen.go
-
+//go:generate mockgen -source=consumer_eventgen.go -destination=mock/consumer_eventgen_gen.go
+//go:generate mockgen -source=handler_eventgen.go -destination=mock/handler_eventgen_gen.go
+//go:generate mockgen -source=producer_eventgen.go -destination=mock/producer_eventgen_gen.go
 `;
 
-  return <File name="generate_gen.go">{payloadContent}</File>;
+  return <File name="generate.go">{payloadContent}</File>;
 }

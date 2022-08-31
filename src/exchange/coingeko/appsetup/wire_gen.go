@@ -9,6 +9,7 @@ package appsetup
 import (
 	"context"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
+	repositories2 "github.com/omiga-group/omiga/src/exchange/coingeko/repositories"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
@@ -27,7 +28,7 @@ func NewTimeHelper() (time.TimeHelper, error) {
 	return timeHelper, nil
 }
 
-func NewCoingekoSubscriber(ctx context.Context, logger *zap.SugaredLogger, coingekoConfig configuration.CoingekoConfig, postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
+func NewCoingekoSubscriber(ctx context.Context, logger *zap.SugaredLogger, coingekoConfig configuration.CoingekoConfig, exchanges map[string]configuration.Exchange, postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
 	timeHelper, err := time.NewTimeHelper()
 	if err != nil {
 		return nil, err
@@ -44,7 +45,11 @@ func NewCoingekoSubscriber(ctx context.Context, logger *zap.SugaredLogger, coing
 	if err != nil {
 		return nil, err
 	}
-	coingekoSubscriber, err := subscribers.NewCoingekoSubscriber(ctx, logger, cronService, coingekoConfig, entgoClient, timeHelper)
+	exchangeRepository, err := repositories2.NewExchangeRepository(logger, entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	coingekoSubscriber, err := subscribers.NewCoingekoSubscriber(ctx, logger, cronService, coingekoConfig, exchanges, entgoClient, timeHelper, exchangeRepository)
 	if err != nil {
 		return nil, err
 	}

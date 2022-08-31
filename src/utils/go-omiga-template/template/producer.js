@@ -54,5 +54,5 @@ func (c *producer) Produce(ctx context.Context, key string, event ${models[0].mo
 }
 `;
 
-  return <File name="producer_gen.go">{payloadContent}</File>;
+  return <File name="producer_eventgen.go">{payloadContent}</File>;
 }

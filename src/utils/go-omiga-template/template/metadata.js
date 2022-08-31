@@ -14,5 +14,5 @@ package ${params.packageName}
 const TopicName = "${Object.keys(asyncapi.channels())[0]}"
 `;
 
-  return <File name="metadata_gen.go">{payloadContent}</File>;
+  return <File name="metadata_eventgen.go">{payloadContent}</File>;
 }

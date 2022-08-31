@@ -12,11 +12,7 @@ export const renderTextField: React.FC<Props> = ({ input, meta: { error, dirty, 
   return <TextField {...input} {...rest} error={hasError} helperText={hasError ? errorMessage : ''} placeholder={placeholder} />;
 };
 
-export const renderAutocomplete: React.FC<Props> = ({
-  input,
-  meta: { error, dirty, submitFailed, submitError },
-  placeholder,
-  options}: Props) => {
+export const renderAutocomplete: React.FC<Props> = ({ input, meta: { error, dirty, submitFailed, submitError }, placeholder, options }: Props) => {
   const errorMessage = error || submitError;
   const hasError = error && (dirty || submitFailed);
   const { name, onChange, value, ...restInput } = input;

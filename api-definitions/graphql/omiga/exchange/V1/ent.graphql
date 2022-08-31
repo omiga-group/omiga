@@ -174,6 +174,38 @@ input ExchangeWhereInput {
   tradeVolume24hBtcNormalizedLTE: Float
   tradeVolume24hBtcNormalizedIsNil: Boolean
   tradeVolume24hBtcNormalizedNotNil: Boolean
+  """maker_fee field predicates"""
+  makerFee: Float
+  makerFeeNEQ: Float
+  makerFeeIn: [Float!]
+  makerFeeNotIn: [Float!]
+  makerFeeGT: Float
+  makerFeeGTE: Float
+  makerFeeLT: Float
+  makerFeeLTE: Float
+  makerFeeIsNil: Boolean
+  makerFeeNotNil: Boolean
+  """taker_fee field predicates"""
+  takerFee: Float
+  takerFeeNEQ: Float
+  takerFeeIn: [Float!]
+  takerFeeNotIn: [Float!]
+  takerFeeGT: Float
+  takerFeeGTE: Float
+  takerFeeLT: Float
+  takerFeeLTE: Float
+  takerFeeIsNil: Boolean
+  takerFeeNotNil: Boolean
+  """spread_fee field predicates"""
+  spreadFee: Boolean
+  spreadFeeNEQ: Boolean
+  spreadFeeIsNil: Boolean
+  spreadFeeNotNil: Boolean
+  """support_api field predicates"""
+  supportAPI: Boolean
+  supportAPINEQ: Boolean
+  supportAPIIsNil: Boolean
+  supportAPINotNil: Boolean
   """ticker edge predicates"""
   hasTicker: Boolean
   hasTickerWith: [TickerWhereInput!]

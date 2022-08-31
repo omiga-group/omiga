@@ -65,24 +65,20 @@ export default React.memo<SubmitOrderProps>(() => {
               name: 'XXX',
             },
             price: {
-              amount: parseFloat(values.amount),
+              quantity: {
+                amount: parseFloat(values.amount),
+                scale: 0,
+              },
               currency: {
                 code: '11',
                 digital: true,
                 maxPrecision: 10,
                 name: 'XXX',
               },
-              scale: 10,
             },
             quantity: {
               amount: parseFloat(values.amount),
-              currency: {
-                code: '11',
-                digital: true,
-                maxPrecision: 10,
-                name: 'XXX',
-              },
-              scale: 10,
+              scale: 0,
             },
             side: 'BID',
             type: 'INSTANT',

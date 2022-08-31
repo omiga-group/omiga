@@ -571,6 +571,46 @@ var (
 			}
 		},
 	}
+	// ExchangeOrderFieldMakerFee orders Exchange by maker_fee.
+	ExchangeOrderFieldMakerFee = &ExchangeOrderField{
+		field: exchange.FieldMakerFee,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.MakerFee,
+			}
+		},
+	}
+	// ExchangeOrderFieldTakerFee orders Exchange by taker_fee.
+	ExchangeOrderFieldTakerFee = &ExchangeOrderField{
+		field: exchange.FieldTakerFee,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.TakerFee,
+			}
+		},
+	}
+	// ExchangeOrderFieldSpreadFee orders Exchange by spread_fee.
+	ExchangeOrderFieldSpreadFee = &ExchangeOrderField{
+		field: exchange.FieldSpreadFee,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.SpreadFee,
+			}
+		},
+	}
+	// ExchangeOrderFieldSupportAPI orders Exchange by support_api.
+	ExchangeOrderFieldSupportAPI = &ExchangeOrderField{
+		field: exchange.FieldSupportAPI,
+		toCursor: func(e *Exchange) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.SupportAPI,
+			}
+		},
+	}
 )
 
 // String implement fmt.Stringer interface.
@@ -603,6 +643,14 @@ func (f ExchangeOrderField) String() string {
 		str = "tradeVolume24hBtc"
 	case exchange.FieldTradeVolume24hBtcNormalized:
 		str = "tradeVolume24hBtcNormalized"
+	case exchange.FieldMakerFee:
+		str = "makerFee"
+	case exchange.FieldTakerFee:
+		str = "takerFee"
+	case exchange.FieldSpreadFee:
+		str = "spreadFee"
+	case exchange.FieldSupportAPI:
+		str = "supportAPI"
 	}
 	return str
 }
@@ -645,6 +693,14 @@ func (f *ExchangeOrderField) UnmarshalGQL(v interface{}) error {
 		*f = *ExchangeOrderFieldTradeVolume24hBtc
 	case "tradeVolume24hBtcNormalized":
 		*f = *ExchangeOrderFieldTradeVolume24hBtcNormalized
+	case "makerFee":
+		*f = *ExchangeOrderFieldMakerFee
+	case "takerFee":
+		*f = *ExchangeOrderFieldTakerFee
+	case "spreadFee":
+		*f = *ExchangeOrderFieldSpreadFee
+	case "supportAPI":
+		*f = *ExchangeOrderFieldSupportAPI
 	default:
 		return fmt.Errorf("%s is not a valid ExchangeOrderField", str)
 	}

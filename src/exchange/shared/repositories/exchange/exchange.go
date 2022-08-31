@@ -35,6 +35,14 @@ const (
 	FieldTradeVolume24hBtc = "trade_volume_24h_btc"
 	// FieldTradeVolume24hBtcNormalized holds the string denoting the trade_volume_24h_btc_normalized field in the database.
 	FieldTradeVolume24hBtcNormalized = "trade_volume_24h_btc_normalized"
+	// FieldMakerFee holds the string denoting the maker_fee field in the database.
+	FieldMakerFee = "maker_fee"
+	// FieldTakerFee holds the string denoting the taker_fee field in the database.
+	FieldTakerFee = "taker_fee"
+	// FieldSpreadFee holds the string denoting the spread_fee field in the database.
+	FieldSpreadFee = "spread_fee"
+	// FieldSupportAPI holds the string denoting the support_api field in the database.
+	FieldSupportAPI = "support_api"
 	// EdgeTicker holds the string denoting the ticker edge name in mutations.
 	EdgeTicker = "ticker"
 	// Table holds the table name of the exchange in the database.
@@ -65,6 +73,10 @@ var Columns = []string{
 	FieldTrustScoreRank,
 	FieldTradeVolume24hBtc,
 	FieldTradeVolume24hBtcNormalized,
+	FieldMakerFee,
+	FieldTakerFee,
+	FieldSpreadFee,
+	FieldSupportAPI,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

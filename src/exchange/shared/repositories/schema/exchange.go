@@ -31,6 +31,10 @@ func (Exchange) Fields() []ent.Field {
 		field.Int("trust_score_rank").Optional().Annotations(entgql.OrderField("trustScoreRank")),
 		field.Float("trade_volume_24h_btc").Optional().Annotations(entgql.OrderField("tradeVolume24hBtc")),
 		field.Float("trade_volume_24h_btc_normalized").Optional().Annotations(entgql.OrderField("tradeVolume24hBtcNormalized")),
+		field.Float("maker_fee").Optional().Annotations(entgql.OrderField("makerFee")),
+		field.Float("taker_fee").Optional().Annotations(entgql.OrderField("takerFee")),
+		field.Bool("spread_fee").Optional().Annotations(entgql.OrderField("spreadFee")),
+		field.Bool("support_api").Optional().Annotations(entgql.OrderField("supportAPI")),
 	}
 }
 
@@ -59,5 +63,9 @@ func (Exchange) Indexes() []ent.Index {
 		index.Fields("trust_score_rank"),
 		index.Fields("trade_volume_24h_btc"),
 		index.Fields("trade_volume_24h_btc_normalized"),
+		index.Fields("maker_fee"),
+		index.Fields("taker_fee"),
+		index.Fields("spread_fee"),
+		index.Fields("support_api"),
 	}
 }

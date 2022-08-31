@@ -4,12 +4,13 @@ import (
 	"context"
 	"time"
 
+	"github.com/life4/genesis/maps"
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
-	"github.com/omiga-group/omiga/src/exchange/shared/models"
+	"github.com/omiga-group/omiga/src/exchange/coingeko/mappers"
+	"github.com/omiga-group/omiga/src/exchange/coingeko/models"
+	coingekorepositories "github.com/omiga-group/omiga/src/exchange/coingeko/repositories"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 	coingekov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingeko/v3"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	timeex "github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -20,11 +21,13 @@ type CoingekoSubscriber interface {
 }
 
 type coingekoSubscriber struct {
-	ctx            context.Context
-	logger         *zap.SugaredLogger
-	coingekoConfig configuration.CoingekoConfig
-	entgoClient    repositories.EntgoClient
-	timeHelper     timeex.TimeHelper
+	ctx                context.Context
+	logger             *zap.SugaredLogger
+	coingekoConfig     configuration.CoingekoConfig
+	exchanges          map[string]configuration.Exchange
+	entgoClient        repositories.EntgoClient
+	timeHelper         timeex.TimeHelper
+	exchangeRepository coingekorepositories.ExchangeRepository
 }
 
 func NewCoingekoSubscriber(
@@ -32,14 +35,18 @@ func NewCoingekoSubscriber(
 	logger *zap.SugaredLogger,
 	cronService cron.CronService,
 	coingekoConfig configuration.CoingekoConfig,
+	exchanges map[string]configuration.Exchange,
 	entgoClient repositories.EntgoClient,
-	timeHelper timeex.TimeHelper) (CoingekoSubscriber, error) {
+	timeHelper timeex.TimeHelper,
+	exchangeRepository coingekorepositories.ExchangeRepository) (CoingekoSubscriber, error) {
 	instance := &coingekoSubscriber{
-		ctx:            ctx,
-		logger:         logger,
-		coingekoConfig: coingekoConfig,
-		entgoClient:    entgoClient,
-		timeHelper:     timeHelper,
+		ctx:                ctx,
+		logger:             logger,
+		coingekoConfig:     coingekoConfig,
+		exchanges:          exchanges,
+		entgoClient:        entgoClient,
+		timeHelper:         timeHelper,
+		exchangeRepository: exchangeRepository,
 	}
 
 	if _, err := cronService.GetCron().AddJob("0/1 * * * * *", instance); err != nil {
@@ -50,32 +57,68 @@ func NewCoingekoSubscriber(
 }
 
 func (cs *coingekoSubscriber) Run() {
+	exchangesWithManualFeesOnlyMap := maps.Map(cs.exchanges, func(id string, exchange configuration.Exchange) (string, models.Exchange) {
+		return id, mappers.FromConfigurationExchangeToExchange(exchange)
+	})
+	exchangesWithManualFeesOnly := maps.Values(exchangesWithManualFeesOnlyMap)
+
+	if err := cs.exchangeRepository.CreateExchanges(cs.ctx, exchangesWithManualFeesOnly); err != nil {
+		cs.logger.Errorf("Failed to create exchanges. Error: %v", err)
+
+		return
+	}
+
 	coingekoClient, err := coingekov3.NewClientWithResponses(cs.coingekoConfig.BaseUrl)
 	if err != nil {
-		cs.logger.Errorf(
-			"Failed to create coingeko client. Error: %v",
-			err)
+		cs.logger.Errorf("Failed to create coingeko client. Error: %v", err)
+		return
 	}
 
-	exchangesListResponse, err := coingekoClient.GetExchangesListWithResponse(cs.ctx)
-	if err != nil {
-		cs.logger.Errorf(
-			"Failed to get exchange list. Error: %v",
-			err)
+	perPage := 250
+	exchanges := make([]coingekov3.Exchange, 0)
+
+	for page := 1; ; page++ {
+		exchangesWithResponse, err := coingekoClient.GetExchangesWithResponse(cs.ctx, &coingekov3.GetExchangesParams{
+			PerPage: &perPage,
+			Page:    &page,
+		})
+		if err != nil {
+			cs.logger.Errorf("Failed to get exchanges list. Error: %v", err)
+
+			return
+		}
+
+		if exchangesWithResponse.HTTPResponse.StatusCode != 200 {
+			cs.logger.Errorf(
+				"Failed to get exchanges list. Return status code is %d",
+				exchangesWithResponse.HTTPResponse.StatusCode)
+
+			return
+		}
+
+		if exchangesWithResponse.JSON200 == nil || len(*exchangesWithResponse.JSON200) == 0 {
+			break
+		}
+
+		exchanges = append(exchanges, *exchangesWithResponse.JSON200...)
+	}
+
+	if err := cs.exchangeRepository.CreateExchanges(
+		cs.ctx,
+		slices.Map(exchanges, func(exchange coingekov3.Exchange) models.Exchange {
+			if extraDetails, ok := cs.exchanges[exchange.Id]; ok {
+				return mappers.FromCoingekoExchangeToExchange(exchange, &extraDetails)
+			}
+
+			return mappers.FromCoingekoExchangeToExchange(exchange, nil)
+		})); err != nil {
+		cs.logger.Errorf("Failed to create exchanges. Error: %v", err)
 
 		return
 	}
 
-	if exchangesListResponse.HTTPResponse.StatusCode != 200 {
-		cs.logger.Errorf(
-			"Failed to get exchange list. Return status code is %d",
-			exchangesListResponse.HTTPResponse.StatusCode)
-
-		return
-	}
-
-	for _, exchangeIdName := range *exchangesListResponse.JSON200 {
-		exchangeId := exchangeIdName.Id
+	for _, exchange := range exchanges {
+		exchangeId := exchange.Id
 
 		// This is to avoid coingeko rate limiter blocking us from querying exchanges details
 		cs.timeHelper.SleepOrWaitForContextGetCancelled(cs.ctx, 2*time.Second)
@@ -84,7 +127,7 @@ func (cs *coingekoSubscriber) Run() {
 			break
 		}
 
-		exchangeIdResponse, err := coingekoClient.GetExchangesIdWithResponse(
+		exchangeIdResponse, err := coingekoClient.GetExchangeWithResponse(
 			cs.ctx,
 			exchangeId)
 		if err != nil {
@@ -101,139 +144,27 @@ func (cs *coingekoSubscriber) Run() {
 			continue
 		}
 
-		exchangeDetails := *exchangeIdResponse.JSON200
+		var mappedExchange models.Exchange
 
-		links := make(map[string]string)
-		links["website"] = exchangeDetails.Url
-		links["facebook"] = exchangeDetails.FacebookUrl
-		links["reddit"] = exchangeDetails.RedditUrl
-		links["twitter"] = exchangeDetails.TwitterHandle
-		links["slack"] = exchangeDetails.SlackUrl
-		links["telegram"] = exchangeDetails.TelegramUrl
-		links["other1"] = exchangeDetails.OtherUrl1
-		links["other2"] = exchangeDetails.OtherUrl2
-
-		client := cs.entgoClient.GetClient()
-
-		if err = client.Exchange.
-			Create().
-			SetExchangeID(exchangeId).
-			SetName(exchangeDetails.Name).
-			SetYearEstablished(exchangeDetails.YearEstablished).
-			SetCountry(exchangeDetails.Country).
-			SetImage(exchangeDetails.Image).
-			SetLinks(links).
-			SetHasTradingIncentive(exchangeDetails.HasTradingIncentive).
-			SetCentralized(exchangeDetails.Centralized).
-			SetPublicNotice(exchangeDetails.PublicNotice).
-			SetAlertNotice(exchangeDetails.AlertNotice).
-			SetTrustScore(exchangeDetails.TrustScore).
-			SetTrustScoreRank(exchangeDetails.TrustScoreRank).
-			SetTradeVolume24hBtc(exchangeDetails.TradeVolume24hBtc).
-			SetTradeVolume24hBtcNormalized(exchangeDetails.TradeVolume24hBtcNormalized).
-			OnConflictColumns(exchange.FieldExchangeID).
-			UpdateNewValues().
-			Exec(cs.ctx); err != nil {
-			cs.logger.Errorf("Failed to save exchange details. Error: %v", err)
-
-			continue
+		if extraDetails, ok := cs.exchanges[mappedExchange.ExchangeId]; ok {
+			mappedExchange = mappers.FromCoingekoExchangeDetailsToExchange(
+				exchangeId,
+				*exchangeIdResponse.JSON200,
+				&extraDetails)
+		} else {
+			mappedExchange = mappers.FromCoingekoExchangeDetailsToExchange(
+				exchangeId,
+				*exchangeIdResponse.JSON200,
+				nil)
 		}
 
-		savedExchange, err := client.Exchange.
-			Query().
-			Where(exchange.ExchangeID(exchangeId)).
-			First(cs.ctx)
-		if err != nil {
-			cs.logger.Errorf("Failed to fetch exchange with exchange Id: %s. Error: %v", exchangeId, err)
+		if err := cs.exchangeRepository.CreateExchange(
+			cs.ctx,
+			mappedExchange); err != nil {
 
-			continue
-		}
+			cs.logger.Errorf("Failed to create exchange. Error: %v", err)
 
-		tickers, err := client.Ticker.
-			Query().
-			Where(ticker.HasExchangeWith(exchange.IDEQ(savedExchange.ID))).
-			All(cs.ctx)
-		if err != nil {
-			cs.logger.Errorf("Failed to fetch tickers for exchange Id: %s. Error: %v", exchangeId, err)
-
-			continue
-		}
-
-		if exchangeDetails.Tickers != nil {
-			tickersToCreate := slices.Map(
-				*exchangeDetails.Tickers,
-				func(ticker coingekov3.Ticker) *repositories.TickerCreate {
-					return client.Ticker.
-						Create().
-						SetExchangeID(savedExchange.ID).
-						SetBase(ticker.Base).
-						SetTarget(ticker.Target).
-						SetMarket(models.Market{
-							HasTradingIncentive: *ticker.Market.HasTradingIncentive,
-							Identifier:          *ticker.Market.Identifier,
-							Name:                *ticker.Market.Name,
-						}).
-						SetLast(ticker.Last).
-						SetVolume(ticker.Volume).
-						SetConvertedLast(models.ConvertedDetails{
-							Btc: *ticker.ConvertedLast.Btc,
-							Eth: *ticker.ConvertedLast.Eth,
-							Usd: *ticker.ConvertedLast.Usd,
-						}).
-						SetConvertedVolume(models.ConvertedDetails{
-							Btc: *ticker.ConvertedVolume.Btc,
-							Eth: *ticker.ConvertedVolume.Eth,
-							Usd: *ticker.ConvertedVolume.Usd,
-						}).
-						SetTrustScore(ticker.TrustScore).
-						SetBidAskSpreadPercentage(ticker.BidAskSpreadPercentage).
-						SetTimestamp(ticker.Timestamp).
-						SetLastTradedAt(ticker.LastTradedAt).
-						SetLastFetchAt(ticker.LastFetchAt).
-						SetIsAnomaly(ticker.IsAnomaly).
-						SetIsStale(ticker.IsStale).
-						SetTradeURL(ticker.TradeUrl).
-						SetNillableTokenInfoURL(ticker.TokenInfoUrl).
-						SetCoinID(ticker.CoinId).
-						SetTargetCoinID(ticker.TargetCoinId)
-				})
-
-			if err = client.Ticker.
-				CreateBulk(tickersToCreate...).
-				OnConflictColumns(ticker.FieldBase, ticker.FieldTarget, ticker.ExchangeColumn).
-				UpdateNewValues().
-				Exec(cs.ctx); err != nil {
-				cs.logger.Errorf("Failed to save tickers for exchange Id: %s. Error: %v", exchangeId, err)
-
-				continue
-			}
-		}
-
-		tickersToDelete := slices.Filter(
-			tickers,
-			func(existingTicker *repositories.Ticker) bool {
-				if exchangeDetails.Tickers == nil {
-					return true
-				}
-
-				return !slices.Any(*exchangeDetails.Tickers, func(ticker coingekov3.Ticker) bool {
-					return ticker.Base == existingTicker.Base && ticker.Target == existingTicker.Target
-				})
-			})
-
-		tickerIdsToDelete := slices.Map(
-			tickersToDelete,
-			func(ticker *repositories.Ticker) int {
-				return ticker.ID
-			})
-
-		if _, err = client.Ticker.
-			Delete().
-			Where(ticker.IDIn(tickerIdsToDelete...)).
-			Exec(cs.ctx); err != nil {
-			cs.logger.Errorf("Failed to delete old tickers for exchange Id: %s. Error: %v", exchangeId, err)
-
-			continue
+			return
 		}
 	}
 }
