@@ -53,3 +53,51 @@ exchanges:
     takerFee: 0.2
     spreadFee: false
     supportAPI: false
+
+  bitmex_spot:
+    makerFee: 0.1
+    takerFee: 0.075
+    spreadFee: false
+    supportAPI: false
+
+  bitpanda:
+    makerFee: 0
+    takerFee: 0
+    spreadFee: false
+    supportAPI: false
+
+  bittrex:
+    makerFee: 0.5
+    takerFee: 0.5
+    spreadFee: false
+    supportAPI: false
+
+  bkex:
+    makerFee: 0.2
+    takerFee: 0.15
+    spreadFee: false
+    supportAPI: false
+
+  blockchain_com:
+    makerFee: 0.002
+    takerFee: 0.004
+    spreadFee: false
+    supportAPI: false
+
+  btcmarkets:
+    makerFee: 0.05
+    takerFee: 0.2
+    spreadFee: false
+    supportAPI: false
+
+  bybit_spot:
+    makerFee: -0.03
+    takerFee: 0.00075
+    spreadFee: false
+    supportAPI: false
+
+  cex:
+    makerFee: 0.0016
+    takerFee: 0.0025
+    spreadFee: false
+    supportAPI: false
