@@ -180,7 +180,6 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 //			SetOrderDetails(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (oc *OrderCreate) OnConflict(opts ...sql.ConflictOption) *OrderUpsertOne {
 	oc.conflict = opts
 	return &OrderUpsertOne{
@@ -194,7 +193,6 @@ func (oc *OrderCreate) OnConflict(opts ...sql.ConflictOption) *OrderUpsertOne {
 //	client.Order.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (oc *OrderCreate) OnConflictColumns(columns ...string) *OrderUpsertOne {
 	oc.conflict = append(oc.conflict, sql.ConflictColumns(columns...))
 	return &OrderUpsertOne{
@@ -247,7 +245,6 @@ func (u *OrderUpsert) UpdatePreferredExchanges() *OrderUpsert {
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
-//
 func (u *OrderUpsertOne) UpdateNewValues() *OrderUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
@@ -256,10 +253,9 @@ func (u *OrderUpsertOne) UpdateNewValues() *OrderUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.Order.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.Order.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *OrderUpsertOne) Ignore() *OrderUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -442,7 +438,6 @@ func (ocb *OrderCreateBulk) ExecX(ctx context.Context) {
 //			SetOrderDetails(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (ocb *OrderCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderUpsertBulk {
 	ocb.conflict = opts
 	return &OrderUpsertBulk{
@@ -456,7 +451,6 @@ func (ocb *OrderCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderUpsertB
 //	client.Order.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (ocb *OrderCreateBulk) OnConflictColumns(columns ...string) *OrderUpsertBulk {
 	ocb.conflict = append(ocb.conflict, sql.ConflictColumns(columns...))
 	return &OrderUpsertBulk{
@@ -478,7 +472,6 @@ type OrderUpsertBulk struct {
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
-//
 func (u *OrderUpsertBulk) UpdateNewValues() *OrderUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
@@ -490,7 +483,6 @@ func (u *OrderUpsertBulk) UpdateNewValues() *OrderUpsertBulk {
 //	client.Order.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *OrderUpsertBulk) Ignore() *OrderUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

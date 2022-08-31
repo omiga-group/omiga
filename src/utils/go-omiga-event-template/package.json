@@ -1,7 +1,7 @@
 {
-  "name": "go-omiga-template",
+  "name": "go-omiga-event-template",
   "version": "1.0.0",
-  "description": "Go Generator to generate Golang code for Omiga project based on AsyncAPI contract",
+  "description": "Go Generator to generate Golang code for Omiga events",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

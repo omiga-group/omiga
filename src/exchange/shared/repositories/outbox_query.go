@@ -265,7 +265,6 @@ func (oq *OutboxQuery) Clone() *OutboxQuery {
 //		GroupBy(outbox.FieldTimestamp).
 //		Aggregate(repositories.Count()).
 //		Scan(ctx, &v)
-//
 func (oq *OutboxQuery) GroupBy(field string, fields ...string) *OutboxGroupBy {
 	grbuild := &OutboxGroupBy{config: oq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -292,7 +291,6 @@ func (oq *OutboxQuery) GroupBy(field string, fields ...string) *OutboxGroupBy {
 //	client.Outbox.Query().
 //		Select(outbox.FieldTimestamp).
 //		Scan(ctx, &v)
-//
 func (oq *OutboxQuery) Select(fields ...string) *OutboxSelect {
 	oq.fields = append(oq.fields, fields...)
 	selbuild := &OutboxSelect{OutboxQuery: oq}
