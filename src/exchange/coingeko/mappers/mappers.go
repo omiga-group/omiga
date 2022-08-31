@@ -2,16 +2,28 @@ package mappers
 
 import (
 	"github.com/life4/genesis/slices"
+	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/models"
 	exchangemodels "github.com/omiga-group/omiga/src/exchange/shared/models"
 	coingekov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingeko/v3"
 )
 
-func FromCoingekoExchangeToExchange(exchange coingekov3.Exchange) models.Exchange {
+func FromConfigurationExchangeToExchange(exchange configuration.Exchange) models.Exchange {
+	return models.Exchange{
+		MakerFee:   &exchange.MakerFee,
+		TakerFee:   &exchange.TakerFee,
+		SpreadFee:  &exchange.SpreadFee,
+		SupportAPI: &exchange.SupportAPI,
+	}
+}
+
+func FromCoingekoExchangeToExchange(
+	exchange coingekov3.Exchange,
+	configurationExchange *configuration.Exchange) models.Exchange {
 	links := make(map[string]string)
 	links["website"] = exchange.Url
 
-	return models.Exchange{
+	mappedExchange := models.Exchange{
 		ExchangeId:          exchange.Id,
 		Name:                exchange.Name,
 		YearEstablished:     exchange.YearEstablished,
@@ -22,9 +34,21 @@ func FromCoingekoExchangeToExchange(exchange coingekov3.Exchange) models.Exchang
 		TrustScore:          exchange.TrustScore,
 		TrustScoreRank:      exchange.TrustScoreRank,
 	}
+
+	if configurationExchange != nil {
+		mappedExchange.MakerFee = &configurationExchange.MakerFee
+		mappedExchange.TakerFee = &configurationExchange.TakerFee
+		mappedExchange.SpreadFee = &configurationExchange.SpreadFee
+		mappedExchange.SupportAPI = &configurationExchange.SupportAPI
+	}
+
+	return mappedExchange
 }
 
-func FromCoingekoExchangeDetailsToExchange(exchangeId string, exchangeDetails coingekov3.ExchangeDetails) models.Exchange {
+func FromCoingekoExchangeDetailsToExchange(
+	exchangeId string,
+	exchangeDetails coingekov3.ExchangeDetails,
+	configurationExchange *configuration.Exchange) models.Exchange {
 	links := make(map[string]string)
 	links["website"] = exchangeDetails.Url
 	links["facebook"] = exchangeDetails.FacebookUrl
@@ -56,6 +80,13 @@ func FromCoingekoExchangeDetailsToExchange(exchangeId string, exchangeDetails co
 		mappedExchange.Tickers = slices.Map(*exchangeDetails.Tickers, func(ticker coingekov3.Ticker) models.Ticker {
 			return fromCoingekoTickerToTicker(ticker)
 		})
+	}
+
+	if configurationExchange != nil {
+		mappedExchange.MakerFee = &configurationExchange.MakerFee
+		mappedExchange.TakerFee = &configurationExchange.TakerFee
+		mappedExchange.SpreadFee = &configurationExchange.SpreadFee
+		mappedExchange.SupportAPI = &configurationExchange.SupportAPI
 	}
 
 	return mappedExchange

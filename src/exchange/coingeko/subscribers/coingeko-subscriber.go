@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/life4/genesis/maps"
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/mappers"
@@ -56,11 +57,26 @@ func NewCoingekoSubscriber(
 }
 
 func (cs *coingekoSubscriber) Run() {
+	exchangesWithManualFeesOnlyMap := maps.Map(cs.exchanges, func(id string, exchange configuration.Exchange) (string, models.Exchange) {
+		return id, mappers.FromConfigurationExchangeToExchange(exchange)
+	})
+	exchangesWithManualFeesOnly := maps.Values(exchangesWithManualFeesOnlyMap)
+
+	if err := cs.exchangeRepository.CreateExchanges(cs.ctx, exchangesWithManualFeesOnly); err != nil {
+		cs.logger.Errorf(
+			"Failed to create exchanges. Error: %v",
+			err)
+
+		return
+	}
+
 	coingekoClient, err := coingekov3.NewClientWithResponses(cs.coingekoConfig.BaseUrl)
 	if err != nil {
 		cs.logger.Errorf(
 			"Failed to create coingeko client. Error: %v",
 			err)
+
+		return
 	}
 
 	perPage := 250
@@ -97,17 +113,16 @@ func (cs *coingekoSubscriber) Run() {
 	if err := cs.exchangeRepository.CreateExchanges(
 		cs.ctx,
 		slices.Map(exchanges, func(exchange coingekov3.Exchange) models.Exchange {
-			mappedExchange := mappers.FromCoingekoExchangeToExchange(exchange)
-
-			if extraDetails, ok := cs.exchanges[mappedExchange.ExchangeId]; ok {
-				mappedExchange.MakerFee = &extraDetails.MakerFee
-				mappedExchange.TakerFee = &extraDetails.TakerFee
-				mappedExchange.SpreadFee = &extraDetails.SpreadFee
-				mappedExchange.SupportAPI = &extraDetails.SupportAPI
+			if extraDetails, ok := cs.exchanges[exchange.Id]; ok {
+				return mappers.FromCoingekoExchangeToExchange(exchange, &extraDetails)
 			}
 
-			return mappedExchange
+			return mappers.FromCoingekoExchangeToExchange(exchange, nil)
 		})); err != nil {
+		cs.logger.Errorf(
+			"Failed to create exchanges. Error: %v",
+			err)
+
 		return
 	}
 
@@ -137,20 +152,29 @@ func (cs *coingekoSubscriber) Run() {
 
 			continue
 		}
-		mappedExchange := mappers.FromCoingekoExchangeDetailsToExchange(
-			exchangeId,
-			*exchangeIdResponse.JSON200)
+
+		var mappedExchange models.Exchange
 
 		if extraDetails, ok := cs.exchanges[mappedExchange.ExchangeId]; ok {
-			mappedExchange.MakerFee = &extraDetails.MakerFee
-			mappedExchange.TakerFee = &extraDetails.TakerFee
-			mappedExchange.SpreadFee = &extraDetails.SpreadFee
-			mappedExchange.SupportAPI = &extraDetails.SupportAPI
+			mappedExchange = mappers.FromCoingekoExchangeDetailsToExchange(
+				exchangeId,
+				*exchangeIdResponse.JSON200,
+				&extraDetails)
+		} else {
+			mappedExchange = mappers.FromCoingekoExchangeDetailsToExchange(
+				exchangeId,
+				*exchangeIdResponse.JSON200,
+				nil)
 		}
 
 		if err := cs.exchangeRepository.CreateExchange(
 			cs.ctx,
 			mappedExchange); err != nil {
+
+			cs.logger.Errorf(
+				"Failed to create exchange. Error: %v",
+				err)
+
 			return
 		}
 	}
