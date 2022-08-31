@@ -44,4 +44,8 @@ type Exchange struct {
 	TradeVolume24hBtc           float64
 	TradeVolume24hBtcNormalized float64
 	Tickers                     []Ticker
+	MakerFee                    *float64
+	TakerFee                    *float64
+	SpreadFee                   *bool
+	SupportAPI                  *bool
 }

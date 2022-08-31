@@ -55,6 +55,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				config.Coingeko,
+				config.Exchanges,
 				config.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}

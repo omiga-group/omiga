@@ -23,6 +23,7 @@ type coingekoSubscriber struct {
 	ctx                context.Context
 	logger             *zap.SugaredLogger
 	coingekoConfig     configuration.CoingekoConfig
+	exchanges          map[string]configuration.Exchange
 	entgoClient        repositories.EntgoClient
 	timeHelper         timeex.TimeHelper
 	exchangeRepository coingekorepositories.ExchangeRepository
@@ -33,6 +34,7 @@ func NewCoingekoSubscriber(
 	logger *zap.SugaredLogger,
 	cronService cron.CronService,
 	coingekoConfig configuration.CoingekoConfig,
+	exchanges map[string]configuration.Exchange,
 	entgoClient repositories.EntgoClient,
 	timeHelper timeex.TimeHelper,
 	exchangeRepository coingekorepositories.ExchangeRepository) (CoingekoSubscriber, error) {
@@ -40,6 +42,7 @@ func NewCoingekoSubscriber(
 		ctx:                ctx,
 		logger:             logger,
 		coingekoConfig:     coingekoConfig,
+		exchanges:          exchanges,
 		entgoClient:        entgoClient,
 		timeHelper:         timeHelper,
 		exchangeRepository: exchangeRepository,
@@ -94,7 +97,16 @@ func (cs *coingekoSubscriber) Run() {
 	if err := cs.exchangeRepository.CreateExchanges(
 		cs.ctx,
 		slices.Map(exchanges, func(exchange coingekov3.Exchange) models.Exchange {
-			return mappers.FromCoingekoExchangeToExchange(exchange)
+			mappedExchange := mappers.FromCoingekoExchangeToExchange(exchange)
+
+			if extraDetails, ok := cs.exchanges[mappedExchange.ExchangeId]; ok {
+				mappedExchange.MakerFee = &extraDetails.MakerFee
+				mappedExchange.TakerFee = &extraDetails.TakerFee
+				mappedExchange.SpreadFee = &extraDetails.SpreadFee
+				mappedExchange.SupportAPI = &extraDetails.SupportAPI
+			}
+
+			return mappedExchange
 		})); err != nil {
 		return
 	}
@@ -125,12 +137,20 @@ func (cs *coingekoSubscriber) Run() {
 
 			continue
 		}
+		mappedExchange := mappers.FromCoingekoExchangeDetailsToExchange(
+			exchangeId,
+			*exchangeIdResponse.JSON200)
+
+		if extraDetails, ok := cs.exchanges[mappedExchange.ExchangeId]; ok {
+			mappedExchange.MakerFee = &extraDetails.MakerFee
+			mappedExchange.TakerFee = &extraDetails.TakerFee
+			mappedExchange.SpreadFee = &extraDetails.SpreadFee
+			mappedExchange.SupportAPI = &extraDetails.SupportAPI
+		}
 
 		if err := cs.exchangeRepository.CreateExchange(
 			cs.ctx,
-			mappers.FromCoingekoExchangeDetailsToExchange(
-				exchangeId,
-				*exchangeIdResponse.JSON200)); err != nil {
+			mappedExchange); err != nil {
 			return
 		}
 	}

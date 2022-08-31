@@ -4,3 +4,52 @@ coingeko:
 postgres:
   connectionString: "postgres://postgres:12345678@localhost/exchange"
   maxOpenConns: 1
+
+exchanges:
+  AAX:
+    makerFee: 0.8
+    takerFee: 0.1
+    spreadFee: false
+    supportAPI: true
+
+  bibox:
+    makerFee: 0.00075
+    takerFee: 0.0015
+    spreadFee: false
+    supportAPI: true
+
+  bigone:
+    makerFee: 0.2
+    takerFee: 0.2
+    spreadFee: false
+    supportAPI: true
+
+  binance:
+    makerFee: 0.1
+    takerFee: 0.1
+    spreadFee: false
+    supportAPI: true
+
+  binance_us:
+    makerFee: 0.1
+    takerFee: 0.1
+    spreadFee: false
+    supportAPI: true
+
+  bitfinex:
+    makerFee: 0.1
+    takerFee: 0.2
+    spreadFee: false
+    supportAPI: true
+
+  bithumb:
+    makerFee: 0.25
+    takerFee: 0.25
+    spreadFee: false
+    supportAPI: false
+
+  bitmart:
+    makerFee: 0.2
+    takerFee: 0.2
+    spreadFee: false
+    supportAPI: false

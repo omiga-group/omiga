@@ -71,6 +71,10 @@ func (er *exchangeRepository) CreateExchange(
 		SetTrustScoreRank(exchange.TrustScoreRank).
 		SetTradeVolume24hBtc(exchange.TradeVolume24hBtc).
 		SetTradeVolume24hBtcNormalized(exchange.TradeVolume24hBtcNormalized).
+		SetNillableMakerFee(exchange.MakerFee).
+		SetNillableTakerFee(exchange.TakerFee).
+		SetNillableSpreadFee(exchange.SpreadFee).
+		SetNillableSupportAPI(exchange.SupportAPI).
 		OnConflictColumns(exchangerepo.FieldExchangeID).
 		UpdateNewValues().
 		Exec(ctx)

@@ -43,6 +43,7 @@ func NewCoingekoSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	coingekoConfig configuration.CoingekoConfig,
+	exchanges map[string]configuration.Exchange,
 	postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,
