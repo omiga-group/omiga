@@ -13,8 +13,8 @@ exchanges:
     supportAPI: true
 
   bibox:
-    makerFee: 0.00075
-    takerFee: 0.0015
+    makerFee: 0.075
+    takerFee: 0.15
     spreadFee: false
     supportAPI: true
 
@@ -79,8 +79,8 @@ exchanges:
     supportAPI: false
 
   blockchain_com:
-    makerFee: 0.002
-    takerFee: 0.004
+    makerFee: 0.2
+    takerFee: 0.4
     spreadFee: false
     supportAPI: false
 
@@ -92,12 +92,18 @@ exchanges:
 
   bybit_spot:
     makerFee: -0.03
-    takerFee: 0.00075
+    takerFee: 0.075
     spreadFee: false
     supportAPI: false
 
   cex:
-    makerFee: 0.0016
-    takerFee: 0.0025
+    makerFee: 0.16
+    takerFee: 0.25
     spreadFee: false
     supportAPI: false
+    
+  gdax:
+    makerFee: 0.5
+    takerFee: 0.5
+    spreadFee: false
+    supportAPI: true
