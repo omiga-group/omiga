@@ -14,6 +14,9 @@ dep: ## Install dependencies
 .PHONY: generate
 generate: ## Generate code
 	@../api-definitions/asyncapi/scripts/generate-all.sh
+	@go install github.com/google/wire/cmd/wire@latest
+	@go install entgo.io/ent/cmd/ent@latest
+	@go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
 	@GOFLAGS=-mod=mod go generate ./...
 	# @./shared/scripts/generate.sh
 	# @./exchange/shared/scripts/generate.sh

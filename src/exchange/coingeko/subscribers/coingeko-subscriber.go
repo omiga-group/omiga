@@ -63,19 +63,14 @@ func (cs *coingekoSubscriber) Run() {
 	exchangesWithManualFeesOnly := maps.Values(exchangesWithManualFeesOnlyMap)
 
 	if err := cs.exchangeRepository.CreateExchanges(cs.ctx, exchangesWithManualFeesOnly); err != nil {
-		cs.logger.Errorf(
-			"Failed to create exchanges. Error: %v",
-			err)
+		cs.logger.Errorf("Failed to create exchanges. Error: %v", err)
 
 		return
 	}
 
 	coingekoClient, err := coingekov3.NewClientWithResponses(cs.coingekoConfig.BaseUrl)
 	if err != nil {
-		cs.logger.Errorf(
-			"Failed to create coingeko client. Error: %v",
-			err)
-
+		cs.logger.Errorf("Failed to create coingeko client. Error: %v", err)
 		return
 	}
 
@@ -88,9 +83,7 @@ func (cs *coingekoSubscriber) Run() {
 			Page:    &page,
 		})
 		if err != nil {
-			cs.logger.Errorf(
-				"Failed to get exchanges list. Error: %v",
-				err)
+			cs.logger.Errorf("Failed to get exchanges list. Error: %v", err)
 
 			return
 		}
@@ -119,9 +112,7 @@ func (cs *coingekoSubscriber) Run() {
 
 			return mappers.FromCoingekoExchangeToExchange(exchange, nil)
 		})); err != nil {
-		cs.logger.Errorf(
-			"Failed to create exchanges. Error: %v",
-			err)
+		cs.logger.Errorf("Failed to create exchanges. Error: %v", err)
 
 		return
 	}
@@ -171,9 +162,7 @@ func (cs *coingekoSubscriber) Run() {
 			cs.ctx,
 			mappedExchange); err != nil {
 
-			cs.logger.Errorf(
-				"Failed to create exchange. Error: %v",
-				err)
+			cs.logger.Errorf("Failed to create exchange. Error: %v", err)
 
 			return
 		}
