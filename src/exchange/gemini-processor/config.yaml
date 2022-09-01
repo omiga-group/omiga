@@ -1,0 +1,15 @@
+app:
+  source: "urn::omiga::gemini-processor"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "gemini-processor"
+  producerName: "gemini-processor"
+
+gemini:
+  apiUrl: https://api.sandbox.gemini.com/v1
+  websocketUrl: wss://api.sandbox.gemini.com
+  timeout: 10
+  orderBook:
+    markets:
+      - market: ETH-PERP
