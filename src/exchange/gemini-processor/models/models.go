@@ -49,4 +49,4 @@ type Market struct {
 	QuoteCurrency string `json:"quote_currency"`
 }
 
-type MarketsMap map[string]Market
+type MarketsMap map[MarketName]Market

@@ -21,7 +21,7 @@ type GeminiOrderBookSubscriber interface {
 
 type geminiOrderBookSubscriber struct {
 	logger             *zap.SugaredLogger
-	geminiConfig          configuration.GeminiConfig
+	geminiConfig       configuration.GeminiConfig
 	orderBookPublisher publishers.OrderBookPublisher
 	apiClient          client.ApiClient
 }
@@ -35,7 +35,7 @@ func NewGeminiOrderBookSubscriber(
 
 	instance := &geminiOrderBookSubscriber{
 		logger:             logger,
-		geminiConfig:          geminiConfig,
+		geminiConfig:       geminiConfig,
 		orderBookPublisher: orderBookPublisher,
 		apiClient:          apiClient,
 	}
@@ -81,7 +81,7 @@ func (fobs *geminiOrderBookSubscriber) connectAndSubscribe(ctx context.Context) 
 
 	channel := "orderbook"
 	for name := range mm {
-		req := &geminiRequest{Op: OperationTypeSubscribe, Channel: &channel, Market: name}
+		req := &geminiRequest{Op: OperationTypeSubscribe, Channel: &channel, Market: string(name)}
 		if err := connection.WriteJSON(req); err != nil {
 			fobs.logger.Errorf("Failed to send request to Gemini websocket. Error: %v", err)
 			return
@@ -103,7 +103,7 @@ func (fobs *geminiOrderBookSubscriber) connectAndSubscribe(ctx context.Context) 
 		}
 
 		if orderBook.Data != nil {
-			if market, ok := mm[orderBook.Market]; ok {
+			if market, ok := mm[models.MarketName(orderBook.Market)]; ok {
 				fobs.publish(ctx, &orderBook, market)
 			}
 		}

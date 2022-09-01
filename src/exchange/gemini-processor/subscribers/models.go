@@ -46,14 +46,14 @@ const (
 )
 
 type geminiOrderBook struct {
-	Channel string            `json:"channel"`
-	Market  string            `json:"market"`
-	Type    responseType      `json:"type"`
-	Data    *geminiOrderBookData `json:"data,omitempty"`
+	Channel string              `json:"channel"`
+	Market  string              `json:"market"`
+	Type    responseType        `json:"type"`
+	Data    *geminirderBookData `json:"data,omitempty"`
 }
 
 type geminirderBookData struct {
-	Time     geminiTime      `json:"time"`
+	Time     geminiTime   `json:"time"`
 	Checksum int          `json:"checksum"`
 	Bids     [][2]float64 `json:"bids"`
 	Asks     [][2]float64 `json:"asks"`

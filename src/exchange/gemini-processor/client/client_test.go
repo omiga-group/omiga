@@ -8,7 +8,7 @@ import (
 
 func TestGetMarkets(t *testing.T) {
 	cfg := configuration.GeminiConfig{
-		ApiUrl: "https://gemini.com/api",
+		ApiUrl: "https://api.sandbox.gemini.com/v1",
 	}
 	c := NewGeminiApiClient(cfg)
 	mm, err := c.GetMarkets()

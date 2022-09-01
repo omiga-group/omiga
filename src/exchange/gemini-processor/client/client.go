@@ -11,11 +11,6 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/gemini-processor/models"
 )
 
-type apiResult[T any] struct {
-	Success bool `json:"success"`
-	Result  T    `json:"result"`
-}
-
 func NewGeminiApiClient(cfg configuration.GeminiConfig) ApiClient {
 	httpClient := createDefaultHttpClient(cfg.Timeout)
 	return geminiApiClient{
@@ -30,7 +25,7 @@ type geminiApiClient struct {
 }
 
 func (gemini geminiApiClient) GetMarkets() (models.MarketsMap, error) {
-	marketNames, err := getMarketNames()
+	marketNames, err := gemini.getMarketNames()
 	if err != nil {
 		return nil, err
 	}
@@ -63,23 +58,25 @@ func (gemini geminiApiClient) getMarketNames() (models.MarketNames, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	return mns, nil
 }
 
-func (gemini geminiApiClient) getMarketDetails(name string) (models.Markets, error) {
-	resp, err := gemini.http.Get(gemini.baseUrl + "/symbols/details/" + name)
+func (gemini geminiApiClient) getMarketDetails(name models.MarketName) (models.Market, error) {
+	resp, err := gemini.http.Get(gemini.baseUrl + "/symbols/details/" + string(name))
 	if err != nil {
-		return nil, err
+		return models.Market{}, err
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return models.Market{}, err
 	}
 
 	var m models.Market
 	err = json.Unmarshal(body, &m)
 	if err != nil {
-		return nil, err
+		return models.Market{}, err
 	}
 
 	return m, nil
