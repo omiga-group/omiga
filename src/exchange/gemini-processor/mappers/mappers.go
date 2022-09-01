@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/life4/genesis/slices"
-	"github.com/omiga-group/omiga/src/exchange/ftx-processor/models"
+	"github.com/omiga-group/omiga/src/exchange/gemini-processor/models"
 	exchangeModels "github.com/omiga-group/omiga/src/exchange/shared/models"
 	"github.com/omiga-group/omiga/src/shared/enterprise/decimal"
 )

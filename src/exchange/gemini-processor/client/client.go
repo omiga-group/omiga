@@ -29,7 +29,7 @@ type geminiApiClient struct {
 	baseUrl string
 }
 
-func (ftx geminiApiClient) GetMarkets() (models.MarketsMap, error) {
+func (gemini geminiApiClient) GetMarkets() (models.MarketsMap, error) {
 	marketNames, err := getMarketNames()
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func (ftx geminiApiClient) GetMarkets() (models.MarketsMap, error) {
 
 	marketsMap := make(models.MarketsMap)
 	for _, name := range marketNames {
-		market, err := ftx.getMarketDetails(name)
+		market, err := gemini.getMarketDetails(name)
 		if err != nil {
 			return nil, err
 		}
@@ -47,8 +47,8 @@ func (ftx geminiApiClient) GetMarkets() (models.MarketsMap, error) {
 	return marketsMap, nil
 }
 
-func (ftx geminiApiClient) getMarketNames() (models.MarketNames, error) {
-	resp, err := ftx.http.Get(ftx.baseUrl + "/symbols")
+func (gemini geminiApiClient) getMarketNames() (models.MarketNames, error) {
+	resp, err := gemini.http.Get(gemini.baseUrl + "/symbols")
 	if err != nil {
 		return nil, err
 	}
@@ -65,8 +65,8 @@ func (ftx geminiApiClient) getMarketNames() (models.MarketNames, error) {
 	}
 }
 
-func (ftx geminiApiClient) getMarketDetails(name string) (models.Markets, error) {
-	resp, err := ftx.http.Get(ftx.baseUrl + "/symbols/details/" + name)
+func (gemini geminiApiClient) getMarketDetails(name string) (models.Markets, error) {
+	resp, err := gemini.http.Get(gemini.baseUrl + "/symbols/details/" + name)
 	if err != nil {
 		return nil, err
 	}

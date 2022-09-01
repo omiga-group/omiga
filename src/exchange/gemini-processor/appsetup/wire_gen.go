@@ -48,8 +48,8 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	return consumer, nil
 }
 
-func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, ftxConfig configuration2.FtxConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.FtxOrderBookSubscriber, error) {
-	apiClient := client.NewFtxApiClient(ftxConfig)
+func NewGeminiOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, geminiConfig configuration2.GeminiConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.GeminiOrderBookSubscriber, error) {
+	apiClient := client.NewGeminiApiClient(geminiConfig)
 	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, topic)
 	if err != nil {
 		return nil, err
@@ -59,9 +59,9 @@ func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, a
 	if err != nil {
 		return nil, err
 	}
-	ftxOrderBookSubscriber, err := subscribers.NewFtxOrderBookSubscriber(ctx, logger, apiClient, ftxConfig, orderBookPublisher)
+	geminiOrderBookSubscriber, err := subscribers.NewGeminiOrderBookSubscriber(ctx, logger, apiClient, geminiConfig, orderBookPublisher)
 	if err != nil {
 		return nil, err
 	}
-	return ftxOrderBookSubscriber, nil
+	return geminiOrderBookSubscriber, nil
 }
