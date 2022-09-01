@@ -14,6 +14,7 @@ trap cleanup EXIT
 find ../../src/shared/events -name "*_gen.go" -type f -delete || true
 
 # AsyncApi
-docker build --progress=plain -f Dockerfile -t asyncapi-generator ../../
+docker build --progress=plain -f Dockerfile -t asyncapi-generator ../../../
 docker create --name extract-asyncapi-generator asyncapi-generator
-docker cp extract-asyncapi-generator:/generated-src/. "../../src/shared/clients"
+mkdir -p "../../../src/shared/clients/events"
+docker cp extract-asyncapi-generator:/generated-src/. "../../../src/shared/clients/events/"
