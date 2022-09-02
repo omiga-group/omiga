@@ -51,9 +51,27 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
+			cronService, err := appsetup.NewCronService(sugarLogger)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer cronService.Close()
+
 			if _, err = appsetup.NewCoingekoExchangeSubscriber(
 				ctx,
 				sugarLogger,
+				cronService,
+				config.Coingeko,
+				config.Exchanges,
+				config.Postgres); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			if _, err = appsetup.NewCoingekoCoinSubscriber(
+				ctx,
+				sugarLogger,
+				cronService,
 				config.Coingeko,
 				config.Exchanges,
 				config.Postgres); err != nil {

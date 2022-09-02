@@ -49,3 +49,8 @@ type Exchange struct {
 	SpreadFee                   *bool
 	SupportAPI                  *bool
 }
+
+type Coin struct {
+	Symbol string
+	Name   *string
+}

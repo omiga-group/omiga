@@ -32,6 +32,15 @@ import (
 	"go.uber.org/zap"
 )
 
+func NewCronService(
+	logger *zap.SugaredLogger) (cron.CronService, error) {
+	wire.Build(
+		time.NewTimeHelper,
+		cron.NewCronService)
+
+	return nil, nil
+}
+
 func NewTimeHelper() (time.TimeHelper, error) {
 	wire.Build(
 		time.NewTimeHelper)
@@ -42,16 +51,33 @@ func NewTimeHelper() (time.TimeHelper, error) {
 func NewCoingekoExchangeSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
+	cronService cron.CronService,
 	coingekoConfig configuration.CoingekoConfig,
 	exchanges map[string]configuration.Exchange,
-	postgresConfig postgres.PostgresConfig) (subscribers.CoingekoSubscriber, error) {
+	postgresConfig postgres.PostgresConfig) (subscribers.CoingekoExchangeSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,
 		repositories.NewEntgoClient,
-		cron.NewCronService,
 		time.NewTimeHelper,
 		subscribers.NewCoingekoExchangeSubscriber,
 		coingekorepositories.NewExchangeRepository)
+
+	return nil, nil
+}
+
+func NewCoingekoCoinSubscriber(
+	ctx context.Context,
+	logger *zap.SugaredLogger,
+	cronService cron.CronService,
+	coingekoConfig configuration.CoingekoConfig,
+	exchanges map[string]configuration.Exchange,
+	postgresConfig postgres.PostgresConfig) (subscribers.CoingekoCoinSubscriber, error) {
+	wire.Build(
+		postgres.NewPostgres,
+		repositories.NewEntgoClient,
+		time.NewTimeHelper,
+		subscribers.NewCoingekoCoinSubscriber,
+		coingekorepositories.NewCoinRepository)
 
 	return nil, nil
 }

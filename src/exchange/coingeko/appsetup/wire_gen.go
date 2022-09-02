@@ -20,15 +20,7 @@ import (
 
 // Injectors from wire.go:
 
-func NewTimeHelper() (time.TimeHelper, error) {
-	timeHelper, err := time.NewTimeHelper()
-	if err != nil {
-		return nil, err
-	}
-	return timeHelper, nil
-}
-
-func NewCoingekoExchangeSubscriber(ctx context.Context, logger *zap.SugaredLogger, coingekoConfig configuration.CoingekoConfig, exchanges map[string]configuration.Exchange, postgresConfig postgres.PostgresConfig) (subscribers.CoingekoExchangeSubscriber, error) {
+func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
 	timeHelper, err := time.NewTimeHelper()
 	if err != nil {
 		return nil, err
@@ -37,6 +29,18 @@ func NewCoingekoExchangeSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
+	return cronService, nil
+}
+
+func NewTimeHelper() (time.TimeHelper, error) {
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	return timeHelper, nil
+}
+
+func NewCoingekoExchangeSubscriber(ctx context.Context, logger *zap.SugaredLogger, cronService cron.CronService, coingekoConfig configuration.CoingekoConfig, exchanges map[string]configuration.Exchange, postgresConfig postgres.PostgresConfig) (subscribers.CoingekoExchangeSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -45,13 +49,41 @@ func NewCoingekoExchangeSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
 	exchangeRepository, err := repositories2.NewExchangeRepository(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}
-	coingekoSubscriber, err := subscribers.NewCoingekoExchangeSubscriber(ctx, logger, cronService, coingekoConfig, exchanges, entgoClient, timeHelper, exchangeRepository)
+	coingekoExchangeSubscriber, err := subscribers.NewCoingekoExchangeSubscriber(ctx, logger, cronService, coingekoConfig, exchanges, entgoClient, timeHelper, exchangeRepository)
 	if err != nil {
 		return nil, err
 	}
-	return coingekoSubscriber, nil
+	return coingekoExchangeSubscriber, nil
+}
+
+func NewCoingekoCoinSubscriber(ctx context.Context, logger *zap.SugaredLogger, cronService cron.CronService, coingekoConfig configuration.CoingekoConfig, exchanges map[string]configuration.Exchange, postgresConfig postgres.PostgresConfig) (subscribers.CoingekoCoinSubscriber, error) {
+	database, err := postgres.NewPostgres(logger, postgresConfig)
+	if err != nil {
+		return nil, err
+	}
+	entgoClient, err := repositories.NewEntgoClient(logger, database)
+	if err != nil {
+		return nil, err
+	}
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	coinRepository, err := repositories2.NewCoinRepository(logger, entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	coingekoCoinSubscriber, err := subscribers.NewCoingekoCoinSubscriber(ctx, logger, cronService, coingekoConfig, exchanges, entgoClient, timeHelper, coinRepository)
+	if err != nil {
+		return nil, err
+	}
+	return coingekoCoinSubscriber, nil
 }

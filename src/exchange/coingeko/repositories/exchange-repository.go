@@ -39,7 +39,6 @@ func NewExchangeRepository(
 func (er *exchangeRepository) CreateExchanges(
 	ctx context.Context,
 	exchanges []models.Exchange) error {
-
 	for _, exchange := range exchanges {
 		if err := er.CreateExchange(ctx, exchange); err != nil {
 			return err

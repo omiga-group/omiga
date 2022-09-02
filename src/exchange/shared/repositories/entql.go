@@ -3,6 +3,7 @@
 package repositories
 
 import (
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/predicate"
@@ -16,8 +17,23 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 3)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 4)}
 	graph.Nodes[0] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   coin.Table,
+			Columns: coin.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt,
+				Column: coin.FieldID,
+			},
+		},
+		Type: "Coin",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			coin.FieldSymbol: {Type: field.TypeString, Column: coin.FieldSymbol},
+			coin.FieldName:   {Type: field.TypeString, Column: coin.FieldName},
+		},
+	}
+	graph.Nodes[1] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   exchange.Table,
 			Columns: exchange.Columns,
@@ -48,7 +64,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			exchange.FieldSupportAPI:                  {Type: field.TypeBool, Column: exchange.FieldSupportAPI},
 		},
 	}
-	graph.Nodes[1] = &sqlgraph.Node{
+	graph.Nodes[2] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   outbox.Table,
 			Columns: outbox.Columns,
@@ -70,7 +86,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			outbox.FieldProcessingErrors: {Type: field.TypeJSON, Column: outbox.FieldProcessingErrors},
 		},
 	}
-	graph.Nodes[2] = &sqlgraph.Node{
+	graph.Nodes[3] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   ticker.Table,
 			Columns: ticker.Columns,
@@ -135,6 +151,56 @@ type predicateAdder interface {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (cq *CoinQuery) addPredicate(pred func(s *sql.Selector)) {
+	cq.predicates = append(cq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the CoinQuery builder.
+func (cq *CoinQuery) Filter() *CoinFilter {
+	return &CoinFilter{config: cq.config, predicateAdder: cq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *CoinMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the CoinMutation builder.
+func (m *CoinMutation) Filter() *CoinFilter {
+	return &CoinFilter{config: m.config, predicateAdder: m}
+}
+
+// CoinFilter provides a generic filtering capability at runtime for CoinQuery.
+type CoinFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *CoinFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[0].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int predicate on the id field.
+func (f *CoinFilter) WhereID(p entql.IntP) {
+	f.Where(p.Field(coin.FieldID))
+}
+
+// WhereSymbol applies the entql string predicate on the symbol field.
+func (f *CoinFilter) WhereSymbol(p entql.StringP) {
+	f.Where(p.Field(coin.FieldSymbol))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *CoinFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(coin.FieldName))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (eq *ExchangeQuery) addPredicate(pred func(s *sql.Selector)) {
 	eq.predicates = append(eq.predicates, pred)
 }
@@ -163,7 +229,7 @@ type ExchangeFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *ExchangeFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[0].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -307,7 +373,7 @@ type OutboxFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OutboxFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -392,7 +458,7 @@ type TickerFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TickerFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

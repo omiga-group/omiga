@@ -9,6 +9,19 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 )
 
+// The CoinFunc type is an adapter to allow the use of ordinary
+// function as Coin mutator.
+type CoinFunc func(context.Context, *repositories.CoinMutation) (repositories.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CoinFunc) Mutate(ctx context.Context, m repositories.Mutation) (repositories.Value, error) {
+	mv, ok := m.(*repositories.CoinMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *repositories.CoinMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The ExchangeFunc type is an adapter to allow the use of ordinary
 // function as Exchange mutator.
 type ExchangeFunc func(context.Context, *repositories.ExchangeMutation) (repositories.Value, error)

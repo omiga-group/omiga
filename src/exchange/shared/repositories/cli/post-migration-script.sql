@@ -30,5 +30,20 @@ BEGIN
 	END IF;
 
 	COMMIT;
+
+	IF NOT EXISTS (SELECT 1
+       FROM pg_catalog.pg_constraint con
+            INNER JOIN pg_catalog.pg_class rel
+                       ON rel.oid = con.conrelid
+            INNER JOIN pg_catalog.pg_namespace nsp
+                       ON nsp.oid = connamespace
+       WHERE nsp.nspname = 'public'
+             AND rel.relname = 'coins'
+             AND con.conname = 'coins_symbol_key') THEN
+		ALTER TABLE public.coins 
+		ADD CONSTRAINT coins_symbol_key
+		UNIQUE (symbol); 
+	END IF;
+
 END
 $do$
