@@ -2,7 +2,6 @@ package mappers
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/models"
@@ -24,6 +23,7 @@ func ToModelOrderBook(
 
 	convertedAsks := slices.Map(asks, func(entry models.OrderBookEntry) exchangeModels.OrderBookEntry {
 		orderbookEntry := exchangeModels.OrderBookEntry{
+			Time: entry.Time,
 			Price: exchangeModels.Money{
 				Currency: counterCurrency,
 			},
@@ -56,6 +56,7 @@ func ToModelOrderBook(
 
 	convertedBids := slices.Map(bids, func(entry models.OrderBookEntry) exchangeModels.OrderBookEntry {
 		orderbookEntry := exchangeModels.OrderBookEntry{
+			Time: entry.Time,
 			Price: exchangeModels.Money{
 				Currency: counterCurrency,
 			},
@@ -89,7 +90,6 @@ func ToModelOrderBook(
 	return exchangeModels.OrderBook{
 		BaseCurrency:    baseCurrency,
 		CounterCurrency: counterCurrency,
-		Time:            time.Now(),
 		Asks: slices.Filter(convertedAsks, func(entry exchangeModels.OrderBookEntry) bool {
 			return entry.Quantity.Scale != -1 && entry.Price.Quantity.Scale != -1
 		}),

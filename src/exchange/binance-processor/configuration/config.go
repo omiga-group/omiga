@@ -24,5 +24,5 @@ type OrderBook struct {
 
 type SymbolConfig struct {
 	Symbol1 string `yaml:"symbol1"`
-	Symbol2 string `yaml:"symbol1"`
+	Symbol2 string `yaml:"symbol2"`
 }

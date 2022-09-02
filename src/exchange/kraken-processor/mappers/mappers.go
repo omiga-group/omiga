@@ -1,6 +1,8 @@
 package mappers
 
 import (
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/life4/genesis/slices"
@@ -9,26 +11,31 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/decimal"
 )
 
-func FromBinanceOrderBookToModelOrderBook(
+func FromKrakenOrderBookToOrderBook(
 	baseCurrency exchangeModels.Currency,
 	counterCurrency exchangeModels.Currency,
-	orderBook []models.BinanceOrderBookEntry) exchangeModels.OrderBook {
-	asks := slices.Filter(orderBook, func(entry models.BinanceOrderBookEntry) bool {
+	orderBook []models.KrakenOrderBookEntry) exchangeModels.OrderBook {
+	asks := slices.Filter(orderBook, func(entry models.KrakenOrderBookEntry) bool {
 		return entry.Ask != nil
 	})
 
-	bids := slices.Filter(orderBook, func(entry models.BinanceOrderBookEntry) bool {
+	bids := slices.Filter(orderBook, func(entry models.KrakenOrderBookEntry) bool {
 		return entry.Bid != nil
 	})
 
-	convertedAsks := slices.Map(asks, func(entry models.BinanceOrderBookEntry) exchangeModels.OrderBookEntry {
+	convertedAsks := slices.Map(asks, func(entry models.KrakenOrderBookEntry) exchangeModels.OrderBookEntry {
+		timePeices := strings.Split(string(entry.Ask.Time), ".")
+		timePeice1, _ := strconv.ParseInt(timePeices[0], 10, 64)
+		timePeice2, _ := strconv.ParseInt(timePeices[1], 10, 64)
+
 		orderbookEntry := exchangeModels.OrderBookEntry{
+			Time: time.Unix(timePeice1, timePeice2),
 			Price: exchangeModels.Money{
 				Currency: counterCurrency,
 			},
 		}
 
-		if decimal, err := decimal.StringToDecimal(entry.Ask.Quantity); err != nil {
+		if decimal, err := decimal.StringToDecimal(string(entry.Ask.Volume)); err != nil {
 			orderbookEntry.Quantity = exchangeModels.Quantity{
 				Scale: -1,
 			}
@@ -39,7 +46,7 @@ func FromBinanceOrderBookToModelOrderBook(
 			}
 		}
 
-		if decimal, err := decimal.StringToDecimal(entry.Ask.Price); err != nil {
+		if decimal, err := decimal.StringToDecimal(string(entry.Ask.Price)); err != nil {
 			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
 				Scale: -1,
 			}
@@ -53,14 +60,19 @@ func FromBinanceOrderBookToModelOrderBook(
 		return orderbookEntry
 	})
 
-	convertedBids := slices.Map(bids, func(entry models.BinanceOrderBookEntry) exchangeModels.OrderBookEntry {
+	convertedBids := slices.Map(bids, func(entry models.KrakenOrderBookEntry) exchangeModels.OrderBookEntry {
+		timePeices := strings.Split(string(entry.Ask.Time), ".")
+		timePeice1, _ := strconv.ParseInt(timePeices[0], 10, 64)
+		timePeice2, _ := strconv.ParseInt(timePeices[1], 10, 64)
+
 		orderbookEntry := exchangeModels.OrderBookEntry{
+			Time: time.Unix(timePeice1, timePeice2),
 			Price: exchangeModels.Money{
 				Currency: counterCurrency,
 			},
 		}
 
-		if decimal, err := decimal.StringToDecimal(entry.Bid.Quantity); err != nil {
+		if decimal, err := decimal.StringToDecimal(string(entry.Bid.Volume)); err != nil {
 			orderbookEntry.Quantity = exchangeModels.Quantity{
 				Scale: -1,
 			}
@@ -71,7 +83,7 @@ func FromBinanceOrderBookToModelOrderBook(
 			}
 		}
 
-		if decimal, err := decimal.StringToDecimal(entry.Bid.Price); err != nil {
+		if decimal, err := decimal.StringToDecimal(string(entry.Bid.Price)); err != nil {
 			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
 				Scale: -1,
 			}
@@ -88,7 +100,6 @@ func FromBinanceOrderBookToModelOrderBook(
 	return exchangeModels.OrderBook{
 		BaseCurrency:    baseCurrency,
 		CounterCurrency: counterCurrency,
-		Time:            time.Now(),
 		Asks: slices.Filter(convertedAsks, func(entry exchangeModels.OrderBookEntry) bool {
 			return entry.Quantity.Scale != -1 && entry.Price.Quantity.Scale != -1
 		}),

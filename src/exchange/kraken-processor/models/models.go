@@ -1,14 +1,11 @@
 package models
 
 import (
-	"time"
-
-	"github.com/adshao/go-binance/v2"
+	krakenwebsocket "github.com/aopoltorzhicky/go_kraken/websocket"
 )
 
-type BinanceOrderBookEntry struct {
+type KrakenOrderBookEntry struct {
 	Symbol string
-	Time   time.Time
-	Bid    *binance.Bid
-	Ask    *binance.Ask
+	Bid    *krakenwebsocket.OrderBookItem
+	Ask    *krakenwebsocket.OrderBookItem
 }

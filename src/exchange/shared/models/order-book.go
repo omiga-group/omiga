@@ -20,6 +20,7 @@ type Money struct {
 }
 
 type OrderBookEntry struct {
+	Time     time.Time
 	Quantity Quantity
 	Price    Money
 }
@@ -28,7 +29,6 @@ type OrderBook struct {
 	ExchangeId      string
 	BaseCurrency    Currency
 	CounterCurrency Currency
-	Time            time.Time
 	Bids            []OrderBookEntry
 	Asks            []OrderBookEntry
 }

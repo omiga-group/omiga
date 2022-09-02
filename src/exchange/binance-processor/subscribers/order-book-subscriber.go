@@ -134,7 +134,7 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 		counterCoinName = name
 	}
 
-	orderBook := mappers.FromBinanceOrderBookToModelOrderBook(
+	orderBook := mappers.FromBinanceOrderBookToOrderBook(
 		exchangeModels.Currency{
 			Name:         baseCoinName,
 			Code:         bobs.symbolConfig.Symbol1,

@@ -91,7 +91,6 @@ components:
         - exchangeId
         - baseCurrency
         - counterCurrency
-        - time
         - bids
         - asks
       properties:
@@ -102,11 +101,6 @@ components:
           $ref: "./Common_V1.yaml#/components/schemas/currency"
         counterCurrency:
           $ref: "./Common_V1.yaml#/components/schemas/currency"
-        time:
-          type: string
-          format: date-time
-          description: The order book entries timestamp
-          example: 2021-03-25T23:04:34.00Z
         bids:
           type: array
           items:
@@ -121,11 +115,16 @@ components:
       type: object
       additionalProperties: false
       required:
+        - time
         - quantity
         - price
       properties:
+        time:
+          type: string
+          format: date-time
+          description: The order book entry timestamp
+          example: 2021-03-25T23:04:34.00Z
         quantity:
           $ref: "./Common_V1.yaml#/components/schemas/quantity"
         price:
           $ref: "./Common_V1.yaml#/components/schemas/money"
-

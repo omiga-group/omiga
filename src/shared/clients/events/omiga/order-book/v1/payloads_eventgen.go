@@ -47,7 +47,6 @@ type OrderBook struct {
   ExchangeId string `json:"exchangeId"`  // The unique ID of the exchange
   BaseCurrency Currency `json:"baseCurrency"` 
   CounterCurrency Currency `json:"counterCurrency"` 
-  Time time.Time `json:"time"`  // The order book entries timestamp
   Bids []OrderBookEntry `json:"bids"`  // undefined
   Asks []OrderBookEntry `json:"asks"`  // undefined
   AdditionalProperties *[]interface{} `json:"additionalProperties,omitempty"`  // undefined
@@ -65,6 +64,7 @@ type Currency struct {
     
     // OrderBookEntry represents a OrderBookEntry model.
 type OrderBookEntry struct {
+  Time time.Time `json:"time"`  // The order book entry timestamp
   Quantity Quantity `json:"quantity"` 
   Price Money `json:"price"` 
 }

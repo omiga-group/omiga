@@ -24,10 +24,10 @@ func NewCoinHelper(
 	}, nil
 }
 
-func (se *coinHelper) GetCoinsNames(
+func (ch *coinHelper) GetCoinsNames(
 	ctx context.Context,
 	symbols []string) (map[string]string, error) {
-	client := se.entgoClient.GetClient()
+	client := ch.entgoClient.GetClient()
 	predicates := slices.Map(symbols, func(symbol string) predicate.Coin {
 		return coin.SymbolEQ(symbol)
 	})
