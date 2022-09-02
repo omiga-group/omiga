@@ -47,6 +47,16 @@ func NewKrakenOrderBookSubscriber(
 }
 
 func (kobs *krakenOrderBookSubscriber) run() {
+	for {
+		kobs.connectAndSubscribe()
+
+		if kobs.ctx.Err() == context.Canceled {
+			return
+		}
+	}
+}
+
+func (kobs *krakenOrderBookSubscriber) connectAndSubscribe() {
 	kraken := krakenwebsocket.NewKraken(krakenwebsocket.ProdBaseURL)
 	if err := kraken.Connect(); err != nil {
 		kobs.logger.Errorf("Error connecting to Kraken websocket. Error:  %v", err)
@@ -80,11 +90,6 @@ func (kobs *krakenOrderBookSubscriber) run() {
 		case update := <-kraken.Listen():
 			switch data := update.Data.(type) {
 			case krakenwebsocket.OrderBookUpdate:
-
-				kobs.logger.Infof("----Ticker of %s----", update.Pair)
-				kobs.logger.Infof("----Ticker of %s----", data.Asks)
-				kobs.logger.Infof("----Ticker of %s----", data.Bids)
-
 				asks := slices.Map(data.Asks, func(ask krakenwebsocket.OrderBookItem) models.KrakenOrderBookEntry {
 					return models.KrakenOrderBookEntry{
 						Symbol: update.Pair,
