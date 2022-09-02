@@ -35,6 +35,7 @@ import (
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 )
 
@@ -49,7 +50,9 @@ func NewMessageConsumer(
 	logger *zap.SugaredLogger,
 	pulsarConfig pulsar.PulsarConfig,
 	topic string) (messaging.MessageConsumer, error) {
-	wire.Build(pulsar.NewPulsarMessageConsumer)
+	wire.Build(
+		os.NewOsHelper,
+		pulsar.NewPulsarMessageConsumer)
 
 	return nil, nil
 }
@@ -70,6 +73,7 @@ func NewGeminiOrderBookSubscriber(
 	pulsarConfig pulsar.PulsarConfig,
 	topic string) (subscribers.GeminiOrderBookSubscriber, error) {
 	wire.Build(
+		os.NewOsHelper,
 		orderbookv1.NewProducer,
 		client.NewGeminiApiClient,
 		pulsar.NewPulsarMessageProducer,

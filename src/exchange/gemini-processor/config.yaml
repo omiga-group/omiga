@@ -5,6 +5,8 @@ pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "gemini-processor"
   producerName: "gemini-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
 
 gemini:
   apiUrl: https://api.sandbox.gemini.com/v1
