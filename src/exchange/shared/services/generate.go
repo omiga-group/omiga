@@ -1,3 +1,3 @@
 package services
 
-//go:generate mockgen -source=symbol-enricher.go -destination=mock/symbol-enricher_gen.go
+//go:generate mockgen -source=coin-helper.go -destination=mock/coin-helper_gen.go

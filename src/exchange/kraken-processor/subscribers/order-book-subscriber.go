@@ -19,6 +19,7 @@ type krakenOrderBookSubscriber struct {
 	logger             *zap.SugaredLogger
 	pairs              []configuration.PairConfig
 	orderBookPublisher publishers.OrderBookPublisher
+	coinHelper         services.CoinHelper
 }
 
 func NewKrakenOrderBookSubscriber(
@@ -26,13 +27,14 @@ func NewKrakenOrderBookSubscriber(
 	logger *zap.SugaredLogger,
 	krakenConfig configuration.KrakenConfig,
 	orderBookPublisher publishers.OrderBookPublisher,
-	symbolEnricher services.SymbolEnricher) (KrakenOrderBookSubscriber, error) {
+	coinHelper services.CoinHelper) (KrakenOrderBookSubscriber, error) {
 
 	instance := &krakenOrderBookSubscriber{
 		ctx:                ctx,
 		logger:             logger,
 		pairs:              krakenConfig.OrderBook.Pairs,
 		orderBookPublisher: orderBookPublisher,
+		coinHelper:         coinHelper,
 	}
 
 	go instance.run()

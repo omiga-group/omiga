@@ -78,6 +78,7 @@ func startCommand() *cobra.Command {
 					config.Binance,
 					symbolConfig,
 					config.Pulsar,
+					config.Postgres,
 					orderbookv1.TopicName)
 				if err != nil {
 					sugarLogger.Fatal(err)

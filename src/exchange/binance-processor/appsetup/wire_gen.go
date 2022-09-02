@@ -11,10 +11,12 @@ import (
 	configuration2 "github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/exchange/shared/services"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -48,7 +50,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	return consumer, nil
 }
 
-func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, binanceConfig configuration2.BinanceConfig, symbolConfig configuration2.SymbolConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.BinanceOrderBookSubscriber, error) {
+func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, binanceConfig configuration2.BinanceConfig, symbolConfig configuration2.SymbolConfig, pulsarConfig pulsar.PulsarConfig, postgresConfig postgres.PostgresConfig, topic string) (subscribers.BinanceOrderBookSubscriber, error) {
 	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, topic)
 	if err != nil {
 		return nil, err
@@ -58,11 +60,19 @@ func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
-	symbolEnricher, err := services.NewSymbolEnricher()
+	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
 	}
-	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, symbolConfig, orderBookPublisher, symbolEnricher)
+	entgoClient, err := repositories.NewEntgoClient(logger, database)
+	if err != nil {
+		return nil, err
+	}
+	coinHelper, err := services.NewCoinHelper(entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, symbolConfig, orderBookPublisher, coinHelper)
 	if err != nil {
 		return nil, err
 	}

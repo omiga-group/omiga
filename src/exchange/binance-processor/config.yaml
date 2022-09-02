@@ -6,8 +6,13 @@ pulsar:
   subscriptionName: "binance-processor"
   producerName: "binance-processor"
 
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/exchange"
+  maxOpenConns: 5
+
 binance:
   useTestnet: true
   orderBook:
     symbols:
-      - symbol: LTCBTC
+      - symbol1: LTC
+        symbol2: BTC

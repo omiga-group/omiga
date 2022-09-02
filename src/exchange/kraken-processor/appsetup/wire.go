@@ -25,10 +25,12 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/kraken-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/kraken-processor/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/exchange/shared/services"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -65,13 +67,16 @@ func NewKrakenOrderBookSubscriber(
 	appConfig enterpriseConfiguration.AppConfig,
 	krakenConfig configuration.KrakenConfig,
 	pulsarConfig pulsar.PulsarConfig,
+	postgresConfig postgres.PostgresConfig,
 	topic string) (subscribers.KrakenOrderBookSubscriber, error) {
 	wire.Build(
+		postgres.NewPostgres,
+		repositories.NewEntgoClient,
 		orderbookv1.NewProducer,
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
 		subscribers.NewKrakenOrderBookSubscriber,
-		services.NewSymbolEnricher)
+		services.NewCoinHelper)
 
 	return nil, nil
 }

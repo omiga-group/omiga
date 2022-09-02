@@ -3,7 +3,7 @@ coingeko:
 
 postgres:
   connectionString: "postgres://postgres:12345678@localhost/exchange"
-  maxOpenConns: 1
+  maxOpenConns: 5
 
 exchanges:
   AAX:

@@ -2,6 +2,7 @@ package subscribers
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/adshao/go-binance/v2"
@@ -19,11 +20,12 @@ type BinanceOrderBookSubscriber interface {
 }
 
 type binanceOrderBookSubscriber struct {
-	ctx                                                          context.Context
-	logger                                                       *zap.SugaredLogger
-	symbol                                                       string
-	orderBookPublisher                                           publishers.OrderBookPublisher
-	baseCoinCode, baseCoinName, counterCoinCode, counterCoinName string
+	ctx                context.Context
+	logger             *zap.SugaredLogger
+	symbolConfig       configuration.SymbolConfig
+	symbol             string
+	orderBookPublisher publishers.OrderBookPublisher
+	coinHelper         services.CoinHelper
 }
 
 func NewBinanceOrderBookSubscriber(
@@ -32,24 +34,17 @@ func NewBinanceOrderBookSubscriber(
 	binanceConfig configuration.BinanceConfig,
 	symbolConfig configuration.SymbolConfig,
 	orderBookPublisher publishers.OrderBookPublisher,
-	symbolEnricher services.SymbolEnricher) (BinanceOrderBookSubscriber, error) {
+	coinHelper services.CoinHelper) (BinanceOrderBookSubscriber, error) {
 
 	binance.UseTestnet = binanceConfig.UseTestnet
-
-	baseCoinCode, baseCoinName, counterCoinCode, counterCoinName, err := symbolEnricher.GetCoinPair(symbolConfig.Symbol)
-	if err != nil {
-		return nil, err
-	}
 
 	instance := &binanceOrderBookSubscriber{
 		ctx:                ctx,
 		logger:             logger,
-		symbol:             symbolConfig.Symbol,
+		symbolConfig:       symbolConfig,
 		orderBookPublisher: orderBookPublisher,
-		baseCoinCode:       baseCoinCode,
-		baseCoinName:       baseCoinName,
-		counterCoinCode:    counterCoinCode,
-		counterCoinName:    counterCoinName,
+		coinHelper:         coinHelper,
+		symbol:             symbolConfig.Symbol1 + symbolConfig.Symbol2,
 	}
 
 	go instance.run()
@@ -93,7 +88,7 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 	if event == nil {
 		bobs.logger.Warnf(
 			"Binance websocket returned nil event for symbol %s",
-			bobs.symbol)
+			bobs.symbolConfig)
 
 		return
 	}
@@ -120,16 +115,35 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 
 	binanceOrderBook := slices.Concat(asks, bids)
 
+	symbol1 := strings.ToLower(bobs.symbolConfig.Symbol1)
+	symbol2 := strings.ToLower(bobs.symbolConfig.Symbol2)
+	coins, err := bobs.coinHelper.GetCoinsNames(bobs.ctx, []string{symbol1, symbol2})
+	if err != nil {
+		bobs.logger.Errorf("Failed to fetch coin names. Error: %v", err)
+
+		return
+	}
+
+	baseCoinName := ""
+	if name, ok := coins[symbol1]; ok {
+		baseCoinName = name
+	}
+
+	counterCoinName := ""
+	if name, ok := coins[symbol2]; ok {
+		counterCoinName = name
+	}
+
 	orderBook := mappers.FromBinanceOrderBookToModelOrderBook(
 		exchangeModels.Currency{
-			Name:         bobs.baseCoinName,
-			Code:         bobs.baseCoinCode,
+			Name:         baseCoinName,
+			Code:         bobs.symbolConfig.Symbol1,
 			MaxPrecision: 1,
 			Digital:      true,
 		},
 		exchangeModels.Currency{
-			Name:         bobs.counterCoinName,
-			Code:         bobs.counterCoinCode,
+			Name:         counterCoinName,
+			Code:         bobs.symbolConfig.Symbol2,
 			MaxPrecision: 1,
 			Digital:      true,
 		},
@@ -143,12 +157,14 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 		orderBook.ExchangeId,
 		orderBook); err != nil {
 		bobs.logger.Errorf("Failed to publish order book for Binance exchange. Error: %v", err)
+
+		return
 	}
 }
 
 func (bobs *binanceOrderBookSubscriber) wsErrorHandler(err error) {
 	bobs.logger.Errorf(
 		"Binance websocket returned error for symbol %s. Error: %v",
-		bobs.symbol,
+		bobs.symbolConfig,
 		err)
 }

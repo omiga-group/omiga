@@ -76,6 +76,7 @@ func startCommand() *cobra.Command {
 				config.App,
 				config.Kraken,
 				config.Pulsar,
+				config.Postgres,
 				orderbookv1.TopicName)
 			if err != nil {
 				sugarLogger.Fatal(err)

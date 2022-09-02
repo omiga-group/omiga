@@ -6,6 +6,10 @@ pulsar:
   subscriptionName: "kraken-processor"
   producerName: "kraken-processor"
 
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/exchange"
+  maxOpenConns: 5
+
 kraken:
   orderBook:
     pairs:

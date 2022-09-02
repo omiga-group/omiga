@@ -2,6 +2,7 @@ package subscribers
 
 import (
 	"context"
+	"strings"
 
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
@@ -85,6 +86,8 @@ func (ces *coingekoCoinSubscriber) Run() {
 	}
 
 	coins := slices.Map(*coinListWithResponse.JSON200, func(coin coingekov3.Coin) models.Coin {
+		coin.Symbol = strings.ToLower(coin.Symbol)
+
 		return mappers.FromCoingekoCoinToCoin(coin)
 	})
 

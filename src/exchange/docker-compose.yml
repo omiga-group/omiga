@@ -93,6 +93,7 @@ services:
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
     depends_on:
       - postgres
       - exchange-database-migration
@@ -140,6 +141,7 @@ services:
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
     depends_on:
       - postgres
       - exchange-database-migration
