@@ -48,7 +48,7 @@ func NewCoingekoCoinSubscriber(
 		coinRepository: coinRepository,
 	}
 
-	if _, err := cronService.GetCron().AddJob("0 * * * *", instance); err != nil {
+	if _, err := cronService.GetCron().AddJob("* 0 * * * *", instance); err != nil {
 		return nil, err
 	}
 
