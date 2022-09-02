@@ -2,7 +2,7 @@ package mappers
 
 import (
 	"github.com/life4/genesis/slices"
-	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
+	"github.com/omiga-group/omiga/src/exchange/coingeko-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	coingekov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingeko/v3"
 )

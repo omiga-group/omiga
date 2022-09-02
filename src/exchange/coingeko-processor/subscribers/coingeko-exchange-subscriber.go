@@ -6,9 +6,9 @@ import (
 
 	"github.com/life4/genesis/maps"
 	"github.com/life4/genesis/slices"
-	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
-	"github.com/omiga-group/omiga/src/exchange/coingeko/mappers"
-	coingekorepositories "github.com/omiga-group/omiga/src/exchange/coingeko/repositories"
+	"github.com/omiga-group/omiga/src/exchange/coingeko-processor/configuration"
+	"github.com/omiga-group/omiga/src/exchange/coingeko-processor/mappers"
+	coingekorepositories "github.com/omiga-group/omiga/src/exchange/coingeko-processor/repositories"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	coingekov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingeko/v3"

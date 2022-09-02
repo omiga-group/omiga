@@ -8,8 +8,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/omiga-group/omiga/src/exchange/coingeko/appsetup"
-	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
+	"github.com/omiga-group/omiga/src/exchange/coingeko-processor/appsetup"
+	"github.com/omiga-group/omiga/src/exchange/coingeko-processor/configuration"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
