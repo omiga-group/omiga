@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	models "github.com/omiga-group/omiga/src/exchange/coingeko/models"
+	models "github.com/omiga-group/omiga/src/exchange/shared/models"
 )
 
 // MockExchangeRepository is a mock of ExchangeRepository interface.
