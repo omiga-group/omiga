@@ -62,11 +62,11 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
              --pull \
              --target test \
-            --tag omiga/order-api-unittests:$GitVersion_SemVer \
+            --tag omiga/binance-processor-unittests:$GitVersion_SemVer \
             --file ./src/exchange/binance-processor/Dockerfile \
             ./src
           mkdir -p ./coverage/reports
-          docker create --name extract-container omiga/order-api-unittests:$GitVersion_SemVer
+          docker create --name extract-container omiga/binance-processor-unittests:$GitVersion_SemVer
           docker cp extract-container:/coverage/reports/. "./coverage/reports/"
 
       - name: Upload coverage to Codecov
