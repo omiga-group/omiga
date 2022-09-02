@@ -16,6 +16,14 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
 )
 
+// Coin defines model for coin.
+type Coin struct {
+	Id                   string                 `json:"id"`
+	Name                 *string                `json:"name,omitempty"`
+	Symbol               string                 `json:"symbol"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // ConvertedDetails defines model for convertedDetails.
 type ConvertedDetails struct {
 	Btc                  *float64               `json:"btc,omitempty"`
@@ -392,6 +400,100 @@ type GetSimpleTokenPriceIdParams struct {
 
 	// <b>true/false</b> to include last_updated_at of price, <b>default: false</b>
 	IncludeLastUpdatedAt *string `form:"include_last_updated_at,omitempty" json:"include_last_updated_at,omitempty"`
+}
+
+// Getter for additional properties for Coin. Returns the specified
+// element and whether it was found
+func (a Coin) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for Coin
+func (a *Coin) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for Coin to handle AdditionalProperties
+func (a *Coin) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["name"]; found {
+		err = json.Unmarshal(raw, &a.Name)
+		if err != nil {
+			return fmt.Errorf("error reading 'name': %w", err)
+		}
+		delete(object, "name")
+	}
+
+	if raw, found := object["symbol"]; found {
+		err = json.Unmarshal(raw, &a.Symbol)
+		if err != nil {
+			return fmt.Errorf("error reading 'symbol': %w", err)
+		}
+		delete(object, "symbol")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for Coin to handle AdditionalProperties
+func (a Coin) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["id"], err = json.Marshal(a.Id)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'id': %w", err)
+	}
+
+	if a.Name != nil {
+		object["name"], err = json.Marshal(a.Name)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'name': %w", err)
+		}
+	}
+
+	object["symbol"], err = json.Marshal(a.Symbol)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'symbol': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
 }
 
 // Getter for additional properties for ConvertedDetails. Returns the specified
@@ -4680,6 +4782,7 @@ func (r GetCoinsCategoriesListResponse) StatusCode() int {
 type GetCoinsListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON200      *[]Coin
 }
 
 // Status returns HTTPResponse.Status
@@ -5667,6 +5770,16 @@ func ParseGetCoinsListResponse(rsp *http.Response) (*GetCoinsListResponse, error
 	response := &GetCoinsListResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Coin
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
 	}
 
 	return response, nil

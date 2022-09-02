@@ -39,6 +39,12 @@ func (se *symbolEnricher) GetCoinPair(symbol string) (string, string, string, st
 
 func (se *symbolEnricher) getCoinName(code string) (string, error) {
 	switch code {
+	case "USD":
+		return "US Dollar", nil
+	case "XBT":
+		return "XBit", nil
+	case "ADA":
+		return "Cardano", nil
 	case "LTC":
 		return "Litecoin", nil
 	case "BTC":

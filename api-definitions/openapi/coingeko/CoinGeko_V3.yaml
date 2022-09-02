@@ -134,6 +134,7 @@ paths:
           content: {}
   /coins/list:
     get:
+      operationId: getCoinsList
       tags:
         - coins
       summary: List all supported coins id, name and symbol (no pagination required)
@@ -149,7 +150,12 @@ paths:
       responses:
         200:
           description: List all coins with id, name, and symbol
-          content: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/coin"
   /coins/markets:
     get:
       tags:
@@ -1250,4 +1256,18 @@ components:
         small:
           type: string
         large:
+          type: string
+
+    coin:
+      type: object
+      additionalProperties: true
+      required:
+        - id
+        - symbol
+      properties:
+        id:
+          type: string
+        symbol:
+          type: string
+        name:
           type: string

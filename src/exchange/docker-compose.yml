@@ -130,3 +130,19 @@ services:
       - exchange-database-migration
     networks:
       - omiga_network
+
+  kraken-processor:
+    image: ${DOCKER_REGISTRY-}krakenprocessor
+    build:
+      context: .
+      dockerfile: exchange/kraken-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
+    depends_on:
+      - postgres
+      - exchange-database-migration
+      - pulsar
+    networks:
+      - omiga_network

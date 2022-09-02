@@ -8,8 +8,8 @@ package appsetup
 
 import (
 	"context"
-	configuration2 "github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
-	"github.com/omiga-group/omiga/src/exchange/binance-processor/subscribers"
+	configuration2 "github.com/omiga-group/omiga/src/exchange/kraken-processor/configuration"
+	"github.com/omiga-group/omiga/src/exchange/kraken-processor/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
 	"github.com/omiga-group/omiga/src/exchange/shared/services"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
@@ -48,7 +48,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	return consumer, nil
 }
 
-func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, binanceConfig configuration2.BinanceConfig, symbolConfig configuration2.SymbolConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.BinanceOrderBookSubscriber, error) {
+func NewKrakenOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, krakenConfig configuration2.KrakenConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.KrakenOrderBookSubscriber, error) {
 	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, topic)
 	if err != nil {
 		return nil, err
@@ -62,9 +62,9 @@ func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
-	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, symbolConfig, orderBookPublisher, symbolEnricher)
+	krakenOrderBookSubscriber, err := subscribers.NewKrakenOrderBookSubscriber(ctx, logger, krakenConfig, orderBookPublisher, symbolEnricher)
 	if err != nil {
 		return nil, err
 	}
-	return binanceOrderBookSubscriber, nil
+	return krakenOrderBookSubscriber, nil
 }

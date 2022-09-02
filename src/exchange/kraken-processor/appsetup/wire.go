@@ -22,8 +22,8 @@ import (
 	"context"
 
 	"github.com/google/wire"
-	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
-	"github.com/omiga-group/omiga/src/exchange/binance-processor/subscribers"
+	"github.com/omiga-group/omiga/src/exchange/kraken-processor/configuration"
+	"github.com/omiga-group/omiga/src/exchange/kraken-processor/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
 	"github.com/omiga-group/omiga/src/exchange/shared/services"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
@@ -59,19 +59,18 @@ func NewSyntheticOrderConsumer(
 	return nil, nil
 }
 
-func NewBinanceOrderBookSubscriber(
+func NewKrakenOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	appConfig enterpriseConfiguration.AppConfig,
-	binanceConfig configuration.BinanceConfig,
-	symbolConfig configuration.SymbolConfig,
+	krakenConfig configuration.KrakenConfig,
 	pulsarConfig pulsar.PulsarConfig,
-	topic string) (subscribers.BinanceOrderBookSubscriber, error) {
+	topic string) (subscribers.KrakenOrderBookSubscriber, error) {
 	wire.Build(
 		orderbookv1.NewProducer,
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
-		subscribers.NewBinanceOrderBookSubscriber,
+		subscribers.NewKrakenOrderBookSubscriber,
 		services.NewSymbolEnricher)
 
 	return nil, nil

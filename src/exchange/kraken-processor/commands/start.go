@@ -8,23 +8,20 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/omiga-group/omiga/src/exchange/coingeko/appsetup"
-	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
+	"github.com/omiga-group/omiga/src/exchange/kraken-processor/appsetup"
+	"github.com/omiga-group/omiga/src/exchange/kraken-processor/configuration"
+	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
+	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
 
-type startOptions struct {
-	name string
-}
-
 func startCommand() *cobra.Command {
-	opt := startOptions{}
 	cmd := &cobra.Command{
 		Use:   "start",
-		Short: "Start coingeko",
-		Long:  "Start coingeko",
+		Short: "Start kraken-processor",
+		Long:  "Start kraken-processor",
 		Run: func(cmd *cobra.Command, args []string) {
 			logger, err := zap.NewDevelopment()
 			if err != nil {
@@ -51,12 +48,36 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			if _, err = appsetup.NewCoingekoExchangeSubscriber(
+			syntheticMessageConsumer, err := appsetup.NewMessageConsumer(
+				sugarLogger,
+				config.Pulsar,
+				syntheticorderv1.TopicName)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer syntheticMessageConsumer.Close(ctx)
+
+			syntheticOrderConsumer, err := appsetup.NewSyntheticOrderConsumer(
+				sugarLogger,
+				syntheticMessageConsumer)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			err = syntheticOrderConsumer.StartAsync(ctx)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			_, err = appsetup.NewKrakenOrderBookSubscriber(
 				ctx,
 				sugarLogger,
-				config.Coingeko,
-				config.Exchanges,
-				config.Postgres); err != nil {
+				config.App,
+				config.Kraken,
+				config.Pulsar,
+				orderbookv1.TopicName)
+			if err != nil {
 				sugarLogger.Fatal(err)
 			}
 
@@ -76,8 +97,6 @@ func startCommand() *cobra.Command {
 			}
 		},
 	}
-
-	cmd.Flags().StringVar(&opt.name, "name", "", "The coingeko instance name")
 
 	return cmd
 }

@@ -17,10 +17,10 @@ import (
 	"go.uber.org/zap"
 )
 
-type CoingekoSubscriber interface {
+type CoingekoExchangeSubscriber interface {
 }
 
-type coingekoSubscriber struct {
+type coingekoExchangeSubscriber struct {
 	ctx                context.Context
 	logger             *zap.SugaredLogger
 	coingekoConfig     configuration.CoingekoConfig
@@ -30,7 +30,7 @@ type coingekoSubscriber struct {
 	exchangeRepository coingekorepositories.ExchangeRepository
 }
 
-func NewCoingekoSubscriber(
+func NewCoingekoExchangeSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	cronService cron.CronService,
@@ -38,8 +38,8 @@ func NewCoingekoSubscriber(
 	exchanges map[string]configuration.Exchange,
 	entgoClient repositories.EntgoClient,
 	timeHelper timeex.TimeHelper,
-	exchangeRepository coingekorepositories.ExchangeRepository) (CoingekoSubscriber, error) {
-	instance := &coingekoSubscriber{
+	exchangeRepository coingekorepositories.ExchangeRepository) (CoingekoExchangeSubscriber, error) {
+	instance := &coingekoExchangeSubscriber{
 		ctx:                ctx,
 		logger:             logger,
 		coingekoConfig:     coingekoConfig,
@@ -56,21 +56,21 @@ func NewCoingekoSubscriber(
 	return instance, nil
 }
 
-func (cs *coingekoSubscriber) Run() {
-	exchangesWithManualFeesOnlyMap := maps.Map(cs.exchanges, func(id string, exchange configuration.Exchange) (string, models.Exchange) {
+func (ces *coingekoExchangeSubscriber) Run() {
+	exchangesWithManualFeesOnlyMap := maps.Map(ces.exchanges, func(id string, exchange configuration.Exchange) (string, models.Exchange) {
 		return id, mappers.FromConfigurationExchangeToExchange(exchange)
 	})
 	exchangesWithManualFeesOnly := maps.Values(exchangesWithManualFeesOnlyMap)
 
-	if err := cs.exchangeRepository.CreateExchanges(cs.ctx, exchangesWithManualFeesOnly); err != nil {
-		cs.logger.Errorf("Failed to create exchanges. Error: %v", err)
+	if err := ces.exchangeRepository.CreateExchanges(ces.ctx, exchangesWithManualFeesOnly); err != nil {
+		ces.logger.Errorf("Failed to create exchanges. Error: %v", err)
 
 		return
 	}
 
-	coingekoClient, err := coingekov3.NewClientWithResponses(cs.coingekoConfig.BaseUrl)
+	coingekoClient, err := coingekov3.NewClientWithResponses(ces.coingekoConfig.BaseUrl)
 	if err != nil {
-		cs.logger.Errorf("Failed to create coingeko client. Error: %v", err)
+		ces.logger.Errorf("Failed to create coingeko client. Error: %v", err)
 		return
 	}
 
@@ -78,18 +78,18 @@ func (cs *coingekoSubscriber) Run() {
 	exchanges := make([]coingekov3.Exchange, 0)
 
 	for page := 1; ; page++ {
-		exchangesWithResponse, err := coingekoClient.GetExchangesWithResponse(cs.ctx, &coingekov3.GetExchangesParams{
+		exchangesWithResponse, err := coingekoClient.GetExchangesWithResponse(ces.ctx, &coingekov3.GetExchangesParams{
 			PerPage: &perPage,
 			Page:    &page,
 		})
 		if err != nil {
-			cs.logger.Errorf("Failed to get exchanges list. Error: %v", err)
+			ces.logger.Errorf("Failed to get exchanges list. Error: %v", err)
 
 			return
 		}
 
 		if exchangesWithResponse.HTTPResponse.StatusCode != 200 {
-			cs.logger.Errorf(
+			ces.logger.Errorf(
 				"Failed to get exchanges list. Return status code is %d",
 				exchangesWithResponse.HTTPResponse.StatusCode)
 
@@ -103,16 +103,16 @@ func (cs *coingekoSubscriber) Run() {
 		exchanges = append(exchanges, *exchangesWithResponse.JSON200...)
 	}
 
-	if err := cs.exchangeRepository.CreateExchanges(
-		cs.ctx,
+	if err := ces.exchangeRepository.CreateExchanges(
+		ces.ctx,
 		slices.Map(exchanges, func(exchange coingekov3.Exchange) models.Exchange {
-			if extraDetails, ok := cs.exchanges[exchange.Id]; ok {
+			if extraDetails, ok := ces.exchanges[exchange.Id]; ok {
 				return mappers.FromCoingekoExchangeToExchange(exchange, &extraDetails)
 			}
 
 			return mappers.FromCoingekoExchangeToExchange(exchange, nil)
 		})); err != nil {
-		cs.logger.Errorf("Failed to create exchanges. Error: %v", err)
+		ces.logger.Errorf("Failed to create exchanges. Error: %v", err)
 
 		return
 	}
@@ -121,23 +121,23 @@ func (cs *coingekoSubscriber) Run() {
 		exchangeId := exchange.Id
 
 		// This is to avoid coingeko rate limiter blocking us from querying exchanges details
-		cs.timeHelper.SleepOrWaitForContextGetCancelled(cs.ctx, 2*time.Second)
+		ces.timeHelper.SleepOrWaitForContextGetCancelled(ces.ctx, 2*time.Second)
 
-		if cs.ctx.Err() == context.Canceled {
+		if ces.ctx.Err() == context.Canceled {
 			break
 		}
 
 		exchangeIdResponse, err := coingekoClient.GetExchangeWithResponse(
-			cs.ctx,
+			ces.ctx,
 			exchangeId)
 		if err != nil {
-			cs.logger.Errorf("Failed to get exchange details. Error: %v", err)
+			ces.logger.Errorf("Failed to get exchange details. Error: %v", err)
 
 			continue
 		}
 
 		if exchangeIdResponse.HTTPResponse.StatusCode != 200 {
-			cs.logger.Errorf(
+			ces.logger.Errorf(
 				"Failed to get exchange details. Return status code is %d",
 				exchangeIdResponse.HTTPResponse.StatusCode)
 
@@ -146,7 +146,7 @@ func (cs *coingekoSubscriber) Run() {
 
 		var mappedExchange models.Exchange
 
-		if extraDetails, ok := cs.exchanges[mappedExchange.ExchangeId]; ok {
+		if extraDetails, ok := ces.exchanges[mappedExchange.ExchangeId]; ok {
 			mappedExchange = mappers.FromCoingekoExchangeDetailsToExchange(
 				exchangeId,
 				*exchangeIdResponse.JSON200,
@@ -158,11 +158,11 @@ func (cs *coingekoSubscriber) Run() {
 				nil)
 		}
 
-		if err := cs.exchangeRepository.CreateExchange(
-			cs.ctx,
+		if err := ces.exchangeRepository.CreateExchange(
+			ces.ctx,
 			mappedExchange); err != nil {
 
-			cs.logger.Errorf("Failed to create exchange. Error: %v", err)
+			ces.logger.Errorf("Failed to create exchange. Error: %v", err)
 
 			return
 		}

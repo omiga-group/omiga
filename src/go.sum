@@ -83,6 +83,10 @@ github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 h1:bvNMNQO63//z+xNg
 github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883/go.mod h1:rCTlJbsFo29Kk6CurOXKm700vrz8f0KW0JNfpkRJY/8=
 github.com/andybalholm/brotli v1.0.2/go.mod h1:loMXtMfwqflxFJPmdbJO0a3KNoPuLBgiu3qAvBg8x/Y=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
+github.com/aopoltorzhicky/go_kraken/rest v0.0.3 h1:oTRp0xqqsq0g83UOu6dCQtbKTk1lZjqtH3TsaDwDt/o=
+github.com/aopoltorzhicky/go_kraken/rest v0.0.3/go.mod h1:cen8hPWBicFQ1T4EoseSAkxvCD7zzZYIzxb0OVTHDk0=
+github.com/aopoltorzhicky/go_kraken/websocket v0.1.10 h1:NXCaE3PihzHeQumri9Z1VYk3DP7p4Xk3zsNSkrpq5g8=
+github.com/aopoltorzhicky/go_kraken/websocket v0.1.10/go.mod h1:ClqV9HZ6EawqFFWrdFGpM0V6s5BRAhPWHEuzHcSvhH4=
 github.com/apache/pulsar-client-go v0.8.1 h1:UZINLbH3I5YtNzqkju7g9vrl4CKrEgYSx2rbpvGufrE=
 github.com/apache/pulsar-client-go v0.8.1/go.mod h1:yJNcvn/IurarFDxwmoZvb2Ieylg630ifxeO/iXpk27I=
 github.com/apache/pulsar-client-go/oauth2 v0.0.0-20220120090717-25e59572242e h1:EqiJ0Xil8NmcXyupNqXV9oYDBeWntEIegxLahrTr8DY=

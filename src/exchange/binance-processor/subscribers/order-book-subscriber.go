@@ -9,9 +9,9 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/mappers"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/models"
-	"github.com/omiga-group/omiga/src/exchange/binance-processor/services"
 	exchangeModels "github.com/omiga-group/omiga/src/exchange/shared/models"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
+	"github.com/omiga-group/omiga/src/exchange/shared/services"
 	"go.uber.org/zap"
 )
 

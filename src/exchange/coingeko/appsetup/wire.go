@@ -39,7 +39,7 @@ func NewTimeHelper() (time.TimeHelper, error) {
 	return nil, nil
 }
 
-func NewCoingekoSubscriber(
+func NewCoingekoExchangeSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	coingekoConfig configuration.CoingekoConfig,
@@ -50,7 +50,7 @@ func NewCoingekoSubscriber(
 		repositories.NewEntgoClient,
 		cron.NewCronService,
 		time.NewTimeHelper,
-		subscribers.NewCoingekoSubscriber,
+		subscribers.NewCoingekoExchangeSubscriber,
 		coingekorepositories.NewExchangeRepository)
 
 	return nil, nil
