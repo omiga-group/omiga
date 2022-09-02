@@ -144,17 +144,12 @@ input OrderDetailsInput {
   type: OrderType!
   side: OrderSide!
   quantity: QuantityInput!
-  price: MoneyInput!
+  price: QuantityInput!
 }
 
 input QuantityInput {
   amount: Int!
   scale: Int!
-}
-
-input MoneyInput {
-  quantity: QuantityInput!
-  currency: CurrencyInput!
 }
 
 input CurrencyInput {

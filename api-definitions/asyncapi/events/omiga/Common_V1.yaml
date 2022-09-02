@@ -25,7 +25,7 @@ components:
         quantity:
           $ref: "#/components/schemas/quantity"
         price:
-          $ref: "#/components/schemas/money"
+          $ref: "#/components/schemas/quantity"
 
     quantity:
       $id: quantity
@@ -41,19 +41,6 @@ components:
         scale:
           type: integer
           format: int32
-
-    money:
-      $id: money
-      type: object
-      additionalProperties: false
-      required:
-        - quantity
-        - currency
-      properties:
-        quantity:
-          $ref: "#/components/schemas/quantity"
-        currency:
-          $ref: "#/components/schemas/currency"
 
     currency:
       $id: currency

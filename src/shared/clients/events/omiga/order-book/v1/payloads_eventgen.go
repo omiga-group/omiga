@@ -66,7 +66,7 @@ type Currency struct {
 type OrderBookEntry struct {
   Time time.Time `json:"time"`  // The order book entry timestamp
   Quantity Quantity `json:"quantity"` 
-  Price Money `json:"price"` 
+  Price Quantity `json:"price"` 
 }
     
     
@@ -74,12 +74,5 @@ type OrderBookEntry struct {
 type Quantity struct {
   Amount int64 `json:"amount"`  // undefined
   Scale int32 `json:"scale"`  // undefined
-}
-    
-    
-    // Money represents a Money model.
-type Money struct {
-  Quantity Quantity `json:"quantity"` 
-  Currency Currency `json:"currency"` 
 }
     

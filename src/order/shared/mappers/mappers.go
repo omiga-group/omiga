@@ -29,7 +29,7 @@ func fromOrderDetailsToEventOrderDetails(src models.OrderDetails) orderv1.OrderD
 		Type:            orderv1.OrderType(src.Type),
 		Side:            orderv1.OrderSide(src.Side),
 		Quantity:        fromQuantityToEventQuantity(src.Quantity),
-		Price:           fromMoneyToEventMoney(src.Price),
+		Price:           fromQuantityToEventQuantity(src.Price),
 	}
 }
 
@@ -37,13 +37,6 @@ func fromQuantityToEventQuantity(src models.Quantity) orderv1.Quantity {
 	return orderv1.Quantity{
 		Amount: src.Amount,
 		Scale:  src.Scale,
-	}
-}
-
-func fromMoneyToEventMoney(src models.Money) orderv1.Money {
-	return orderv1.Money{
-		Quantity: fromQuantityToEventQuantity(src.Quantity),
-		Currency: fromCurrencyToEventCurrency(src.Currency),
 	}
 }
 
@@ -86,7 +79,7 @@ func FromEventOrderBookToOrderBook(src orderbookv1.OrderBook) models.OrderBook {
 func fromEventOrderBookEntryToOrderBookEntry(src orderbookv1.OrderBookEntry) models.OrderBookEntry {
 	return models.OrderBookEntry{
 		Quantity: fromEventQuantityToQuantity(src.Quantity),
-		Price:    fromEventMoneyToMoney(src.Price),
+		Price:    fromEventQuantityToQuantity(src.Price),
 	}
 }
 
@@ -94,13 +87,6 @@ func fromEventQuantityToQuantity(src orderbookv1.Quantity) models.Quantity {
 	return models.Quantity{
 		Amount: src.Amount,
 		Scale:  src.Scale,
-	}
-}
-
-func fromEventMoneyToMoney(src orderbookv1.Money) models.Money {
-	return models.Money{
-		Quantity: fromEventQuantityToQuantity(src.Quantity),
-		Currency: fromEventCurrencyToCurrency(src.Currency),
 	}
 }
 
