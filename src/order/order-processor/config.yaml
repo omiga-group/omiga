@@ -2,6 +2,8 @@ pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "order-processor"
   producerName: "order-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
 
 postgres:
   connectionString: "postgres://postgres:12345678@localhost/order"

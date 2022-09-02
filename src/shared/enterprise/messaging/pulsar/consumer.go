@@ -21,11 +21,21 @@ func NewPulsarMessageConsumer(
 	logger *zap.SugaredLogger,
 	pulsarConfig PulsarConfig,
 	topic string) (messaging.MessageConsumer, error) {
+	operationTimeout, err := time.ParseDuration(pulsarConfig.OperationTimeout)
+	if err != nil {
+		return nil, err
+	}
+
+	connectionTimeout, err := time.ParseDuration(pulsarConfig.ConnectionTimeout)
+	if err != nil {
+		return nil, err
+	}
+
 	pulsarClient, err := pulsar.NewClient(
 		pulsar.ClientOptions{
 			URL:               pulsarConfig.Url,
-			OperationTimeout:  30 * time.Second,
-			ConnectionTimeout: 30 * time.Second,
+			OperationTimeout:  operationTimeout,
+			ConnectionTimeout: connectionTimeout,
 		})
 	if err != nil {
 		return nil, err
