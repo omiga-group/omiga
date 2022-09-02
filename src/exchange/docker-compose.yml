@@ -81,6 +81,23 @@ services:
     networks:
       - omiga_network
 
+  gemini-processor:
+    image: ${DOCKER_REGISTRY-}geminiprocessor
+    build:
+      context: .
+      dockerfile: exchange/gemini-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
+    depends_on:
+      - postgres
+      - exchange-database-migration
+      - pulsar
+    networks:
+      - omiga_network
+
   kraken-processor:
     image: ${DOCKER_REGISTRY-}krakenprocessor
     build:
