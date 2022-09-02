@@ -33,6 +33,21 @@ func (m *MockOsHelper) EXPECT() *MockOsHelperMockRecorder {
 	return m.recorder
 }
 
+// CreateTemporaryTextFile mocks base method.
+func (m *MockOsHelper) CreateTemporaryTextFile(content string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateTemporaryTextFile", content)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateTemporaryTextFile indicates an expected call of CreateTemporaryTextFile.
+func (mr *MockOsHelperMockRecorder) CreateTemporaryTextFile(content interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTemporaryTextFile", reflect.TypeOf((*MockOsHelper)(nil).CreateTemporaryTextFile), content)
+}
+
 // DirExist mocks base method.
 func (m *MockOsHelper) DirExist(path string) bool {
 	m.ctrl.T.Helper()

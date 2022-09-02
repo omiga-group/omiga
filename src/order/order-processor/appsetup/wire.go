@@ -24,6 +24,7 @@ import (
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
@@ -39,7 +40,9 @@ func NewMessageConsumer(
 	logger *zap.SugaredLogger,
 	pulsarConfig pulsar.PulsarConfig,
 	topic string) (messaging.MessageConsumer, error) {
-	wire.Build(pulsar.NewPulsarMessageConsumer)
+	wire.Build(
+		os.NewOsHelper,
+		pulsar.NewPulsarMessageConsumer)
 
 	return nil, nil
 }
@@ -47,7 +50,9 @@ func NewMessageConsumer(
 func NewOrderConsumer(
 	logger *zap.SugaredLogger,
 	messageConsumer messaging.MessageConsumer) (orderv1.Consumer, error) {
-	wire.Build(orderv1.NewConsumer, subscribers.NewOrderSubscriber)
+	wire.Build(
+		orderv1.NewConsumer,
+		subscribers.NewOrderSubscriber)
 
 	return nil, nil
 }

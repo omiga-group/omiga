@@ -33,6 +33,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	enterpriseOutbox "github.com/omiga-group/omiga/src/shared/enterprise/outbox"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
@@ -66,6 +67,7 @@ func NewOrderOutboxBackgroundService(
 	entgoClient repositories.EntgoClient,
 	cronService cron.CronService) (outbox.OutboxBackgroundService, error) {
 	wire.Build(
+		os.NewOsHelper,
 		pulsar.NewPulsarMessageProducer,
 		outbox.NewOutboxBackgroundService)
 

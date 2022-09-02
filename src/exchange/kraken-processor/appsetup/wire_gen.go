@@ -19,6 +19,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
@@ -34,7 +35,11 @@ func NewTimeHelper() (time.TimeHelper, error) {
 }
 
 func NewMessageConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, topic string) (messaging.MessageConsumer, error) {
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarConfig, topic)
+	osHelper, err := os.NewOsHelper()
+	if err != nil {
+		return nil, err
+	}
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarConfig, osHelper, topic)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +56,11 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 }
 
 func NewKrakenOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, krakenConfig configuration2.KrakenConfig, pulsarConfig pulsar.PulsarConfig, postgresConfig postgres.PostgresConfig, topic string) (subscribers.KrakenOrderBookSubscriber, error) {
-	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, topic)
+	osHelper, err := os.NewOsHelper()
+	if err != nil {
+		return nil, err
+	}
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, osHelper, topic)
 	if err != nil {
 		return nil, err
 	}

@@ -1,12 +1,15 @@
 package os
 
-import "os"
+import (
+	"os"
+)
 
 type OsHelper interface {
 	FileExist(path string) bool
 	DirExist(path string) bool
 	GetFileAsByteArray(path string) ([]byte, error)
 	GetFileAsString(path string) (string, error)
+	CreateTemporaryTextFile(content string) (string, error)
 }
 
 type osHelper struct {
@@ -54,4 +57,22 @@ func (oh *osHelper) GetFileAsString(path string) (string, error) {
 	}
 
 	return string(buf), nil
+}
+
+func (oh *osHelper) CreateTemporaryTextFile(content string) (string, error) {
+	file, err := os.CreateTemp(os.TempDir(), "")
+	if err != nil {
+		return "", err
+	}
+
+	defer func() {
+		_ = file.Close()
+	}()
+
+	_, err = file.WriteString(content)
+	if err != nil {
+		return "", err
+	}
+
+	return file.Name(), nil
 }

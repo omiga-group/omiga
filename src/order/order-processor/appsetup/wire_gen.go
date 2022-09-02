@@ -11,6 +11,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
@@ -26,7 +27,11 @@ func NewTimeHelper() (time.TimeHelper, error) {
 }
 
 func NewMessageConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, topic string) (messaging.MessageConsumer, error) {
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarConfig, topic)
+	osHelper, err := os.NewOsHelper()
+	if err != nil {
+		return nil, err
+	}
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarConfig, osHelper, topic)
 	if err != nil {
 		return nil, err
 	}

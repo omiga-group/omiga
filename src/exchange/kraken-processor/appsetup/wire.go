@@ -33,6 +33,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
@@ -48,7 +49,9 @@ func NewMessageConsumer(
 	logger *zap.SugaredLogger,
 	pulsarConfig pulsar.PulsarConfig,
 	topic string) (messaging.MessageConsumer, error) {
-	wire.Build(pulsar.NewPulsarMessageConsumer)
+	wire.Build(
+		os.NewOsHelper,
+		pulsar.NewPulsarMessageConsumer)
 
 	return nil, nil
 }
@@ -70,6 +73,7 @@ func NewKrakenOrderBookSubscriber(
 	postgresConfig postgres.PostgresConfig,
 	topic string) (subscribers.KrakenOrderBookSubscriber, error) {
 	wire.Build(
+		os.NewOsHelper,
 		postgres.NewPostgres,
 		repositories.NewEntgoClient,
 		orderbookv1.NewProducer,
