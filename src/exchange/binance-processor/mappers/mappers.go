@@ -22,9 +22,6 @@ func FromBinanceOrderBookToOrderBook(
 	convertedAsks := slices.Map(asks, func(entry models.BinanceOrderBookEntry) exchangeModels.OrderBookEntry {
 		orderbookEntry := exchangeModels.OrderBookEntry{
 			Time: entry.Time,
-			Price: exchangeModels.Money{
-				Currency: counterCurrency,
-			},
 		}
 
 		if decimal, err := decimal.StringToDecimal(entry.Ask.Quantity); err != nil {
@@ -39,11 +36,11 @@ func FromBinanceOrderBookToOrderBook(
 		}
 
 		if decimal, err := decimal.StringToDecimal(entry.Ask.Price); err != nil {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Scale: -1,
 			}
 		} else {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Amount: decimal.Amount,
 				Scale:  decimal.Scale,
 			}
@@ -55,9 +52,6 @@ func FromBinanceOrderBookToOrderBook(
 	convertedBids := slices.Map(bids, func(entry models.BinanceOrderBookEntry) exchangeModels.OrderBookEntry {
 		orderbookEntry := exchangeModels.OrderBookEntry{
 			Time: entry.Time,
-			Price: exchangeModels.Money{
-				Currency: counterCurrency,
-			},
 		}
 
 		if decimal, err := decimal.StringToDecimal(entry.Bid.Quantity); err != nil {
@@ -72,11 +66,11 @@ func FromBinanceOrderBookToOrderBook(
 		}
 
 		if decimal, err := decimal.StringToDecimal(entry.Bid.Price); err != nil {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Scale: -1,
 			}
 		} else {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Amount: decimal.Amount,
 				Scale:  decimal.Scale,
 			}
@@ -89,10 +83,10 @@ func FromBinanceOrderBookToOrderBook(
 		BaseCurrency:    baseCurrency,
 		CounterCurrency: counterCurrency,
 		Asks: slices.Filter(convertedAsks, func(entry exchangeModels.OrderBookEntry) bool {
-			return entry.Quantity.Scale != -1 && entry.Price.Quantity.Scale != -1
+			return entry.Quantity.Scale != -1 && entry.Price.Scale != -1
 		}),
 		Bids: slices.Filter(convertedBids, func(entry exchangeModels.OrderBookEntry) bool {
-			return entry.Quantity.Scale != -1 && entry.Price.Quantity.Scale != -1
+			return entry.Quantity.Scale != -1 && entry.Price.Scale != -1
 		}),
 	}
 }

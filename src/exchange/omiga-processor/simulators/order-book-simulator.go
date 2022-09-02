@@ -2,6 +2,7 @@ package simulators
 
 import (
 	"context"
+	"time"
 
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
@@ -44,6 +45,7 @@ func NewOrderBookSimulator(
 }
 
 func (obs *orderBookSimulator) Run() {
+	now := time.Now()
 	orderBook := models.OrderBook{
 		ExchangeId: obs.orderBookSimulatorConfig.ExchangeName,
 		BaseCurrency: models.Currency{
@@ -60,77 +62,49 @@ func (obs *orderBookSimulator) Run() {
 		},
 		Asks: []models.OrderBookEntry{
 			{
+				Time: now,
 				Quantity: models.Quantity{
 					Amount: 1,
 					Scale:  1,
 				},
-				Price: models.Money{
-					Quantity: models.Quantity{
-						Amount: 1,
-						Scale:  1,
-					},
-					Currency: models.Currency{
-						Name:         "Ethereum",
-						Code:         "ETH",
-						MaxPrecision: 1,
-						Digital:      true,
-					},
+				Price: models.Quantity{
+					Amount: 1,
+					Scale:  1,
 				},
 			},
 			{
+				Time: now,
 				Quantity: models.Quantity{
 					Amount: 1,
 					Scale:  1,
 				},
-				Price: models.Money{
-					Quantity: models.Quantity{
-						Amount: 1,
-						Scale:  1,
-					},
-					Currency: models.Currency{
-						Name:         "Ethereum",
-						Code:         "ETH",
-						MaxPrecision: 1,
-						Digital:      true,
-					},
+				Price: models.Quantity{
+					Amount: 1,
+					Scale:  1,
 				},
 			},
 		},
 		Bids: []models.OrderBookEntry{
 			{
+				Time: now,
 				Quantity: models.Quantity{
 					Amount: 1,
 					Scale:  1,
 				},
-				Price: models.Money{
-					Quantity: models.Quantity{
-						Amount: 1,
-						Scale:  1,
-					},
-					Currency: models.Currency{
-						Name:         "Ethereum",
-						Code:         "ETH",
-						MaxPrecision: 1,
-						Digital:      true,
-					},
+				Price: models.Quantity{
+					Amount: 1,
+					Scale:  1,
 				},
 			},
 			{
+				Time: now,
 				Quantity: models.Quantity{
 					Amount: 1,
 					Scale:  1,
 				},
-				Price: models.Money{
-					Quantity: models.Quantity{
-						Amount: 1,
-						Scale:  1,
-					},
-					Currency: models.Currency{
-						Name:         "Ethereum",
-						Code:         "ETH",
-						MaxPrecision: 1,
-						Digital:      true,
-					},
+				Price: models.Quantity{
+					Amount: 1,
+					Scale:  1,
 				},
 			},
 		},

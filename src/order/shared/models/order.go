@@ -37,18 +37,13 @@ type Quantity struct {
 	Scale  int32
 }
 
-type Money struct {
-	Quantity Quantity
-	Currency Currency
-}
-
 type OrderDetails struct {
 	BaseCurrency    Currency
 	CounterCurrency Currency
 	Type            OrderType
 	Side            OrderSide
 	Quantity        Quantity
-	Price           Money
+	Price           Quantity
 }
 
 type UserType string
@@ -78,7 +73,7 @@ type Order struct {
 
 type OrderBookEntry struct {
 	Quantity Quantity
-	Price    Money
+	Price    Quantity
 }
 
 type OrderBook struct {

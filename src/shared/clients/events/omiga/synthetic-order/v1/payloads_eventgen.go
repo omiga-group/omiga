@@ -72,7 +72,7 @@ type OrderDetails struct {
   Type OrderType `json:"type"` 
   Side OrderSide `json:"side"` 
   Quantity Quantity `json:"quantity"` 
-  Price Money `json:"price"` 
+  Price Quantity `json:"price"` 
   AdditionalProperties *[]interface{} `json:"additionalProperties,omitempty"`  // undefined
 }
     
@@ -113,12 +113,5 @@ const (
 type Quantity struct {
   Amount int64 `json:"amount"`  // undefined
   Scale int32 `json:"scale"`  // undefined
-}
-    
-    
-    // Money represents a Money model.
-type Money struct {
-  Quantity Quantity `json:"quantity"` 
-  Currency Currency `json:"currency"` 
 }
     

@@ -279,7 +279,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCancelOrderInput,
 		ec.unmarshalInputCurrencyInput,
 		ec.unmarshalInputExchangeInput,
-		ec.unmarshalInputMoneyInput,
 		ec.unmarshalInputOrderDetailsInput,
 		ec.unmarshalInputOrderWhereInput,
 		ec.unmarshalInputOutboxWhereInput,
@@ -491,17 +490,12 @@ input OrderDetailsInput {
   type: OrderType!
   side: OrderSide!
   quantity: QuantityInput!
-  price: MoneyInput!
+  price: QuantityInput!
 }
 
 input QuantityInput {
   amount: Int!
   scale: Int!
-}
-
-input MoneyInput {
-  quantity: QuantityInput!
-  currency: CurrencyInput!
 }
 
 input CurrencyInput {
@@ -3678,42 +3672,6 @@ func (ec *executionContext) unmarshalInputExchangeInput(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputMoneyInput(ctx context.Context, obj interface{}) (models.MoneyInput, error) {
-	var it models.MoneyInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"quantity", "currency"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "quantity":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("quantity"))
-			it.Quantity, err = ec.unmarshalNQuantityInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋorderᚑapiᚋgraphqlᚋmodelsᚐQuantityInput(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "currency":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
-			it.Currency, err = ec.unmarshalNCurrencyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋorderᚑapiᚋgraphqlᚋmodelsᚐCurrencyInput(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputOrderDetailsInput(ctx context.Context, obj interface{}) (models.OrderDetailsInput, error) {
 	var it models.OrderDetailsInput
 	asMap := map[string]interface{}{}
@@ -3772,7 +3730,7 @@ func (ec *executionContext) unmarshalInputOrderDetailsInput(ctx context.Context,
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("price"))
-			it.Price, err = ec.unmarshalNMoneyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋorderᚑapiᚋgraphqlᚋmodelsᚐMoneyInput(ctx, v)
+			it.Price, err = ec.unmarshalNQuantityInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋorderᚑapiᚋgraphqlᚋmodelsᚐQuantityInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5286,11 +5244,6 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalNMoneyInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋorderᚑapiᚋgraphqlᚋmodelsᚐMoneyInput(ctx context.Context, v interface{}) (*models.MoneyInput, error) {
-	res, err := ec.unmarshalInputMoneyInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNOrderDetailsInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋorderᚑapiᚋgraphqlᚋmodelsᚐOrderDetailsInput(ctx context.Context, v interface{}) (*models.OrderDetailsInput, error) {

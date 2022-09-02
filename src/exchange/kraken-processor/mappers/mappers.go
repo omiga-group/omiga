@@ -30,9 +30,6 @@ func FromKrakenOrderBookToOrderBook(
 
 		orderbookEntry := exchangeModels.OrderBookEntry{
 			Time: time.Unix(timePeice1, timePeice2),
-			Price: exchangeModels.Money{
-				Currency: counterCurrency,
-			},
 		}
 
 		if decimal, err := decimal.StringToDecimal(string(entry.Ask.Volume)); err != nil {
@@ -47,11 +44,11 @@ func FromKrakenOrderBookToOrderBook(
 		}
 
 		if decimal, err := decimal.StringToDecimal(string(entry.Ask.Price)); err != nil {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Scale: -1,
 			}
 		} else {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Amount: decimal.Amount,
 				Scale:  decimal.Scale,
 			}
@@ -67,9 +64,6 @@ func FromKrakenOrderBookToOrderBook(
 
 		orderbookEntry := exchangeModels.OrderBookEntry{
 			Time: time.Unix(timePeice1, timePeice2),
-			Price: exchangeModels.Money{
-				Currency: counterCurrency,
-			},
 		}
 
 		if decimal, err := decimal.StringToDecimal(string(entry.Bid.Volume)); err != nil {
@@ -84,11 +78,11 @@ func FromKrakenOrderBookToOrderBook(
 		}
 
 		if decimal, err := decimal.StringToDecimal(string(entry.Bid.Price)); err != nil {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Scale: -1,
 			}
 		} else {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Amount: decimal.Amount,
 				Scale:  decimal.Scale,
 			}
@@ -101,10 +95,10 @@ func FromKrakenOrderBookToOrderBook(
 		BaseCurrency:    baseCurrency,
 		CounterCurrency: counterCurrency,
 		Asks: slices.Filter(convertedAsks, func(entry exchangeModels.OrderBookEntry) bool {
-			return entry.Quantity.Scale != -1 && entry.Price.Quantity.Scale != -1
+			return entry.Quantity.Scale != -1 && entry.Price.Scale != -1
 		}),
 		Bids: slices.Filter(convertedBids, func(entry exchangeModels.OrderBookEntry) bool {
-			return entry.Quantity.Scale != -1 && entry.Price.Quantity.Scale != -1
+			return entry.Quantity.Scale != -1 && entry.Price.Scale != -1
 		}),
 	}
 }

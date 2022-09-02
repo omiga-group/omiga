@@ -127,4 +127,4 @@ components:
         quantity:
           $ref: "./Common_V1.yaml#/components/schemas/quantity"
         price:
-          $ref: "./Common_V1.yaml#/components/schemas/money"
+          $ref: "./Common_V1.yaml#/components/schemas/quantity"
