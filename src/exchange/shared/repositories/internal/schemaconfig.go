@@ -7,6 +7,7 @@ import "context"
 // SchemaConfig represents alternative schema names for all tables
 // that can be passed at runtime.
 type SchemaConfig struct {
+	Coin     string // Coin table.
 	Exchange string // Exchange table.
 	Outbox   string // Outbox table.
 	Ticker   string // Ticker table.

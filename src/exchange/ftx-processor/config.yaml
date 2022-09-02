@@ -5,6 +5,8 @@ pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "ftx-processor"
   producerName: "ftx-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
 
 ftx:
   apiUrl: https://ftx.com/api

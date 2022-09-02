@@ -7,6 +7,7 @@ import (
 
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
+	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"go.uber.org/zap"
 )
 
@@ -20,12 +21,42 @@ type pulsarMessageConsumer struct {
 func NewPulsarMessageConsumer(
 	logger *zap.SugaredLogger,
 	pulsarConfig PulsarConfig,
+	osHelper os.OsHelper,
 	topic string) (messaging.MessageConsumer, error) {
+	operationTimeout, err := time.ParseDuration(pulsarConfig.OperationTimeout)
+	if err != nil {
+		return nil, err
+	}
+
+	connectionTimeout, err := time.ParseDuration(pulsarConfig.ConnectionTimeout)
+	if err != nil {
+		return nil, err
+	}
+
+	var authentication interface{} = nil
+
+	if pulsarConfig.EnableAuthenticationOAuth2 && pulsarConfig.AuthenticationOAuth2 != nil {
+		privateKeyFilePath, err := osHelper.CreateTemporaryTextFile(
+			pulsarConfig.AuthenticationOAuth2.PrivateKey)
+		if err != nil {
+			return nil, err
+		}
+
+		authentication = pulsar.NewAuthenticationOAuth2(map[string]string{
+			"type":       pulsarConfig.AuthenticationOAuth2.Type,
+			"issuerUrl":  pulsarConfig.AuthenticationOAuth2.IssuerUrl,
+			"audience":   pulsarConfig.AuthenticationOAuth2.Audience,
+			"privateKey": privateKeyFilePath,
+			"clientId":   pulsarConfig.AuthenticationOAuth2.ClientId,
+		})
+	}
+
 	pulsarClient, err := pulsar.NewClient(
 		pulsar.ClientOptions{
 			URL:               pulsarConfig.Url,
-			OperationTimeout:  30 * time.Second,
-			ConnectionTimeout: 30 * time.Second,
+			OperationTimeout:  operationTimeout,
+			ConnectionTimeout: connectionTimeout,
+			Authentication:    authentication,
 		})
 	if err != nil {
 		return nil, err

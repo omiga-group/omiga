@@ -2,7 +2,6 @@ package mappers
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/models"
@@ -24,9 +23,7 @@ func ToModelOrderBook(
 
 	convertedAsks := slices.Map(asks, func(entry models.OrderBookEntry) exchangeModels.OrderBookEntry {
 		orderbookEntry := exchangeModels.OrderBookEntry{
-			Price: exchangeModels.Money{
-				Currency: counterCurrency,
-			},
+			Time: entry.Time,
 		}
 
 		if decimal, err := decimal.StringToDecimal(fmt.Sprintf("%f", entry.Ask.Quantity)); err != nil {
@@ -41,11 +38,11 @@ func ToModelOrderBook(
 		}
 
 		if decimal, err := decimal.StringToDecimal(fmt.Sprintf("%f", entry.Ask.Quantity)); err != nil {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Scale: -1,
 			}
 		} else {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Amount: decimal.Amount,
 				Scale:  decimal.Scale,
 			}
@@ -56,9 +53,7 @@ func ToModelOrderBook(
 
 	convertedBids := slices.Map(bids, func(entry models.OrderBookEntry) exchangeModels.OrderBookEntry {
 		orderbookEntry := exchangeModels.OrderBookEntry{
-			Price: exchangeModels.Money{
-				Currency: counterCurrency,
-			},
+			Time: entry.Time,
 		}
 
 		if decimal, err := decimal.StringToDecimal(fmt.Sprintf("%f", entry.Bid.Quantity)); err != nil {
@@ -73,11 +68,11 @@ func ToModelOrderBook(
 		}
 
 		if decimal, err := decimal.StringToDecimal(fmt.Sprintf("%f", entry.Bid.Quantity)); err != nil {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Scale: -1,
 			}
 		} else {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Amount: decimal.Amount,
 				Scale:  decimal.Scale,
 			}
@@ -89,12 +84,11 @@ func ToModelOrderBook(
 	return exchangeModels.OrderBook{
 		BaseCurrency:    baseCurrency,
 		CounterCurrency: counterCurrency,
-		Time:            time.Now(),
 		Asks: slices.Filter(convertedAsks, func(entry exchangeModels.OrderBookEntry) bool {
-			return entry.Quantity.Scale != -1 && entry.Price.Quantity.Scale != -1
+			return entry.Quantity.Scale != -1 && entry.Price.Scale != -1
 		}),
 		Bids: slices.Filter(convertedBids, func(entry exchangeModels.OrderBookEntry) bool {
-			return entry.Quantity.Scale != -1 && entry.Price.Quantity.Scale != -1
+			return entry.Quantity.Scale != -1 && entry.Price.Scale != -1
 		}),
 	}
 }

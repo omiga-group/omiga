@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
@@ -33,6 +34,7 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
+		coin.Table:     coin.ValidColumn,
 		exchange.Table: exchange.ValidColumn,
 		outbox.Table:   outbox.ValidColumn,
 		ticker.Table:   ticker.ValidColumn,

@@ -33,54 +33,18 @@ services:
     networks:
       - omiga_network
 
-  omiga-processor1:
-    image: ${DOCKER_REGISTRY-}omigaprocessor1
+  coingeko-processor:
+    image: ${DOCKER_REGISTRY-}coingekoprocessor
     build:
       context: .
-      dockerfile: exchange/omiga-processor/Dockerfile
+      dockerfile: exchange/coingeko-processor/Dockerfile
       target: local
     restart: unless-stopped
-    command: /bin/omiga-processor start --name omiga-exchange1
     environment:
-      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
     depends_on:
       - postgres
       - exchange-database-migration
-      - pulsar
-    networks:
-      - omiga_network
-
-  omiga-processor2:
-    image: ${DOCKER_REGISTRY-}omigaprocessor2
-    build:
-      context: .
-      dockerfile: exchange/omiga-processor/Dockerfile
-      target: local
-    restart: unless-stopped
-    command: /bin/omiga-processor start --name omiga-exchange2
-    environment:
-      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
-    depends_on:
-      - postgres
-      - exchange-database-migration
-      - pulsar
-    networks:
-      - omiga_network
-
-  omiga-processor3:
-    image: ${DOCKER_REGISTRY-}omigaprocessor3
-    build:
-      context: .
-      dockerfile: exchange/omiga-processor/Dockerfile
-      target: local
-    restart: unless-stopped
-    command: /bin/omiga-processor start --name omiga-exchange3
-    environment:
-      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
-    depends_on:
-      - postgres
-      - exchange-database-migration
-      - pulsar
     networks:
       - omiga_network
 
@@ -93,6 +57,7 @@ services:
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
     depends_on:
       - postgres
       - exchange-database-migration
@@ -116,17 +81,19 @@ services:
     networks:
       - omiga_network
 
-  coingeko:
-    image: ${DOCKER_REGISTRY-}coingeko
+  kraken-processor:
+    image: ${DOCKER_REGISTRY-}krakenprocessor
     build:
       context: .
-      dockerfile: exchange/coingeko/Dockerfile
+      dockerfile: exchange/kraken-processor/Dockerfile
       target: local
     restart: unless-stopped
     environment:
+      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
     depends_on:
       - postgres
       - exchange-database-migration
+      - pulsar
     networks:
       - omiga_network

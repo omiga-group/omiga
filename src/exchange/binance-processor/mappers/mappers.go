@@ -1,15 +1,13 @@
 package mappers
 
 import (
-	"time"
-
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/models"
 	exchangeModels "github.com/omiga-group/omiga/src/exchange/shared/models"
 	"github.com/omiga-group/omiga/src/shared/enterprise/decimal"
 )
 
-func FromBinanceOrderBookToModelOrderBook(
+func FromBinanceOrderBookToOrderBook(
 	baseCurrency exchangeModels.Currency,
 	counterCurrency exchangeModels.Currency,
 	orderBook []models.BinanceOrderBookEntry) exchangeModels.OrderBook {
@@ -23,9 +21,7 @@ func FromBinanceOrderBookToModelOrderBook(
 
 	convertedAsks := slices.Map(asks, func(entry models.BinanceOrderBookEntry) exchangeModels.OrderBookEntry {
 		orderbookEntry := exchangeModels.OrderBookEntry{
-			Price: exchangeModels.Money{
-				Currency: counterCurrency,
-			},
+			Time: entry.Time,
 		}
 
 		if decimal, err := decimal.StringToDecimal(entry.Ask.Quantity); err != nil {
@@ -40,11 +36,11 @@ func FromBinanceOrderBookToModelOrderBook(
 		}
 
 		if decimal, err := decimal.StringToDecimal(entry.Ask.Price); err != nil {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Scale: -1,
 			}
 		} else {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Amount: decimal.Amount,
 				Scale:  decimal.Scale,
 			}
@@ -55,9 +51,7 @@ func FromBinanceOrderBookToModelOrderBook(
 
 	convertedBids := slices.Map(bids, func(entry models.BinanceOrderBookEntry) exchangeModels.OrderBookEntry {
 		orderbookEntry := exchangeModels.OrderBookEntry{
-			Price: exchangeModels.Money{
-				Currency: counterCurrency,
-			},
+			Time: entry.Time,
 		}
 
 		if decimal, err := decimal.StringToDecimal(entry.Bid.Quantity); err != nil {
@@ -72,11 +66,11 @@ func FromBinanceOrderBookToModelOrderBook(
 		}
 
 		if decimal, err := decimal.StringToDecimal(entry.Bid.Price); err != nil {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Scale: -1,
 			}
 		} else {
-			orderbookEntry.Price.Quantity = exchangeModels.Quantity{
+			orderbookEntry.Price = exchangeModels.Quantity{
 				Amount: decimal.Amount,
 				Scale:  decimal.Scale,
 			}
@@ -88,12 +82,11 @@ func FromBinanceOrderBookToModelOrderBook(
 	return exchangeModels.OrderBook{
 		BaseCurrency:    baseCurrency,
 		CounterCurrency: counterCurrency,
-		Time:            time.Now(),
 		Asks: slices.Filter(convertedAsks, func(entry exchangeModels.OrderBookEntry) bool {
-			return entry.Quantity.Scale != -1 && entry.Price.Quantity.Scale != -1
+			return entry.Quantity.Scale != -1 && entry.Price.Scale != -1
 		}),
 		Bids: slices.Filter(convertedBids, func(entry exchangeModels.OrderBookEntry) bool {
-			return entry.Quantity.Scale != -1 && entry.Price.Quantity.Scale != -1
+			return entry.Quantity.Scale != -1 && entry.Price.Scale != -1
 		}),
 	}
 }

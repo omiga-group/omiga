@@ -2,6 +2,7 @@ package subscribers
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/adshao/go-binance/v2"
@@ -9,9 +10,9 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/mappers"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/models"
-	"github.com/omiga-group/omiga/src/exchange/binance-processor/services"
 	exchangeModels "github.com/omiga-group/omiga/src/exchange/shared/models"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
+	"github.com/omiga-group/omiga/src/exchange/shared/services"
 	"go.uber.org/zap"
 )
 
@@ -19,37 +20,36 @@ type BinanceOrderBookSubscriber interface {
 }
 
 type binanceOrderBookSubscriber struct {
-	ctx                                                          context.Context
-	logger                                                       *zap.SugaredLogger
-	symbol                                                       string
-	orderBookPublisher                                           publishers.OrderBookPublisher
-	baseCoinCode, baseCoinName, counterCoinCode, counterCoinName string
+	ctx                context.Context
+	logger             *zap.SugaredLogger
+	pair               string
+	orderBookPublisher publishers.OrderBookPublisher
+	coinHelper         services.CoinHelper
+	symbol1            string
+	symbol2            string
 }
 
 func NewBinanceOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	binanceConfig configuration.BinanceConfig,
-	symbolConfig configuration.SymbolConfig,
+	pairConfig configuration.PairConfig,
 	orderBookPublisher publishers.OrderBookPublisher,
-	symbolEnricher services.SymbolEnricher) (BinanceOrderBookSubscriber, error) {
-
+	coinHelper services.CoinHelper) (BinanceOrderBookSubscriber, error) {
 	binance.UseTestnet = binanceConfig.UseTestnet
 
-	baseCoinCode, baseCoinName, counterCoinCode, counterCoinName, err := symbolEnricher.GetCoinPair(symbolConfig.Symbol)
-	if err != nil {
-		return nil, err
-	}
+	pairs := strings.Split(pairConfig.Pair, "/")
+	symbol1 := strings.ToLower(pairs[0])
+	symbol2 := strings.ToLower(pairs[1])
 
 	instance := &binanceOrderBookSubscriber{
 		ctx:                ctx,
 		logger:             logger,
-		symbol:             symbolConfig.Symbol,
 		orderBookPublisher: orderBookPublisher,
-		baseCoinCode:       baseCoinCode,
-		baseCoinName:       baseCoinName,
-		counterCoinCode:    counterCoinCode,
-		counterCoinName:    counterCoinName,
+		coinHelper:         coinHelper,
+		pair:               strings.Replace(pairConfig.Pair, "/", "", -1),
+		symbol1:            symbol1,
+		symbol2:            symbol2,
 	}
 
 	go instance.run()
@@ -69,7 +69,7 @@ func (bobs *binanceOrderBookSubscriber) run() {
 
 func (bobs *binanceOrderBookSubscriber) connectAndSubscribe() {
 	_, stopChannel, err := binance.WsDepthServe100Ms(
-		bobs.symbol,
+		bobs.pair,
 		bobs.wsDepthHandler,
 		bobs.wsErrorHandler)
 	if err != nil {
@@ -92,8 +92,8 @@ func (bobs *binanceOrderBookSubscriber) connectAndSubscribe() {
 func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEvent) {
 	if event == nil {
 		bobs.logger.Warnf(
-			"Binance websocket returned nil event for symbol %s",
-			bobs.symbol)
+			"Binance websocket returned nil event for pair %s",
+			bobs.pair)
 
 		return
 	}
@@ -102,7 +102,7 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 
 	asks := slices.Map(event.Asks, func(ask binance.Ask) models.BinanceOrderBookEntry {
 		return models.BinanceOrderBookEntry{
-			Symbol: bobs.symbol,
+			Symbol: bobs.pair,
 			Time:   entryTime,
 			Ask:    &ask,
 			Bid:    nil,
@@ -111,7 +111,7 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 
 	bids := slices.Map(event.Bids, func(bid binance.Bid) models.BinanceOrderBookEntry {
 		return models.BinanceOrderBookEntry{
-			Symbol: bobs.symbol,
+			Symbol: bobs.pair,
 			Time:   entryTime,
 			Ask:    nil,
 			Bid:    &bid,
@@ -120,16 +120,26 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 
 	binanceOrderBook := slices.Concat(asks, bids)
 
-	orderBook := mappers.FromBinanceOrderBookToModelOrderBook(
+	coins, err := bobs.coinHelper.GetCoinsNames(bobs.ctx, []string{bobs.symbol1, bobs.symbol2})
+	if err != nil {
+		bobs.logger.Errorf("Failed to fetch coin names. Error: %v", err)
+
+		return
+	}
+
+	baseCoinName := coins[bobs.symbol1]
+	counterCoinName := coins[bobs.symbol2]
+
+	orderBook := mappers.FromBinanceOrderBookToOrderBook(
 		exchangeModels.Currency{
-			Name:         bobs.baseCoinName,
-			Code:         bobs.baseCoinCode,
+			Name:         baseCoinName,
+			Code:         bobs.symbol1,
 			MaxPrecision: 1,
 			Digital:      true,
 		},
 		exchangeModels.Currency{
-			Name:         bobs.counterCoinName,
-			Code:         bobs.counterCoinCode,
+			Name:         counterCoinName,
+			Code:         bobs.symbol2,
 			MaxPrecision: 1,
 			Digital:      true,
 		},
@@ -143,12 +153,14 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 		orderBook.ExchangeId,
 		orderBook); err != nil {
 		bobs.logger.Errorf("Failed to publish order book for Binance exchange. Error: %v", err)
+
+		return
 	}
 }
 
 func (bobs *binanceOrderBookSubscriber) wsErrorHandler(err error) {
 	bobs.logger.Errorf(
-		"Binance websocket returned error for symbol %s. Error: %v",
-		bobs.symbol,
+		"Binance websocket returned error for pair %s. Error: %v",
+		bobs.pair,
 		err)
 }

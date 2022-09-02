@@ -10,6 +10,7 @@ import (
 
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/migrate"
 
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
@@ -24,6 +25,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Coin is the client for interacting with the Coin builders.
+	Coin *CoinClient
 	// Exchange is the client for interacting with the Exchange builders.
 	Exchange *ExchangeClient
 	// Outbox is the client for interacting with the Outbox builders.
@@ -45,6 +48,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Coin = NewCoinClient(c.config)
 	c.Exchange = NewExchangeClient(c.config)
 	c.Outbox = NewOutboxClient(c.config)
 	c.Ticker = NewTickerClient(c.config)
@@ -81,6 +85,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:      ctx,
 		config:   cfg,
+		Coin:     NewCoinClient(cfg),
 		Exchange: NewExchangeClient(cfg),
 		Outbox:   NewOutboxClient(cfg),
 		Ticker:   NewTickerClient(cfg),
@@ -103,6 +108,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:      ctx,
 		config:   cfg,
+		Coin:     NewCoinClient(cfg),
 		Exchange: NewExchangeClient(cfg),
 		Outbox:   NewOutboxClient(cfg),
 		Ticker:   NewTickerClient(cfg),
@@ -112,7 +118,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Exchange.
+//		Coin.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -134,9 +140,100 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Coin.Use(hooks...)
 	c.Exchange.Use(hooks...)
 	c.Outbox.Use(hooks...)
 	c.Ticker.Use(hooks...)
+}
+
+// CoinClient is a client for the Coin schema.
+type CoinClient struct {
+	config
+}
+
+// NewCoinClient returns a client for the Coin from the given config.
+func NewCoinClient(c config) *CoinClient {
+	return &CoinClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `coin.Hooks(f(g(h())))`.
+func (c *CoinClient) Use(hooks ...Hook) {
+	c.hooks.Coin = append(c.hooks.Coin, hooks...)
+}
+
+// Create returns a builder for creating a Coin entity.
+func (c *CoinClient) Create() *CoinCreate {
+	mutation := newCoinMutation(c.config, OpCreate)
+	return &CoinCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Coin entities.
+func (c *CoinClient) CreateBulk(builders ...*CoinCreate) *CoinCreateBulk {
+	return &CoinCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Coin.
+func (c *CoinClient) Update() *CoinUpdate {
+	mutation := newCoinMutation(c.config, OpUpdate)
+	return &CoinUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CoinClient) UpdateOne(co *Coin) *CoinUpdateOne {
+	mutation := newCoinMutation(c.config, OpUpdateOne, withCoin(co))
+	return &CoinUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CoinClient) UpdateOneID(id int) *CoinUpdateOne {
+	mutation := newCoinMutation(c.config, OpUpdateOne, withCoinID(id))
+	return &CoinUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Coin.
+func (c *CoinClient) Delete() *CoinDelete {
+	mutation := newCoinMutation(c.config, OpDelete)
+	return &CoinDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CoinClient) DeleteOne(co *Coin) *CoinDeleteOne {
+	return c.DeleteOneID(co.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *CoinClient) DeleteOneID(id int) *CoinDeleteOne {
+	builder := c.Delete().Where(coin.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CoinDeleteOne{builder}
+}
+
+// Query returns a query builder for Coin.
+func (c *CoinClient) Query() *CoinQuery {
+	return &CoinQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Coin entity by its id.
+func (c *CoinClient) Get(ctx context.Context, id int) (*Coin, error) {
+	return c.Query().Where(coin.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CoinClient) GetX(ctx context.Context, id int) *Coin {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CoinClient) Hooks() []Hook {
+	return c.hooks.Coin
 }
 
 // ExchangeClient is a client for the Exchange schema.

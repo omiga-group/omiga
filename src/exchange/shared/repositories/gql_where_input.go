@@ -7,11 +7,252 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 )
+
+// CoinWhereInput represents a where input for filtering Coin queries.
+type CoinWhereInput struct {
+	Predicates []predicate.Coin  `json:"-"`
+	Not        *CoinWhereInput   `json:"not,omitempty"`
+	Or         []*CoinWhereInput `json:"or,omitempty"`
+	And        []*CoinWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *int  `json:"id,omitempty"`
+	IDNEQ   *int  `json:"idNEQ,omitempty"`
+	IDIn    []int `json:"idIn,omitempty"`
+	IDNotIn []int `json:"idNotIn,omitempty"`
+	IDGT    *int  `json:"idGT,omitempty"`
+	IDGTE   *int  `json:"idGTE,omitempty"`
+	IDLT    *int  `json:"idLT,omitempty"`
+	IDLTE   *int  `json:"idLTE,omitempty"`
+
+	// "symbol" field predicates.
+	Symbol             *string  `json:"symbol,omitempty"`
+	SymbolNEQ          *string  `json:"symbolNEQ,omitempty"`
+	SymbolIn           []string `json:"symbolIn,omitempty"`
+	SymbolNotIn        []string `json:"symbolNotIn,omitempty"`
+	SymbolGT           *string  `json:"symbolGT,omitempty"`
+	SymbolGTE          *string  `json:"symbolGTE,omitempty"`
+	SymbolLT           *string  `json:"symbolLT,omitempty"`
+	SymbolLTE          *string  `json:"symbolLTE,omitempty"`
+	SymbolContains     *string  `json:"symbolContains,omitempty"`
+	SymbolHasPrefix    *string  `json:"symbolHasPrefix,omitempty"`
+	SymbolHasSuffix    *string  `json:"symbolHasSuffix,omitempty"`
+	SymbolEqualFold    *string  `json:"symbolEqualFold,omitempty"`
+	SymbolContainsFold *string  `json:"symbolContainsFold,omitempty"`
+
+	// "name" field predicates.
+	Name             *string  `json:"name,omitempty"`
+	NameNEQ          *string  `json:"nameNEQ,omitempty"`
+	NameIn           []string `json:"nameIn,omitempty"`
+	NameNotIn        []string `json:"nameNotIn,omitempty"`
+	NameGT           *string  `json:"nameGT,omitempty"`
+	NameGTE          *string  `json:"nameGTE,omitempty"`
+	NameLT           *string  `json:"nameLT,omitempty"`
+	NameLTE          *string  `json:"nameLTE,omitempty"`
+	NameContains     *string  `json:"nameContains,omitempty"`
+	NameHasPrefix    *string  `json:"nameHasPrefix,omitempty"`
+	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
+	NameIsNil        bool     `json:"nameIsNil,omitempty"`
+	NameNotNil       bool     `json:"nameNotNil,omitempty"`
+	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
+	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *CoinWhereInput) AddPredicates(predicates ...predicate.Coin) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the CoinWhereInput filter on the CoinQuery builder.
+func (i *CoinWhereInput) Filter(q *CoinQuery) (*CoinQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyCoinWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyCoinWhereInput is returned in case the CoinWhereInput is empty.
+var ErrEmptyCoinWhereInput = errors.New("repositories: empty predicate CoinWhereInput")
+
+// P returns a predicate for filtering coins.
+// An error is returned if the input is empty or invalid.
+func (i *CoinWhereInput) P() (predicate.Coin, error) {
+	var predicates []predicate.Coin
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, coin.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.Coin, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, coin.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.Coin, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, coin.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, coin.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, coin.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, coin.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, coin.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, coin.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, coin.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, coin.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, coin.IDLTE(*i.IDLTE))
+	}
+	if i.Symbol != nil {
+		predicates = append(predicates, coin.SymbolEQ(*i.Symbol))
+	}
+	if i.SymbolNEQ != nil {
+		predicates = append(predicates, coin.SymbolNEQ(*i.SymbolNEQ))
+	}
+	if len(i.SymbolIn) > 0 {
+		predicates = append(predicates, coin.SymbolIn(i.SymbolIn...))
+	}
+	if len(i.SymbolNotIn) > 0 {
+		predicates = append(predicates, coin.SymbolNotIn(i.SymbolNotIn...))
+	}
+	if i.SymbolGT != nil {
+		predicates = append(predicates, coin.SymbolGT(*i.SymbolGT))
+	}
+	if i.SymbolGTE != nil {
+		predicates = append(predicates, coin.SymbolGTE(*i.SymbolGTE))
+	}
+	if i.SymbolLT != nil {
+		predicates = append(predicates, coin.SymbolLT(*i.SymbolLT))
+	}
+	if i.SymbolLTE != nil {
+		predicates = append(predicates, coin.SymbolLTE(*i.SymbolLTE))
+	}
+	if i.SymbolContains != nil {
+		predicates = append(predicates, coin.SymbolContains(*i.SymbolContains))
+	}
+	if i.SymbolHasPrefix != nil {
+		predicates = append(predicates, coin.SymbolHasPrefix(*i.SymbolHasPrefix))
+	}
+	if i.SymbolHasSuffix != nil {
+		predicates = append(predicates, coin.SymbolHasSuffix(*i.SymbolHasSuffix))
+	}
+	if i.SymbolEqualFold != nil {
+		predicates = append(predicates, coin.SymbolEqualFold(*i.SymbolEqualFold))
+	}
+	if i.SymbolContainsFold != nil {
+		predicates = append(predicates, coin.SymbolContainsFold(*i.SymbolContainsFold))
+	}
+	if i.Name != nil {
+		predicates = append(predicates, coin.NameEQ(*i.Name))
+	}
+	if i.NameNEQ != nil {
+		predicates = append(predicates, coin.NameNEQ(*i.NameNEQ))
+	}
+	if len(i.NameIn) > 0 {
+		predicates = append(predicates, coin.NameIn(i.NameIn...))
+	}
+	if len(i.NameNotIn) > 0 {
+		predicates = append(predicates, coin.NameNotIn(i.NameNotIn...))
+	}
+	if i.NameGT != nil {
+		predicates = append(predicates, coin.NameGT(*i.NameGT))
+	}
+	if i.NameGTE != nil {
+		predicates = append(predicates, coin.NameGTE(*i.NameGTE))
+	}
+	if i.NameLT != nil {
+		predicates = append(predicates, coin.NameLT(*i.NameLT))
+	}
+	if i.NameLTE != nil {
+		predicates = append(predicates, coin.NameLTE(*i.NameLTE))
+	}
+	if i.NameContains != nil {
+		predicates = append(predicates, coin.NameContains(*i.NameContains))
+	}
+	if i.NameHasPrefix != nil {
+		predicates = append(predicates, coin.NameHasPrefix(*i.NameHasPrefix))
+	}
+	if i.NameHasSuffix != nil {
+		predicates = append(predicates, coin.NameHasSuffix(*i.NameHasSuffix))
+	}
+	if i.NameIsNil {
+		predicates = append(predicates, coin.NameIsNil())
+	}
+	if i.NameNotNil {
+		predicates = append(predicates, coin.NameNotNil())
+	}
+	if i.NameEqualFold != nil {
+		predicates = append(predicates, coin.NameEqualFold(*i.NameEqualFold))
+	}
+	if i.NameContainsFold != nil {
+		predicates = append(predicates, coin.NameContainsFold(*i.NameContainsFold))
+	}
+
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyCoinWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return coin.And(predicates...), nil
+	}
+}
 
 // ExchangeWhereInput represents a where input for filtering Exchange queries.
 type ExchangeWhereInput struct {

@@ -5,9 +5,15 @@ pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "binance-processor"
   producerName: "binance-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/exchange"
+  maxOpenConns: 5
 
 binance:
-  useTestnet: true
+  useTestnet: false
   orderBook:
-    symbols:
-      - symbol: LTCBTC
+    pairs:
+      - pair: LTC/BTC

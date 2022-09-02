@@ -14,7 +14,7 @@ func FromSubmitOrderInputToOrder(src graphqlmodels.SubmitOrderInput) models.Orde
 			Type:            models.OrderType(src.OrderDetails.Type),
 			Side:            models.OrderSide(src.OrderDetails.Side),
 			Quantity:        fromQuantityInputToQuantity(src.OrderDetails.Quantity),
-			Price:           fromMoneyInputToMoney(src.OrderDetails.Price),
+			Price:           fromQuantityInputToQuantity(src.OrderDetails.Price),
 		},
 	}
 
@@ -31,13 +31,6 @@ func fromQuantityInputToQuantity(src *graphqlmodels.QuantityInput) models.Quanti
 	return models.Quantity{
 		Amount: int64(src.Amount),
 		Scale:  int32(src.Scale),
-	}
-}
-
-func fromMoneyInputToMoney(src *graphqlmodels.MoneyInput) models.Money {
-	return models.Money{
-		Quantity: fromQuantityInputToQuantity(src.Quantity),
-		Currency: fromCurrencyInputToCurrency(src.Currency),
 	}
 }
 

@@ -1,7 +1,0 @@
-app:
-  source: "urn::omiga::omiga-processor"
-
-pulsar:
-  url: "pulsar://localhost:6650"
-  subscriptionName: "omiga-processor"
-  producerName: "omiga-processor"

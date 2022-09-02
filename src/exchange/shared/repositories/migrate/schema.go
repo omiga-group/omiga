@@ -8,6 +8,30 @@ import (
 )
 
 var (
+	// CoinsColumns holds the columns for the "coins" table.
+	CoinsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "symbol", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+	}
+	// CoinsTable holds the schema information for the "coins" table.
+	CoinsTable = &schema.Table{
+		Name:       "coins",
+		Columns:    CoinsColumns,
+		PrimaryKey: []*schema.Column{CoinsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "coin_symbol",
+				Unique:  false,
+				Columns: []*schema.Column{CoinsColumns[1]},
+			},
+			{
+				Name:    "coin_name",
+				Unique:  false,
+				Columns: []*schema.Column{CoinsColumns[2]},
+			},
+		},
+	}
 	// ExchangesColumns holds the columns for the "exchanges" table.
 	ExchangesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -270,6 +294,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		CoinsTable,
 		ExchangesTable,
 		OutboxesTable,
 		TickersTable,

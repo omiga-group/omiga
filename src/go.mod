@@ -7,6 +7,7 @@ require (
 	entgo.io/ent v0.11.2
 	github.com/99designs/gqlgen v0.17.16
 	github.com/adshao/go-binance/v2 v2.3.8
+	github.com/aopoltorzhicky/go_kraken/websocket v0.1.10
 	github.com/apache/pulsar-client-go v0.8.1
 	github.com/deepmap/oapi-codegen v1.11.0
 	github.com/golang/mock v1.6.0
@@ -37,6 +38,7 @@ require (
 	github.com/DataDog/zstd v1.5.0 // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
+	github.com/aopoltorzhicky/go_kraken/rest v0.0.3 // indirect
 	github.com/apache/pulsar-client-go/oauth2 v0.0.0-20220120090717-25e59572242e // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/ardielle/ardielle-go v1.5.2 // indirect

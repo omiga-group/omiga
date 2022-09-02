@@ -14,7 +14,6 @@ dep: ## Install dependencies
 .PHONY: generate
 generate: ## Generate code
 	@../api-definitions/asyncapi/events/scripts/generate-all.sh
-	@../api-definitions/asyncapi/websockets/scripts/generate-all.sh
 	@go install github.com/google/wire/cmd/wire@latest
 	@go install entgo.io/ent/cmd/ent@latest
 	@go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
@@ -22,14 +21,12 @@ generate: ## Generate code
 
 generate-via-docker: ## Generate code
 	@../api-definitions/asyncapi/events/scripts/generate-all.sh
-	@../api-definitions/asyncapi/websockets/scripts/generate-all.sh
 	@./shared/scripts/generate.sh
 	@./exchange/shared/scripts/generate.sh
 	@./exchange/exchange-api/scripts/generate.sh
 	@./exchange/binance-processor/scripts/generate.sh
-	@./exchange/coingeko/scripts/generate.sh
+	@./coingeko-processor/scripts/generate.sh
 	@./exchange/ftx-processor/scripts/generate.sh
-	@./exchange/omiga-processor/scripts/generate.sh
 	@./order/shared/scripts/generate.sh
 	@./order/order-api/scripts/generate.sh
 	@./order/order-processor/scripts/generate.sh

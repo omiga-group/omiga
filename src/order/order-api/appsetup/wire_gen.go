@@ -19,6 +19,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/outbox"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
@@ -51,7 +52,11 @@ func NewEntgoClient(logger *zap.SugaredLogger, postgresConfig postgres.PostgresC
 }
 
 func NewOrderOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, outboxConfig outbox.OutboxConfig, topic string, entgoClient repositories.EntgoClient, cronService cron.CronService) (outbox2.OutboxBackgroundService, error) {
-	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, topic)
+	osHelper, err := os.NewOsHelper()
+	if err != nil {
+		return nil, err
+	}
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, osHelper, topic)
 	if err != nil {
 		return nil, err
 	}
