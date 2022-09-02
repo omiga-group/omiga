@@ -8,9 +8,9 @@ package appsetup
 
 import (
 	"context"
-	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
-	repositories2 "github.com/omiga-group/omiga/src/exchange/coingeko/repositories"
-	"github.com/omiga-group/omiga/src/exchange/coingeko/subscribers"
+	"github.com/omiga-group/omiga/src/exchange/coingeko-processor/configuration"
+	repositories2 "github.com/omiga-group/omiga/src/exchange/coingeko-processor/repositories"
+	"github.com/omiga-group/omiga/src/exchange/coingeko-processor/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"

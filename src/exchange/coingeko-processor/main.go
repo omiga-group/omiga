@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/micro-business/go-core/pkg/util"
-	"github.com/omiga-group/omiga/src/exchange/coingeko/commands"
+	"github.com/omiga-group/omiga/src/exchange/coingeko-processor/commands"
 )
 
 func main() {

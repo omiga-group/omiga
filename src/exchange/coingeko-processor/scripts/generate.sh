@@ -12,4 +12,4 @@ trap cleanup EXIT
 
 docker build --file Dockerfile.generate --tag generator:latest ../../
 docker create --name generated-image generator:latest
-docker cp generated-image:/src/exchange/coingeko/. ./
+docker cp generated-image:/src/exchange/coingeko-processor/. ./

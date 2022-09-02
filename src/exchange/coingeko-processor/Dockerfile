@@ -10,16 +10,16 @@ FROM $BUILD_IMAGE as build
 RUN mkdir -p /src/shared/enterprise \
     mkdir -p /src/shared/clients \
     mkdir -p /src/exchange/shared \
-    mkdir -p /src/exchange/coingeko
+    mkdir -p /src/exchange/coingeko-processor
 
 COPY go.mod /src/
 COPY go.sum /src/
 COPY shared/enterprise /src/shared/enterprise
 COPY shared/clients /src/shared/clients
 COPY exchange/shared /src/exchange/shared
-COPY exchange/coingeko /src/exchange/coingeko
+COPY exchange/coingeko-processor /src/exchange/coingeko-processor
 
-WORKDIR /src/exchange/coingeko
+WORKDIR /src/exchange/coingeko-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/coingeko main.go
 
@@ -35,5 +35,5 @@ FROM base AS final
 
 WORKDIR /omiga
 COPY --from=build /bin/coingeko /omiga
-COPY --from=build /src/exchange/coingeko/config.yaml /omiga
+COPY --from=build /src/exchange/coingeko-processor/config.yaml /omiga
 CMD ["/omiga/coingeko", "start"]

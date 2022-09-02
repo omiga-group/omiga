@@ -33,11 +33,11 @@ services:
     networks:
       - omiga_network
 
-  coingeko:
-    image: ${DOCKER_REGISTRY-}coingeko
+  coingeko-processor:
+    image: ${DOCKER_REGISTRY-}coingekoprocessor
     build:
       context: .
-      dockerfile: exchange/coingeko/Dockerfile
+      dockerfile: exchange/coingeko-processor/Dockerfile
       target: local
     restart: unless-stopped
     environment:
