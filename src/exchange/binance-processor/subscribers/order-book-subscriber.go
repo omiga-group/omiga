@@ -22,29 +22,34 @@ type BinanceOrderBookSubscriber interface {
 type binanceOrderBookSubscriber struct {
 	ctx                context.Context
 	logger             *zap.SugaredLogger
-	symbolConfig       configuration.SymbolConfig
-	symbol             string
+	pair               string
 	orderBookPublisher publishers.OrderBookPublisher
 	coinHelper         services.CoinHelper
+	symbol1            string
+	symbol2            string
 }
 
 func NewBinanceOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	binanceConfig configuration.BinanceConfig,
-	symbolConfig configuration.SymbolConfig,
+	pairConfig configuration.PairConfig,
 	orderBookPublisher publishers.OrderBookPublisher,
 	coinHelper services.CoinHelper) (BinanceOrderBookSubscriber, error) {
-
 	binance.UseTestnet = binanceConfig.UseTestnet
+
+	pairs := strings.Split(pairConfig.Pair, "/")
+	symbol1 := strings.ToLower(pairs[0])
+	symbol2 := strings.ToLower(pairs[1])
 
 	instance := &binanceOrderBookSubscriber{
 		ctx:                ctx,
 		logger:             logger,
-		symbolConfig:       symbolConfig,
 		orderBookPublisher: orderBookPublisher,
 		coinHelper:         coinHelper,
-		symbol:             symbolConfig.Symbol1 + symbolConfig.Symbol2,
+		pair:               strings.Replace(pairConfig.Pair, "/", "", -1),
+		symbol1:            symbol1,
+		symbol2:            symbol2,
 	}
 
 	go instance.run()
@@ -64,7 +69,7 @@ func (bobs *binanceOrderBookSubscriber) run() {
 
 func (bobs *binanceOrderBookSubscriber) connectAndSubscribe() {
 	_, stopChannel, err := binance.WsDepthServe100Ms(
-		bobs.symbol,
+		bobs.pair,
 		bobs.wsDepthHandler,
 		bobs.wsErrorHandler)
 	if err != nil {
@@ -87,8 +92,8 @@ func (bobs *binanceOrderBookSubscriber) connectAndSubscribe() {
 func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEvent) {
 	if event == nil {
 		bobs.logger.Warnf(
-			"Binance websocket returned nil event for symbol %s",
-			bobs.symbolConfig)
+			"Binance websocket returned nil event for pair %s",
+			bobs.pair)
 
 		return
 	}
@@ -97,7 +102,7 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 
 	asks := slices.Map(event.Asks, func(ask binance.Ask) models.BinanceOrderBookEntry {
 		return models.BinanceOrderBookEntry{
-			Symbol: bobs.symbol,
+			Symbol: bobs.pair,
 			Time:   entryTime,
 			Ask:    &ask,
 			Bid:    nil,
@@ -106,7 +111,7 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 
 	bids := slices.Map(event.Bids, func(bid binance.Bid) models.BinanceOrderBookEntry {
 		return models.BinanceOrderBookEntry{
-			Symbol: bobs.symbol,
+			Symbol: bobs.pair,
 			Time:   entryTime,
 			Ask:    nil,
 			Bid:    &bid,
@@ -115,28 +120,26 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 
 	binanceOrderBook := slices.Concat(asks, bids)
 
-	symbol1 := strings.ToLower(bobs.symbolConfig.Symbol1)
-	symbol2 := strings.ToLower(bobs.symbolConfig.Symbol2)
-	coins, err := bobs.coinHelper.GetCoinsNames(bobs.ctx, []string{symbol1, symbol2})
+	coins, err := bobs.coinHelper.GetCoinsNames(bobs.ctx, []string{bobs.symbol1, bobs.symbol2})
 	if err != nil {
 		bobs.logger.Errorf("Failed to fetch coin names. Error: %v", err)
 
 		return
 	}
 
-	baseCoinName := coins[symbol1]
-	counterCoinName := coins[symbol2]
+	baseCoinName := coins[bobs.symbol1]
+	counterCoinName := coins[bobs.symbol2]
 
 	orderBook := mappers.FromBinanceOrderBookToOrderBook(
 		exchangeModels.Currency{
 			Name:         baseCoinName,
-			Code:         bobs.symbolConfig.Symbol1,
+			Code:         bobs.symbol1,
 			MaxPrecision: 1,
 			Digital:      true,
 		},
 		exchangeModels.Currency{
 			Name:         counterCoinName,
-			Code:         bobs.symbolConfig.Symbol2,
+			Code:         bobs.symbol2,
 			MaxPrecision: 1,
 			Digital:      true,
 		},
@@ -157,7 +160,7 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 
 func (bobs *binanceOrderBookSubscriber) wsErrorHandler(err error) {
 	bobs.logger.Errorf(
-		"Binance websocket returned error for symbol %s. Error: %v",
-		bobs.symbolConfig,
+		"Binance websocket returned error for pair %s. Error: %v",
+		bobs.pair,
 		err)
 }

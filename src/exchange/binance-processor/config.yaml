@@ -13,8 +13,7 @@ postgres:
   maxOpenConns: 5
 
 binance:
-  useTestnet: true
+  useTestnet: false
   orderBook:
-    symbols:
-      - symbol1: LTC
-        symbol2: BTC
+    pairs:
+      - pair: LTC/BTC

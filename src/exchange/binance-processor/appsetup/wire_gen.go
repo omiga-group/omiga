@@ -55,7 +55,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, messageConsumer messag
 	return consumer, nil
 }
 
-func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, binanceConfig configuration2.BinanceConfig, symbolConfig configuration2.SymbolConfig, pulsarConfig pulsar.PulsarConfig, postgresConfig postgres.PostgresConfig, topic string) (subscribers.BinanceOrderBookSubscriber, error) {
+func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, binanceConfig configuration2.BinanceConfig, pairConfig configuration2.PairConfig, pulsarConfig pulsar.PulsarConfig, postgresConfig postgres.PostgresConfig, topic string) (subscribers.BinanceOrderBookSubscriber, error) {
 	osHelper, err := os.NewOsHelper()
 	if err != nil {
 		return nil, err
@@ -81,7 +81,7 @@ func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
-	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, symbolConfig, orderBookPublisher, coinHelper)
+	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, pairConfig, orderBookPublisher, coinHelper)
 	if err != nil {
 		return nil, err
 	}

@@ -70,13 +70,13 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			for _, symbolConfig := range config.Binance.OrderBook.Symbols {
+			for _, pairConfig := range config.Binance.OrderBook.Pairs {
 				_, err = appsetup.NewBinanceOrderBookSubscriber(
 					ctx,
 					sugarLogger,
 					config.App,
 					config.Binance,
-					symbolConfig,
+					pairConfig,
 					config.Pulsar,
 					config.Postgres,
 					orderbookv1.TopicName)

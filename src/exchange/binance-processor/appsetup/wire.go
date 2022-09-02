@@ -69,7 +69,7 @@ func NewBinanceOrderBookSubscriber(
 	logger *zap.SugaredLogger,
 	appConfig enterpriseConfiguration.AppConfig,
 	binanceConfig configuration.BinanceConfig,
-	symbolConfig configuration.SymbolConfig,
+	pairConfig configuration.PairConfig,
 	pulsarConfig pulsar.PulsarConfig,
 	postgresConfig postgres.PostgresConfig,
 	topic string) (subscribers.BinanceOrderBookSubscriber, error) {

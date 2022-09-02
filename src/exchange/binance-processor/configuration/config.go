@@ -19,10 +19,9 @@ type BinanceConfig struct {
 }
 
 type OrderBook struct {
-	Symbols []SymbolConfig `yaml:"symbols"`
+	Pairs []PairConfig `yaml:"pairs"`
 }
 
-type SymbolConfig struct {
-	Symbol1 string `yaml:"symbol1"`
-	Symbol2 string `yaml:"symbol2"`
+type PairConfig struct {
+	Pair string `yaml:"pair"`
 }
