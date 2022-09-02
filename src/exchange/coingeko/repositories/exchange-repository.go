@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/life4/genesis/slices"
-	"github.com/omiga-group/omiga/src/exchange/coingeko/models"
+	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	modelsexchange "github.com/omiga-group/omiga/src/exchange/shared/models"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	exchangerepo "github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"

@@ -3,8 +3,7 @@ package mappers
 import (
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/coingeko/configuration"
-	"github.com/omiga-group/omiga/src/exchange/coingeko/models"
-	exchangemodels "github.com/omiga-group/omiga/src/exchange/shared/models"
+	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	coingekov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingeko/v3"
 )
 
@@ -97,12 +96,12 @@ func fromCoingekoTickerToTicker(ticker coingekov3.Ticker) models.Ticker {
 		Base:                   ticker.Base,
 		BidAskSpreadPercentage: ticker.BidAskSpreadPercentage,
 		CoinId:                 ticker.CoinId,
-		ConvertedLast: exchangemodels.ConvertedDetails{
+		ConvertedLast: models.ConvertedDetails{
 			Btc: *ticker.ConvertedLast.Btc,
 			Eth: *ticker.ConvertedLast.Eth,
 			Usd: *ticker.ConvertedLast.Usd,
 		},
-		ConvertedVolume: exchangemodels.ConvertedDetails{
+		ConvertedVolume: models.ConvertedDetails{
 			Btc: *ticker.ConvertedVolume.Btc,
 			Eth: *ticker.ConvertedVolume.Eth,
 			Usd: *ticker.ConvertedVolume.Usd,
@@ -112,7 +111,7 @@ func fromCoingekoTickerToTicker(ticker coingekov3.Ticker) models.Ticker {
 		Last:         ticker.Last,
 		LastFetchAt:  ticker.LastFetchAt,
 		LastTradedAt: ticker.LastTradedAt,
-		Market: exchangemodels.Market{
+		Market: models.Market{
 			HasTradingIncentive: *ticker.Market.HasTradingIncentive,
 			Identifier:          *ticker.Market.Identifier,
 			Name:                *ticker.Market.Name,

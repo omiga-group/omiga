@@ -3,7 +3,7 @@ package repositories
 import (
 	"context"
 
-	"github.com/omiga-group/omiga/src/exchange/coingeko/models"
+	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	coinrepo "github.com/omiga-group/omiga/src/exchange/shared/repositories/coin"
 	"go.uber.org/zap"
