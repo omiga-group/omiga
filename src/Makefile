@@ -27,7 +27,6 @@ generate-via-docker: ## Generate code
 	@./exchange/binance-processor/scripts/generate.sh
 	@./exchange/coingeko/scripts/generate.sh
 	@./exchange/ftx-processor/scripts/generate.sh
-	@./exchange/omiga-processor/scripts/generate.sh
 	@./order/shared/scripts/generate.sh
 	@./order/order-api/scripts/generate.sh
 	@./order/order-processor/scripts/generate.sh
