@@ -58,7 +58,7 @@ func FromKrakenOrderBookToOrderBook(
 	})
 
 	convertedBids := slices.Map(bids, func(entry models.KrakenOrderBookEntry) exchangeModels.OrderBookEntry {
-		timePeices := strings.Split(string(entry.Ask.Time), ".")
+		timePeices := strings.Split(string(entry.Bid.Time), ".")
 		timePeice1, _ := strconv.ParseInt(timePeices[0], 10, 64)
 		timePeice2, _ := strconv.ParseInt(timePeices[1], 10, 64)
 
