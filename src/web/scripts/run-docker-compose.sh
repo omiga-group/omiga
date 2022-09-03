@@ -7,7 +7,7 @@ command=${@:-up -d --build}
 
 cd "$(dirname "${0}")/../.."
 
-docker compose -p "web" \
+docker compose -p "omiga" \
     --profile web \
     -f docker-compose.yml \
     -f ./web/docker-compose.yml \
