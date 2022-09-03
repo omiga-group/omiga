@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
+	"github.com/lucsky/cuid"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"go.uber.org/zap"
@@ -65,7 +66,7 @@ func NewPulsarMessageProducer(
 	producer, err := pulsarClient.CreateProducer(
 		pulsar.ProducerOptions{
 			Topic: topic,
-			Name:  pulsarConfig.ProducerName,
+			Name:  pulsarConfig.ProducerName + "-" + cuid.New(),
 		})
 	if err != nil {
 		return nil, err
