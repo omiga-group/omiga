@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.9"
 
 networks:
   omiga_network:
@@ -17,6 +17,13 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 9999:8080
+    profiles:
+      - core
+      - exchange
+      - order
+      - web
+      - gateway
+      - all
     networks:
       - omiga_network
 
@@ -29,6 +36,13 @@ services:
       POSTGRES_PASSWORD: "12345678"
     ports:
       - "5432:5432"
+    profiles:
+      - core
+      - exchange
+      - order
+      - web
+      - gateway
+      - all
     networks:
       - omiga_network
 
@@ -54,33 +68,12 @@ services:
       - pulsar
     environment:
       SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties
-    networks:
-      - omiga_network
-
-  gateway:
-    image: ${DOCKER_REGISTRY-}gateway
-    build:
-      context: .
-      dockerfile: gateway/Dockerfile
-    restart: unless-stopped
-    ports:
-      - "4343:80"
-    environment:
-      PORT: 80
-      ORDER_GRAPHQL_API: http://order-api/graphql
-      EXCHANGE_GRAPHQL_API: http://exchange-api/graphql
-    networks:
-      - omiga_network
-
-  web:
-    image: ${DOCKER_REGISTRY-}web
-    build:
-      context: ..
-      dockerfile: src/web/Dockerfile
-    restart: unless-stopped
-    ports:
-      - "8081:80"
-    environment:
-      GRAPHQL_API_ENDPOINT: http://localhost:4343
+    profiles:
+      - core
+      - exchange
+      - order
+      - web
+      - gateway
+      - all
     networks:
       - omiga_network

@@ -1,4 +1,4 @@
-﻿version: "3.8"
+﻿version: "3.9"
 
 services:
   order-database-migration:
@@ -12,6 +12,10 @@ services:
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/order"
     depends_on:
       - postgres
+    profiles:
+      - core
+      - order
+      - all
     networks:
       - omiga_network
 
@@ -25,13 +29,22 @@ services:
     environment:
       OMIGA_APP_LISTENINGINTERFACE: ":80"
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/order"
-      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_URL: ${OMIGA_PULSAR_AUTHENTICATION_URL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
     ports:
       - "10000:80"
     depends_on:
       - postgres
       - order-database-migration
       - pulsar
+    profiles:
+      - order
+      - all
     networks:
       - omiga_network
 
@@ -44,10 +57,19 @@ services:
     restart: unless-stopped
     environment:
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/order"
-      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_URL: ${OMIGA_PULSAR_AUTHENTICATION_URL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
     depends_on:
       - postgres
       - order-database-migration
       - pulsar
+    profiles:
+      - order
+      - all
     networks:
       - omiga_network

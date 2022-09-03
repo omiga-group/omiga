@@ -7,8 +7,8 @@ command=${@:-up -d --build}
 
 cd "$(dirname "${0}")/../.."
 
-docker compose -p "exchange" \
-    --profile exchange \
+docker compose -p "gateway" \
+    --profile gateway \
     -f docker-compose.yml \
-    -f ./exchange/docker-compose.yml \
+    -f ./gateway/docker-compose.yml \
     $command

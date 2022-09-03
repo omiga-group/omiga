@@ -3,13 +3,15 @@
 set -e
 set -x
 
-project="omiga"
-dcpath="docker-compose.yml"
 command=${@:-up -d --build}
 
 cd "$(dirname "${0}")/.."
 
-docker compose -p $project -f $dcpath \
+docker compose -p "omiga" \
+    --profile all \
+    -f docker-compose.yml \
     -f order/docker-compose.yml \
     -f exchange/docker-compose.yml \
+    -f gateway/docker-compose.yml \
+    -f web/docker-compose.yml \
     $command

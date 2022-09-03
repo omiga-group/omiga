@@ -1,4 +1,4 @@
-﻿version: "3.8"
+﻿version: "3.9"
 
 services:
   exchange-database-migration:
@@ -12,6 +12,10 @@ services:
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
     depends_on:
       - postgres
+    profiles:
+      - core
+      - exchange
+      - all
     networks:
       - omiga_network
 
@@ -30,6 +34,9 @@ services:
     depends_on:
       - postgres
       - exchange-database-migration
+    profiles:
+      - exchange
+      - all
     networks:
       - omiga_network
 
@@ -45,6 +52,9 @@ services:
     depends_on:
       - postgres
       - exchange-database-migration
+    profiles:
+      - exchange
+      - all
     networks:
       - omiga_network
 
@@ -56,12 +66,21 @@ services:
       target: local
     restart: unless-stopped
     environment:
-      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_URL: ${OMIGA_PULSAR_AUTHENTICATION_URL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
     depends_on:
       - postgres
       - exchange-database-migration
       - pulsar
+    profiles:
+      - exchange
+      - all
     networks:
       - omiga_network
 
@@ -73,11 +92,20 @@ services:
       target: local
     restart: unless-stopped
     environment:
-      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_URL: ${OMIGA_PULSAR_AUTHENTICATION_URL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
     depends_on:
       - postgres
       - exchange-database-migration
       - pulsar
+    profiles:
+      - exchange
+      - all
     networks:
       - omiga_network
 
@@ -89,12 +117,21 @@ services:
       target: local
     restart: unless-stopped
     environment:
-      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_URL: ${OMIGA_PULSAR_AUTHENTICATION_URL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
     depends_on:
       - postgres
       - exchange-database-migration
       - pulsar
+    profiles:
+      - exchange
+      - all
     networks:
       - omiga_network
 
@@ -106,11 +143,20 @@ services:
       target: local
     restart: unless-stopped
     environment:
-      OMIGA_PULSAR_URL: "pulsar://pulsar:6650"
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_URL: ${OMIGA_PULSAR_AUTHENTICATION_URL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/exchange"
     depends_on:
       - postgres
       - exchange-database-migration
       - pulsar
+    profiles:
+      - exchange
+      - all
     networks:
       - omiga_network

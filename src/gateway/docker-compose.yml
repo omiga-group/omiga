@@ -1,0 +1,20 @@
+﻿version: "3.9"
+
+services:
+  gateway:
+    image: ${DOCKER_REGISTRY-}gateway
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "4343:80"
+    environment:
+      PORT: 80
+      ORDER_GRAPHQL_API: http://order-api/graphql
+      EXCHANGE_GRAPHQL_API: http://exchange-api/graphql
+    profiles:
+      - gateway
+      - all
+    networks:
+      - omiga_network

@@ -95,13 +95,7 @@ func envUnmarshaller(elem reflect.Value, env string) error {
 }
 
 func toBool(sbool string) bool {
-	sbool = strings.ToLower(sbool)
-	nbool, _ := strconv.Atoi(sbool)
-	if sbool == "true" || nbool > 0 {
-		return true
-	}
-
-	return false
+	return strings.ToLower(sbool) == "true"
 }
 
 func toInt(sint string) int64 {
