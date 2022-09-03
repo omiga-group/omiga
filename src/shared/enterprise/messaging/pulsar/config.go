@@ -12,7 +12,7 @@ type PulsarConfig struct {
 
 type PulsarAuthenticationOAuth2Config struct {
 	Type       string `yaml:"type" env:"OMIGA_PULSAR_AUTHENTICATION_TYPE"`
-	IssuerUrl  string `yaml:"issuerUrl" env:"OMIGA_PULSAR_AUTHENTICATION_URL"`
+	IssuerUrl  string `yaml:"issuerUrl" env:"OMIGA_PULSAR_AUTHENTICATION_ISSUERURL"`
 	Audience   string `yaml:"audience" env:"OMIGA_PULSAR_AUTHENTICATION_AUDIENCE"`
 	PrivateKey string `yaml:"privateKey" env:"OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY"`
 	ClientId   string `yaml:"clientId" env:"OMIGA_PULSAR_AUTHENTICATION_CLIENTID"`
