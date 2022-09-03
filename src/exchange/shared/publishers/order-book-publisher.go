@@ -36,10 +36,11 @@ func NewOrderBookPublisher(
 func (obp *orderBookPublisher) Publish(ctx context.Context, key string, orderBook models.OrderBook) error {
 	orderBookEvent := orderbookv1.OrderBookEvent{
 		Metadata: orderbookv1.Metadata{
-			Id:     orderbookv1.ID(uuid.New()),
-			Time:   time.Now(),
-			Source: obp.appConfig.Source,
-			Type:   orderbookv1.TypeOrderBookUpdated,
+			Id:            uuid.New(),
+			Source:        obp.appConfig.Source,
+			Type:          orderbookv1.TypeOrderBookUpdated,
+			Time:          time.Now(),
+			CorrelationId: uuid.New(),
 		},
 		Data: mappers.FromOrderBookToEventOrderBook(orderBook),
 	}

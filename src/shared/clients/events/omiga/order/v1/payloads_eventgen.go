@@ -10,8 +10,6 @@ package orderv1
       "github.com/google/uuid"
     )
     
-    type ID uuid.UUID
-
     
     
     // OrderEvent represents a OrderEvent model.
@@ -23,12 +21,12 @@ type OrderEvent struct {
     
     // Metadata represents a Metadata model.
 type Metadata struct {
-  Id ID `json:"id"`  // The unique message ID
+  Id uuid.UUID `json:"id"`  // The unique message ID
   Source string `json:"source"`  // undefined
   Type Type `json:"type"` 
   Subject string `json:"subject"`  // undefined
   Time time.Time `json:"time"`  // undefined
-  CorrelationId ID `json:"correlationId"`  // undefined
+  CorrelationId uuid.UUID `json:"correlationId"`  // undefined
   Actor string `json:"actor"`  // undefined
 }
     
@@ -113,7 +111,7 @@ type Quantity struct {
     
     // User represents a User model.
 type User struct {
-  Id ID `json:"id"`  // undefined
+  Id uuid.UUID `json:"id"`  // undefined
   Created *time.Time `json:"created,omitempty"`  // undefined
   Updated *time.Time `json:"updated,omitempty"`  // undefined
   Type *UserType `json:"type,omitempty"` 

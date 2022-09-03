@@ -47,7 +47,7 @@ export default async function ({ asyncapi, params }) {
                 break;
 
               case "uuid":
-                finalFieldType = "ID";
+                finalFieldType = "uuid.UUID";
                 foundIDTypeField = true;
 
                 break;
@@ -89,8 +89,6 @@ package ${params.packageName}
       "github.com/google/uuid"
     )
     
-    type ID uuid.UUID
-
     `;
   } else if (foundTimeTypeField && !foundIDTypeField) {
     payloadContent =
@@ -105,8 +103,6 @@ package ${params.packageName}
       `
     import "github.com/google/uuid"
     
-    type ID uuid.UUID
-
     `;
   }
 

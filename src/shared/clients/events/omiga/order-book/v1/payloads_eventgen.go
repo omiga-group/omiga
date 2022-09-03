@@ -10,8 +10,6 @@ package orderbookv1
       "github.com/google/uuid"
     )
     
-    type ID uuid.UUID
-
     
     
     // OrderBookEvent represents a OrderBookEvent model.
@@ -23,12 +21,12 @@ type OrderBookEvent struct {
     
     // Metadata represents a Metadata model.
 type Metadata struct {
-  Id ID `json:"id"`  // The unique message ID
+  Id uuid.UUID `json:"id"`  // The unique message ID
   Source string `json:"source"`  // undefined
   Type Type `json:"type"` 
   Subject string `json:"subject"`  // undefined
   Time time.Time `json:"time"`  // undefined
-  CorrelationId ID `json:"correlationId"`  // undefined
+  CorrelationId uuid.UUID `json:"correlationId"`  // undefined
   Actor string `json:"actor"`  // undefined
 }
     

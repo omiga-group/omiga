@@ -47,10 +47,11 @@ func (op *orderPublisher) Publish(
 
 	orderEvent := orderv1.OrderEvent{
 		Metadata: orderv1.Metadata{
-			Id:     orderv1.ID(uuid.New()),
-			Time:   time.Now(),
-			Source: op.appConfig.Source,
-			Type:   orderv1.TypeOrderSubmitted,
+			Id:            uuid.New(),
+			Source:        op.appConfig.Source,
+			Type:          orderv1.TypeOrderSubmitted,
+			Time:          time.Now(),
+			CorrelationId: uuid.New(),
 		},
 		Data: orderv1.Data{},
 	}
