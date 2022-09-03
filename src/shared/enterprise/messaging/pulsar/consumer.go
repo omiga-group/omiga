@@ -35,7 +35,7 @@ func NewPulsarMessageConsumer(
 
 	var authentication interface{} = nil
 
-	if pulsarConfig.EnableAuthenticationOAuth2 && pulsarConfig.AuthenticationOAuth2 != nil {
+	if pulsarConfig.EnableAuthenticationOAuth2 {
 		privateKeyFilePath, err := osHelper.CreateTemporaryTextFile(
 			pulsarConfig.AuthenticationOAuth2.PrivateKey)
 		if err != nil {

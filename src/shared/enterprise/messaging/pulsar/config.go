@@ -7,7 +7,7 @@ type PulsarConfig struct {
 	OperationTimeout           string                            `yaml:"operationTimeout" env:"OMIGA_PULSAR_OPERATIONTIMEOUT"`
 	ConnectionTimeout          string                            `yaml:"connectionTimeout" env:"OMIGA_PULSAR_CONNECTIONTIMEOUT"`
 	EnableAuthenticationOAuth2 bool                              `yaml:"enableAuthenticationOAuth2" env:"OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2"`
-	AuthenticationOAuth2       *PulsarAuthenticationOAuth2Config `yaml:"authenticationOAuth2,omitempty"`
+	AuthenticationOAuth2       PulsarAuthenticationOAuth2Config  `yaml:"authenticationOAuth2,omitempty"`
 }
 
 type PulsarAuthenticationOAuth2Config struct {

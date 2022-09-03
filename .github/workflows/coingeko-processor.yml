@@ -89,13 +89,13 @@ jobs:
             --tag omiga/coingeko-processor:${{ github.sha }} \
             --file ./src/exchange/coingeko-processor/Dockerfile \
             ./src
-          docker save -o image.tar omiga/coingeko:$GitVersion_SemVer
+          docker save -o image.tar omiga/coingeko-processor:$GitVersion_SemVer
 
       - name: Run Trivy vulnerability scanner
         if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: omiga/coingeko:${{ github.sha }}
+          image-ref: omiga/coingeko-processor:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
