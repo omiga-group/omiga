@@ -66,7 +66,7 @@ func NewPulsarMessageConsumer(
 		pulsar.ConsumerOptions{
 			Topic:            topic,
 			SubscriptionName: pulsarConfig.SubscriptionName,
-			Type:             pulsar.Shared,
+			Type:             pulsar.KeyShared,
 		})
 	if err != nil {
 		return nil, err
