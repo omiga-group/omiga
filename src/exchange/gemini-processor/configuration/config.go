@@ -8,7 +8,7 @@ import (
 type Config struct {
 	App    configuration.AppConfig `yaml:"app"`
 	Pulsar pulsar.PulsarConfig     `yaml:"pulsar"`
-	Gemini    GeminiConfig               `yaml:"gemini"`
+	Gemini GeminiConfig            `yaml:"gemini"`
 }
 
 type GeminiConfig struct {

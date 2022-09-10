@@ -31,7 +31,6 @@ import (
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
-	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -45,21 +44,14 @@ func NewTimeHelper() (time.TimeHelper, error) {
 	return nil, nil
 }
 
-func NewMessageConsumer(
-	logger *zap.SugaredLogger,
-	pulsarConfig pulsar.PulsarConfig,
-	topic string) (messaging.MessageConsumer, error) {
-	wire.Build(
-		os.NewOsHelper,
-		pulsar.NewPulsarMessageConsumer)
-
-	return nil, nil
-}
-
 func NewSyntheticOrderConsumer(
 	logger *zap.SugaredLogger,
-	messageConsumer messaging.MessageConsumer) (syntheticorderv1.Consumer, error) {
-	wire.Build(syntheticorderv1.NewConsumer, subscribers.NewSyntheticOrderSubscriber)
+	pulsarConfig pulsar.PulsarConfig) (syntheticorderv1.Consumer, error) {
+	wire.Build(
+		os.NewOsHelper,
+		pulsar.NewPulsarMessageConsumer,
+		syntheticorderv1.NewConsumer,
+		subscribers.NewSyntheticOrderSubscriber)
 
 	return nil, nil
 }

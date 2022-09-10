@@ -22,7 +22,6 @@ import (
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/order/order-processor/subscribers"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
-	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -36,21 +35,12 @@ func NewTimeHelper() (time.TimeHelper, error) {
 	return nil, nil
 }
 
-func NewMessageConsumer(
-	logger *zap.SugaredLogger,
-	pulsarConfig pulsar.PulsarConfig,
-	topic string) (messaging.MessageConsumer, error) {
-	wire.Build(
-		os.NewOsHelper,
-		pulsar.NewPulsarMessageConsumer)
-
-	return nil, nil
-}
-
 func NewOrderConsumer(
 	logger *zap.SugaredLogger,
-	messageConsumer messaging.MessageConsumer) (orderv1.Consumer, error) {
+	pulsarConfig pulsar.PulsarConfig) (orderv1.Consumer, error) {
 	wire.Build(
+		os.NewOsHelper,
+		pulsar.NewPulsarMessageConsumer,
 		orderv1.NewConsumer,
 		subscribers.NewOrderSubscriber)
 

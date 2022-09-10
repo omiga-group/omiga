@@ -2,7 +2,6 @@ package pulsar
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
@@ -12,17 +11,20 @@ import (
 )
 
 type pulsarMessageConsumer struct {
-	logger       *zap.SugaredLogger
-	pulsarConfig PulsarConfig
-	pulsarClient pulsar.Client
-	consumer     pulsar.Consumer
+	logger            *zap.SugaredLogger
+	pulsarConfig      PulsarConfig
+	pulsarClient      pulsar.Client
+	consumer          pulsar.Consumer
+	osHelper          os.OsHelper
+	operationTimeout  time.Duration
+	connectionTimeout time.Duration
+	authentication    interface{}
 }
 
 func NewPulsarMessageConsumer(
 	logger *zap.SugaredLogger,
 	pulsarConfig PulsarConfig,
-	osHelper os.OsHelper,
-	topic string) (messaging.MessageConsumer, error) {
+	osHelper os.OsHelper) (messaging.MessageConsumer, error) {
 	operationTimeout, err := time.ParseDuration(pulsarConfig.OperationTimeout)
 	if err != nil {
 		return nil, err
@@ -51,36 +53,17 @@ func NewPulsarMessageConsumer(
 		})
 	}
 
-	pulsarClient, err := pulsar.NewClient(
-		pulsar.ClientOptions{
-			URL:               pulsarConfig.Url,
-			OperationTimeout:  operationTimeout,
-			ConnectionTimeout: connectionTimeout,
-			Authentication:    authentication,
-		})
-	if err != nil {
-		return nil, err
-	}
-
-	consumer, err := pulsarClient.Subscribe(
-		pulsar.ConsumerOptions{
-			Topic:            topic,
-			SubscriptionName: pulsarConfig.SubscriptionName,
-			Type:             pulsar.KeyShared,
-		})
-	if err != nil {
-		return nil, err
-	}
-
 	return &pulsarMessageConsumer{
-		logger:       logger,
-		pulsarConfig: pulsarConfig,
-		pulsarClient: pulsarClient,
-		consumer:     consumer,
+		logger:            logger,
+		pulsarConfig:      pulsarConfig,
+		osHelper:          osHelper,
+		operationTimeout:  operationTimeout,
+		connectionTimeout: connectionTimeout,
+		authentication:    authentication,
 	}, nil
 }
 
-func (pmc *pulsarMessageConsumer) Close(ctx context.Context) {
+func (pmc *pulsarMessageConsumer) Close() {
 	if pmc.consumer != nil {
 		if err := pmc.consumer.Unsubscribe(); err != nil {
 			pmc.logger.Errorf("Failed to unsubscribe. Error: %v", err)
@@ -96,55 +79,74 @@ func (pmc *pulsarMessageConsumer) Close(ctx context.Context) {
 	}
 }
 
-func (pmc *pulsarMessageConsumer) Consume(ctx context.Context) (
+func (pmc *pulsarMessageConsumer) Consume(ctx context.Context, topic string) (
 	messaging.Message,
 	messaging.MessageProcessedCallback,
 	messaging.MessageFailedCallback,
 	error) {
-	for {
-		if ctx.Err() == context.Canceled {
-			return messaging.Message{},
-				nil,
-				nil,
-				context.Canceled
-		}
-
-		ctxWithTimeout, cancel := context.WithTimeout(ctx, 1*time.Second)
-
-		msg, err := pmc.consumer.Receive(ctxWithTimeout)
-		if err != nil {
-			cancel()
-
-			if !errors.Is(err, context.DeadlineExceeded) {
-				pmc.logger.Errorf("Failed to receive message from. Error: %v", err)
-			}
-
-			continue
-		}
-
-		cancel()
-
-		messageProcessedCallback := func() {
-			if pmc.consumer != nil {
-				pmc.consumer.Ack(msg)
-			}
-		}
-
-		messageFailedCallback := func() {
-			if pmc.consumer != nil {
-				pmc.consumer.Nack(msg)
-			}
-		}
-		return messaging.Message{
-				Topic:       msg.Topic(),
-				Key:         msg.Key(),
-				Payload:     msg.Payload(),
-				Headers:     msg.Properties(),
-				PublishTime: msg.PublishTime(),
-				EventTime:   msg.EventTime(),
-			},
-			messageProcessedCallback,
-			messageFailedCallback,
-			nil
+	if err := pmc.connect(topic); err != nil {
+		return messaging.Message{}, nil, nil, err
 	}
+
+	msg, err := pmc.consumer.Receive(ctx)
+	if err != nil {
+		return messaging.Message{}, nil, nil, err
+	}
+
+	messageProcessedCallback := func() {
+		if pmc.consumer != nil {
+			pmc.consumer.Ack(msg)
+		}
+	}
+
+	messageFailedCallback := func() {
+		if pmc.consumer != nil {
+			pmc.consumer.Nack(msg)
+		}
+	}
+
+	return messaging.Message{
+			Topic:       msg.Topic(),
+			Key:         msg.Key(),
+			Payload:     msg.Payload(),
+			Headers:     msg.Properties(),
+			PublishTime: msg.PublishTime(),
+			EventTime:   msg.EventTime(),
+		},
+		messageProcessedCallback,
+		messageFailedCallback,
+		nil
+}
+
+func (pmc *pulsarMessageConsumer) connect(topic string) (err error) {
+	if pmc.consumer != nil {
+		return nil
+	}
+
+	pmc.pulsarClient, err = pulsar.NewClient(
+		pulsar.ClientOptions{
+			URL:               pmc.pulsarConfig.Url,
+			OperationTimeout:  pmc.operationTimeout,
+			ConnectionTimeout: pmc.connectionTimeout,
+			Authentication:    pmc.authentication,
+		})
+	if err != nil {
+		pmc.Close()
+
+		return err
+	}
+
+	pmc.consumer, err = pmc.pulsarClient.Subscribe(
+		pulsar.ConsumerOptions{
+			Topic:            topic,
+			SubscriptionName: pmc.pulsarConfig.SubscriptionName,
+			Type:             pulsar.KeyShared,
+		})
+	if err != nil {
+		pmc.Close()
+
+		return err
+	}
+
+	return nil
 }

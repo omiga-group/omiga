@@ -11,7 +11,6 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/appsetup"
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/configuration"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
-	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -48,22 +47,14 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			syntheticMessageConsumer, err := appsetup.NewMessageConsumer(
-				sugarLogger,
-				config.Pulsar,
-				syntheticorderv1.TopicName)
-			if err != nil {
-				sugarLogger.Fatal(err)
-			}
-
-			defer syntheticMessageConsumer.Close(ctx)
-
 			syntheticOrderConsumer, err := appsetup.NewSyntheticOrderConsumer(
 				sugarLogger,
-				syntheticMessageConsumer)
+				config.Pulsar)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
+
+			defer syntheticOrderConsumer.Close()
 
 			err = syntheticOrderConsumer.StartAsync(ctx)
 			if err != nil {

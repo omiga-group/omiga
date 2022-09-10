@@ -10,7 +10,6 @@ import (
 
 	"github.com/omiga-group/omiga/src/order/order-processor/appsetup"
 	"github.com/omiga-group/omiga/src/order/order-processor/configuration"
-	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -47,22 +46,14 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			orderMessageConsumer, err := appsetup.NewMessageConsumer(
-				sugarLogger,
-				config.Pulsar,
-				orderv1.TopicName)
-			if err != nil {
-				sugarLogger.Fatal(err)
-			}
-
-			defer orderMessageConsumer.Close(ctx)
-
 			orderConsumer, err := appsetup.NewOrderConsumer(
 				sugarLogger,
-				orderMessageConsumer)
+				config.Pulsar)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
+
+			defer orderConsumer.Close()
 
 			err = orderConsumer.StartAsync(ctx)
 			if err != nil {

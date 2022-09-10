@@ -20,6 +20,7 @@ import (
 
 type Consumer interface {
 	StartAsync(ctx context.Context) error
+	Close()
 }
 
 type consumer struct {
@@ -46,10 +47,13 @@ func (c *consumer) StartAsync(ctx context.Context) error {
 				return
 			}
 
-			message, messageProcessedCallback, messageFailedCallback, err := c.messageConsumer.Consume(ctx)
-			if err != nil && err != context.Canceled {
-				c.logger.Errorf("Failed to consume message. Error: %v", err)
+			message, messageProcessedCallback, messageFailedCallback, err := c.messageConsumer.Consume(ctx, TopicName)
+			if err != nil && err == context.Canceled {
 				return
+			} else if err != nil && err != context.Canceled {
+				c.logger.Errorf("Failed to consume message. Error: %v", err)
+
+				continue
 			}
 
 			event := ${models[0].modelName}{}
@@ -74,6 +78,10 @@ func (c *consumer) StartAsync(ctx context.Context) error {
 	}()
 
 	return nil
+}
+
+func (c *consumer) Close()  {
+	c.messageConsumer.Close()
 }
 `;
 
