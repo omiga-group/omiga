@@ -17,6 +17,7 @@ import (
 )
 
 type BinanceOrderBookSubscriber interface {
+	Close()
 }
 
 type binanceOrderBookSubscriber struct {
@@ -55,6 +56,10 @@ func NewBinanceOrderBookSubscriber(
 	go instance.run()
 
 	return instance, nil
+}
+
+func (bobs *binanceOrderBookSubscriber) Close() {
+	bobs.orderBookPublisher.Close()
 }
 
 func (bobs *binanceOrderBookSubscriber) run() {

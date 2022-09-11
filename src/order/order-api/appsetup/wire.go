@@ -58,16 +58,16 @@ func NewEntgoClient(
 	return nil, nil
 }
 
-func NewOrderOutboxBackgroundService(
+func NewOutboxBackgroundService(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	pulsarConfig pulsar.PulsarConfig,
 	outboxConfig enterpriseOutbox.OutboxConfig,
-	topic string,
 	entgoClient repositories.EntgoClient,
 	cronService cron.CronService) (outbox.OutboxBackgroundService, error) {
 	wire.Build(
 		os.NewOsHelper,
+		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageProducer,
 		outbox.NewOutboxBackgroundService)
 

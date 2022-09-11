@@ -13,6 +13,7 @@ import (
 
 type Producer interface {
 	Produce(ctx context.Context, key string, event OrderEvent) error
+	Close()
 }
 
 type producer struct {
@@ -39,9 +40,13 @@ func (c *producer) Produce(ctx context.Context, key string, event OrderEvent) er
 		return err
 	}
 
-	if err := c.messageProducer.Produce(ctx, key, data); err != nil {
+	if err := c.messageProducer.Produce(ctx, TopicName, key, data); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (c *producer) Close() {
+	c.messageProducer.Close()
 }

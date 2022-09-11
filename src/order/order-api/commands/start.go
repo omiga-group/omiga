@@ -6,7 +6,6 @@ import (
 
 	"github.com/omiga-group/omiga/src/order/order-api/appsetup"
 	"github.com/omiga-group/omiga/src/order/order-api/configuration"
-	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -47,23 +46,24 @@ func startCommand() *cobra.Command {
 
 			defer cronService.Close()
 
-			orderOutboxBackgroundService, err := appsetup.NewOrderOutboxBackgroundService(
+			outboxBackgroundService, err := appsetup.NewOutboxBackgroundService(
 				ctx,
 				sugarLogger,
 				config.Pulsar,
 				config.Outbox,
-				orderv1.TopicName,
 				entgoClient,
 				cronService)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
 
+			defer outboxBackgroundService.Close()
+
 			httpServer, err := appsetup.NewHttpServer(
 				sugarLogger,
 				config.App,
 				entgoClient,
-				orderOutboxBackgroundService)
+				outboxBackgroundService)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

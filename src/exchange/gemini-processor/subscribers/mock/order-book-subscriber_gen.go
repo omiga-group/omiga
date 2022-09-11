@@ -5,6 +5,8 @@
 package mock_subscribers
 
 import (
+	reflect "reflect"
+
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -29,4 +31,16 @@ func NewMockGeminiOrderBookSubscriber(ctrl *gomock.Controller) *MockGeminiOrderB
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockGeminiOrderBookSubscriber) EXPECT() *MockGeminiOrderBookSubscriberMockRecorder {
 	return m.recorder
+}
+
+// Close mocks base method.
+func (m *MockGeminiOrderBookSubscriber) Close() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Close")
+}
+
+// Close indicates an expected call of Close.
+func (mr *MockGeminiOrderBookSubscriberMockRecorder) Close() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockGeminiOrderBookSubscriber)(nil).Close))
 }

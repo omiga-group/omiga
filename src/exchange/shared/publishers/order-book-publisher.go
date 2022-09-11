@@ -14,6 +14,7 @@ import (
 
 type OrderBookPublisher interface {
 	Publish(ctx context.Context, key string, orderBook models.OrderBook) error
+	Close()
 }
 
 type orderBookPublisher struct {
@@ -49,4 +50,8 @@ func (obp *orderBookPublisher) Publish(ctx context.Context, key string, orderBoo
 		ctx,
 		key,
 		orderBookEvent)
+}
+
+func (obp *orderBookPublisher) Close() {
+	obp.orderBookProducer.Close()
 }

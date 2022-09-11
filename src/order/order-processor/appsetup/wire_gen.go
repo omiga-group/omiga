@@ -34,7 +34,11 @@ func NewOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfi
 	if err != nil {
 		return nil, err
 	}
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarConfig, osHelper)
+	pulsarClient, err := pulsar.NewPulsarClient(logger, pulsarConfig, osHelper)
+	if err != nil {
+		return nil, err
+	}
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(pulsarClient)
 	if err != nil {
 		return nil, err
 	}

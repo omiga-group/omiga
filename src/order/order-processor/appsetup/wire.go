@@ -40,6 +40,7 @@ func NewOrderConsumer(
 	pulsarConfig pulsar.PulsarConfig) (orderv1.Consumer, error) {
 	wire.Build(
 		os.NewOsHelper,
+		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageConsumer,
 		orderv1.NewConsumer,
 		subscribers.NewOrderSubscriber)

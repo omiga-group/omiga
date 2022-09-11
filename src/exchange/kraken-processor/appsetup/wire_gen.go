@@ -42,7 +42,11 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	if err != nil {
 		return nil, err
 	}
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarConfig, osHelper)
+	pulsarClient, err := pulsar.NewPulsarClient(logger, pulsarConfig, osHelper)
+	if err != nil {
+		return nil, err
+	}
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(pulsarClient)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +59,11 @@ func NewKrakenOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	if err != nil {
 		return nil, err
 	}
-	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, osHelper, topic)
+	pulsarClient, err := pulsar.NewPulsarClient(logger, pulsarConfig, osHelper)
+	if err != nil {
+		return nil, err
+	}
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient)
 	if err != nil {
 		return nil, err
 	}

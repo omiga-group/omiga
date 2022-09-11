@@ -17,9 +17,11 @@ import (
 )
 
 type GeminiOrderBookSubscriber interface {
+	Close()
 }
 
 type geminiOrderBookSubscriber struct {
+	ctx                context.Context
 	logger             *zap.SugaredLogger
 	geminiConfig       configuration.GeminiConfig
 	orderBookPublisher publishers.OrderBookPublisher
@@ -34,48 +36,53 @@ func NewGeminiOrderBookSubscriber(
 	orderBookPublisher publishers.OrderBookPublisher) (GeminiOrderBookSubscriber, error) {
 
 	instance := &geminiOrderBookSubscriber{
+		ctx:                ctx,
 		logger:             logger,
 		geminiConfig:       geminiConfig,
 		orderBookPublisher: orderBookPublisher,
 		apiClient:          apiClient,
 	}
 
-	go instance.run(ctx)
+	go instance.run()
 
 	return instance, nil
 }
 
-func (fobs *geminiOrderBookSubscriber) run(ctx context.Context) {
-	for {
-		fobs.connectAndSubscribe(ctx)
+func (gobs *geminiOrderBookSubscriber) Close() {
+	gobs.orderBookPublisher.Close()
+}
 
-		if ctx.Err() == context.Canceled {
+func (gobs *geminiOrderBookSubscriber) run() {
+	for {
+		gobs.connectAndSubscribe()
+
+		if gobs.ctx.Err() == context.Canceled {
 			return
 		}
 	}
 }
 
-func (fobs *geminiOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
-	connection, _, err := websocket.DefaultDialer.DialContext(ctx, fobs.geminiConfig.WebsocketUrl, nil)
+func (gobs *geminiOrderBookSubscriber) connectAndSubscribe() {
+	connection, _, err := websocket.DefaultDialer.DialContext(gobs.ctx, gobs.geminiConfig.WebsocketUrl, nil)
 	if err != nil {
-		fobs.logger.Errorf("Failed to dial Gemini websocket. Error: %v", err)
+		gobs.logger.Errorf("Failed to dial Gemini websocket. Error: %v", err)
 		return
 	}
 
 	if connection == nil {
-		fobs.logger.Error("websocket is not initialized")
+		gobs.logger.Error("websocket is not initialized")
 		return
 	}
 
 	defer func() {
 		if connectionCloseErr := connection.Close(); connectionCloseErr != nil {
-			fobs.logger.Errorf("Failed to close Gemini websocket connection. Error: %v", connectionCloseErr)
+			gobs.logger.Errorf("Failed to close Gemini websocket connection. Error: %v", connectionCloseErr)
 		}
 	}()
 
-	mm, err := fobs.apiClient.GetMarkets()
+	mm, err := gobs.apiClient.GetMarkets()
 	if err != nil {
-		fobs.logger.Errorf("Failed to get Gemini markets list. Error: %v", err)
+		gobs.logger.Errorf("Failed to get Gemini markets list. Error: %v", err)
 		return
 	}
 
@@ -83,40 +90,39 @@ func (fobs *geminiOrderBookSubscriber) connectAndSubscribe(ctx context.Context) 
 	for name := range mm {
 		req := &geminiRequest{Op: OperationTypeSubscribe, Channel: &channel, Market: string(name)}
 		if err := connection.WriteJSON(req); err != nil {
-			fobs.logger.Errorf("Failed to send request to Gemini websocket. Error: %v", err)
+			gobs.logger.Errorf("Failed to send request to Gemini websocket. Error: %v", err)
 			return
 		}
 	}
 
-	go fobs.ping(ctx, connection)
+	go gobs.ping(connection)
 
 	for {
-		if ctx.Err() == context.Canceled {
+		if gobs.ctx.Err() == context.Canceled {
 			break
 		}
 
 		orderBook := geminiOrderBook{}
 		err := connection.ReadJSON(&orderBook)
 		if err != nil {
-			fobs.logger.Errorf("Failed to read OrderBook JSON. Error: %v", err)
+			gobs.logger.Errorf("Failed to read OrderBook JSON. Error: %v", err)
 			break
 		}
 
 		if orderBook.Data != nil {
 			if market, ok := mm[models.MarketName(orderBook.Market)]; ok {
-				fobs.publish(ctx, &orderBook, market)
+				gobs.publish(&orderBook, market)
 			}
 		}
 
 	}
 
 	if connectionCloseErr := connection.Close(); connectionCloseErr != nil {
-		fobs.logger.Errorf("Failed to close Gemini websocket connection. Error: %v", connectionCloseErr)
+		gobs.logger.Errorf("Failed to close Gemini websocket connection. Error: %v", connectionCloseErr)
 	}
 }
 
-func (fobs *geminiOrderBookSubscriber) publish(
-	ctx context.Context,
+func (gobs *geminiOrderBookSubscriber) publish(
 	ob *geminiOrderBook,
 	market models.Market) {
 	asks := slices.Map(ob.Data.Asks, func(ask [2]float64) models.OrderBookEntry {
@@ -157,13 +163,12 @@ func (fobs *geminiOrderBookSubscriber) publish(
 
 	orderBook.ExchangeId = "binance"
 
-	if err := fobs.orderBookPublisher.Publish(ctx, orderBook.ExchangeId, orderBook); err != nil {
-		fobs.logger.Errorf("Failed to publish order book for Binance exchange. Error: %v", err)
+	if err := gobs.orderBookPublisher.Publish(gobs.ctx, orderBook.ExchangeId, orderBook); err != nil {
+		gobs.logger.Errorf("Failed to publish order book for Binance exchange. Error: %v", err)
 	}
 }
 
-func (fobs *geminiOrderBookSubscriber) ping(
-	ctx context.Context,
+func (gobs *geminiOrderBookSubscriber) ping(
 	connection *websocket.Conn) {
 	ticker := time.NewTicker(15 * time.Second)
 	defer ticker.Stop()
@@ -172,13 +177,13 @@ func (fobs *geminiOrderBookSubscriber) ping(
 		select {
 		case <-ticker.C:
 			if err := connection.WriteJSON(&geminiRequest{Op: "ping"}); err != nil {
-				fobs.logger.Errorf("Failed to send ping request. Error: %v", err)
+				gobs.logger.Errorf("Failed to send ping request. Error: %v", err)
 				return
 			}
-		case <-ctx.Done():
+		case <-gobs.ctx.Done():
 		}
 
-		if ctx.Err() == context.Canceled {
+		if gobs.ctx.Err() == context.Canceled {
 			break
 		}
 	}

@@ -61,7 +61,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			_, err = appsetup.NewGeminiOrderBookSubscriber(
+			feminiOrderBookSubscriber, err := appsetup.NewGeminiOrderBookSubscriber(
 				ctx,
 				sugarLogger,
 				config.App,
@@ -72,6 +72,8 @@ func startCommand() *cobra.Command {
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
+
+			defer feminiOrderBookSubscriber.Close()
 
 			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {

@@ -62,7 +62,7 @@ func startCommand() *cobra.Command {
 			}
 
 			for _, pairConfig := range config.Binance.OrderBook.Pairs {
-				_, err = appsetup.NewBinanceOrderBookSubscriber(
+				binanceOrderBookSubscriber, err := appsetup.NewBinanceOrderBookSubscriber(
 					ctx,
 					sugarLogger,
 					config.App,
@@ -74,6 +74,8 @@ func startCommand() *cobra.Command {
 				if err != nil {
 					sugarLogger.Fatal(err)
 				}
+
+				defer binanceOrderBookSubscriber.Close()
 			}
 
 			timeHelper, err := appsetup.NewTimeHelper()

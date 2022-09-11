@@ -61,7 +61,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			_, err = appsetup.NewFtxOrderBookSubscriber(
+			ftxOrderBookSubscriber, err := appsetup.NewFtxOrderBookSubscriber(
 				ctx,
 				sugarLogger,
 				config.App,
@@ -72,6 +72,8 @@ func startCommand() *cobra.Command {
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
+
+			defer ftxOrderBookSubscriber.Close()
 
 			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {

@@ -17,9 +17,11 @@ import (
 )
 
 type FtxOrderBookSubscriber interface {
+	Close()
 }
 
 type ftxOrderBookSubscriber struct {
+	ctx                context.Context
 	logger             *zap.SugaredLogger
 	ftxConfig          configuration.FtxConfig
 	orderBookPublisher publishers.OrderBookPublisher
@@ -34,29 +36,34 @@ func NewFtxOrderBookSubscriber(
 	orderBookPublisher publishers.OrderBookPublisher) (FtxOrderBookSubscriber, error) {
 
 	instance := &ftxOrderBookSubscriber{
+		ctx:                ctx,
 		logger:             logger,
 		ftxConfig:          ftxConfig,
 		orderBookPublisher: orderBookPublisher,
 		apiClient:          apiClient,
 	}
 
-	go instance.run(ctx)
+	go instance.run()
 
 	return instance, nil
 }
 
-func (fobs *ftxOrderBookSubscriber) run(ctx context.Context) {
-	for {
-		fobs.connectAndSubscribe(ctx)
+func (fobs *ftxOrderBookSubscriber) Close() {
+	fobs.orderBookPublisher.Close()
+}
 
-		if ctx.Err() == context.Canceled {
+func (fobs *ftxOrderBookSubscriber) run() {
+	for {
+		fobs.connectAndSubscribe()
+
+		if fobs.ctx.Err() == context.Canceled {
 			return
 		}
 	}
 }
 
-func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
-	connection, _, err := websocket.DefaultDialer.DialContext(ctx, fobs.ftxConfig.WebsocketUrl, nil)
+func (fobs *ftxOrderBookSubscriber) connectAndSubscribe() {
+	connection, _, err := websocket.DefaultDialer.DialContext(fobs.ctx, fobs.ftxConfig.WebsocketUrl, nil)
 	if err != nil {
 		fobs.logger.Errorf("Failed to dial FTX websocket. Error: %v", err)
 		return
@@ -88,10 +95,10 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
 		}
 	}
 
-	go fobs.ping(ctx, connection)
+	go fobs.ping(connection)
 
 	for {
-		if ctx.Err() == context.Canceled {
+		if fobs.ctx.Err() == context.Canceled {
 			break
 		}
 
@@ -104,7 +111,7 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
 
 		if orderBook.Data != nil {
 			if market, ok := mm[orderBook.Market]; ok {
-				fobs.publish(ctx, &orderBook, market)
+				fobs.publish(&orderBook, market)
 			}
 		}
 
@@ -116,7 +123,6 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe(ctx context.Context) {
 }
 
 func (fobs *ftxOrderBookSubscriber) publish(
-	ctx context.Context,
 	ob *ftxOrderBook,
 	market models.Market) {
 	asks := slices.Map(ob.Data.Asks, func(ask [2]float64) models.OrderBookEntry {
@@ -157,13 +163,12 @@ func (fobs *ftxOrderBookSubscriber) publish(
 
 	orderBook.ExchangeId = "binance"
 
-	if err := fobs.orderBookPublisher.Publish(ctx, orderBook.ExchangeId, orderBook); err != nil {
+	if err := fobs.orderBookPublisher.Publish(fobs.ctx, orderBook.ExchangeId, orderBook); err != nil {
 		fobs.logger.Errorf("Failed to publish order book for Binance exchange. Error: %v", err)
 	}
 }
 
 func (fobs *ftxOrderBookSubscriber) ping(
-	ctx context.Context,
 	connection *websocket.Conn) {
 	ticker := time.NewTicker(15 * time.Second)
 	defer ticker.Stop()
@@ -175,10 +180,10 @@ func (fobs *ftxOrderBookSubscriber) ping(
 				fobs.logger.Errorf("Failed to send ping request. Error: %v", err)
 				return
 			}
-		case <-ctx.Done():
+		case <-fobs.ctx.Done():
 		}
 
-		if ctx.Err() == context.Canceled {
+		if fobs.ctx.Err() == context.Canceled {
 			break
 		}
 	}

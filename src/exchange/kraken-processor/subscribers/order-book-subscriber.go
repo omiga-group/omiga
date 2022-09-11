@@ -16,6 +16,7 @@ import (
 )
 
 type KrakenOrderBookSubscriber interface {
+	Close()
 }
 
 type krakenOrderBookSubscriber struct {
@@ -44,6 +45,10 @@ func NewKrakenOrderBookSubscriber(
 	go instance.run()
 
 	return instance, nil
+}
+
+func (kobs *krakenOrderBookSubscriber) Close() {
+	kobs.orderBookPublisher.Close()
 }
 
 func (kobs *krakenOrderBookSubscriber) run() {

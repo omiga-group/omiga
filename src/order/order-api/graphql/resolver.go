@@ -9,9 +9,9 @@ import (
 )
 
 type Resolver struct {
-	client                       *repositories.Client
-	orderService                 services.OrderService
-	orderOutboxBackgroundService outbox.OutboxBackgroundService
+	client                  *repositories.Client
+	orderService            services.OrderService
+	outboxBackgroundService outbox.OutboxBackgroundService
 }
 
 type GraphQLServer interface {
@@ -20,12 +20,12 @@ type GraphQLServer interface {
 func NewGraphQLServer(
 	entgoClient repositories.EntgoClient,
 	orderService services.OrderService,
-	orderOutboxBackgroundService outbox.OutboxBackgroundService) (*handler.Server, error) {
+	outboxBackgroundService outbox.OutboxBackgroundService) (*handler.Server, error) {
 	executableSchema := generated.NewExecutableSchema(generated.Config{
 		Resolvers: &Resolver{
-			client:                       entgoClient.GetClient(),
-			orderService:                 orderService,
-			orderOutboxBackgroundService: orderOutboxBackgroundService,
+			client:                  entgoClient.GetClient(),
+			orderService:            orderService,
+			outboxBackgroundService: outboxBackgroundService,
 		},
 	})
 

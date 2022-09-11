@@ -15,13 +15,13 @@ import (
 
 type OutboxBackgroundService interface {
 	RunAsync()
+	Close()
 }
 
 type outboxBackgroundService struct {
 	ctx             context.Context
 	logger          *zap.SugaredLogger
 	outboxConfig    outbox.OutboxConfig
-	topic           string
 	messageProducer messaging.MessageProducer
 	entgoClient     repositories.EntgoClient
 	globalMutex     sync.Mutex
@@ -32,7 +32,6 @@ func NewOutboxBackgroundService(
 	logger *zap.SugaredLogger,
 	outboxConfig outbox.OutboxConfig,
 	messageProducer messaging.MessageProducer,
-	topic string,
 	entgoClient repositories.EntgoClient,
 	cronService cron.CronService) (OutboxBackgroundService, error) {
 
@@ -41,7 +40,6 @@ func NewOutboxBackgroundService(
 		logger:          logger,
 		outboxConfig:    outboxConfig,
 		messageProducer: messageProducer,
-		topic:           topic,
 		entgoClient:     entgoClient,
 		globalMutex:     sync.Mutex{},
 	}
@@ -57,6 +55,10 @@ func (obs *outboxBackgroundService) RunAsync() {
 	go obs.Run()
 }
 
+func (obs *outboxBackgroundService) Close() {
+	obs.messageProducer.Close()
+}
+
 func (obs *outboxBackgroundService) Run() {
 	obs.globalMutex.Lock()
 	defer obs.globalMutex.Unlock()
@@ -66,7 +68,6 @@ func (obs *outboxBackgroundService) Run() {
 	records, err := client.Outbox.Query().
 		Where(
 			outboxmodel.And(
-				outboxmodel.TopicEQ(obs.topic),
 				outboxmodel.StatusEQ(outboxmodel.StatusPending),
 				outboxmodel.Or(
 					outboxmodel.LastRetryLTE(time.Now().Add(-1*obs.outboxConfig.RetryDelay)),
@@ -98,6 +99,7 @@ func (obs *outboxBackgroundService) Run() {
 
 			err := obs.messageProducer.Produce(
 				obs.ctx,
+				record.Topic,
 				record.Key,
 				record.Payload)
 
@@ -133,7 +135,7 @@ func (obs *outboxBackgroundService) Run() {
 				SetProcessingErrors(append(record.ProcessingErrors, failedRecord.err.Error())).
 				Save(obs.ctx)
 			if err != nil {
-				obs.logger.Errorf("Failed to update failed outbox item for topic %s. Error: %v", obs.topic, err)
+				obs.logger.Errorf("Failed to update failed outbox item for topic %s. Error: %v", record.Topic, err)
 			}
 		} else {
 			_, err := client.Outbox.
@@ -143,7 +145,7 @@ func (obs *outboxBackgroundService) Run() {
 				SetProcessingErrors(append(record.ProcessingErrors, failedRecord.err.Error())).
 				Save(obs.ctx)
 			if err != nil {
-				obs.logger.Errorf("Failed to update failed outbox item for topic %s. Error: %v", obs.topic, err)
+				obs.logger.Errorf("Failed to update failed outbox item for topic %s. Error: %v", record.Topic, err)
 			}
 		}
 	}
@@ -156,7 +158,7 @@ func (obs *outboxBackgroundService) Run() {
 			SetLastRetry(now).
 			Save(obs.ctx)
 		if err != nil {
-			obs.logger.Errorf("Failed to update succeeded outbox item for topic %s. Error: %v", obs.topic, err)
+			obs.logger.Errorf("Failed to update succeeded outbox item for topic %s. Error: %v", record.Topic, err)
 		}
 	}
 }

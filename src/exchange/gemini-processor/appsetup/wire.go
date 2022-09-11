@@ -50,6 +50,7 @@ func NewSyntheticOrderConsumer(
 	pulsarConfig pulsar.PulsarConfig) (syntheticorderv1.Consumer, error) {
 	wire.Build(
 		os.NewOsHelper,
+		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageConsumer,
 		syntheticorderv1.NewConsumer,
 		subscribers.NewSyntheticOrderSubscriber)
@@ -68,6 +69,7 @@ func NewGeminiOrderBookSubscriber(
 		os.NewOsHelper,
 		orderbookv1.NewProducer,
 		client.NewGeminiApiClient,
+		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
 		subscribers.NewGeminiOrderBookSubscriber,

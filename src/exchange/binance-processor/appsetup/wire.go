@@ -49,6 +49,7 @@ func NewSyntheticOrderConsumer(
 	pulsarConfig pulsar.PulsarConfig) (syntheticorderv1.Consumer, error) {
 	wire.Build(
 		os.NewOsHelper,
+		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageConsumer,
 		syntheticorderv1.NewConsumer,
 		subscribers.NewSyntheticOrderSubscriber)
@@ -70,6 +71,7 @@ func NewBinanceOrderBookSubscriber(
 		postgres.NewPostgres,
 		repositories.NewEntgoClient,
 		orderbookv1.NewProducer,
+		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
 		subscribers.NewBinanceOrderBookSubscriber,

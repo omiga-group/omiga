@@ -51,16 +51,20 @@ func NewEntgoClient(logger *zap.SugaredLogger, postgresConfig postgres.PostgresC
 	return entgoClient, nil
 }
 
-func NewOrderOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, outboxConfig outbox.OutboxConfig, topic string, entgoClient repositories.EntgoClient, cronService cron.CronService) (outbox2.OutboxBackgroundService, error) {
+func NewOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, outboxConfig outbox.OutboxConfig, entgoClient repositories.EntgoClient, cronService cron.CronService) (outbox2.OutboxBackgroundService, error) {
 	osHelper, err := os.NewOsHelper()
 	if err != nil {
 		return nil, err
 	}
-	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarConfig, osHelper, topic)
+	pulsarClient, err := pulsar.NewPulsarClient(logger, pulsarConfig, osHelper)
 	if err != nil {
 		return nil, err
 	}
-	outboxBackgroundService, err := outbox2.NewOutboxBackgroundService(ctx, logger, outboxConfig, messageProducer, topic, entgoClient, cronService)
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient)
+	if err != nil {
+		return nil, err
+	}
+	outboxBackgroundService, err := outbox2.NewOutboxBackgroundService(ctx, logger, outboxConfig, messageProducer, entgoClient, cronService)
 	if err != nil {
 		return nil, err
 	}

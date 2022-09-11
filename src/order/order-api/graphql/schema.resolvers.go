@@ -22,7 +22,7 @@ func (r *mutationResolver) SubmitOrder(ctx context.Context, input models.SubmitO
 		return nil, err
 	}
 
-	r.orderOutboxBackgroundService.RunAsync()
+	r.outboxBackgroundService.RunAsync()
 
 	return &models.OrderPayload{
 		ClientMutationID: input.ClientMutationID,
