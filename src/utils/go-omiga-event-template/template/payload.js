@@ -60,7 +60,7 @@ export default async function ({ asyncapi, params }) {
               ? `\`json:"${fieldName}"\``
               : `\`json:"${fieldName},omitempty"\``;
 
-            if (field.type === "array") {
+            if (field.type === "array" && finalFieldType.startsWith("[]*")) {
               finalFieldType = "[]" + finalFieldType.substring("[]*".length);
             }
 
