@@ -31,16 +31,16 @@ RUN ag /asyncapi/omiga/OrderBook_V1.yaml /go-omiga-event-template \
 # Generate metadata including topic name and json schema
 
 RUN ag /asyncapi/omiga/Order_V1.yaml /go-omiga-event-jsonschema-template \
-    --output /generated-src/omiga/order/v1 \
+    --output /generated-src/omiga/order/v1/schema \
     --force-write \
     -p packageName=orderv1
 
 RUN ag /asyncapi/omiga/SyntheticOrder_V1.yaml /go-omiga-event-jsonschema-template \
-    --output /generated-src/omiga/synthetic-order/v1 \
+    --output /generated-src/omiga/synthetic-order/v1/schema \
     --force-write \
     -p packageName=syntheticorderv1
 
 RUN ag /asyncapi/omiga/OrderBook_V1.yaml /go-omiga-event-jsonschema-template \
-    --output /generated-src/omiga/order-book/v1 \
+    --output /generated-src/omiga/order-book/v1/schema \
     --force-write \
     -p packageName=orderbookv1

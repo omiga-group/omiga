@@ -10,6 +10,7 @@ require (
 	github.com/aopoltorzhicky/go_kraken/websocket v0.1.10
 	github.com/apache/pulsar-client-go v0.8.1
 	github.com/deepmap/oapi-codegen v1.11.0
+	github.com/gobuffalo/packr/v2 v2.5.1
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
@@ -50,6 +51,9 @@ require (
 	github.com/dvsekhvalnov/jose2go v0.0.0-20200901110807-248326c1351b // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect
+	github.com/gobuffalo/envy v1.7.0 // indirect
+	github.com/gobuffalo/logger v1.0.0 // indirect
+	github.com/gobuffalo/packd v0.3.0 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
@@ -68,7 +72,9 @@ require (
 	github.com/jackc/pgproto3/v2 v2.3.1 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.12.0 // indirect
+	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/karrick/godirwalk v1.10.12 // indirect
 	github.com/keybase/go-keychain v0.0.0-20190712205309-48d3d31d256d // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/linkedin/goavro/v2 v2.9.8 // indirect
@@ -87,6 +93,7 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.30.0 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
+	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
