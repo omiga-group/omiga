@@ -1,6 +1,6 @@
 module github.com/omiga-group/omiga/src
 
-go 1.19
+go 1.18
 
 require (
 	entgo.io/contrib v0.3.2
