@@ -10,5 +10,5 @@ import (
 const TopicName = "synthetic.order.v1.event"
 
 func GetJsonSchema() (string, error) {
-	return packr.New("schema","./schema").FindString("schema.json")
+	return packr.New("schema","./schema").FindString("./schema.json")
 }

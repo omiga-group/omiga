@@ -17,7 +17,7 @@ import (
 const TopicName = "${Object.keys(asyncapi.channels())[0]}"
 
 func GetJsonSchema() (string, error) {
-	return packr.New("schema","./schema").FindString("schema.json")
+	return packr.New("schema","./schema").FindString("./schema.json")
 }
 `;
 
