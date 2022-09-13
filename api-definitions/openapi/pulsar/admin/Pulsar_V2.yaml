@@ -20781,6 +20781,9 @@ paths:
               $ref: '#/components/schemas/TenantInfo'
         required: false
       responses:
+        204:
+          description: successful operation
+          content: {}
         403:
           description: The requester doesn't have admin permissions
           content: {}

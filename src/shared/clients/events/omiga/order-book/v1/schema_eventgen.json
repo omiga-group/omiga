@@ -1,0 +1,180 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "OrderBookEvent",
+  "description": "An event describing a change in Order domain.",
+  "$id": "orderBookEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "data"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "#/definitions/metadata"
+    },
+    "data": {
+      "$ref": "#/definitions/orderBook"
+    }
+  },
+  "definitions": {
+    "metadata": {
+      "$id": "metadata",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "type",
+        "subject",
+        "time",
+        "correlationId",
+        "actor"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique message ID",
+          "format": "uuid"
+        },
+        "source": {
+          "type": "string",
+          "format": "urn",
+          "example": "urn:nz:co:omiga:example"
+        },
+        "type": {
+          "$ref": "#/definitions/type"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "time": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2021-03-25T23:04:34.000Z"
+        },
+        "correlationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "actor": {
+          "type": "string",
+          "format": "urn",
+          "example": "TBD"
+        }
+      }
+    },
+    "type": {
+      "$id": "type",
+      "type": "string",
+      "enum": [
+        "orderBookUpdated"
+      ]
+    },
+    "orderBook": {
+      "$id": "orderBook",
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "exchangeId",
+        "baseCurrency",
+        "counterCurrency",
+        "bids",
+        "asks"
+      ],
+      "properties": {
+        "exchangeId": {
+          "type": "string",
+          "description": "The unique ID of the exchange"
+        },
+        "baseCurrency": {
+          "$ref": "#/definitions/currency"
+        },
+        "counterCurrency": {
+          "$ref": "#/definitions/currency"
+        },
+        "bids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/orderBookEntry"
+          }
+        },
+        "asks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/orderBookEntry"
+          }
+        }
+      }
+    },
+    "currency": {
+      "$id": "currency",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "code",
+        "maxPrecision",
+        "digital"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "maxPrecision": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "digital": {
+          "type": "boolean"
+        }
+      }
+    },
+    "orderBookEntry": {
+      "$id": "orderBookEntry",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "time",
+        "quantity",
+        "price"
+      ],
+      "properties": {
+        "time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The order book entry timestamp",
+          "example": "2021-03-25T23:04:34.000Z"
+        },
+        "quantity": {
+          "$ref": "#/definitions/quantity"
+        },
+        "price": {
+          "$ref": "#/definitions/quantity"
+        }
+      }
+    },
+    "quantity": {
+      "$id": "quantity",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amount",
+        "scale"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "scale": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    }
+  }
+}

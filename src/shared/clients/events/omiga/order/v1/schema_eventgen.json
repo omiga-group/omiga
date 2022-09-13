@@ -1,0 +1,257 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "OrderEvent",
+  "description": "An event describing a change in Order domain.",
+  "$id": "orderEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "data"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "#/definitions/metadata"
+    },
+    "data": {
+      "$ref": "#/definitions/data"
+    }
+  },
+  "definitions": {
+    "metadata": {
+      "$id": "metadata",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "type",
+        "subject",
+        "time",
+        "correlationId",
+        "actor"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique message ID",
+          "format": "uuid"
+        },
+        "source": {
+          "type": "string",
+          "format": "urn",
+          "example": "urn:nz:co:omiga:example"
+        },
+        "type": {
+          "$ref": "#/definitions/type"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "time": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2021-03-25T23:04:34.000Z"
+        },
+        "correlationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "actor": {
+          "type": "string",
+          "format": "urn",
+          "example": "TBD"
+        }
+      }
+    },
+    "type": {
+      "$id": "type",
+      "type": "string",
+      "enum": [
+        "orderSubmitted",
+        "orderCancel"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "afterState"
+      ],
+      "properties": {
+        "beforeState": {
+          "$ref": "#/definitions/order"
+        },
+        "afterState": {
+          "$ref": "#/definitions/order"
+        }
+      }
+    },
+    "order": {
+      "$id": "order",
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "orderDetails",
+        "preferredExchanges"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "The unique order ID"
+        },
+        "orderDetails": {
+          "$ref": "#/definitions/orderDetails"
+        },
+        "user": {
+          "$ref": "#/definitions/user"
+        },
+        "preferredExchanges": {
+          "type": "array",
+          "description": "the preferred list of the supportef exchanged by the user",
+          "items": {
+            "$ref": "#/definitions/exchange"
+          }
+        }
+      }
+    },
+    "orderDetails": {
+      "$id": "orderDetails",
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "baseCurrency",
+        "counterCurrency",
+        "type",
+        "side",
+        "quantity",
+        "price"
+      ],
+      "properties": {
+        "baseCurrency": {
+          "$ref": "#/definitions/currency"
+        },
+        "counterCurrency": {
+          "$ref": "#/definitions/currency"
+        },
+        "type": {
+          "$ref": "#/definitions/orderType"
+        },
+        "side": {
+          "$ref": "#/definitions/orderSide"
+        },
+        "quantity": {
+          "$ref": "#/definitions/quantity"
+        },
+        "price": {
+          "$ref": "#/definitions/quantity"
+        }
+      }
+    },
+    "currency": {
+      "$id": "currency",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "code",
+        "maxPrecision",
+        "digital"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "maxPrecision": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "digital": {
+          "type": "boolean"
+        }
+      }
+    },
+    "orderType": {
+      "$id": "orderType",
+      "enum": [
+        "INSTANT",
+        "MARKET",
+        "LIMIT",
+        "STOP",
+        "TRAILING_STOP"
+      ]
+    },
+    "orderSide": {
+      "$id": "orderSide",
+      "enum": [
+        "BID",
+        "ASK"
+      ]
+    },
+    "quantity": {
+      "$id": "quantity",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amount",
+        "scale"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "scale": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "user": {
+      "$id": "user",
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "type": {
+          "enum": [
+            "RETAIL",
+            "INSTITUTION"
+          ]
+        }
+      }
+    },
+    "exchange": {
+      "$id": "exchange",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique ID of the supported exchange"
+        }
+      }
+    }
+  }
+}
