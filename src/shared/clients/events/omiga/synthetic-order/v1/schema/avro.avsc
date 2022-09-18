@@ -1,6 +1,6 @@
 {
   "namespace": "au.com.omiga.schemas.syntheticOrderEvent",
-  "name": "http://omiga.com.au/schemas/syntheticOrderEvent",
+  "name": "syntheticOrderEvent",
   "type": "record",
   "doc": "An event describing a change in Order domain.",
   "fields": [

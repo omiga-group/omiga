@@ -8,20 +8,20 @@ export default async function ({ asyncapi, params }) {
   }
 
   const messages = Object.entries(asyncapi._json.components.messages);
-  const jsonSchema = getJsonSchema(messages[0]);
+  const { jsonSchema, originalId } = getJsonSchema(messages[0]);
   const dereferencedJsonSchema = await refParser.dereference(
     JSON.parse(jsonSchema)
   );
   const avro = jsonSchemaAvro.convert(dereferencedJsonSchema);
+
+  avro.name = originalId;
 
   return [
     <File name="jsonschema.json">{render(jsonSchema)}</File>,
     <File name="dereferenced-jsonschema.json">
       {JSON.stringify(dereferencedJsonSchema, null, 2)}
     </File>,
-    <File name="avro.avsc">
-      {JSON.stringify(avro, null, 2)}
-    </File>,
+    <File name="avro.avsc">{JSON.stringify(avro, null, 2)}</File>,
   ];
 }
 
@@ -102,13 +102,18 @@ const getJsonSchema = ([messageName, message]) => {
     definitions: definitions,
   };
 
+  const originalId = schema["$id"];
+
   schema["$id"] = "http://omiga.com.au/schemas/" + schema["$id"];
 
-  const strJson = JSON.stringify(
+  const jsonSchema = JSON.stringify(
     schema,
     (key, value) => (key === "x-parser-schema-id" ? undefined : value),
     2
   );
 
-  return strJson;
+  return {
+    jsonSchema,
+    originalId,
+  };
 };

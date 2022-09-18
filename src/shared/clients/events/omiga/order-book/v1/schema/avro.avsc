@@ -1,6 +1,6 @@
 {
   "namespace": "au.com.omiga.schemas.orderBookEvent",
-  "name": "http://omiga.com.au/schemas/orderBookEvent",
+  "name": "orderBookEvent",
   "type": "record",
   "doc": "An event describing a change in Order domain.",
   "fields": [
