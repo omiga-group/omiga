@@ -76,14 +76,14 @@
     rollup "^2.60.1"
     source-map-support "^0.5.19"
 
-"@asyncapi/modelina@^0.59.5":
-  version "0.59.5"
-  resolved "https://registry.yarnpkg.com/@asyncapi/modelina/-/modelina-0.59.5.tgz#4dbe2e57156180c782657aa77780a76178f7cae1"
-  integrity sha512-ISZKjVN3ZS2JGoSpq3MCbev8AfWE+NrZnSZw+RLn+Gf4Vm4leH54Cf+enxGYpe1SmoB+CUQcaGSzFZZ2XYZMTQ==
+"@asyncapi/modelina@^0.59.7":
+  version "0.59.7"
+  resolved "https://registry.yarnpkg.com/@asyncapi/modelina/-/modelina-0.59.7.tgz#cf2a3bc4929caa5481e43234874f139f559d4bea"
+  integrity sha512-IruuUTJ6HOJ7LRlVZcLypouas/0oWBTvdls2S+d49ixjV8OeDZc04827uJyE3jyfQvWEdsNHcQ4vxnoVe2os+A==
   dependencies:
     "@apidevtools/json-schema-ref-parser" "^9.0.9"
     "@apidevtools/swagger-parser" "^10.0.3"
-    "@asyncapi/parser" "^1.15.1"
+    "@asyncapi/parser" "^1.16.0"
     change-case "^4.1.2"
     openapi-types "9.3.0"
     typescript-json-schema "^0.53.0"
@@ -103,10 +103,30 @@
     node-fetch "^2.6.0"
     tiny-merge-patch "^0.1.2"
 
+"@asyncapi/parser@^1.16.0":
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/@asyncapi/parser/-/parser-1.16.0.tgz#f40bc80e7f9e3a6901fdb61fc2f1ad015bfb23b8"
+  integrity sha512-uqW5YfkpQV13tplqXE66FbMfqLv17AkmVtU4PZWgh2XjzeEMnmb5Vpxdob3vNtO0I3pB1A/Hl06ouWDSR+hTMA==
+  dependencies:
+    "@apidevtools/json-schema-ref-parser" "^9.0.6"
+    "@asyncapi/specs" "^3.0.0"
+    "@fmvilas/pseudo-yaml-ast" "^0.3.1"
+    ajv "^6.10.1"
+    js-yaml "^3.13.1"
+    json-to-ast "^2.1.0"
+    lodash.clonedeep "^4.5.0"
+    node-fetch "^2.6.0"
+    tiny-merge-patch "^0.1.2"
+
 "@asyncapi/specs@^2.14.0":
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/@asyncapi/specs/-/specs-2.14.0.tgz#a4535fedde931181f20d41356ed1906d0fb73d48"
   integrity sha512-hHsYF6XsYNIKb1P2rXaooF4H+uKKQ4b/Ljxrk3rZ3riEDiSxMshMEfb1fUlw9Yj4V4OmJhjXwkNvw8W59AXv1A==
+
+"@asyncapi/specs@^3.0.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@asyncapi/specs/-/specs-3.1.0.tgz#f1360f58300b7fc15e28770327df383c6af9ad68"
+  integrity sha512-6xFvzDd54+M9g6EM259Y4a4iiFb2VzPr6eoxA/ttwTu7NRxaGScocXskXtuz53ZWx9BWZWuzwDYKfM3KBkDfiQ==
 
 "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.18.6":
   version "7.18.6"
@@ -1154,10 +1174,15 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
 
-"@types/json-schema@^7.0.6", "@types/json-schema@^7.0.9":
+"@types/json-schema@^7.0.3", "@types/json-schema@^7.0.6", "@types/json-schema@^7.0.9":
   version "7.0.11"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.11.tgz#d421b6c527a3037f7c84433fd2c4229e016863d3"
   integrity sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==
+
+"@types/node@^11.13.2":
+  version "11.15.54"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.15.54.tgz#59ed60e7b0d56905a654292e8d73275034eb6283"
+  integrity sha512-1RWYiq+5UfozGsU6MwJyFX6BtktcT10XRjvcAQmskCtMcW3tPske88lM/nHv7BQG1w9KBXI1zPGuu5PnNCX14g==
 
 "@types/node@^16.9.2":
   version "16.11.56"
@@ -1691,6 +1716,14 @@ json-pointer@^0.6.0:
   integrity sha512-vLWcKbOaXlO+jvRy4qNd+TI1QUPZzfJj1tpJ3vAXDych5XJf93ftpUKe5pKCrzyIIwgBJcOcCVRUfqQP25afBw==
   dependencies:
     foreach "^2.0.4"
+
+json-schema-to-avro@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/json-schema-to-avro/-/json-schema-to-avro-1.1.0.tgz#506459b29cde31d9f1008372acd508b7fc0ddbe1"
+  integrity sha512-U+0rpWZl8wRmXl2xv4fiNEe/9xbGwWpEUvYsgwin4qV219PMOGYED08PUIW4z7DWFYXW9q4L0zGwyHOcrGeZeA==
+  dependencies:
+    "@types/json-schema" "^7.0.3"
+    "@types/node" "^11.13.2"
 
 json-schema-traverse@^0.4.1:
   version "0.4.1"

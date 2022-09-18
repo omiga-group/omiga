@@ -1,4 +1,6 @@
 const { File, render } = require("@asyncapi/generator-react-sdk");
+const jsonSchemaAvro = require("json-schema-to-avro");
+const refParser = require("@apidevtools/json-schema-ref-parser");
 
 export default async function ({ asyncapi, params }) {
   if (asyncapi.channels().length === 0) {
@@ -7,8 +9,20 @@ export default async function ({ asyncapi, params }) {
 
   const messages = Object.entries(asyncapi._json.components.messages);
   const jsonSchema = getJsonSchema(messages[0]);
+  const dereferencedJsonSchema = await refParser.dereference(
+    JSON.parse(jsonSchema)
+  );
+  const avro = jsonSchemaAvro.convert(dereferencedJsonSchema);
 
-  return [<File name="schema.json">{render(jsonSchema)}</File>];
+  return [
+    <File name="jsonschema.json">{render(jsonSchema)}</File>,
+    <File name="dereferenced-jsonschema.json">
+      {JSON.stringify(dereferencedJsonSchema, null, 2)}
+    </File>,
+    <File name="avro.json">
+      {JSON.stringify(avro, null, 2)}
+    </File>,
+  ];
 }
 
 const captializeFirstChar = (str) => str.charAt(0).toUpperCase() + str.slice(1);
@@ -87,6 +101,8 @@ const getJsonSchema = ([messageName, message]) => {
     ...message.payload,
     definitions: definitions,
   };
+
+  schema["$id"] = "http://omiga.com.au/schemas/" + schema["$id"];
 
   const strJson = JSON.stringify(
     schema,

@@ -1,0 +1,250 @@
+{
+  "namespace": "au.com.omiga.schemas.orderBookEvent",
+  "name": "http://omiga.com.au/schemas/orderBookEvent",
+  "type": "record",
+  "doc": "An event describing a change in Order domain.",
+  "fields": [
+    {
+      "name": "metadata",
+      "doc": "",
+      "type": {
+        "type": "record",
+        "name": "metadata_record",
+        "fields": [
+          {
+            "name": "id",
+            "doc": "The unique message ID",
+            "type": "string"
+          },
+          {
+            "name": "source",
+            "doc": "",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "doc": "",
+            "type": {
+              "type": "enum",
+              "name": "type_enum",
+              "symbols": [
+                "orderBookUpdated"
+              ]
+            }
+          },
+          {
+            "name": "subject",
+            "doc": "",
+            "type": "string"
+          },
+          {
+            "name": "time",
+            "doc": "",
+            "type": "string"
+          },
+          {
+            "name": "correlationId",
+            "doc": "",
+            "type": "string"
+          },
+          {
+            "name": "actor",
+            "doc": "",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "data",
+      "doc": "",
+      "type": {
+        "type": "record",
+        "name": "data_record",
+        "fields": [
+          {
+            "name": "exchangeId",
+            "doc": "The unique ID of the exchange",
+            "type": "string"
+          },
+          {
+            "name": "baseCurrency",
+            "doc": "",
+            "type": {
+              "type": "record",
+              "name": "baseCurrency_1b0b2352286570cd6ae7f5b5a7929205",
+              "fields": [
+                {
+                  "name": "code",
+                  "doc": "",
+                  "type": "string"
+                },
+                {
+                  "name": "name",
+                  "doc": "",
+                  "type": "string"
+                },
+                {
+                  "name": "maxPrecision",
+                  "doc": "",
+                  "type": "int"
+                },
+                {
+                  "name": "digital",
+                  "doc": "",
+                  "type": "boolean"
+                }
+              ]
+            }
+          },
+          {
+            "name": "counterCurrency",
+            "doc": "",
+            "type": {
+              "type": "record",
+              "name": "counterCurrency_1b0b2352286570cd6ae7f5b5a7929205",
+              "fields": [
+                {
+                  "name": "code",
+                  "doc": "",
+                  "type": "string"
+                },
+                {
+                  "name": "name",
+                  "doc": "",
+                  "type": "string"
+                },
+                {
+                  "name": "maxPrecision",
+                  "doc": "",
+                  "type": "int"
+                },
+                {
+                  "name": "digital",
+                  "doc": "",
+                  "type": "boolean"
+                }
+              ]
+            }
+          },
+          {
+            "name": "bids",
+            "doc": "",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "record",
+                "name": "bids_1b0b2352286570cd6ae7f5b5a7929205",
+                "fields": [
+                  {
+                    "name": "time",
+                    "doc": "The order book entry timestamp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "quantity",
+                    "doc": "",
+                    "type": {
+                      "type": "record",
+                      "name": "quantity_ebf08b7fb0afe5becbec4a413ebbe7ce",
+                      "fields": [
+                        {
+                          "name": "amount",
+                          "doc": "",
+                          "type": "int"
+                        },
+                        {
+                          "name": "scale",
+                          "doc": "",
+                          "type": "int"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "price",
+                    "doc": "",
+                    "type": {
+                      "type": "record",
+                      "name": "price_ebf08b7fb0afe5becbec4a413ebbe7ce",
+                      "fields": [
+                        {
+                          "name": "amount",
+                          "doc": "",
+                          "type": "int"
+                        },
+                        {
+                          "name": "scale",
+                          "doc": "",
+                          "type": "int"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "asks",
+            "doc": "",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "record",
+                "name": "asks_1b0b2352286570cd6ae7f5b5a7929205",
+                "fields": [
+                  {
+                    "name": "time",
+                    "doc": "The order book entry timestamp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "quantity",
+                    "doc": "",
+                    "type": {
+                      "type": "record",
+                      "name": "quantity_ef0dbd3cba393e414d3321c4df4e8036",
+                      "fields": [
+                        {
+                          "name": "amount",
+                          "doc": "",
+                          "type": "int"
+                        },
+                        {
+                          "name": "scale",
+                          "doc": "",
+                          "type": "int"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "price",
+                    "doc": "",
+                    "type": {
+                      "type": "record",
+                      "name": "price_ef0dbd3cba393e414d3321c4df4e8036",
+                      "fields": [
+                        {
+                          "name": "amount",
+                          "doc": "",
+                          "type": "int"
+                        },
+                        {
+                          "name": "scale",
+                          "doc": "",
+                          "type": "int"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,1105 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SyntheticOrderEvent",
+  "description": "An event describing a change in Order domain.",
+  "$id": "http://omiga.com.au/schemas/syntheticOrderEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "data"
+  ],
+  "properties": {
+    "metadata": {
+      "$id": "metadata",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "type",
+        "subject",
+        "time",
+        "correlationId",
+        "actor"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique message ID",
+          "format": "uuid"
+        },
+        "source": {
+          "type": "string",
+          "format": "urn",
+          "example": "urn:nz:co:omiga:example"
+        },
+        "type": {
+          "$id": "type",
+          "type": "string",
+          "enum": [
+            "orderSubmitted",
+            "orderCancel"
+          ]
+        },
+        "subject": {
+          "type": "string"
+        },
+        "time": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2021-03-25T23:04:34.000Z"
+        },
+        "correlationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "actor": {
+          "type": "string",
+          "format": "urn",
+          "example": "TBD"
+        }
+      }
+    },
+    "data": {
+      "$id": "data",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "afterState"
+      ],
+      "properties": {
+        "beforeState": {
+          "$id": "order",
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "id",
+            "orderDetails"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "The unique synthetic order ID"
+            },
+            "exchange": {
+              "description": "The destination order for this given synthetic order",
+              "$id": "exchange",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The unique ID of the supported exchange"
+                }
+              }
+            },
+            "orderDetails": {
+              "$id": "orderDetails",
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "baseCurrency",
+                "counterCurrency",
+                "type",
+                "side",
+                "quantity",
+                "price"
+              ],
+              "properties": {
+                "baseCurrency": {
+                  "$id": "currency",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "code",
+                    "maxPrecision",
+                    "digital"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "maxPrecision": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "digital": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "counterCurrency": {
+                  "$id": "currency",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "code",
+                    "maxPrecision",
+                    "digital"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "maxPrecision": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "digital": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "type": {
+                  "$id": "orderType",
+                  "enum": [
+                    "INSTANT",
+                    "MARKET",
+                    "LIMIT",
+                    "STOP",
+                    "TRAILING_STOP"
+                  ]
+                },
+                "side": {
+                  "$id": "orderSide",
+                  "enum": [
+                    "BID",
+                    "ASK"
+                  ]
+                },
+                "quantity": {
+                  "$id": "quantity",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "amount",
+                    "scale"
+                  ],
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "scale": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                },
+                "price": {
+                  "$id": "quantity",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "amount",
+                    "scale"
+                  ],
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "scale": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "afterState": {
+          "$id": "order",
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "id",
+            "orderDetails"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "The unique synthetic order ID"
+            },
+            "exchange": {
+              "description": "The destination order for this given synthetic order",
+              "$id": "exchange",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The unique ID of the supported exchange"
+                }
+              }
+            },
+            "orderDetails": {
+              "$id": "orderDetails",
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "baseCurrency",
+                "counterCurrency",
+                "type",
+                "side",
+                "quantity",
+                "price"
+              ],
+              "properties": {
+                "baseCurrency": {
+                  "$id": "currency",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "code",
+                    "maxPrecision",
+                    "digital"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "maxPrecision": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "digital": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "counterCurrency": {
+                  "$id": "currency",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "code",
+                    "maxPrecision",
+                    "digital"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "maxPrecision": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "digital": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "type": {
+                  "$id": "orderType",
+                  "enum": [
+                    "INSTANT",
+                    "MARKET",
+                    "LIMIT",
+                    "STOP",
+                    "TRAILING_STOP"
+                  ]
+                },
+                "side": {
+                  "$id": "orderSide",
+                  "enum": [
+                    "BID",
+                    "ASK"
+                  ]
+                },
+                "quantity": {
+                  "$id": "quantity",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "amount",
+                    "scale"
+                  ],
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "scale": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                },
+                "price": {
+                  "$id": "quantity",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "amount",
+                    "scale"
+                  ],
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "scale": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "metadata": {
+      "$id": "metadata",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "type",
+        "subject",
+        "time",
+        "correlationId",
+        "actor"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique message ID",
+          "format": "uuid"
+        },
+        "source": {
+          "type": "string",
+          "format": "urn",
+          "example": "urn:nz:co:omiga:example"
+        },
+        "type": {
+          "$id": "type",
+          "type": "string",
+          "enum": [
+            "orderSubmitted",
+            "orderCancel"
+          ]
+        },
+        "subject": {
+          "type": "string"
+        },
+        "time": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2021-03-25T23:04:34.000Z"
+        },
+        "correlationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "actor": {
+          "type": "string",
+          "format": "urn",
+          "example": "TBD"
+        }
+      }
+    },
+    "type": {
+      "$id": "type",
+      "type": "string",
+      "enum": [
+        "orderSubmitted",
+        "orderCancel"
+      ]
+    },
+    "data": {
+      "$id": "data",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "afterState"
+      ],
+      "properties": {
+        "beforeState": {
+          "$id": "order",
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "id",
+            "orderDetails"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "The unique synthetic order ID"
+            },
+            "exchange": {
+              "description": "The destination order for this given synthetic order",
+              "$id": "exchange",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The unique ID of the supported exchange"
+                }
+              }
+            },
+            "orderDetails": {
+              "$id": "orderDetails",
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "baseCurrency",
+                "counterCurrency",
+                "type",
+                "side",
+                "quantity",
+                "price"
+              ],
+              "properties": {
+                "baseCurrency": {
+                  "$id": "currency",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "code",
+                    "maxPrecision",
+                    "digital"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "maxPrecision": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "digital": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "counterCurrency": {
+                  "$id": "currency",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "code",
+                    "maxPrecision",
+                    "digital"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "maxPrecision": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "digital": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "type": {
+                  "$id": "orderType",
+                  "enum": [
+                    "INSTANT",
+                    "MARKET",
+                    "LIMIT",
+                    "STOP",
+                    "TRAILING_STOP"
+                  ]
+                },
+                "side": {
+                  "$id": "orderSide",
+                  "enum": [
+                    "BID",
+                    "ASK"
+                  ]
+                },
+                "quantity": {
+                  "$id": "quantity",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "amount",
+                    "scale"
+                  ],
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "scale": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                },
+                "price": {
+                  "$id": "quantity",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "amount",
+                    "scale"
+                  ],
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "scale": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "afterState": {
+          "$id": "order",
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "id",
+            "orderDetails"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "The unique synthetic order ID"
+            },
+            "exchange": {
+              "description": "The destination order for this given synthetic order",
+              "$id": "exchange",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The unique ID of the supported exchange"
+                }
+              }
+            },
+            "orderDetails": {
+              "$id": "orderDetails",
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "baseCurrency",
+                "counterCurrency",
+                "type",
+                "side",
+                "quantity",
+                "price"
+              ],
+              "properties": {
+                "baseCurrency": {
+                  "$id": "currency",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "code",
+                    "maxPrecision",
+                    "digital"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "maxPrecision": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "digital": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "counterCurrency": {
+                  "$id": "currency",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "code",
+                    "maxPrecision",
+                    "digital"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "maxPrecision": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "digital": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "type": {
+                  "$id": "orderType",
+                  "enum": [
+                    "INSTANT",
+                    "MARKET",
+                    "LIMIT",
+                    "STOP",
+                    "TRAILING_STOP"
+                  ]
+                },
+                "side": {
+                  "$id": "orderSide",
+                  "enum": [
+                    "BID",
+                    "ASK"
+                  ]
+                },
+                "quantity": {
+                  "$id": "quantity",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "amount",
+                    "scale"
+                  ],
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "scale": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                },
+                "price": {
+                  "$id": "quantity",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "amount",
+                    "scale"
+                  ],
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "scale": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "order": {
+      "$id": "order",
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "orderDetails"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "The unique synthetic order ID"
+        },
+        "exchange": {
+          "description": "The destination order for this given synthetic order",
+          "$id": "exchange",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The unique ID of the supported exchange"
+            }
+          }
+        },
+        "orderDetails": {
+          "$id": "orderDetails",
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "baseCurrency",
+            "counterCurrency",
+            "type",
+            "side",
+            "quantity",
+            "price"
+          ],
+          "properties": {
+            "baseCurrency": {
+              "$id": "currency",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "code",
+                "maxPrecision",
+                "digital"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "maxPrecision": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "digital": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "counterCurrency": {
+              "$id": "currency",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "code",
+                "maxPrecision",
+                "digital"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "maxPrecision": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "digital": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "type": {
+              "$id": "orderType",
+              "enum": [
+                "INSTANT",
+                "MARKET",
+                "LIMIT",
+                "STOP",
+                "TRAILING_STOP"
+              ]
+            },
+            "side": {
+              "$id": "orderSide",
+              "enum": [
+                "BID",
+                "ASK"
+              ]
+            },
+            "quantity": {
+              "$id": "quantity",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "amount",
+                "scale"
+              ],
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "scale": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            },
+            "price": {
+              "$id": "quantity",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "amount",
+                "scale"
+              ],
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "scale": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "exchange": {
+      "description": "The destination order for this given synthetic order",
+      "$id": "exchange",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique ID of the supported exchange"
+        }
+      }
+    },
+    "orderDetails": {
+      "$id": "orderDetails",
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "baseCurrency",
+        "counterCurrency",
+        "type",
+        "side",
+        "quantity",
+        "price"
+      ],
+      "properties": {
+        "baseCurrency": {
+          "$id": "currency",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "code",
+            "maxPrecision",
+            "digital"
+          ],
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "maxPrecision": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "digital": {
+              "type": "boolean"
+            }
+          }
+        },
+        "counterCurrency": {
+          "$id": "currency",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "code",
+            "maxPrecision",
+            "digital"
+          ],
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "maxPrecision": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "digital": {
+              "type": "boolean"
+            }
+          }
+        },
+        "type": {
+          "$id": "orderType",
+          "enum": [
+            "INSTANT",
+            "MARKET",
+            "LIMIT",
+            "STOP",
+            "TRAILING_STOP"
+          ]
+        },
+        "side": {
+          "$id": "orderSide",
+          "enum": [
+            "BID",
+            "ASK"
+          ]
+        },
+        "quantity": {
+          "$id": "quantity",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "amount",
+            "scale"
+          ],
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "scale": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        "price": {
+          "$id": "quantity",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "amount",
+            "scale"
+          ],
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "scale": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      }
+    },
+    "currency": {
+      "$id": "currency",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "code",
+        "maxPrecision",
+        "digital"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "maxPrecision": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "digital": {
+          "type": "boolean"
+        }
+      }
+    },
+    "orderType": {
+      "$id": "orderType",
+      "enum": [
+        "INSTANT",
+        "MARKET",
+        "LIMIT",
+        "STOP",
+        "TRAILING_STOP"
+      ]
+    },
+    "orderSide": {
+      "$id": "orderSide",
+      "enum": [
+        "BID",
+        "ASK"
+      ]
+    },
+    "quantity": {
+      "$id": "quantity",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amount",
+        "scale"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "scale": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    }
+  }
+}

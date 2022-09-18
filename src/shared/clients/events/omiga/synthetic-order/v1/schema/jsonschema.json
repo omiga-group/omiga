@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "SyntheticOrderEvent",
   "description": "An event describing a change in Order domain.",
-  "$id": "syntheticOrderEvent",
+  "$id": "http://omiga.com.au/schemas/syntheticOrderEvent",
   "type": "object",
   "additionalProperties": false,
   "required": [

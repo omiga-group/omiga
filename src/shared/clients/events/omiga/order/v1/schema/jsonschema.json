@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "OrderEvent",
   "description": "An event describing a change in Order domain.",
-  "$id": "orderEvent",
+  "$id": "http://omiga.com.au/schemas/orderEvent",
   "type": "object",
   "additionalProperties": false,
   "required": [
