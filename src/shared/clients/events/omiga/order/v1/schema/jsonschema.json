@@ -233,12 +233,16 @@
           "format": "date-time"
         },
         "type": {
-          "enum": [
-            "RETAIL",
-            "INSTITUTION"
-          ]
+          "$ref": "#/definitions/userType"
         }
       }
+    },
+    "userType": {
+      "$id": "userType",
+      "enum": [
+        "RETAIL",
+        "INSTITUTION"
+      ]
     },
     "exchange": {
       "$id": "exchange",

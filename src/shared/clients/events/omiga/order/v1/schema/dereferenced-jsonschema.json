@@ -226,6 +226,7 @@
                   "format": "date-time"
                 },
                 "type": {
+                  "$id": "userType",
                   "enum": [
                     "RETAIL",
                     "INSTITUTION"
@@ -410,6 +411,7 @@
                   "format": "date-time"
                 },
                 "type": {
+                  "$id": "userType",
                   "enum": [
                     "RETAIL",
                     "INSTITUTION"
@@ -665,6 +667,7 @@
                   "format": "date-time"
                 },
                 "type": {
+                  "$id": "userType",
                   "enum": [
                     "RETAIL",
                     "INSTITUTION"
@@ -849,6 +852,7 @@
                   "format": "date-time"
                 },
                 "type": {
+                  "$id": "userType",
                   "enum": [
                     "RETAIL",
                     "INSTITUTION"
@@ -1035,6 +1039,7 @@
               "format": "date-time"
             },
             "type": {
+              "$id": "userType",
               "enum": [
                 "RETAIL",
                 "INSTITUTION"
@@ -1267,12 +1272,20 @@
           "format": "date-time"
         },
         "type": {
+          "$id": "userType",
           "enum": [
             "RETAIL",
             "INSTITUTION"
           ]
         }
       }
+    },
+    "userType": {
+      "$id": "userType",
+      "enum": [
+        "RETAIL",
+        "INSTITUTION"
+      ]
     },
     "exchange": {
       "$id": "exchange",

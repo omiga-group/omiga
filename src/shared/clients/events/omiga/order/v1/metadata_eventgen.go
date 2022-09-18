@@ -10,5 +10,13 @@ import (
 const TopicName = "order.v1.event"
 
 func GetJsonSchema() (string, error) {
-	return packr.New("schema","./schema").FindString("./schema.json")
+	return packr.New("schema","./schema").FindString("./jsonschema.json")
+}
+
+func GetDereferencedJsonSchema() (string, error) {
+	return packr.New("schema","./schema").FindString("./dereferenced-jsonschema.json")
+}
+
+func GetAvroSchema() (string, error) {
+	return packr.New("schema","./schema").FindString("./avro.json")
 }

@@ -138,6 +138,7 @@ components:
           $ref: "#/components/schemas/userType"
 
     userType:
+      $id: userType
       enum:
         - RETAIL
         - INSTITUTION
