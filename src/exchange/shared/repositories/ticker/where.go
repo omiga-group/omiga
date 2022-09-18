@@ -35,7 +35,7 @@ func IDNEQ(id int) predicate.Ticker {
 // IDIn applies the In predicate on the ID field.
 func IDIn(ids ...int) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		v := make([]interface{}, len(ids))
+		v := make([]any, len(ids))
 		for i := range v {
 			v[i] = ids[i]
 		}
@@ -46,7 +46,7 @@ func IDIn(ids ...int) predicate.Ticker {
 // IDNotIn applies the NotIn predicate on the ID field.
 func IDNotIn(ids ...int) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		v := make([]interface{}, len(ids))
+		v := make([]any, len(ids))
 		for i := range v {
 			v[i] = ids[i]
 		}
@@ -203,7 +203,7 @@ func BaseNEQ(v string) predicate.Ticker {
 
 // BaseIn applies the In predicate on the "base" field.
 func BaseIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -214,7 +214,7 @@ func BaseIn(vs ...string) predicate.Ticker {
 
 // BaseNotIn applies the NotIn predicate on the "base" field.
 func BaseNotIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -302,7 +302,7 @@ func TargetNEQ(v string) predicate.Ticker {
 
 // TargetIn applies the In predicate on the "target" field.
 func TargetIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -313,7 +313,7 @@ func TargetIn(vs ...string) predicate.Ticker {
 
 // TargetNotIn applies the NotIn predicate on the "target" field.
 func TargetNotIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -415,7 +415,7 @@ func LastNEQ(v float64) predicate.Ticker {
 
 // LastIn applies the In predicate on the "last" field.
 func LastIn(vs ...float64) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -426,7 +426,7 @@ func LastIn(vs ...float64) predicate.Ticker {
 
 // LastNotIn applies the NotIn predicate on the "last" field.
 func LastNotIn(vs ...float64) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -493,7 +493,7 @@ func VolumeNEQ(v float64) predicate.Ticker {
 
 // VolumeIn applies the In predicate on the "volume" field.
 func VolumeIn(vs ...float64) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -504,7 +504,7 @@ func VolumeIn(vs ...float64) predicate.Ticker {
 
 // VolumeNotIn applies the NotIn predicate on the "volume" field.
 func VolumeNotIn(vs ...float64) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -599,7 +599,7 @@ func TrustScoreNEQ(v string) predicate.Ticker {
 
 // TrustScoreIn applies the In predicate on the "trust_score" field.
 func TrustScoreIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -610,7 +610,7 @@ func TrustScoreIn(vs ...string) predicate.Ticker {
 
 // TrustScoreNotIn applies the NotIn predicate on the "trust_score" field.
 func TrustScoreNotIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -712,7 +712,7 @@ func BidAskSpreadPercentageNEQ(v float64) predicate.Ticker {
 
 // BidAskSpreadPercentageIn applies the In predicate on the "bid_ask_spread_percentage" field.
 func BidAskSpreadPercentageIn(vs ...float64) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -723,7 +723,7 @@ func BidAskSpreadPercentageIn(vs ...float64) predicate.Ticker {
 
 // BidAskSpreadPercentageNotIn applies the NotIn predicate on the "bid_ask_spread_percentage" field.
 func BidAskSpreadPercentageNotIn(vs ...float64) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -790,7 +790,7 @@ func TimestampNEQ(v time.Time) predicate.Ticker {
 
 // TimestampIn applies the In predicate on the "timestamp" field.
 func TimestampIn(vs ...time.Time) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -801,7 +801,7 @@ func TimestampIn(vs ...time.Time) predicate.Ticker {
 
 // TimestampNotIn applies the NotIn predicate on the "timestamp" field.
 func TimestampNotIn(vs ...time.Time) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -868,7 +868,7 @@ func LastTradedAtNEQ(v time.Time) predicate.Ticker {
 
 // LastTradedAtIn applies the In predicate on the "last_traded_at" field.
 func LastTradedAtIn(vs ...time.Time) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -879,7 +879,7 @@ func LastTradedAtIn(vs ...time.Time) predicate.Ticker {
 
 // LastTradedAtNotIn applies the NotIn predicate on the "last_traded_at" field.
 func LastTradedAtNotIn(vs ...time.Time) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -946,7 +946,7 @@ func LastFetchAtNEQ(v time.Time) predicate.Ticker {
 
 // LastFetchAtIn applies the In predicate on the "last_fetch_at" field.
 func LastFetchAtIn(vs ...time.Time) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -957,7 +957,7 @@ func LastFetchAtIn(vs ...time.Time) predicate.Ticker {
 
 // LastFetchAtNotIn applies the NotIn predicate on the "last_fetch_at" field.
 func LastFetchAtNotIn(vs ...time.Time) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1080,7 +1080,7 @@ func TradeURLNEQ(v string) predicate.Ticker {
 
 // TradeURLIn applies the In predicate on the "trade_url" field.
 func TradeURLIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1091,7 +1091,7 @@ func TradeURLIn(vs ...string) predicate.Ticker {
 
 // TradeURLNotIn applies the NotIn predicate on the "trade_url" field.
 func TradeURLNotIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1193,7 +1193,7 @@ func TokenInfoURLNEQ(v string) predicate.Ticker {
 
 // TokenInfoURLIn applies the In predicate on the "token_info_url" field.
 func TokenInfoURLIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1204,7 +1204,7 @@ func TokenInfoURLIn(vs ...string) predicate.Ticker {
 
 // TokenInfoURLNotIn applies the NotIn predicate on the "token_info_url" field.
 func TokenInfoURLNotIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1306,7 +1306,7 @@ func CoinIDNEQ(v string) predicate.Ticker {
 
 // CoinIDIn applies the In predicate on the "coin_id" field.
 func CoinIDIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1317,7 +1317,7 @@ func CoinIDIn(vs ...string) predicate.Ticker {
 
 // CoinIDNotIn applies the NotIn predicate on the "coin_id" field.
 func CoinIDNotIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1419,7 +1419,7 @@ func TargetCoinIDNEQ(v string) predicate.Ticker {
 
 // TargetCoinIDIn applies the In predicate on the "target_coin_id" field.
 func TargetCoinIDIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1430,7 +1430,7 @@ func TargetCoinIDIn(vs ...string) predicate.Ticker {
 
 // TargetCoinIDNotIn applies the NotIn predicate on the "target_coin_id" field.
 func TargetCoinIDNotIn(vs ...string) predicate.Ticker {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}

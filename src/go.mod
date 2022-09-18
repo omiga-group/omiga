@@ -1,11 +1,11 @@
 module github.com/omiga-group/omiga/src
 
-go 1.18
+go 1.19
 
 require (
 	entgo.io/contrib v0.3.2
 	entgo.io/ent v0.11.3-0.20220830071904-3b1b75b9d7a9
-	github.com/99designs/gqlgen v0.17.16
+	github.com/99designs/gqlgen v0.17.19
 	github.com/adshao/go-binance/v2 v2.3.8
 	github.com/aopoltorzhicky/go_kraken/websocket v0.1.10
 	github.com/apache/pulsar-client-go v0.8.1

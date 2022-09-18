@@ -364,10 +364,10 @@ func (eq *ExchangeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Exc
 			eq.withTicker != nil,
 		}
 	)
-	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
+	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Exchange).scanValues(nil, columns)
 	}
-	_spec.Assign = func(columns []string, values []interface{}) error {
+	_spec.Assign = func(columns []string, values []any) error {
 		node := &Exchange{config: eq.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
@@ -613,7 +613,7 @@ func (egb *ExchangeGroupBy) Aggregate(fns ...AggregateFunc) *ExchangeGroupBy {
 }
 
 // Scan applies the group-by query and scans the result into the given value.
-func (egb *ExchangeGroupBy) Scan(ctx context.Context, v interface{}) error {
+func (egb *ExchangeGroupBy) Scan(ctx context.Context, v any) error {
 	query, err := egb.path(ctx)
 	if err != nil {
 		return err
@@ -622,7 +622,7 @@ func (egb *ExchangeGroupBy) Scan(ctx context.Context, v interface{}) error {
 	return egb.sqlScan(ctx, v)
 }
 
-func (egb *ExchangeGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+func (egb *ExchangeGroupBy) sqlScan(ctx context.Context, v any) error {
 	for _, f := range egb.fields {
 		if !exchange.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
@@ -669,7 +669,7 @@ type ExchangeSelect struct {
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (es *ExchangeSelect) Scan(ctx context.Context, v interface{}) error {
+func (es *ExchangeSelect) Scan(ctx context.Context, v any) error {
 	if err := es.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -677,7 +677,7 @@ func (es *ExchangeSelect) Scan(ctx context.Context, v interface{}) error {
 	return es.sqlScan(ctx, v)
 }
 
-func (es *ExchangeSelect) sqlScan(ctx context.Context, v interface{}) error {
+func (es *ExchangeSelect) sqlScan(ctx context.Context, v any) error {
 	rows := &sql.Rows{}
 	query, args := es.sql.Query()
 	if err := es.driver.Query(ctx, query, args, rows); err != nil {

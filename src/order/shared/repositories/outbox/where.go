@@ -33,7 +33,7 @@ func IDNEQ(id int) predicate.Outbox {
 // IDIn applies the In predicate on the ID field.
 func IDIn(ids ...int) predicate.Outbox {
 	return predicate.Outbox(func(s *sql.Selector) {
-		v := make([]interface{}, len(ids))
+		v := make([]any, len(ids))
 		for i := range v {
 			v[i] = ids[i]
 		}
@@ -44,7 +44,7 @@ func IDIn(ids ...int) predicate.Outbox {
 // IDNotIn applies the NotIn predicate on the ID field.
 func IDNotIn(ids ...int) predicate.Outbox {
 	return predicate.Outbox(func(s *sql.Selector) {
-		v := make([]interface{}, len(ids))
+		v := make([]any, len(ids))
 		for i := range v {
 			v[i] = ids[i]
 		}
@@ -138,7 +138,7 @@ func TimestampNEQ(v time.Time) predicate.Outbox {
 
 // TimestampIn applies the In predicate on the "timestamp" field.
 func TimestampIn(vs ...time.Time) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -149,7 +149,7 @@ func TimestampIn(vs ...time.Time) predicate.Outbox {
 
 // TimestampNotIn applies the NotIn predicate on the "timestamp" field.
 func TimestampNotIn(vs ...time.Time) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -202,7 +202,7 @@ func TopicNEQ(v string) predicate.Outbox {
 
 // TopicIn applies the In predicate on the "topic" field.
 func TopicIn(vs ...string) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -213,7 +213,7 @@ func TopicIn(vs ...string) predicate.Outbox {
 
 // TopicNotIn applies the NotIn predicate on the "topic" field.
 func TopicNotIn(vs ...string) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -301,7 +301,7 @@ func KeyNEQ(v string) predicate.Outbox {
 
 // KeyIn applies the In predicate on the "key" field.
 func KeyIn(vs ...string) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -312,7 +312,7 @@ func KeyIn(vs ...string) predicate.Outbox {
 
 // KeyNotIn applies the NotIn predicate on the "key" field.
 func KeyNotIn(vs ...string) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -400,7 +400,7 @@ func PayloadNEQ(v []byte) predicate.Outbox {
 
 // PayloadIn applies the In predicate on the "payload" field.
 func PayloadIn(vs ...[]byte) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -411,7 +411,7 @@ func PayloadIn(vs ...[]byte) predicate.Outbox {
 
 // PayloadNotIn applies the NotIn predicate on the "payload" field.
 func PayloadNotIn(vs ...[]byte) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -464,7 +464,7 @@ func RetryCountNEQ(v int) predicate.Outbox {
 
 // RetryCountIn applies the In predicate on the "retry_count" field.
 func RetryCountIn(vs ...int) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -475,7 +475,7 @@ func RetryCountIn(vs ...int) predicate.Outbox {
 
 // RetryCountNotIn applies the NotIn predicate on the "retry_count" field.
 func RetryCountNotIn(vs ...int) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -528,7 +528,7 @@ func StatusNEQ(v Status) predicate.Outbox {
 
 // StatusIn applies the In predicate on the "status" field.
 func StatusIn(vs ...Status) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -539,7 +539,7 @@ func StatusIn(vs ...Status) predicate.Outbox {
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
 func StatusNotIn(vs ...Status) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -564,7 +564,7 @@ func LastRetryNEQ(v time.Time) predicate.Outbox {
 
 // LastRetryIn applies the In predicate on the "last_retry" field.
 func LastRetryIn(vs ...time.Time) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -575,7 +575,7 @@ func LastRetryIn(vs ...time.Time) predicate.Outbox {
 
 // LastRetryNotIn applies the NotIn predicate on the "last_retry" field.
 func LastRetryNotIn(vs ...time.Time) predicate.Outbox {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
