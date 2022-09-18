@@ -2,10 +2,14 @@
 
 package repositories
 
-import "context"
+import (
+	"context"
+
+	"github.com/99designs/gqlgen/graphql"
+)
 
 func (e *Exchange) Ticker(ctx context.Context) ([]*Ticker, error) {
-	result, err := e.Edges.TickerOrErr()
+	result, err := e.NamedTicker(graphql.GetFieldContext(ctx).Field.Alias)
 	if IsNotLoaded(err) {
 		result, err = e.QueryTicker().All(ctx)
 	}

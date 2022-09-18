@@ -33,7 +33,7 @@ func IDNEQ(id int) predicate.Exchange {
 // IDIn applies the In predicate on the ID field.
 func IDIn(ids ...int) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
-		v := make([]interface{}, len(ids))
+		v := make([]any, len(ids))
 		for i := range v {
 			v[i] = ids[i]
 		}
@@ -44,7 +44,7 @@ func IDIn(ids ...int) predicate.Exchange {
 // IDNotIn applies the NotIn predicate on the ID field.
 func IDNotIn(ids ...int) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
-		v := make([]interface{}, len(ids))
+		v := make([]any, len(ids))
 		for i := range v {
 			v[i] = ids[i]
 		}
@@ -215,7 +215,7 @@ func ExchangeIDNEQ(v string) predicate.Exchange {
 
 // ExchangeIDIn applies the In predicate on the "exchange_id" field.
 func ExchangeIDIn(vs ...string) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -226,7 +226,7 @@ func ExchangeIDIn(vs ...string) predicate.Exchange {
 
 // ExchangeIDNotIn applies the NotIn predicate on the "exchange_id" field.
 func ExchangeIDNotIn(vs ...string) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -314,7 +314,7 @@ func NameNEQ(v string) predicate.Exchange {
 
 // NameIn applies the In predicate on the "name" field.
 func NameIn(vs ...string) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -325,7 +325,7 @@ func NameIn(vs ...string) predicate.Exchange {
 
 // NameNotIn applies the NotIn predicate on the "name" field.
 func NameNotIn(vs ...string) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -427,7 +427,7 @@ func YearEstablishedNEQ(v int) predicate.Exchange {
 
 // YearEstablishedIn applies the In predicate on the "year_established" field.
 func YearEstablishedIn(vs ...int) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -438,7 +438,7 @@ func YearEstablishedIn(vs ...int) predicate.Exchange {
 
 // YearEstablishedNotIn applies the NotIn predicate on the "year_established" field.
 func YearEstablishedNotIn(vs ...int) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -505,7 +505,7 @@ func CountryNEQ(v string) predicate.Exchange {
 
 // CountryIn applies the In predicate on the "country" field.
 func CountryIn(vs ...string) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -516,7 +516,7 @@ func CountryIn(vs ...string) predicate.Exchange {
 
 // CountryNotIn applies the NotIn predicate on the "country" field.
 func CountryNotIn(vs ...string) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -618,7 +618,7 @@ func ImageNEQ(v string) predicate.Exchange {
 
 // ImageIn applies the In predicate on the "image" field.
 func ImageIn(vs ...string) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -629,7 +629,7 @@ func ImageIn(vs ...string) predicate.Exchange {
 
 // ImageNotIn applies the NotIn predicate on the "image" field.
 func ImageNotIn(vs ...string) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -801,7 +801,7 @@ func PublicNoticeNEQ(v string) predicate.Exchange {
 
 // PublicNoticeIn applies the In predicate on the "public_notice" field.
 func PublicNoticeIn(vs ...string) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -812,7 +812,7 @@ func PublicNoticeIn(vs ...string) predicate.Exchange {
 
 // PublicNoticeNotIn applies the NotIn predicate on the "public_notice" field.
 func PublicNoticeNotIn(vs ...string) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -914,7 +914,7 @@ func AlertNoticeNEQ(v string) predicate.Exchange {
 
 // AlertNoticeIn applies the In predicate on the "alert_notice" field.
 func AlertNoticeIn(vs ...string) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -925,7 +925,7 @@ func AlertNoticeIn(vs ...string) predicate.Exchange {
 
 // AlertNoticeNotIn applies the NotIn predicate on the "alert_notice" field.
 func AlertNoticeNotIn(vs ...string) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1027,7 +1027,7 @@ func TrustScoreNEQ(v int) predicate.Exchange {
 
 // TrustScoreIn applies the In predicate on the "trust_score" field.
 func TrustScoreIn(vs ...int) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1038,7 +1038,7 @@ func TrustScoreIn(vs ...int) predicate.Exchange {
 
 // TrustScoreNotIn applies the NotIn predicate on the "trust_score" field.
 func TrustScoreNotIn(vs ...int) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1105,7 +1105,7 @@ func TrustScoreRankNEQ(v int) predicate.Exchange {
 
 // TrustScoreRankIn applies the In predicate on the "trust_score_rank" field.
 func TrustScoreRankIn(vs ...int) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1116,7 +1116,7 @@ func TrustScoreRankIn(vs ...int) predicate.Exchange {
 
 // TrustScoreRankNotIn applies the NotIn predicate on the "trust_score_rank" field.
 func TrustScoreRankNotIn(vs ...int) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1183,7 +1183,7 @@ func TradeVolume24hBtcNEQ(v float64) predicate.Exchange {
 
 // TradeVolume24hBtcIn applies the In predicate on the "trade_volume_24h_btc" field.
 func TradeVolume24hBtcIn(vs ...float64) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1194,7 +1194,7 @@ func TradeVolume24hBtcIn(vs ...float64) predicate.Exchange {
 
 // TradeVolume24hBtcNotIn applies the NotIn predicate on the "trade_volume_24h_btc" field.
 func TradeVolume24hBtcNotIn(vs ...float64) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1261,7 +1261,7 @@ func TradeVolume24hBtcNormalizedNEQ(v float64) predicate.Exchange {
 
 // TradeVolume24hBtcNormalizedIn applies the In predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedIn(vs ...float64) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1272,7 +1272,7 @@ func TradeVolume24hBtcNormalizedIn(vs ...float64) predicate.Exchange {
 
 // TradeVolume24hBtcNormalizedNotIn applies the NotIn predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedNotIn(vs ...float64) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1339,7 +1339,7 @@ func MakerFeeNEQ(v float64) predicate.Exchange {
 
 // MakerFeeIn applies the In predicate on the "maker_fee" field.
 func MakerFeeIn(vs ...float64) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1350,7 +1350,7 @@ func MakerFeeIn(vs ...float64) predicate.Exchange {
 
 // MakerFeeNotIn applies the NotIn predicate on the "maker_fee" field.
 func MakerFeeNotIn(vs ...float64) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1417,7 +1417,7 @@ func TakerFeeNEQ(v float64) predicate.Exchange {
 
 // TakerFeeIn applies the In predicate on the "taker_fee" field.
 func TakerFeeIn(vs ...float64) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -1428,7 +1428,7 @@ func TakerFeeIn(vs ...float64) predicate.Exchange {
 
 // TakerFeeNotIn applies the NotIn predicate on the "taker_fee" field.
 func TakerFeeNotIn(vs ...float64) predicate.Exchange {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}

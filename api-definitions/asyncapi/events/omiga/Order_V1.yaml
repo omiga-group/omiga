@@ -85,6 +85,7 @@ components:
           example: TBD
 
     data:
+      $id: data
       type: object
       additionalProperties: false
       required:

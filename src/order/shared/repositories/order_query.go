@@ -320,10 +320,10 @@ func (oq *OrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Order,
 		nodes = []*Order{}
 		_spec = oq.querySpec()
 	)
-	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
+	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Order).scanValues(nil, columns)
 	}
-	_spec.Assign = func(columns []string, values []interface{}) error {
+	_spec.Assign = func(columns []string, values []any) error {
 		node := &Order{config: oq.config}
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
@@ -508,7 +508,7 @@ func (ogb *OrderGroupBy) Aggregate(fns ...AggregateFunc) *OrderGroupBy {
 }
 
 // Scan applies the group-by query and scans the result into the given value.
-func (ogb *OrderGroupBy) Scan(ctx context.Context, v interface{}) error {
+func (ogb *OrderGroupBy) Scan(ctx context.Context, v any) error {
 	query, err := ogb.path(ctx)
 	if err != nil {
 		return err
@@ -517,7 +517,7 @@ func (ogb *OrderGroupBy) Scan(ctx context.Context, v interface{}) error {
 	return ogb.sqlScan(ctx, v)
 }
 
-func (ogb *OrderGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+func (ogb *OrderGroupBy) sqlScan(ctx context.Context, v any) error {
 	for _, f := range ogb.fields {
 		if !order.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
@@ -564,7 +564,7 @@ type OrderSelect struct {
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (os *OrderSelect) Scan(ctx context.Context, v interface{}) error {
+func (os *OrderSelect) Scan(ctx context.Context, v any) error {
 	if err := os.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -572,7 +572,7 @@ func (os *OrderSelect) Scan(ctx context.Context, v interface{}) error {
 	return os.sqlScan(ctx, v)
 }
 
-func (os *OrderSelect) sqlScan(ctx context.Context, v interface{}) error {
+func (os *OrderSelect) sqlScan(ctx context.Context, v any) error {
 	rows := &sql.Rows{}
 	query, args := os.sql.Query()
 	if err := os.driver.Query(ctx, query, args, rows); err != nil {
