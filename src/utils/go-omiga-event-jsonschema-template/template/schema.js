@@ -19,7 +19,7 @@ export default async function ({ asyncapi, params }) {
     <File name="dereferenced-jsonschema.json">
       {JSON.stringify(dereferencedJsonSchema, null, 2)}
     </File>,
-    <File name="avro.json">
+    <File name="avro.avsc">
       {JSON.stringify(avro, null, 2)}
     </File>,
   ];

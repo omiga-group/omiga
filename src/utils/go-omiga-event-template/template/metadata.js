@@ -25,7 +25,7 @@ func GetDereferencedJsonSchema() (string, error) {
 }
 
 func GetAvroSchema() (string, error) {
-	return packr.New("schema","./schema").FindString("./avro.json")
+	return packr.New("schema","./schema").FindString("./avro.avsc")
 }
 `;
 
