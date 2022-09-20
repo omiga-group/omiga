@@ -1,6 +1,6 @@
 const { File, render } = require("@asyncapi/generator-react-sdk");
-const jsonSchemaAvro = require("json-schema-to-avro");
 const refParser = require("@apidevtools/json-schema-ref-parser");
+const jsonSchemaAvro = require("./avro");
 
 export default async function ({ asyncapi, params }) {
   if (asyncapi.channels().length === 0) {

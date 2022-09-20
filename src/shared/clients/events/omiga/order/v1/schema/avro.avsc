@@ -1,5 +1,4 @@
 {
-  "namespace": "au.com.omiga.schemas.orderEvent",
   "name": "orderEvent",
   "type": "record",
   "doc": "An event describing a change in Order domain.",
@@ -9,7 +8,7 @@
       "doc": "",
       "type": {
         "type": "record",
-        "name": "metadata_record",
+        "name": "metadata_record_0",
         "fields": [
           {
             "name": "id",
@@ -26,7 +25,7 @@
             "doc": "",
             "type": {
               "type": "enum",
-              "name": "type_enum",
+              "name": "type_enum_0",
               "symbols": [
                 "orderSubmitted",
                 "orderCancel"
@@ -61,241 +60,14 @@
       "doc": "",
       "type": {
         "type": "record",
-        "name": "data_record",
+        "name": "data_record_1",
         "fields": [
           {
             "name": "beforeState",
             "doc": "",
-            "type": [
-              "null",
-              {
-                "type": "record",
-                "name": "beforeState_1b0b2352286570cd6ae7f5b5a7929205",
-                "fields": [
-                  {
-                    "name": "id",
-                    "doc": "The unique order ID",
-                    "type": "int"
-                  },
-                  {
-                    "name": "orderDetails",
-                    "doc": "",
-                    "type": {
-                      "type": "record",
-                      "name": "orderDetails_1e48172e5a060acb6747a103a8224148",
-                      "fields": [
-                        {
-                          "name": "baseCurrency",
-                          "doc": "",
-                          "type": {
-                            "type": "record",
-                            "name": "baseCurrency_0946981bf429efeaba00db8e47ccf791",
-                            "fields": [
-                              {
-                                "name": "code",
-                                "doc": "",
-                                "type": "string"
-                              },
-                              {
-                                "name": "name",
-                                "doc": "",
-                                "type": "string"
-                              },
-                              {
-                                "name": "maxPrecision",
-                                "doc": "",
-                                "type": "int"
-                              },
-                              {
-                                "name": "digital",
-                                "doc": "",
-                                "type": "boolean"
-                              }
-                            ]
-                          }
-                        },
-                        {
-                          "name": "counterCurrency",
-                          "doc": "",
-                          "type": {
-                            "type": "record",
-                            "name": "counterCurrency_0946981bf429efeaba00db8e47ccf791",
-                            "fields": [
-                              {
-                                "name": "code",
-                                "doc": "",
-                                "type": "string"
-                              },
-                              {
-                                "name": "name",
-                                "doc": "",
-                                "type": "string"
-                              },
-                              {
-                                "name": "maxPrecision",
-                                "doc": "",
-                                "type": "int"
-                              },
-                              {
-                                "name": "digital",
-                                "doc": "",
-                                "type": "boolean"
-                              }
-                            ]
-                          }
-                        },
-                        {
-                          "name": "type",
-                          "doc": "",
-                          "type": {
-                            "type": "enum",
-                            "name": "type_enum",
-                            "symbols": [
-                              "INSTANT",
-                              "MARKET",
-                              "LIMIT",
-                              "STOP",
-                              "TRAILING_STOP"
-                            ]
-                          }
-                        },
-                        {
-                          "name": "side",
-                          "doc": "",
-                          "type": {
-                            "type": "enum",
-                            "name": "side_enum",
-                            "symbols": [
-                              "BID",
-                              "ASK"
-                            ]
-                          }
-                        },
-                        {
-                          "name": "quantity",
-                          "doc": "",
-                          "type": {
-                            "type": "record",
-                            "name": "quantity_0946981bf429efeaba00db8e47ccf791",
-                            "fields": [
-                              {
-                                "name": "amount",
-                                "doc": "",
-                                "type": "int"
-                              },
-                              {
-                                "name": "scale",
-                                "doc": "",
-                                "type": "int"
-                              }
-                            ]
-                          }
-                        },
-                        {
-                          "name": "price",
-                          "doc": "",
-                          "type": {
-                            "type": "record",
-                            "name": "price_0946981bf429efeaba00db8e47ccf791",
-                            "fields": [
-                              {
-                                "name": "amount",
-                                "doc": "",
-                                "type": "int"
-                              },
-                              {
-                                "name": "scale",
-                                "doc": "",
-                                "type": "int"
-                              }
-                            ]
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "name": "user",
-                    "doc": "",
-                    "type": [
-                      "null",
-                      {
-                        "type": "record",
-                        "name": "user_1e48172e5a060acb6747a103a8224148",
-                        "fields": [
-                          {
-                            "name": "id",
-                            "doc": "",
-                            "type": "string"
-                          },
-                          {
-                            "name": "created",
-                            "doc": "",
-                            "type": [
-                              "null",
-                              "string"
-                            ],
-                            "default": null
-                          },
-                          {
-                            "name": "updated",
-                            "doc": "",
-                            "type": [
-                              "null",
-                              "string"
-                            ],
-                            "default": null
-                          },
-                          {
-                            "name": "type",
-                            "doc": "",
-                            "type": [
-                              "null",
-                              {
-                                "type": "enum",
-                                "name": "type_enum",
-                                "symbols": [
-                                  "RETAIL",
-                                  "INSTITUTION"
-                                ]
-                              }
-                            ],
-                            "default": null
-                          }
-                        ]
-                      }
-                    ],
-                    "default": null
-                  },
-                  {
-                    "name": "preferredExchanges",
-                    "doc": "the preferred list of the supportef exchanged by the user",
-                    "type": {
-                      "type": "array",
-                      "items": {
-                        "type": "record",
-                        "name": "preferredExchanges_1e48172e5a060acb6747a103a8224148",
-                        "fields": [
-                          {
-                            "name": "id",
-                            "doc": "The unique ID of the supported exchange",
-                            "type": "string"
-                          }
-                        ]
-                      }
-                    }
-                  }
-                ]
-              }
-            ],
-            "default": null
-          },
-          {
-            "name": "afterState",
-            "doc": "",
             "type": {
               "type": "record",
-              "name": "afterState_1b0b2352286570cd6ae7f5b5a7929205",
+              "name": "beforeState_record_2",
               "fields": [
                 {
                   "name": "id",
@@ -307,14 +79,14 @@
                   "doc": "",
                   "type": {
                     "type": "record",
-                    "name": "orderDetails_d563234a4d579637dc3514c70cae50e5",
+                    "name": "orderDetails_record_3",
                     "fields": [
                       {
                         "name": "baseCurrency",
                         "doc": "",
                         "type": {
                           "type": "record",
-                          "name": "baseCurrency_40e0626058c950f94fb5088e10e4eccf",
+                          "name": "baseCurrency_record_4",
                           "fields": [
                             {
                               "name": "code",
@@ -344,7 +116,7 @@
                         "doc": "",
                         "type": {
                           "type": "record",
-                          "name": "counterCurrency_40e0626058c950f94fb5088e10e4eccf",
+                          "name": "counterCurrency_record_5",
                           "fields": [
                             {
                               "name": "code",
@@ -374,7 +146,7 @@
                         "doc": "",
                         "type": {
                           "type": "enum",
-                          "name": "type_enum",
+                          "name": "type_enum_1",
                           "symbols": [
                             "INSTANT",
                             "MARKET",
@@ -389,7 +161,7 @@
                         "doc": "",
                         "type": {
                           "type": "enum",
-                          "name": "side_enum",
+                          "name": "side_enum_2",
                           "symbols": [
                             "BID",
                             "ASK"
@@ -401,7 +173,7 @@
                         "doc": "",
                         "type": {
                           "type": "record",
-                          "name": "quantity_40e0626058c950f94fb5088e10e4eccf",
+                          "name": "quantity_record_6",
                           "fields": [
                             {
                               "name": "amount",
@@ -421,7 +193,7 @@
                         "doc": "",
                         "type": {
                           "type": "record",
-                          "name": "price_40e0626058c950f94fb5088e10e4eccf",
+                          "name": "price_record_7",
                           "fields": [
                             {
                               "name": "amount",
@@ -442,55 +214,47 @@
                 {
                   "name": "user",
                   "doc": "",
-                  "type": [
-                    "null",
-                    {
-                      "type": "record",
-                      "name": "user_d563234a4d579637dc3514c70cae50e5",
-                      "fields": [
-                        {
-                          "name": "id",
-                          "doc": "",
-                          "type": "string"
-                        },
-                        {
-                          "name": "created",
-                          "doc": "",
-                          "type": [
-                            "null",
-                            "string"
-                          ],
-                          "default": null
-                        },
-                        {
-                          "name": "updated",
-                          "doc": "",
-                          "type": [
-                            "null",
-                            "string"
-                          ],
-                          "default": null
-                        },
-                        {
-                          "name": "type",
-                          "doc": "",
-                          "type": [
-                            "null",
-                            {
-                              "type": "enum",
-                              "name": "type_enum",
-                              "symbols": [
-                                "RETAIL",
-                                "INSTITUTION"
-                              ]
-                            }
-                          ],
-                          "default": null
+                  "type": {
+                    "type": "record",
+                    "name": "user_record_8",
+                    "fields": [
+                      {
+                        "name": "id",
+                        "doc": "",
+                        "type": "string"
+                      },
+                      {
+                        "name": "created",
+                        "doc": "",
+                        "default": null,
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      {
+                        "name": "updated",
+                        "doc": "",
+                        "default": null,
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      {
+                        "name": "type",
+                        "doc": "",
+                        "type": {
+                          "type": "enum",
+                          "name": "type_enum_3",
+                          "symbols": [
+                            "RETAIL",
+                            "INSTITUTION"
+                          ]
                         }
-                      ]
-                    }
-                  ],
-                  "default": null
+                      }
+                    ]
+                  }
                 },
                 {
                   "name": "preferredExchanges",
@@ -499,7 +263,222 @@
                     "type": "array",
                     "items": {
                       "type": "record",
-                      "name": "preferredExchanges_d563234a4d579637dc3514c70cae50e5",
+                      "name": "preferredExchanges_record_9",
+                      "fields": [
+                        {
+                          "name": "id",
+                          "doc": "The unique ID of the supported exchange",
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "afterState",
+            "doc": "",
+            "type": {
+              "type": "record",
+              "name": "afterState_record_10",
+              "fields": [
+                {
+                  "name": "id",
+                  "doc": "The unique order ID",
+                  "type": "int"
+                },
+                {
+                  "name": "orderDetails",
+                  "doc": "",
+                  "type": {
+                    "type": "record",
+                    "name": "orderDetails_record_11",
+                    "fields": [
+                      {
+                        "name": "baseCurrency",
+                        "doc": "",
+                        "type": {
+                          "type": "record",
+                          "name": "baseCurrency_record_12",
+                          "fields": [
+                            {
+                              "name": "code",
+                              "doc": "",
+                              "type": "string"
+                            },
+                            {
+                              "name": "name",
+                              "doc": "",
+                              "type": "string"
+                            },
+                            {
+                              "name": "maxPrecision",
+                              "doc": "",
+                              "type": "int"
+                            },
+                            {
+                              "name": "digital",
+                              "doc": "",
+                              "type": "boolean"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "name": "counterCurrency",
+                        "doc": "",
+                        "type": {
+                          "type": "record",
+                          "name": "counterCurrency_record_13",
+                          "fields": [
+                            {
+                              "name": "code",
+                              "doc": "",
+                              "type": "string"
+                            },
+                            {
+                              "name": "name",
+                              "doc": "",
+                              "type": "string"
+                            },
+                            {
+                              "name": "maxPrecision",
+                              "doc": "",
+                              "type": "int"
+                            },
+                            {
+                              "name": "digital",
+                              "doc": "",
+                              "type": "boolean"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "name": "type",
+                        "doc": "",
+                        "type": {
+                          "type": "enum",
+                          "name": "type_enum_4",
+                          "symbols": [
+                            "INSTANT",
+                            "MARKET",
+                            "LIMIT",
+                            "STOP",
+                            "TRAILING_STOP"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "side",
+                        "doc": "",
+                        "type": {
+                          "type": "enum",
+                          "name": "side_enum_5",
+                          "symbols": [
+                            "BID",
+                            "ASK"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "quantity",
+                        "doc": "",
+                        "type": {
+                          "type": "record",
+                          "name": "quantity_record_14",
+                          "fields": [
+                            {
+                              "name": "amount",
+                              "doc": "",
+                              "type": "int"
+                            },
+                            {
+                              "name": "scale",
+                              "doc": "",
+                              "type": "int"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "name": "price",
+                        "doc": "",
+                        "type": {
+                          "type": "record",
+                          "name": "price_record_15",
+                          "fields": [
+                            {
+                              "name": "amount",
+                              "doc": "",
+                              "type": "int"
+                            },
+                            {
+                              "name": "scale",
+                              "doc": "",
+                              "type": "int"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "name": "user",
+                  "doc": "",
+                  "type": {
+                    "type": "record",
+                    "name": "user_record_16",
+                    "fields": [
+                      {
+                        "name": "id",
+                        "doc": "",
+                        "type": "string"
+                      },
+                      {
+                        "name": "created",
+                        "doc": "",
+                        "default": null,
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      {
+                        "name": "updated",
+                        "doc": "",
+                        "default": null,
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      {
+                        "name": "type",
+                        "doc": "",
+                        "type": {
+                          "type": "enum",
+                          "name": "type_enum_6",
+                          "symbols": [
+                            "RETAIL",
+                            "INSTITUTION"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "name": "preferredExchanges",
+                  "doc": "the preferred list of the supportef exchanged by the user",
+                  "type": {
+                    "type": "array",
+                    "items": {
+                      "type": "record",
+                      "name": "preferredExchanges_record_17",
                       "fields": [
                         {
                           "name": "id",
