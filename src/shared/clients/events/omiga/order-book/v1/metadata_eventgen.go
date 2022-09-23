@@ -18,14 +18,14 @@ var dereferencedJsonschema string
 //go:embed schema/avro.avsc
 var avro string
 
-func GetJsonSchema() (string, error) {
-  return jsonschema, nil
+func GetJsonSchema() string {
+  return jsonschema
 }
 
-func GetDereferencedJsonSchema() (string, error) {
-  return dereferencedJsonschema, nil
+func GetDereferencedJsonSchema() string {
+  return dereferencedJsonschema
 }
 
-func GetAvroSchema() (string, error) {
-  return avro, nil
+func GetAvroSchema() string {
+  return avro
 }
