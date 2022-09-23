@@ -11,21 +11,30 @@ export default async function ({ asyncapi, params }) {
 package ${params.packageName}
 
 import (
-	"github.com/gobuffalo/packr/v2"
+	_ "embed"
 )
 
 const TopicName = "${Object.keys(asyncapi.channels())[0]}"
 
+//go:embed schema/jsonschema.json
+var jsonschema string
+
+//go:embed schema/dereferenced-jsonschema.json
+var dereferencedJsonschema string
+
+//go:embed schema/avro.avsc
+var avro string
+
 func GetJsonSchema() (string, error) {
-	return packr.New("schema","./schema").FindString("./jsonschema.json")
+  return jsonschema, nil
 }
 
 func GetDereferencedJsonSchema() (string, error) {
-	return packr.New("schema","./schema").FindString("./dereferenced-jsonschema.json")
+  return dereferencedJsonschema, nil
 }
 
 func GetAvroSchema() (string, error) {
-	return packr.New("schema","./schema").FindString("./avro.avsc")
+  return avro, nil
 }
 `;
 

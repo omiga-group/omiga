@@ -4,19 +4,28 @@
 package syntheticorderv1
 
 import (
-	"github.com/gobuffalo/packr/v2"
+	_ "embed"
 )
 
 const TopicName = "synthetic.order.v1.event"
 
+//go:embed schema/jsonschema.json
+var jsonschema string
+
+//go:embed schema/dereferenced-jsonschema.json
+var dereferencedJsonschema string
+
+//go:embed schema/avro.avsc
+var avro string
+
 func GetJsonSchema() (string, error) {
-	return packr.New("schema","./schema").FindString("./jsonschema.json")
+  return jsonschema, nil
 }
 
 func GetDereferencedJsonSchema() (string, error) {
-	return packr.New("schema","./schema").FindString("./dereferenced-jsonschema.json")
+  return dereferencedJsonschema, nil
 }
 
 func GetAvroSchema() (string, error) {
-	return packr.New("schema","./schema").FindString("./avro.avsc")
+  return avro, nil
 }

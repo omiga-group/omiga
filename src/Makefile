@@ -17,7 +17,6 @@ generate: ## Generate code
 	@go install github.com/google/wire/cmd/wire@latest
 	@go install entgo.io/ent/cmd/ent@latest
 	@go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
-	@go install github.com/gobuffalo/packr/v2/packr2@latest
 	@go install github.com/golang/mock/mockgen@latest
 	@GOFLAGS=-mod=mod go generate ./...
 
