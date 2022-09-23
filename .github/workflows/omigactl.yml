@@ -1,4 +1,4 @@
-name: "omigactl"
+name: "Omigactl"
 
 on:
   push:
