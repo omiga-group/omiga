@@ -10,7 +10,8 @@ RUN --mount=type=cache,target=/go go install github.com/golang/mock/mockgen@late
 RUN mkdir -p /api-definitions/graphql \
     mkdir -p /api-definitions/openapi \
     mkdir -p /src/shared/enterprise \
-    mkdir -p /src/shared/clients
+    mkdir -p /src/shared/clients \
+    mkdir -p /src/shared/cli
 
 COPY api-definitions/graphql /api-definitions/graphql
 COPY api-definitions/openapi /api-definitions/openapi
@@ -18,6 +19,7 @@ COPY src/go.mod /src/
 COPY src/go.sum /src/
 COPY src/shared/enterprise /src/shared/enterprise
 COPY src/shared/clients /src/shared/clients
+COPY src/shared/cli /src/shared/cli
 
 WORKDIR /src/shared
 

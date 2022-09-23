@@ -1,0 +1,17 @@
+﻿version: "3.9"
+
+services:
+  omigactl:
+    image: ${DOCKER_REGISTRY-}omigactl
+    build:
+      context: .
+      dockerfile: shared/omigactl/Dockerfile
+      target: local
+    restart: on-failure
+    environment:
+      OMIGA_PULSAR_HTTPURL: ${OMIGA_PULSAR_HTTPURL:-http://pulsar:8080/admin/v2}
+    profiles:
+      - core
+      - all
+    networks:
+      - omiga_network

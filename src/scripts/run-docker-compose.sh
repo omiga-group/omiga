@@ -10,6 +10,7 @@ cd "$(dirname "${0}")/.."
 docker compose -p "omiga" \
     --profile all \
     -f docker-compose.yml \
+    -f shared/docker-compose.yml \
     -f order/docker-compose.yml \
     -f exchange/docker-compose.yml \
     -f gateway/docker-compose.yml \
