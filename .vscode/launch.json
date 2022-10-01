@@ -22,7 +22,7 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/exchange/coingeko/main.go",
+      "program": "${workspaceFolder}/src/exchange/coingeko-processor/main.go",
       "args": ["start"]
     },
     {
