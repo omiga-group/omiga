@@ -49,6 +49,7 @@ func NewCoingekoExchangeSubscriber(
 		exchangeRepository: exchangeRepository,
 	}
 
+	// Run at every second from 0 through 59.
 	if _, err := cronService.GetCron().AddJob("0/1 * * * * *", instance); err != nil {
 		return nil, err
 	}
