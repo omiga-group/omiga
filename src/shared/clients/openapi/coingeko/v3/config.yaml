@@ -1,8 +1,0 @@
-package: coingekov3
-generate:
-  client: true
-  models: true
-output-options:
-  skip-fmt: false
-  skip-prune: false
-output: coingeko_gen.go

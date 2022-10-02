@@ -40,11 +40,11 @@ services:
     networks:
       - omiga_network
 
-  coingeko-processor:
-    image: ${DOCKER_REGISTRY-}coingekoprocessor
+  coingecko-processor:
+    image: ${DOCKER_REGISTRY-}coingeckoprocessor
     build:
       context: .
-      dockerfile: exchange/coingeko-processor/Dockerfile
+      dockerfile: exchange/coingecko-processor/Dockerfile
       target: local
     restart: unless-stopped
     environment:
