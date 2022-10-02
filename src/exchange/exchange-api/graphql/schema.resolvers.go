@@ -53,6 +53,44 @@ func (r *exchangeResolver) Tickers(ctx context.Context, obj *repositories.Exchan
 		All(ctx)
 }
 
+// Coin is the resolver for the coin field.
+func (r *queryResolver) Coin(ctx context.Context, where *repositories.CoinWhereInput) (*repositories.Coin, error) {
+	query, err := where.Filter(r.client.Coin.Query())
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := query.First(ctx)
+	if _, ok := err.(*repositories.NotFoundError); ok {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+// Coins is the resolver for the coins field.
+func (r *queryResolver) Coins(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, orderBy []*repositories.CoinOrder, where *repositories.CoinWhereInput) (*repositories.CoinConnection, error) {
+	orderBy = slices.Reverse(orderBy)
+
+	pageOrder := slices.Map(orderBy, func(item *repositories.CoinOrder) repositories.CoinPaginateOption {
+		return repositories.WithCoinOrder(item)
+	})
+
+	pageOrderAndFilter := append(pageOrder, repositories.WithCoinFilter(where.Filter))
+
+	return r.client.Coin.
+		Query().
+		Paginate(
+			ctx,
+			after,
+			first,
+			before,
+			last,
+			pageOrderAndFilter...)
+}
+
 // Exchange is the resolver for the exchange field.
 func (r *queryResolver) Exchange(ctx context.Context, where *repositories.ExchangeWhereInput) (*repositories.Exchange, error) {
 	query, err := where.Filter(r.client.Exchange.Query())
