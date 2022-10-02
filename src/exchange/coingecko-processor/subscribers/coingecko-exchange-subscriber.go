@@ -79,6 +79,8 @@ func (ces *coingeckoExchangeSubscriber) Run() {
 	exchanges := make([]coingeckov3.Exchange, 0)
 
 	for page := 1; ; page++ {
+		ces.timeHelper.SleepOrWaitForContextGetCancelled(ces.ctx, 2*time.Second)
+
 		exchangesWithResponse, err := coingeckoClient.GetExchangesWithResponse(ces.ctx, &coingeckov3.GetExchangesParams{
 			PerPage: &perPage,
 			Page:    &page,
