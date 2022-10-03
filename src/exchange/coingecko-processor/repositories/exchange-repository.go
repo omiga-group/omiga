@@ -113,7 +113,7 @@ func (er *exchangeRepository) CreateExchange(
 				Create().
 				SetExchangeID(savedExchange.ID).
 				SetBase(ticker.Base).
-				SetTarget(ticker.Target).
+				SetCounter(ticker.Counter).
 				SetMarket(modelsexchange.Market{
 					HasTradingIncentive: ticker.Market.HasTradingIncentive,
 					Identifier:          ticker.Market.Identifier,
@@ -140,13 +140,13 @@ func (er *exchangeRepository) CreateExchange(
 				SetIsStale(ticker.IsStale).
 				SetTradeURL(ticker.TradeUrl).
 				SetNillableTokenInfoURL(ticker.TokenInfoUrl).
-				SetCoinID(ticker.CoinId).
-				SetTargetCoinID(ticker.TargetCoinId)
+				SetBaseCoinID(ticker.BaseCoinId).
+				SetCounterCoinID(ticker.CounterCoinId)
 		})
 
 	if err = client.Ticker.
 		CreateBulk(tickersToCreate...).
-		OnConflictColumns(ticker.FieldBase, ticker.FieldTarget, ticker.ExchangeColumn).
+		OnConflictColumns(ticker.FieldBase, ticker.FieldCounter, ticker.ExchangeColumn).
 		UpdateNewValues().
 		Exec(ctx); err != nil {
 		er.logger.Errorf("Failed to save tickers for exchange Id: %s. Error: %v", exchangeId, err)
@@ -162,7 +162,7 @@ func (er *exchangeRepository) CreateExchange(
 			}
 
 			return !slices.Any(exchange.Tickers, func(ticker models.Ticker) bool {
-				return ticker.Base == existingTicker.Base && ticker.Target == existingTicker.Target
+				return ticker.Base == existingTicker.Base && ticker.Counter == existingTicker.Counter
 			})
 		})
 

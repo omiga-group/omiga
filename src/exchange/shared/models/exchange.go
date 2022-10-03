@@ -18,8 +18,10 @@ type ConvertedDetails struct {
 
 type Ticker struct {
 	Base                   string
+	BaseCoinId             string
+	Counter                string
+	CounterCoinId          string
 	BidAskSpreadPercentage float64
-	CoinId                 string
 	ConvertedLast          ConvertedDetails
 	ConvertedVolume        ConvertedDetails
 	IsAnomaly              bool
@@ -28,8 +30,6 @@ type Ticker struct {
 	LastFetchAt            time.Time
 	LastTradedAt           time.Time
 	Market                 Market
-	Target                 string
-	TargetCoinId           string
 	Timestamp              time.Time
 	TokenInfoUrl           *string
 	TradeUrl               string

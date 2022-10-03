@@ -232,7 +232,9 @@ type Links {
 type Ticker implements Node {
   id: ID!
   base: String!
-  target: String!
+  baseCoinId: String
+  counter: String!
+  counterCoinId: String
   market: Market
   last: Float
   volume: Float
@@ -247,8 +249,6 @@ type Ticker implements Node {
   isStale: Boolean
   tradeUrl: String
   tokenInfoUrl: String
-  coinId: String
-  targetCoinId: String
 }
 
 type Market {

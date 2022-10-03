@@ -89,10 +89,24 @@ func Base(v string) predicate.Ticker {
 	})
 }
 
-// Target applies equality check predicate on the "target" field. It's identical to TargetEQ.
-func Target(v string) predicate.Ticker {
+// BaseCoinID applies equality check predicate on the "base_coin_id" field. It's identical to BaseCoinIDEQ.
+func BaseCoinID(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTarget), v))
+		s.Where(sql.EQ(s.C(FieldBaseCoinID), v))
+	})
+}
+
+// Counter applies equality check predicate on the "counter" field. It's identical to CounterEQ.
+func Counter(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCounter), v))
+	})
+}
+
+// CounterCoinID applies equality check predicate on the "counter_coin_id" field. It's identical to CounterCoinIDEQ.
+func CounterCoinID(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCounterCoinID), v))
 	})
 }
 
@@ -170,20 +184,6 @@ func TradeURL(v string) predicate.Ticker {
 func TokenInfoURL(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTokenInfoURL), v))
-	})
-}
-
-// CoinID applies equality check predicate on the "coin_id" field. It's identical to CoinIDEQ.
-func CoinID(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCoinID), v))
-	})
-}
-
-// TargetCoinID applies equality check predicate on the "target_coin_id" field. It's identical to TargetCoinIDEQ.
-func TargetCoinID(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTargetCoinID), v))
 	})
 }
 
@@ -286,102 +286,328 @@ func BaseContainsFold(v string) predicate.Ticker {
 	})
 }
 
-// TargetEQ applies the EQ predicate on the "target" field.
-func TargetEQ(v string) predicate.Ticker {
+// BaseCoinIDEQ applies the EQ predicate on the "base_coin_id" field.
+func BaseCoinIDEQ(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTarget), v))
+		s.Where(sql.EQ(s.C(FieldBaseCoinID), v))
 	})
 }
 
-// TargetNEQ applies the NEQ predicate on the "target" field.
-func TargetNEQ(v string) predicate.Ticker {
+// BaseCoinIDNEQ applies the NEQ predicate on the "base_coin_id" field.
+func BaseCoinIDNEQ(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTarget), v))
+		s.Where(sql.NEQ(s.C(FieldBaseCoinID), v))
 	})
 }
 
-// TargetIn applies the In predicate on the "target" field.
-func TargetIn(vs ...string) predicate.Ticker {
+// BaseCoinIDIn applies the In predicate on the "base_coin_id" field.
+func BaseCoinIDIn(vs ...string) predicate.Ticker {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldTarget), v...))
+		s.Where(sql.In(s.C(FieldBaseCoinID), v...))
 	})
 }
 
-// TargetNotIn applies the NotIn predicate on the "target" field.
-func TargetNotIn(vs ...string) predicate.Ticker {
+// BaseCoinIDNotIn applies the NotIn predicate on the "base_coin_id" field.
+func BaseCoinIDNotIn(vs ...string) predicate.Ticker {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldTarget), v...))
+		s.Where(sql.NotIn(s.C(FieldBaseCoinID), v...))
 	})
 }
 
-// TargetGT applies the GT predicate on the "target" field.
-func TargetGT(v string) predicate.Ticker {
+// BaseCoinIDGT applies the GT predicate on the "base_coin_id" field.
+func BaseCoinIDGT(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTarget), v))
+		s.Where(sql.GT(s.C(FieldBaseCoinID), v))
 	})
 }
 
-// TargetGTE applies the GTE predicate on the "target" field.
-func TargetGTE(v string) predicate.Ticker {
+// BaseCoinIDGTE applies the GTE predicate on the "base_coin_id" field.
+func BaseCoinIDGTE(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTarget), v))
+		s.Where(sql.GTE(s.C(FieldBaseCoinID), v))
 	})
 }
 
-// TargetLT applies the LT predicate on the "target" field.
-func TargetLT(v string) predicate.Ticker {
+// BaseCoinIDLT applies the LT predicate on the "base_coin_id" field.
+func BaseCoinIDLT(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTarget), v))
+		s.Where(sql.LT(s.C(FieldBaseCoinID), v))
 	})
 }
 
-// TargetLTE applies the LTE predicate on the "target" field.
-func TargetLTE(v string) predicate.Ticker {
+// BaseCoinIDLTE applies the LTE predicate on the "base_coin_id" field.
+func BaseCoinIDLTE(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTarget), v))
+		s.Where(sql.LTE(s.C(FieldBaseCoinID), v))
 	})
 }
 
-// TargetContains applies the Contains predicate on the "target" field.
-func TargetContains(v string) predicate.Ticker {
+// BaseCoinIDContains applies the Contains predicate on the "base_coin_id" field.
+func BaseCoinIDContains(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldTarget), v))
+		s.Where(sql.Contains(s.C(FieldBaseCoinID), v))
 	})
 }
 
-// TargetHasPrefix applies the HasPrefix predicate on the "target" field.
-func TargetHasPrefix(v string) predicate.Ticker {
+// BaseCoinIDHasPrefix applies the HasPrefix predicate on the "base_coin_id" field.
+func BaseCoinIDHasPrefix(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldTarget), v))
+		s.Where(sql.HasPrefix(s.C(FieldBaseCoinID), v))
 	})
 }
 
-// TargetHasSuffix applies the HasSuffix predicate on the "target" field.
-func TargetHasSuffix(v string) predicate.Ticker {
+// BaseCoinIDHasSuffix applies the HasSuffix predicate on the "base_coin_id" field.
+func BaseCoinIDHasSuffix(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldTarget), v))
+		s.Where(sql.HasSuffix(s.C(FieldBaseCoinID), v))
 	})
 }
 
-// TargetEqualFold applies the EqualFold predicate on the "target" field.
-func TargetEqualFold(v string) predicate.Ticker {
+// BaseCoinIDIsNil applies the IsNil predicate on the "base_coin_id" field.
+func BaseCoinIDIsNil() predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldTarget), v))
+		s.Where(sql.IsNull(s.C(FieldBaseCoinID)))
 	})
 }
 
-// TargetContainsFold applies the ContainsFold predicate on the "target" field.
-func TargetContainsFold(v string) predicate.Ticker {
+// BaseCoinIDNotNil applies the NotNil predicate on the "base_coin_id" field.
+func BaseCoinIDNotNil() predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldTarget), v))
+		s.Where(sql.NotNull(s.C(FieldBaseCoinID)))
+	})
+}
+
+// BaseCoinIDEqualFold applies the EqualFold predicate on the "base_coin_id" field.
+func BaseCoinIDEqualFold(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldBaseCoinID), v))
+	})
+}
+
+// BaseCoinIDContainsFold applies the ContainsFold predicate on the "base_coin_id" field.
+func BaseCoinIDContainsFold(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldBaseCoinID), v))
+	})
+}
+
+// CounterEQ applies the EQ predicate on the "counter" field.
+func CounterEQ(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCounter), v))
+	})
+}
+
+// CounterNEQ applies the NEQ predicate on the "counter" field.
+func CounterNEQ(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCounter), v))
+	})
+}
+
+// CounterIn applies the In predicate on the "counter" field.
+func CounterIn(vs ...string) predicate.Ticker {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCounter), v...))
+	})
+}
+
+// CounterNotIn applies the NotIn predicate on the "counter" field.
+func CounterNotIn(vs ...string) predicate.Ticker {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCounter), v...))
+	})
+}
+
+// CounterGT applies the GT predicate on the "counter" field.
+func CounterGT(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCounter), v))
+	})
+}
+
+// CounterGTE applies the GTE predicate on the "counter" field.
+func CounterGTE(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCounter), v))
+	})
+}
+
+// CounterLT applies the LT predicate on the "counter" field.
+func CounterLT(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCounter), v))
+	})
+}
+
+// CounterLTE applies the LTE predicate on the "counter" field.
+func CounterLTE(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCounter), v))
+	})
+}
+
+// CounterContains applies the Contains predicate on the "counter" field.
+func CounterContains(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldCounter), v))
+	})
+}
+
+// CounterHasPrefix applies the HasPrefix predicate on the "counter" field.
+func CounterHasPrefix(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldCounter), v))
+	})
+}
+
+// CounterHasSuffix applies the HasSuffix predicate on the "counter" field.
+func CounterHasSuffix(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldCounter), v))
+	})
+}
+
+// CounterEqualFold applies the EqualFold predicate on the "counter" field.
+func CounterEqualFold(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldCounter), v))
+	})
+}
+
+// CounterContainsFold applies the ContainsFold predicate on the "counter" field.
+func CounterContainsFold(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldCounter), v))
+	})
+}
+
+// CounterCoinIDEQ applies the EQ predicate on the "counter_coin_id" field.
+func CounterCoinIDEQ(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCounterCoinID), v))
+	})
+}
+
+// CounterCoinIDNEQ applies the NEQ predicate on the "counter_coin_id" field.
+func CounterCoinIDNEQ(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCounterCoinID), v))
+	})
+}
+
+// CounterCoinIDIn applies the In predicate on the "counter_coin_id" field.
+func CounterCoinIDIn(vs ...string) predicate.Ticker {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCounterCoinID), v...))
+	})
+}
+
+// CounterCoinIDNotIn applies the NotIn predicate on the "counter_coin_id" field.
+func CounterCoinIDNotIn(vs ...string) predicate.Ticker {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCounterCoinID), v...))
+	})
+}
+
+// CounterCoinIDGT applies the GT predicate on the "counter_coin_id" field.
+func CounterCoinIDGT(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCounterCoinID), v))
+	})
+}
+
+// CounterCoinIDGTE applies the GTE predicate on the "counter_coin_id" field.
+func CounterCoinIDGTE(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCounterCoinID), v))
+	})
+}
+
+// CounterCoinIDLT applies the LT predicate on the "counter_coin_id" field.
+func CounterCoinIDLT(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCounterCoinID), v))
+	})
+}
+
+// CounterCoinIDLTE applies the LTE predicate on the "counter_coin_id" field.
+func CounterCoinIDLTE(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCounterCoinID), v))
+	})
+}
+
+// CounterCoinIDContains applies the Contains predicate on the "counter_coin_id" field.
+func CounterCoinIDContains(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldCounterCoinID), v))
+	})
+}
+
+// CounterCoinIDHasPrefix applies the HasPrefix predicate on the "counter_coin_id" field.
+func CounterCoinIDHasPrefix(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldCounterCoinID), v))
+	})
+}
+
+// CounterCoinIDHasSuffix applies the HasSuffix predicate on the "counter_coin_id" field.
+func CounterCoinIDHasSuffix(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldCounterCoinID), v))
+	})
+}
+
+// CounterCoinIDIsNil applies the IsNil predicate on the "counter_coin_id" field.
+func CounterCoinIDIsNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCounterCoinID)))
+	})
+}
+
+// CounterCoinIDNotNil applies the NotNil predicate on the "counter_coin_id" field.
+func CounterCoinIDNotNil() predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCounterCoinID)))
+	})
+}
+
+// CounterCoinIDEqualFold applies the EqualFold predicate on the "counter_coin_id" field.
+func CounterCoinIDEqualFold(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldCounterCoinID), v))
+	})
+}
+
+// CounterCoinIDContainsFold applies the ContainsFold predicate on the "counter_coin_id" field.
+func CounterCoinIDContainsFold(v string) predicate.Ticker {
+	return predicate.Ticker(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldCounterCoinID), v))
 	})
 }
 
@@ -1287,232 +1513,6 @@ func TokenInfoURLEqualFold(v string) predicate.Ticker {
 func TokenInfoURLContainsFold(v string) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldTokenInfoURL), v))
-	})
-}
-
-// CoinIDEQ applies the EQ predicate on the "coin_id" field.
-func CoinIDEQ(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCoinID), v))
-	})
-}
-
-// CoinIDNEQ applies the NEQ predicate on the "coin_id" field.
-func CoinIDNEQ(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCoinID), v))
-	})
-}
-
-// CoinIDIn applies the In predicate on the "coin_id" field.
-func CoinIDIn(vs ...string) predicate.Ticker {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldCoinID), v...))
-	})
-}
-
-// CoinIDNotIn applies the NotIn predicate on the "coin_id" field.
-func CoinIDNotIn(vs ...string) predicate.Ticker {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldCoinID), v...))
-	})
-}
-
-// CoinIDGT applies the GT predicate on the "coin_id" field.
-func CoinIDGT(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCoinID), v))
-	})
-}
-
-// CoinIDGTE applies the GTE predicate on the "coin_id" field.
-func CoinIDGTE(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCoinID), v))
-	})
-}
-
-// CoinIDLT applies the LT predicate on the "coin_id" field.
-func CoinIDLT(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCoinID), v))
-	})
-}
-
-// CoinIDLTE applies the LTE predicate on the "coin_id" field.
-func CoinIDLTE(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCoinID), v))
-	})
-}
-
-// CoinIDContains applies the Contains predicate on the "coin_id" field.
-func CoinIDContains(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldCoinID), v))
-	})
-}
-
-// CoinIDHasPrefix applies the HasPrefix predicate on the "coin_id" field.
-func CoinIDHasPrefix(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldCoinID), v))
-	})
-}
-
-// CoinIDHasSuffix applies the HasSuffix predicate on the "coin_id" field.
-func CoinIDHasSuffix(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldCoinID), v))
-	})
-}
-
-// CoinIDIsNil applies the IsNil predicate on the "coin_id" field.
-func CoinIDIsNil() predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldCoinID)))
-	})
-}
-
-// CoinIDNotNil applies the NotNil predicate on the "coin_id" field.
-func CoinIDNotNil() predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldCoinID)))
-	})
-}
-
-// CoinIDEqualFold applies the EqualFold predicate on the "coin_id" field.
-func CoinIDEqualFold(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldCoinID), v))
-	})
-}
-
-// CoinIDContainsFold applies the ContainsFold predicate on the "coin_id" field.
-func CoinIDContainsFold(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldCoinID), v))
-	})
-}
-
-// TargetCoinIDEQ applies the EQ predicate on the "target_coin_id" field.
-func TargetCoinIDEQ(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTargetCoinID), v))
-	})
-}
-
-// TargetCoinIDNEQ applies the NEQ predicate on the "target_coin_id" field.
-func TargetCoinIDNEQ(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTargetCoinID), v))
-	})
-}
-
-// TargetCoinIDIn applies the In predicate on the "target_coin_id" field.
-func TargetCoinIDIn(vs ...string) predicate.Ticker {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldTargetCoinID), v...))
-	})
-}
-
-// TargetCoinIDNotIn applies the NotIn predicate on the "target_coin_id" field.
-func TargetCoinIDNotIn(vs ...string) predicate.Ticker {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldTargetCoinID), v...))
-	})
-}
-
-// TargetCoinIDGT applies the GT predicate on the "target_coin_id" field.
-func TargetCoinIDGT(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTargetCoinID), v))
-	})
-}
-
-// TargetCoinIDGTE applies the GTE predicate on the "target_coin_id" field.
-func TargetCoinIDGTE(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTargetCoinID), v))
-	})
-}
-
-// TargetCoinIDLT applies the LT predicate on the "target_coin_id" field.
-func TargetCoinIDLT(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTargetCoinID), v))
-	})
-}
-
-// TargetCoinIDLTE applies the LTE predicate on the "target_coin_id" field.
-func TargetCoinIDLTE(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTargetCoinID), v))
-	})
-}
-
-// TargetCoinIDContains applies the Contains predicate on the "target_coin_id" field.
-func TargetCoinIDContains(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldTargetCoinID), v))
-	})
-}
-
-// TargetCoinIDHasPrefix applies the HasPrefix predicate on the "target_coin_id" field.
-func TargetCoinIDHasPrefix(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldTargetCoinID), v))
-	})
-}
-
-// TargetCoinIDHasSuffix applies the HasSuffix predicate on the "target_coin_id" field.
-func TargetCoinIDHasSuffix(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldTargetCoinID), v))
-	})
-}
-
-// TargetCoinIDIsNil applies the IsNil predicate on the "target_coin_id" field.
-func TargetCoinIDIsNil() predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldTargetCoinID)))
-	})
-}
-
-// TargetCoinIDNotNil applies the NotNil predicate on the "target_coin_id" field.
-func TargetCoinIDNotNil() predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldTargetCoinID)))
-	})
-}
-
-// TargetCoinIDEqualFold applies the EqualFold predicate on the "target_coin_id" field.
-func TargetCoinIDEqualFold(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldTargetCoinID), v))
-	})
-}
-
-// TargetCoinIDContainsFold applies the ContainsFold predicate on the "target_coin_id" field.
-func TargetCoinIDContainsFold(v string) predicate.Ticker {
-	return predicate.Ticker(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldTargetCoinID), v))
 	})
 }
 

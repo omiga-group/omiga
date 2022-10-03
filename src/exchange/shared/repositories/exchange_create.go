@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/tradingpairs"
 )
 
 // ExchangeCreate is the builder for creating a Exchange entity.
@@ -271,6 +272,21 @@ func (ec *ExchangeCreate) AddTicker(t ...*Ticker) *ExchangeCreate {
 		ids[i] = t[i].ID
 	}
 	return ec.AddTickerIDs(ids...)
+}
+
+// AddTradingPairIDs adds the "trading_pairs" edge to the TradingPairs entity by IDs.
+func (ec *ExchangeCreate) AddTradingPairIDs(ids ...int) *ExchangeCreate {
+	ec.mutation.AddTradingPairIDs(ids...)
+	return ec
+}
+
+// AddTradingPairs adds the "trading_pairs" edges to the TradingPairs entity.
+func (ec *ExchangeCreate) AddTradingPairs(t ...*TradingPairs) *ExchangeCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ec.AddTradingPairIDs(ids...)
 }
 
 // Mutation returns the ExchangeMutation object of the builder.
@@ -540,6 +556,26 @@ func (ec *ExchangeCreate) createSpec() (*Exchange, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = ec.schemaConfig.Ticker
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.TradingPairsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.TradingPairsTable,
+			Columns: []string{exchange.TradingPairsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpairs.FieldID,
+				},
+			},
+		}
+		edge.Schema = ec.schemaConfig.TradingPairs
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

@@ -21,8 +21,12 @@ type Ticker struct {
 	ID int `json:"id,omitempty"`
 	// Base holds the value of the "base" field.
 	Base string `json:"base,omitempty"`
-	// Target holds the value of the "target" field.
-	Target string `json:"target,omitempty"`
+	// BaseCoinID holds the value of the "base_coin_id" field.
+	BaseCoinID string `json:"base_coin_id,omitempty"`
+	// Counter holds the value of the "counter" field.
+	Counter string `json:"counter,omitempty"`
+	// CounterCoinID holds the value of the "counter_coin_id" field.
+	CounterCoinID string `json:"counter_coin_id,omitempty"`
 	// Market holds the value of the "market" field.
 	Market models.Market `json:"market,omitempty"`
 	// Last holds the value of the "last" field.
@@ -51,10 +55,6 @@ type Ticker struct {
 	TradeURL string `json:"trade_url,omitempty"`
 	// TokenInfoURL holds the value of the "token_info_url" field.
 	TokenInfoURL string `json:"token_info_url,omitempty"`
-	// CoinID holds the value of the "coin_id" field.
-	CoinID string `json:"coin_id,omitempty"`
-	// TargetCoinID holds the value of the "target_coin_id" field.
-	TargetCoinID string `json:"target_coin_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TickerQuery when eager-loading is set.
 	Edges           TickerEdges `json:"edges"`
@@ -98,7 +98,7 @@ func (*Ticker) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case ticker.FieldID:
 			values[i] = new(sql.NullInt64)
-		case ticker.FieldBase, ticker.FieldTarget, ticker.FieldTrustScore, ticker.FieldTradeURL, ticker.FieldTokenInfoURL, ticker.FieldCoinID, ticker.FieldTargetCoinID:
+		case ticker.FieldBase, ticker.FieldBaseCoinID, ticker.FieldCounter, ticker.FieldCounterCoinID, ticker.FieldTrustScore, ticker.FieldTradeURL, ticker.FieldTokenInfoURL:
 			values[i] = new(sql.NullString)
 		case ticker.FieldTimestamp, ticker.FieldLastTradedAt, ticker.FieldLastFetchAt:
 			values[i] = new(sql.NullTime)
@@ -131,11 +131,23 @@ func (t *Ticker) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Base = value.String
 			}
-		case ticker.FieldTarget:
+		case ticker.FieldBaseCoinID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field target", values[i])
+				return fmt.Errorf("unexpected type %T for field base_coin_id", values[i])
 			} else if value.Valid {
-				t.Target = value.String
+				t.BaseCoinID = value.String
+			}
+		case ticker.FieldCounter:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field counter", values[i])
+			} else if value.Valid {
+				t.Counter = value.String
+			}
+		case ticker.FieldCounterCoinID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field counter_coin_id", values[i])
+			} else if value.Valid {
+				t.CounterCoinID = value.String
 			}
 		case ticker.FieldMarket:
 			if value, ok := values[i].(*[]byte); !ok {
@@ -227,18 +239,6 @@ func (t *Ticker) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.TokenInfoURL = value.String
 			}
-		case ticker.FieldCoinID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field coin_id", values[i])
-			} else if value.Valid {
-				t.CoinID = value.String
-			}
-		case ticker.FieldTargetCoinID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field target_coin_id", values[i])
-			} else if value.Valid {
-				t.TargetCoinID = value.String
-			}
 		case ticker.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field exchange_ticker", value)
@@ -282,8 +282,14 @@ func (t *Ticker) String() string {
 	builder.WriteString("base=")
 	builder.WriteString(t.Base)
 	builder.WriteString(", ")
-	builder.WriteString("target=")
-	builder.WriteString(t.Target)
+	builder.WriteString("base_coin_id=")
+	builder.WriteString(t.BaseCoinID)
+	builder.WriteString(", ")
+	builder.WriteString("counter=")
+	builder.WriteString(t.Counter)
+	builder.WriteString(", ")
+	builder.WriteString("counter_coin_id=")
+	builder.WriteString(t.CounterCoinID)
 	builder.WriteString(", ")
 	builder.WriteString("market=")
 	builder.WriteString(fmt.Sprintf("%v", t.Market))
@@ -326,12 +332,6 @@ func (t *Ticker) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("token_info_url=")
 	builder.WriteString(t.TokenInfoURL)
-	builder.WriteString(", ")
-	builder.WriteString("coin_id=")
-	builder.WriteString(t.CoinID)
-	builder.WriteString(", ")
-	builder.WriteString("target_coin_id=")
-	builder.WriteString(t.TargetCoinID)
 	builder.WriteByte(')')
 	return builder.String()
 }

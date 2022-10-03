@@ -30,9 +30,37 @@ func (tc *TickerCreate) SetBase(s string) *TickerCreate {
 	return tc
 }
 
-// SetTarget sets the "target" field.
-func (tc *TickerCreate) SetTarget(s string) *TickerCreate {
-	tc.mutation.SetTarget(s)
+// SetBaseCoinID sets the "base_coin_id" field.
+func (tc *TickerCreate) SetBaseCoinID(s string) *TickerCreate {
+	tc.mutation.SetBaseCoinID(s)
+	return tc
+}
+
+// SetNillableBaseCoinID sets the "base_coin_id" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableBaseCoinID(s *string) *TickerCreate {
+	if s != nil {
+		tc.SetBaseCoinID(*s)
+	}
+	return tc
+}
+
+// SetCounter sets the "counter" field.
+func (tc *TickerCreate) SetCounter(s string) *TickerCreate {
+	tc.mutation.SetCounter(s)
+	return tc
+}
+
+// SetCounterCoinID sets the "counter_coin_id" field.
+func (tc *TickerCreate) SetCounterCoinID(s string) *TickerCreate {
+	tc.mutation.SetCounterCoinID(s)
+	return tc
+}
+
+// SetNillableCounterCoinID sets the "counter_coin_id" field if the given value is not nil.
+func (tc *TickerCreate) SetNillableCounterCoinID(s *string) *TickerCreate {
+	if s != nil {
+		tc.SetCounterCoinID(*s)
+	}
 	return tc
 }
 
@@ -232,34 +260,6 @@ func (tc *TickerCreate) SetNillableTokenInfoURL(s *string) *TickerCreate {
 	return tc
 }
 
-// SetCoinID sets the "coin_id" field.
-func (tc *TickerCreate) SetCoinID(s string) *TickerCreate {
-	tc.mutation.SetCoinID(s)
-	return tc
-}
-
-// SetNillableCoinID sets the "coin_id" field if the given value is not nil.
-func (tc *TickerCreate) SetNillableCoinID(s *string) *TickerCreate {
-	if s != nil {
-		tc.SetCoinID(*s)
-	}
-	return tc
-}
-
-// SetTargetCoinID sets the "target_coin_id" field.
-func (tc *TickerCreate) SetTargetCoinID(s string) *TickerCreate {
-	tc.mutation.SetTargetCoinID(s)
-	return tc
-}
-
-// SetNillableTargetCoinID sets the "target_coin_id" field if the given value is not nil.
-func (tc *TickerCreate) SetNillableTargetCoinID(s *string) *TickerCreate {
-	if s != nil {
-		tc.SetTargetCoinID(*s)
-	}
-	return tc
-}
-
 // SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
 func (tc *TickerCreate) SetExchangeID(id int) *TickerCreate {
 	tc.mutation.SetExchangeID(id)
@@ -350,8 +350,8 @@ func (tc *TickerCreate) check() error {
 	if _, ok := tc.mutation.Base(); !ok {
 		return &ValidationError{Name: "base", err: errors.New(`repositories: missing required field "Ticker.base"`)}
 	}
-	if _, ok := tc.mutation.Target(); !ok {
-		return &ValidationError{Name: "target", err: errors.New(`repositories: missing required field "Ticker.target"`)}
+	if _, ok := tc.mutation.Counter(); !ok {
+		return &ValidationError{Name: "counter", err: errors.New(`repositories: missing required field "Ticker.counter"`)}
 	}
 	if _, ok := tc.mutation.ExchangeID(); !ok {
 		return &ValidationError{Name: "exchange", err: errors.New(`repositories: missing required edge "Ticker.exchange"`)}
@@ -393,13 +393,29 @@ func (tc *TickerCreate) createSpec() (*Ticker, *sqlgraph.CreateSpec) {
 		})
 		_node.Base = value
 	}
-	if value, ok := tc.mutation.Target(); ok {
+	if value, ok := tc.mutation.BaseCoinID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: ticker.FieldTarget,
+			Column: ticker.FieldBaseCoinID,
 		})
-		_node.Target = value
+		_node.BaseCoinID = value
+	}
+	if value, ok := tc.mutation.Counter(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: ticker.FieldCounter,
+		})
+		_node.Counter = value
+	}
+	if value, ok := tc.mutation.CounterCoinID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: ticker.FieldCounterCoinID,
+		})
+		_node.CounterCoinID = value
 	}
 	if value, ok := tc.mutation.Market(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -513,22 +529,6 @@ func (tc *TickerCreate) createSpec() (*Ticker, *sqlgraph.CreateSpec) {
 		})
 		_node.TokenInfoURL = value
 	}
-	if value, ok := tc.mutation.CoinID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldCoinID,
-		})
-		_node.CoinID = value
-	}
-	if value, ok := tc.mutation.TargetCoinID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldTargetCoinID,
-		})
-		_node.TargetCoinID = value
-	}
 	if nodes := tc.mutation.ExchangeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -614,15 +614,51 @@ func (u *TickerUpsert) UpdateBase() *TickerUpsert {
 	return u
 }
 
-// SetTarget sets the "target" field.
-func (u *TickerUpsert) SetTarget(v string) *TickerUpsert {
-	u.Set(ticker.FieldTarget, v)
+// SetBaseCoinID sets the "base_coin_id" field.
+func (u *TickerUpsert) SetBaseCoinID(v string) *TickerUpsert {
+	u.Set(ticker.FieldBaseCoinID, v)
 	return u
 }
 
-// UpdateTarget sets the "target" field to the value that was provided on create.
-func (u *TickerUpsert) UpdateTarget() *TickerUpsert {
-	u.SetExcluded(ticker.FieldTarget)
+// UpdateBaseCoinID sets the "base_coin_id" field to the value that was provided on create.
+func (u *TickerUpsert) UpdateBaseCoinID() *TickerUpsert {
+	u.SetExcluded(ticker.FieldBaseCoinID)
+	return u
+}
+
+// ClearBaseCoinID clears the value of the "base_coin_id" field.
+func (u *TickerUpsert) ClearBaseCoinID() *TickerUpsert {
+	u.SetNull(ticker.FieldBaseCoinID)
+	return u
+}
+
+// SetCounter sets the "counter" field.
+func (u *TickerUpsert) SetCounter(v string) *TickerUpsert {
+	u.Set(ticker.FieldCounter, v)
+	return u
+}
+
+// UpdateCounter sets the "counter" field to the value that was provided on create.
+func (u *TickerUpsert) UpdateCounter() *TickerUpsert {
+	u.SetExcluded(ticker.FieldCounter)
+	return u
+}
+
+// SetCounterCoinID sets the "counter_coin_id" field.
+func (u *TickerUpsert) SetCounterCoinID(v string) *TickerUpsert {
+	u.Set(ticker.FieldCounterCoinID, v)
+	return u
+}
+
+// UpdateCounterCoinID sets the "counter_coin_id" field to the value that was provided on create.
+func (u *TickerUpsert) UpdateCounterCoinID() *TickerUpsert {
+	u.SetExcluded(ticker.FieldCounterCoinID)
+	return u
+}
+
+// ClearCounterCoinID clears the value of the "counter_coin_id" field.
+func (u *TickerUpsert) ClearCounterCoinID() *TickerUpsert {
+	u.SetNull(ticker.FieldCounterCoinID)
 	return u
 }
 
@@ -896,42 +932,6 @@ func (u *TickerUpsert) ClearTokenInfoURL() *TickerUpsert {
 	return u
 }
 
-// SetCoinID sets the "coin_id" field.
-func (u *TickerUpsert) SetCoinID(v string) *TickerUpsert {
-	u.Set(ticker.FieldCoinID, v)
-	return u
-}
-
-// UpdateCoinID sets the "coin_id" field to the value that was provided on create.
-func (u *TickerUpsert) UpdateCoinID() *TickerUpsert {
-	u.SetExcluded(ticker.FieldCoinID)
-	return u
-}
-
-// ClearCoinID clears the value of the "coin_id" field.
-func (u *TickerUpsert) ClearCoinID() *TickerUpsert {
-	u.SetNull(ticker.FieldCoinID)
-	return u
-}
-
-// SetTargetCoinID sets the "target_coin_id" field.
-func (u *TickerUpsert) SetTargetCoinID(v string) *TickerUpsert {
-	u.Set(ticker.FieldTargetCoinID, v)
-	return u
-}
-
-// UpdateTargetCoinID sets the "target_coin_id" field to the value that was provided on create.
-func (u *TickerUpsert) UpdateTargetCoinID() *TickerUpsert {
-	u.SetExcluded(ticker.FieldTargetCoinID)
-	return u
-}
-
-// ClearTargetCoinID clears the value of the "target_coin_id" field.
-func (u *TickerUpsert) ClearTargetCoinID() *TickerUpsert {
-	u.SetNull(ticker.FieldTargetCoinID)
-	return u
-}
-
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -986,17 +986,59 @@ func (u *TickerUpsertOne) UpdateBase() *TickerUpsertOne {
 	})
 }
 
-// SetTarget sets the "target" field.
-func (u *TickerUpsertOne) SetTarget(v string) *TickerUpsertOne {
+// SetBaseCoinID sets the "base_coin_id" field.
+func (u *TickerUpsertOne) SetBaseCoinID(v string) *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
-		s.SetTarget(v)
+		s.SetBaseCoinID(v)
 	})
 }
 
-// UpdateTarget sets the "target" field to the value that was provided on create.
-func (u *TickerUpsertOne) UpdateTarget() *TickerUpsertOne {
+// UpdateBaseCoinID sets the "base_coin_id" field to the value that was provided on create.
+func (u *TickerUpsertOne) UpdateBaseCoinID() *TickerUpsertOne {
 	return u.Update(func(s *TickerUpsert) {
-		s.UpdateTarget()
+		s.UpdateBaseCoinID()
+	})
+}
+
+// ClearBaseCoinID clears the value of the "base_coin_id" field.
+func (u *TickerUpsertOne) ClearBaseCoinID() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearBaseCoinID()
+	})
+}
+
+// SetCounter sets the "counter" field.
+func (u *TickerUpsertOne) SetCounter(v string) *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.SetCounter(v)
+	})
+}
+
+// UpdateCounter sets the "counter" field to the value that was provided on create.
+func (u *TickerUpsertOne) UpdateCounter() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.UpdateCounter()
+	})
+}
+
+// SetCounterCoinID sets the "counter_coin_id" field.
+func (u *TickerUpsertOne) SetCounterCoinID(v string) *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.SetCounterCoinID(v)
+	})
+}
+
+// UpdateCounterCoinID sets the "counter_coin_id" field to the value that was provided on create.
+func (u *TickerUpsertOne) UpdateCounterCoinID() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.UpdateCounterCoinID()
+	})
+}
+
+// ClearCounterCoinID clears the value of the "counter_coin_id" field.
+func (u *TickerUpsertOne) ClearCounterCoinID() *TickerUpsertOne {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearCounterCoinID()
 	})
 }
 
@@ -1315,48 +1357,6 @@ func (u *TickerUpsertOne) ClearTokenInfoURL() *TickerUpsertOne {
 	})
 }
 
-// SetCoinID sets the "coin_id" field.
-func (u *TickerUpsertOne) SetCoinID(v string) *TickerUpsertOne {
-	return u.Update(func(s *TickerUpsert) {
-		s.SetCoinID(v)
-	})
-}
-
-// UpdateCoinID sets the "coin_id" field to the value that was provided on create.
-func (u *TickerUpsertOne) UpdateCoinID() *TickerUpsertOne {
-	return u.Update(func(s *TickerUpsert) {
-		s.UpdateCoinID()
-	})
-}
-
-// ClearCoinID clears the value of the "coin_id" field.
-func (u *TickerUpsertOne) ClearCoinID() *TickerUpsertOne {
-	return u.Update(func(s *TickerUpsert) {
-		s.ClearCoinID()
-	})
-}
-
-// SetTargetCoinID sets the "target_coin_id" field.
-func (u *TickerUpsertOne) SetTargetCoinID(v string) *TickerUpsertOne {
-	return u.Update(func(s *TickerUpsert) {
-		s.SetTargetCoinID(v)
-	})
-}
-
-// UpdateTargetCoinID sets the "target_coin_id" field to the value that was provided on create.
-func (u *TickerUpsertOne) UpdateTargetCoinID() *TickerUpsertOne {
-	return u.Update(func(s *TickerUpsert) {
-		s.UpdateTargetCoinID()
-	})
-}
-
-// ClearTargetCoinID clears the value of the "target_coin_id" field.
-func (u *TickerUpsertOne) ClearTargetCoinID() *TickerUpsertOne {
-	return u.Update(func(s *TickerUpsert) {
-		s.ClearTargetCoinID()
-	})
-}
-
 // Exec executes the query.
 func (u *TickerUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -1570,17 +1570,59 @@ func (u *TickerUpsertBulk) UpdateBase() *TickerUpsertBulk {
 	})
 }
 
-// SetTarget sets the "target" field.
-func (u *TickerUpsertBulk) SetTarget(v string) *TickerUpsertBulk {
+// SetBaseCoinID sets the "base_coin_id" field.
+func (u *TickerUpsertBulk) SetBaseCoinID(v string) *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
-		s.SetTarget(v)
+		s.SetBaseCoinID(v)
 	})
 }
 
-// UpdateTarget sets the "target" field to the value that was provided on create.
-func (u *TickerUpsertBulk) UpdateTarget() *TickerUpsertBulk {
+// UpdateBaseCoinID sets the "base_coin_id" field to the value that was provided on create.
+func (u *TickerUpsertBulk) UpdateBaseCoinID() *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
-		s.UpdateTarget()
+		s.UpdateBaseCoinID()
+	})
+}
+
+// ClearBaseCoinID clears the value of the "base_coin_id" field.
+func (u *TickerUpsertBulk) ClearBaseCoinID() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearBaseCoinID()
+	})
+}
+
+// SetCounter sets the "counter" field.
+func (u *TickerUpsertBulk) SetCounter(v string) *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.SetCounter(v)
+	})
+}
+
+// UpdateCounter sets the "counter" field to the value that was provided on create.
+func (u *TickerUpsertBulk) UpdateCounter() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.UpdateCounter()
+	})
+}
+
+// SetCounterCoinID sets the "counter_coin_id" field.
+func (u *TickerUpsertBulk) SetCounterCoinID(v string) *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.SetCounterCoinID(v)
+	})
+}
+
+// UpdateCounterCoinID sets the "counter_coin_id" field to the value that was provided on create.
+func (u *TickerUpsertBulk) UpdateCounterCoinID() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.UpdateCounterCoinID()
+	})
+}
+
+// ClearCounterCoinID clears the value of the "counter_coin_id" field.
+func (u *TickerUpsertBulk) ClearCounterCoinID() *TickerUpsertBulk {
+	return u.Update(func(s *TickerUpsert) {
+		s.ClearCounterCoinID()
 	})
 }
 
@@ -1896,48 +1938,6 @@ func (u *TickerUpsertBulk) UpdateTokenInfoURL() *TickerUpsertBulk {
 func (u *TickerUpsertBulk) ClearTokenInfoURL() *TickerUpsertBulk {
 	return u.Update(func(s *TickerUpsert) {
 		s.ClearTokenInfoURL()
-	})
-}
-
-// SetCoinID sets the "coin_id" field.
-func (u *TickerUpsertBulk) SetCoinID(v string) *TickerUpsertBulk {
-	return u.Update(func(s *TickerUpsert) {
-		s.SetCoinID(v)
-	})
-}
-
-// UpdateCoinID sets the "coin_id" field to the value that was provided on create.
-func (u *TickerUpsertBulk) UpdateCoinID() *TickerUpsertBulk {
-	return u.Update(func(s *TickerUpsert) {
-		s.UpdateCoinID()
-	})
-}
-
-// ClearCoinID clears the value of the "coin_id" field.
-func (u *TickerUpsertBulk) ClearCoinID() *TickerUpsertBulk {
-	return u.Update(func(s *TickerUpsert) {
-		s.ClearCoinID()
-	})
-}
-
-// SetTargetCoinID sets the "target_coin_id" field.
-func (u *TickerUpsertBulk) SetTargetCoinID(v string) *TickerUpsertBulk {
-	return u.Update(func(s *TickerUpsert) {
-		s.SetTargetCoinID(v)
-	})
-}
-
-// UpdateTargetCoinID sets the "target_coin_id" field to the value that was provided on create.
-func (u *TickerUpsertBulk) UpdateTargetCoinID() *TickerUpsertBulk {
-	return u.Update(func(s *TickerUpsert) {
-		s.UpdateTargetCoinID()
-	})
-}
-
-// ClearTargetCoinID clears the value of the "target_coin_id" field.
-func (u *TickerUpsertBulk) ClearTargetCoinID() *TickerUpsertBulk {
-	return u.Update(func(s *TickerUpsert) {
-		s.ClearTargetCoinID()
 	})
 }
 

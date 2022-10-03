@@ -38,9 +38,49 @@ func (tu *TickerUpdate) SetBase(s string) *TickerUpdate {
 	return tu
 }
 
-// SetTarget sets the "target" field.
-func (tu *TickerUpdate) SetTarget(s string) *TickerUpdate {
-	tu.mutation.SetTarget(s)
+// SetBaseCoinID sets the "base_coin_id" field.
+func (tu *TickerUpdate) SetBaseCoinID(s string) *TickerUpdate {
+	tu.mutation.SetBaseCoinID(s)
+	return tu
+}
+
+// SetNillableBaseCoinID sets the "base_coin_id" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableBaseCoinID(s *string) *TickerUpdate {
+	if s != nil {
+		tu.SetBaseCoinID(*s)
+	}
+	return tu
+}
+
+// ClearBaseCoinID clears the value of the "base_coin_id" field.
+func (tu *TickerUpdate) ClearBaseCoinID() *TickerUpdate {
+	tu.mutation.ClearBaseCoinID()
+	return tu
+}
+
+// SetCounter sets the "counter" field.
+func (tu *TickerUpdate) SetCounter(s string) *TickerUpdate {
+	tu.mutation.SetCounter(s)
+	return tu
+}
+
+// SetCounterCoinID sets the "counter_coin_id" field.
+func (tu *TickerUpdate) SetCounterCoinID(s string) *TickerUpdate {
+	tu.mutation.SetCounterCoinID(s)
+	return tu
+}
+
+// SetNillableCounterCoinID sets the "counter_coin_id" field if the given value is not nil.
+func (tu *TickerUpdate) SetNillableCounterCoinID(s *string) *TickerUpdate {
+	if s != nil {
+		tu.SetCounterCoinID(*s)
+	}
+	return tu
+}
+
+// ClearCounterCoinID clears the value of the "counter_coin_id" field.
+func (tu *TickerUpdate) ClearCounterCoinID() *TickerUpdate {
+	tu.mutation.ClearCounterCoinID()
 	return tu
 }
 
@@ -345,46 +385,6 @@ func (tu *TickerUpdate) ClearTokenInfoURL() *TickerUpdate {
 	return tu
 }
 
-// SetCoinID sets the "coin_id" field.
-func (tu *TickerUpdate) SetCoinID(s string) *TickerUpdate {
-	tu.mutation.SetCoinID(s)
-	return tu
-}
-
-// SetNillableCoinID sets the "coin_id" field if the given value is not nil.
-func (tu *TickerUpdate) SetNillableCoinID(s *string) *TickerUpdate {
-	if s != nil {
-		tu.SetCoinID(*s)
-	}
-	return tu
-}
-
-// ClearCoinID clears the value of the "coin_id" field.
-func (tu *TickerUpdate) ClearCoinID() *TickerUpdate {
-	tu.mutation.ClearCoinID()
-	return tu
-}
-
-// SetTargetCoinID sets the "target_coin_id" field.
-func (tu *TickerUpdate) SetTargetCoinID(s string) *TickerUpdate {
-	tu.mutation.SetTargetCoinID(s)
-	return tu
-}
-
-// SetNillableTargetCoinID sets the "target_coin_id" field if the given value is not nil.
-func (tu *TickerUpdate) SetNillableTargetCoinID(s *string) *TickerUpdate {
-	if s != nil {
-		tu.SetTargetCoinID(*s)
-	}
-	return tu
-}
-
-// ClearTargetCoinID clears the value of the "target_coin_id" field.
-func (tu *TickerUpdate) ClearTargetCoinID() *TickerUpdate {
-	tu.mutation.ClearTargetCoinID()
-	return tu
-}
-
 // SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
 func (tu *TickerUpdate) SetExchangeID(id int) *TickerUpdate {
 	tu.mutation.SetExchangeID(id)
@@ -506,11 +506,37 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: ticker.FieldBase,
 		})
 	}
-	if value, ok := tu.mutation.Target(); ok {
+	if value, ok := tu.mutation.BaseCoinID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: ticker.FieldTarget,
+			Column: ticker.FieldBaseCoinID,
+		})
+	}
+	if tu.mutation.BaseCoinIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: ticker.FieldBaseCoinID,
+		})
+	}
+	if value, ok := tu.mutation.Counter(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: ticker.FieldCounter,
+		})
+	}
+	if value, ok := tu.mutation.CounterCoinID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: ticker.FieldCounterCoinID,
+		})
+	}
+	if tu.mutation.CounterCoinIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: ticker.FieldCounterCoinID,
 		})
 	}
 	if value, ok := tu.mutation.Market(); ok {
@@ -716,32 +742,6 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: ticker.FieldTokenInfoURL,
 		})
 	}
-	if value, ok := tu.mutation.CoinID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldCoinID,
-		})
-	}
-	if tu.mutation.CoinIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldCoinID,
-		})
-	}
-	if value, ok := tu.mutation.TargetCoinID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldTargetCoinID,
-		})
-	}
-	if tu.mutation.TargetCoinIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldTargetCoinID,
-		})
-	}
 	if tu.mutation.ExchangeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -808,9 +808,49 @@ func (tuo *TickerUpdateOne) SetBase(s string) *TickerUpdateOne {
 	return tuo
 }
 
-// SetTarget sets the "target" field.
-func (tuo *TickerUpdateOne) SetTarget(s string) *TickerUpdateOne {
-	tuo.mutation.SetTarget(s)
+// SetBaseCoinID sets the "base_coin_id" field.
+func (tuo *TickerUpdateOne) SetBaseCoinID(s string) *TickerUpdateOne {
+	tuo.mutation.SetBaseCoinID(s)
+	return tuo
+}
+
+// SetNillableBaseCoinID sets the "base_coin_id" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableBaseCoinID(s *string) *TickerUpdateOne {
+	if s != nil {
+		tuo.SetBaseCoinID(*s)
+	}
+	return tuo
+}
+
+// ClearBaseCoinID clears the value of the "base_coin_id" field.
+func (tuo *TickerUpdateOne) ClearBaseCoinID() *TickerUpdateOne {
+	tuo.mutation.ClearBaseCoinID()
+	return tuo
+}
+
+// SetCounter sets the "counter" field.
+func (tuo *TickerUpdateOne) SetCounter(s string) *TickerUpdateOne {
+	tuo.mutation.SetCounter(s)
+	return tuo
+}
+
+// SetCounterCoinID sets the "counter_coin_id" field.
+func (tuo *TickerUpdateOne) SetCounterCoinID(s string) *TickerUpdateOne {
+	tuo.mutation.SetCounterCoinID(s)
+	return tuo
+}
+
+// SetNillableCounterCoinID sets the "counter_coin_id" field if the given value is not nil.
+func (tuo *TickerUpdateOne) SetNillableCounterCoinID(s *string) *TickerUpdateOne {
+	if s != nil {
+		tuo.SetCounterCoinID(*s)
+	}
+	return tuo
+}
+
+// ClearCounterCoinID clears the value of the "counter_coin_id" field.
+func (tuo *TickerUpdateOne) ClearCounterCoinID() *TickerUpdateOne {
+	tuo.mutation.ClearCounterCoinID()
 	return tuo
 }
 
@@ -1115,46 +1155,6 @@ func (tuo *TickerUpdateOne) ClearTokenInfoURL() *TickerUpdateOne {
 	return tuo
 }
 
-// SetCoinID sets the "coin_id" field.
-func (tuo *TickerUpdateOne) SetCoinID(s string) *TickerUpdateOne {
-	tuo.mutation.SetCoinID(s)
-	return tuo
-}
-
-// SetNillableCoinID sets the "coin_id" field if the given value is not nil.
-func (tuo *TickerUpdateOne) SetNillableCoinID(s *string) *TickerUpdateOne {
-	if s != nil {
-		tuo.SetCoinID(*s)
-	}
-	return tuo
-}
-
-// ClearCoinID clears the value of the "coin_id" field.
-func (tuo *TickerUpdateOne) ClearCoinID() *TickerUpdateOne {
-	tuo.mutation.ClearCoinID()
-	return tuo
-}
-
-// SetTargetCoinID sets the "target_coin_id" field.
-func (tuo *TickerUpdateOne) SetTargetCoinID(s string) *TickerUpdateOne {
-	tuo.mutation.SetTargetCoinID(s)
-	return tuo
-}
-
-// SetNillableTargetCoinID sets the "target_coin_id" field if the given value is not nil.
-func (tuo *TickerUpdateOne) SetNillableTargetCoinID(s *string) *TickerUpdateOne {
-	if s != nil {
-		tuo.SetTargetCoinID(*s)
-	}
-	return tuo
-}
-
-// ClearTargetCoinID clears the value of the "target_coin_id" field.
-func (tuo *TickerUpdateOne) ClearTargetCoinID() *TickerUpdateOne {
-	tuo.mutation.ClearTargetCoinID()
-	return tuo
-}
-
 // SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
 func (tuo *TickerUpdateOne) SetExchangeID(id int) *TickerUpdateOne {
 	tuo.mutation.SetExchangeID(id)
@@ -1306,11 +1306,37 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 			Column: ticker.FieldBase,
 		})
 	}
-	if value, ok := tuo.mutation.Target(); ok {
+	if value, ok := tuo.mutation.BaseCoinID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: ticker.FieldTarget,
+			Column: ticker.FieldBaseCoinID,
+		})
+	}
+	if tuo.mutation.BaseCoinIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: ticker.FieldBaseCoinID,
+		})
+	}
+	if value, ok := tuo.mutation.Counter(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: ticker.FieldCounter,
+		})
+	}
+	if value, ok := tuo.mutation.CounterCoinID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: ticker.FieldCounterCoinID,
+		})
+	}
+	if tuo.mutation.CounterCoinIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: ticker.FieldCounterCoinID,
 		})
 	}
 	if value, ok := tuo.mutation.Market(); ok {
@@ -1514,32 +1540,6 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: ticker.FieldTokenInfoURL,
-		})
-	}
-	if value, ok := tuo.mutation.CoinID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldCoinID,
-		})
-	}
-	if tuo.mutation.CoinIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldCoinID,
-		})
-	}
-	if value, ok := tuo.mutation.TargetCoinID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldTargetCoinID,
-		})
-	}
-	if tuo.mutation.TargetCoinIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldTargetCoinID,
 		})
 	}
 	if tuo.mutation.ExchangeCleared() {

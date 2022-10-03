@@ -18,7 +18,9 @@ type Ticker struct {
 func (Ticker) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("base").Annotations(entgql.OrderField("base")),
-		field.String("target").Annotations(entgql.OrderField("target")),
+		field.String("base_coin_id").Optional().Annotations(entgql.OrderField("baseCoinId")),
+		field.String("counter").Annotations(entgql.OrderField("counter")),
+		field.String("counter_coin_id").Optional().Annotations(entgql.OrderField("counterCoinId")),
 		field.JSON("market", models.Market{}).Optional(),
 		field.Float("last").Optional().Annotations(entgql.OrderField("last")),
 		field.Float("volume").Optional().Annotations(entgql.OrderField("volume")),
@@ -33,8 +35,6 @@ func (Ticker) Fields() []ent.Field {
 		field.Bool("is_stale").Optional().Annotations(entgql.OrderField("isStale")),
 		field.String("trade_url").Optional().Annotations(entgql.OrderField("tradeUrl")),
 		field.String("token_info_url").Optional().Annotations(entgql.OrderField("tokenInfoUrl")),
-		field.String("coin_id").Optional().Annotations(entgql.OrderField("coinId")),
-		field.String("target_coin_id").Optional().Annotations(entgql.OrderField("targetCoinId")),
 	}
 }
 
@@ -51,7 +51,9 @@ func (Ticker) Edges() []ent.Edge {
 func (Ticker) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("base"),
-		index.Fields("target"),
+		index.Fields("base_coin_id"),
+		index.Fields("counter"),
+		index.Fields("counter_coin_id"),
 		index.Fields("last"),
 		index.Fields("volume"),
 		index.Fields("trust_score"),
@@ -63,7 +65,5 @@ func (Ticker) Indexes() []ent.Index {
 		index.Fields("is_stale"),
 		index.Fields("trade_url"),
 		index.Fields("token_info_url"),
-		index.Fields("coin_id"),
-		index.Fields("target_coin_id"),
 	}
 }

@@ -61,6 +61,19 @@ func (f TickerFunc) Mutate(ctx context.Context, m repositories.Mutation) (reposi
 	return f(ctx, mv)
 }
 
+// The TradingPairsFunc type is an adapter to allow the use of ordinary
+// function as TradingPairs mutator.
+type TradingPairsFunc func(context.Context, *repositories.TradingPairsMutation) (repositories.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TradingPairsFunc) Mutate(ctx context.Context, m repositories.Mutation) (repositories.Value, error) {
+	mv, ok := m.(*repositories.TradingPairsMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *repositories.TradingPairsMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, repositories.Mutation) bool
 

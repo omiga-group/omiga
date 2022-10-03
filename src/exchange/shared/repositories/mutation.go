@@ -15,6 +15,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories/tradingpairs"
 
 	"entgo.io/ent"
 )
@@ -28,10 +29,11 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeCoin     = "Coin"
-	TypeExchange = "Exchange"
-	TypeOutbox   = "Outbox"
-	TypeTicker   = "Ticker"
+	TypeCoin         = "Coin"
+	TypeExchange     = "Exchange"
+	TypeOutbox       = "Outbox"
+	TypeTicker       = "Ticker"
+	TypeTradingPairs = "TradingPairs"
 )
 
 // CoinMutation represents an operation that mutates the Coin nodes in the graph.
@@ -456,6 +458,9 @@ type ExchangeMutation struct {
 	ticker                             map[int]struct{}
 	removedticker                      map[int]struct{}
 	clearedticker                      bool
+	trading_pairs                      map[int]struct{}
+	removedtrading_pairs               map[int]struct{}
+	clearedtrading_pairs               bool
 	done                               bool
 	oldValue                           func(context.Context) (*Exchange, error)
 	predicates                         []predicate.Exchange
@@ -1629,6 +1634,60 @@ func (m *ExchangeMutation) ResetTicker() {
 	m.removedticker = nil
 }
 
+// AddTradingPairIDs adds the "trading_pairs" edge to the TradingPairs entity by ids.
+func (m *ExchangeMutation) AddTradingPairIDs(ids ...int) {
+	if m.trading_pairs == nil {
+		m.trading_pairs = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.trading_pairs[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTradingPairs clears the "trading_pairs" edge to the TradingPairs entity.
+func (m *ExchangeMutation) ClearTradingPairs() {
+	m.clearedtrading_pairs = true
+}
+
+// TradingPairsCleared reports if the "trading_pairs" edge to the TradingPairs entity was cleared.
+func (m *ExchangeMutation) TradingPairsCleared() bool {
+	return m.clearedtrading_pairs
+}
+
+// RemoveTradingPairIDs removes the "trading_pairs" edge to the TradingPairs entity by IDs.
+func (m *ExchangeMutation) RemoveTradingPairIDs(ids ...int) {
+	if m.removedtrading_pairs == nil {
+		m.removedtrading_pairs = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.trading_pairs, ids[i])
+		m.removedtrading_pairs[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTradingPairs returns the removed IDs of the "trading_pairs" edge to the TradingPairs entity.
+func (m *ExchangeMutation) RemovedTradingPairsIDs() (ids []int) {
+	for id := range m.removedtrading_pairs {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TradingPairsIDs returns the "trading_pairs" edge IDs in the mutation.
+func (m *ExchangeMutation) TradingPairsIDs() (ids []int) {
+	for id := range m.trading_pairs {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTradingPairs resets all changes to the "trading_pairs" edge.
+func (m *ExchangeMutation) ResetTradingPairs() {
+	m.trading_pairs = nil
+	m.clearedtrading_pairs = false
+	m.removedtrading_pairs = nil
+}
+
 // Where appends a list predicates to the ExchangeMutation builder.
 func (m *ExchangeMutation) Where(ps ...predicate.Exchange) {
 	m.predicates = append(m.predicates, ps...)
@@ -2228,9 +2287,12 @@ func (m *ExchangeMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ExchangeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.ticker != nil {
 		edges = append(edges, exchange.EdgeTicker)
+	}
+	if m.trading_pairs != nil {
+		edges = append(edges, exchange.EdgeTradingPairs)
 	}
 	return edges
 }
@@ -2245,15 +2307,24 @@ func (m *ExchangeMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case exchange.EdgeTradingPairs:
+		ids := make([]ent.Value, 0, len(m.trading_pairs))
+		for id := range m.trading_pairs {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ExchangeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedticker != nil {
 		edges = append(edges, exchange.EdgeTicker)
+	}
+	if m.removedtrading_pairs != nil {
+		edges = append(edges, exchange.EdgeTradingPairs)
 	}
 	return edges
 }
@@ -2268,15 +2339,24 @@ func (m *ExchangeMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case exchange.EdgeTradingPairs:
+		ids := make([]ent.Value, 0, len(m.removedtrading_pairs))
+		for id := range m.removedtrading_pairs {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ExchangeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedticker {
 		edges = append(edges, exchange.EdgeTicker)
+	}
+	if m.clearedtrading_pairs {
+		edges = append(edges, exchange.EdgeTradingPairs)
 	}
 	return edges
 }
@@ -2287,6 +2367,8 @@ func (m *ExchangeMutation) EdgeCleared(name string) bool {
 	switch name {
 	case exchange.EdgeTicker:
 		return m.clearedticker
+	case exchange.EdgeTradingPairs:
+		return m.clearedtrading_pairs
 	}
 	return false
 }
@@ -2305,6 +2387,9 @@ func (m *ExchangeMutation) ResetEdge(name string) error {
 	switch name {
 	case exchange.EdgeTicker:
 		m.ResetTicker()
+		return nil
+	case exchange.EdgeTradingPairs:
+		m.ResetTradingPairs()
 		return nil
 	}
 	return fmt.Errorf("unknown Exchange edge %s", name)
@@ -3137,7 +3222,9 @@ type TickerMutation struct {
 	typ                          string
 	id                           *int
 	base                         *string
-	target                       *string
+	base_coin_id                 *string
+	counter                      *string
+	counter_coin_id              *string
 	market                       *models.Market
 	last                         *float64
 	addlast                      *float64
@@ -3155,8 +3242,6 @@ type TickerMutation struct {
 	is_stale                     *bool
 	trade_url                    *string
 	token_info_url               *string
-	coin_id                      *string
-	target_coin_id               *string
 	clearedFields                map[string]struct{}
 	exchange                     *int
 	clearedexchange              bool
@@ -3299,40 +3384,138 @@ func (m *TickerMutation) ResetBase() {
 	m.base = nil
 }
 
-// SetTarget sets the "target" field.
-func (m *TickerMutation) SetTarget(s string) {
-	m.target = &s
+// SetBaseCoinID sets the "base_coin_id" field.
+func (m *TickerMutation) SetBaseCoinID(s string) {
+	m.base_coin_id = &s
 }
 
-// Target returns the value of the "target" field in the mutation.
-func (m *TickerMutation) Target() (r string, exists bool) {
-	v := m.target
+// BaseCoinID returns the value of the "base_coin_id" field in the mutation.
+func (m *TickerMutation) BaseCoinID() (r string, exists bool) {
+	v := m.base_coin_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldTarget returns the old "target" field's value of the Ticker entity.
+// OldBaseCoinID returns the old "base_coin_id" field's value of the Ticker entity.
 // If the Ticker object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TickerMutation) OldTarget(ctx context.Context) (v string, err error) {
+func (m *TickerMutation) OldBaseCoinID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTarget is only allowed on UpdateOne operations")
+		return v, errors.New("OldBaseCoinID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTarget requires an ID field in the mutation")
+		return v, errors.New("OldBaseCoinID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTarget: %w", err)
+		return v, fmt.Errorf("querying old value for OldBaseCoinID: %w", err)
 	}
-	return oldValue.Target, nil
+	return oldValue.BaseCoinID, nil
 }
 
-// ResetTarget resets all changes to the "target" field.
-func (m *TickerMutation) ResetTarget() {
-	m.target = nil
+// ClearBaseCoinID clears the value of the "base_coin_id" field.
+func (m *TickerMutation) ClearBaseCoinID() {
+	m.base_coin_id = nil
+	m.clearedFields[ticker.FieldBaseCoinID] = struct{}{}
+}
+
+// BaseCoinIDCleared returns if the "base_coin_id" field was cleared in this mutation.
+func (m *TickerMutation) BaseCoinIDCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldBaseCoinID]
+	return ok
+}
+
+// ResetBaseCoinID resets all changes to the "base_coin_id" field.
+func (m *TickerMutation) ResetBaseCoinID() {
+	m.base_coin_id = nil
+	delete(m.clearedFields, ticker.FieldBaseCoinID)
+}
+
+// SetCounter sets the "counter" field.
+func (m *TickerMutation) SetCounter(s string) {
+	m.counter = &s
+}
+
+// Counter returns the value of the "counter" field in the mutation.
+func (m *TickerMutation) Counter() (r string, exists bool) {
+	v := m.counter
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCounter returns the old "counter" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldCounter(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCounter is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCounter requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCounter: %w", err)
+	}
+	return oldValue.Counter, nil
+}
+
+// ResetCounter resets all changes to the "counter" field.
+func (m *TickerMutation) ResetCounter() {
+	m.counter = nil
+}
+
+// SetCounterCoinID sets the "counter_coin_id" field.
+func (m *TickerMutation) SetCounterCoinID(s string) {
+	m.counter_coin_id = &s
+}
+
+// CounterCoinID returns the value of the "counter_coin_id" field in the mutation.
+func (m *TickerMutation) CounterCoinID() (r string, exists bool) {
+	v := m.counter_coin_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCounterCoinID returns the old "counter_coin_id" field's value of the Ticker entity.
+// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TickerMutation) OldCounterCoinID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCounterCoinID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCounterCoinID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCounterCoinID: %w", err)
+	}
+	return oldValue.CounterCoinID, nil
+}
+
+// ClearCounterCoinID clears the value of the "counter_coin_id" field.
+func (m *TickerMutation) ClearCounterCoinID() {
+	m.counter_coin_id = nil
+	m.clearedFields[ticker.FieldCounterCoinID] = struct{}{}
+}
+
+// CounterCoinIDCleared returns if the "counter_coin_id" field was cleared in this mutation.
+func (m *TickerMutation) CounterCoinIDCleared() bool {
+	_, ok := m.clearedFields[ticker.FieldCounterCoinID]
+	return ok
+}
+
+// ResetCounterCoinID resets all changes to the "counter_coin_id" field.
+func (m *TickerMutation) ResetCounterCoinID() {
+	m.counter_coin_id = nil
+	delete(m.clearedFields, ticker.FieldCounterCoinID)
 }
 
 // SetMarket sets the "market" field.
@@ -4084,104 +4267,6 @@ func (m *TickerMutation) ResetTokenInfoURL() {
 	delete(m.clearedFields, ticker.FieldTokenInfoURL)
 }
 
-// SetCoinID sets the "coin_id" field.
-func (m *TickerMutation) SetCoinID(s string) {
-	m.coin_id = &s
-}
-
-// CoinID returns the value of the "coin_id" field in the mutation.
-func (m *TickerMutation) CoinID() (r string, exists bool) {
-	v := m.coin_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCoinID returns the old "coin_id" field's value of the Ticker entity.
-// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TickerMutation) OldCoinID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCoinID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCoinID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCoinID: %w", err)
-	}
-	return oldValue.CoinID, nil
-}
-
-// ClearCoinID clears the value of the "coin_id" field.
-func (m *TickerMutation) ClearCoinID() {
-	m.coin_id = nil
-	m.clearedFields[ticker.FieldCoinID] = struct{}{}
-}
-
-// CoinIDCleared returns if the "coin_id" field was cleared in this mutation.
-func (m *TickerMutation) CoinIDCleared() bool {
-	_, ok := m.clearedFields[ticker.FieldCoinID]
-	return ok
-}
-
-// ResetCoinID resets all changes to the "coin_id" field.
-func (m *TickerMutation) ResetCoinID() {
-	m.coin_id = nil
-	delete(m.clearedFields, ticker.FieldCoinID)
-}
-
-// SetTargetCoinID sets the "target_coin_id" field.
-func (m *TickerMutation) SetTargetCoinID(s string) {
-	m.target_coin_id = &s
-}
-
-// TargetCoinID returns the value of the "target_coin_id" field in the mutation.
-func (m *TickerMutation) TargetCoinID() (r string, exists bool) {
-	v := m.target_coin_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTargetCoinID returns the old "target_coin_id" field's value of the Ticker entity.
-// If the Ticker object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TickerMutation) OldTargetCoinID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTargetCoinID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTargetCoinID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTargetCoinID: %w", err)
-	}
-	return oldValue.TargetCoinID, nil
-}
-
-// ClearTargetCoinID clears the value of the "target_coin_id" field.
-func (m *TickerMutation) ClearTargetCoinID() {
-	m.target_coin_id = nil
-	m.clearedFields[ticker.FieldTargetCoinID] = struct{}{}
-}
-
-// TargetCoinIDCleared returns if the "target_coin_id" field was cleared in this mutation.
-func (m *TickerMutation) TargetCoinIDCleared() bool {
-	_, ok := m.clearedFields[ticker.FieldTargetCoinID]
-	return ok
-}
-
-// ResetTargetCoinID resets all changes to the "target_coin_id" field.
-func (m *TickerMutation) ResetTargetCoinID() {
-	m.target_coin_id = nil
-	delete(m.clearedFields, ticker.FieldTargetCoinID)
-}
-
 // SetExchangeID sets the "exchange" edge to the Exchange entity by id.
 func (m *TickerMutation) SetExchangeID(id int) {
 	m.exchange = &id
@@ -4244,8 +4329,14 @@ func (m *TickerMutation) Fields() []string {
 	if m.base != nil {
 		fields = append(fields, ticker.FieldBase)
 	}
-	if m.target != nil {
-		fields = append(fields, ticker.FieldTarget)
+	if m.base_coin_id != nil {
+		fields = append(fields, ticker.FieldBaseCoinID)
+	}
+	if m.counter != nil {
+		fields = append(fields, ticker.FieldCounter)
+	}
+	if m.counter_coin_id != nil {
+		fields = append(fields, ticker.FieldCounterCoinID)
 	}
 	if m.market != nil {
 		fields = append(fields, ticker.FieldMarket)
@@ -4289,12 +4380,6 @@ func (m *TickerMutation) Fields() []string {
 	if m.token_info_url != nil {
 		fields = append(fields, ticker.FieldTokenInfoURL)
 	}
-	if m.coin_id != nil {
-		fields = append(fields, ticker.FieldCoinID)
-	}
-	if m.target_coin_id != nil {
-		fields = append(fields, ticker.FieldTargetCoinID)
-	}
 	return fields
 }
 
@@ -4305,8 +4390,12 @@ func (m *TickerMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case ticker.FieldBase:
 		return m.Base()
-	case ticker.FieldTarget:
-		return m.Target()
+	case ticker.FieldBaseCoinID:
+		return m.BaseCoinID()
+	case ticker.FieldCounter:
+		return m.Counter()
+	case ticker.FieldCounterCoinID:
+		return m.CounterCoinID()
 	case ticker.FieldMarket:
 		return m.Market()
 	case ticker.FieldLast:
@@ -4335,10 +4424,6 @@ func (m *TickerMutation) Field(name string) (ent.Value, bool) {
 		return m.TradeURL()
 	case ticker.FieldTokenInfoURL:
 		return m.TokenInfoURL()
-	case ticker.FieldCoinID:
-		return m.CoinID()
-	case ticker.FieldTargetCoinID:
-		return m.TargetCoinID()
 	}
 	return nil, false
 }
@@ -4350,8 +4435,12 @@ func (m *TickerMutation) OldField(ctx context.Context, name string) (ent.Value, 
 	switch name {
 	case ticker.FieldBase:
 		return m.OldBase(ctx)
-	case ticker.FieldTarget:
-		return m.OldTarget(ctx)
+	case ticker.FieldBaseCoinID:
+		return m.OldBaseCoinID(ctx)
+	case ticker.FieldCounter:
+		return m.OldCounter(ctx)
+	case ticker.FieldCounterCoinID:
+		return m.OldCounterCoinID(ctx)
 	case ticker.FieldMarket:
 		return m.OldMarket(ctx)
 	case ticker.FieldLast:
@@ -4380,10 +4469,6 @@ func (m *TickerMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldTradeURL(ctx)
 	case ticker.FieldTokenInfoURL:
 		return m.OldTokenInfoURL(ctx)
-	case ticker.FieldCoinID:
-		return m.OldCoinID(ctx)
-	case ticker.FieldTargetCoinID:
-		return m.OldTargetCoinID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Ticker field %s", name)
 }
@@ -4400,12 +4485,26 @@ func (m *TickerMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBase(v)
 		return nil
-	case ticker.FieldTarget:
+	case ticker.FieldBaseCoinID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetTarget(v)
+		m.SetBaseCoinID(v)
+		return nil
+	case ticker.FieldCounter:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCounter(v)
+		return nil
+	case ticker.FieldCounterCoinID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCounterCoinID(v)
 		return nil
 	case ticker.FieldMarket:
 		v, ok := value.(models.Market)
@@ -4505,20 +4604,6 @@ func (m *TickerMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTokenInfoURL(v)
 		return nil
-	case ticker.FieldCoinID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCoinID(v)
-		return nil
-	case ticker.FieldTargetCoinID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTargetCoinID(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Ticker field %s", name)
 }
@@ -4588,6 +4673,12 @@ func (m *TickerMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *TickerMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(ticker.FieldBaseCoinID) {
+		fields = append(fields, ticker.FieldBaseCoinID)
+	}
+	if m.FieldCleared(ticker.FieldCounterCoinID) {
+		fields = append(fields, ticker.FieldCounterCoinID)
+	}
 	if m.FieldCleared(ticker.FieldMarket) {
 		fields = append(fields, ticker.FieldMarket)
 	}
@@ -4630,12 +4721,6 @@ func (m *TickerMutation) ClearedFields() []string {
 	if m.FieldCleared(ticker.FieldTokenInfoURL) {
 		fields = append(fields, ticker.FieldTokenInfoURL)
 	}
-	if m.FieldCleared(ticker.FieldCoinID) {
-		fields = append(fields, ticker.FieldCoinID)
-	}
-	if m.FieldCleared(ticker.FieldTargetCoinID) {
-		fields = append(fields, ticker.FieldTargetCoinID)
-	}
 	return fields
 }
 
@@ -4650,6 +4735,12 @@ func (m *TickerMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *TickerMutation) ClearField(name string) error {
 	switch name {
+	case ticker.FieldBaseCoinID:
+		m.ClearBaseCoinID()
+		return nil
+	case ticker.FieldCounterCoinID:
+		m.ClearCounterCoinID()
+		return nil
 	case ticker.FieldMarket:
 		m.ClearMarket()
 		return nil
@@ -4692,12 +4783,6 @@ func (m *TickerMutation) ClearField(name string) error {
 	case ticker.FieldTokenInfoURL:
 		m.ClearTokenInfoURL()
 		return nil
-	case ticker.FieldCoinID:
-		m.ClearCoinID()
-		return nil
-	case ticker.FieldTargetCoinID:
-		m.ClearTargetCoinID()
-		return nil
 	}
 	return fmt.Errorf("unknown Ticker nullable field %s", name)
 }
@@ -4709,8 +4794,14 @@ func (m *TickerMutation) ResetField(name string) error {
 	case ticker.FieldBase:
 		m.ResetBase()
 		return nil
-	case ticker.FieldTarget:
-		m.ResetTarget()
+	case ticker.FieldBaseCoinID:
+		m.ResetBaseCoinID()
+		return nil
+	case ticker.FieldCounter:
+		m.ResetCounter()
+		return nil
+	case ticker.FieldCounterCoinID:
+		m.ResetCounterCoinID()
 		return nil
 	case ticker.FieldMarket:
 		m.ResetMarket()
@@ -4753,12 +4844,6 @@ func (m *TickerMutation) ResetField(name string) error {
 		return nil
 	case ticker.FieldTokenInfoURL:
 		m.ResetTokenInfoURL()
-		return nil
-	case ticker.FieldCoinID:
-		m.ResetCoinID()
-		return nil
-	case ticker.FieldTargetCoinID:
-		m.ResetTargetCoinID()
 		return nil
 	}
 	return fmt.Errorf("unknown Ticker field %s", name)
@@ -4836,4 +4921,667 @@ func (m *TickerMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Ticker edge %s", name)
+}
+
+// TradingPairsMutation represents an operation that mutates the TradingPairs nodes in the graph.
+type TradingPairsMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int
+	symbol               *string
+	base                 *string
+	base_precision       *int
+	addbase_precision    *int
+	counter              *string
+	counter_precision    *int
+	addcounter_precision *int
+	clearedFields        map[string]struct{}
+	exchange             *int
+	clearedexchange      bool
+	done                 bool
+	oldValue             func(context.Context) (*TradingPairs, error)
+	predicates           []predicate.TradingPairs
+}
+
+var _ ent.Mutation = (*TradingPairsMutation)(nil)
+
+// tradingpairsOption allows management of the mutation configuration using functional options.
+type tradingpairsOption func(*TradingPairsMutation)
+
+// newTradingPairsMutation creates new mutation for the TradingPairs entity.
+func newTradingPairsMutation(c config, op Op, opts ...tradingpairsOption) *TradingPairsMutation {
+	m := &TradingPairsMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTradingPairs,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTradingPairsID sets the ID field of the mutation.
+func withTradingPairsID(id int) tradingpairsOption {
+	return func(m *TradingPairsMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *TradingPairs
+		)
+		m.oldValue = func(ctx context.Context) (*TradingPairs, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().TradingPairs.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTradingPairs sets the old TradingPairs of the mutation.
+func withTradingPairs(node *TradingPairs) tradingpairsOption {
+	return func(m *TradingPairsMutation) {
+		m.oldValue = func(context.Context) (*TradingPairs, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TradingPairsMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TradingPairsMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("repositories: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *TradingPairsMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *TradingPairsMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().TradingPairs.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetSymbol sets the "symbol" field.
+func (m *TradingPairsMutation) SetSymbol(s string) {
+	m.symbol = &s
+}
+
+// Symbol returns the value of the "symbol" field in the mutation.
+func (m *TradingPairsMutation) Symbol() (r string, exists bool) {
+	v := m.symbol
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbol returns the old "symbol" field's value of the TradingPairs entity.
+// If the TradingPairs object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TradingPairsMutation) OldSymbol(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbol is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbol requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbol: %w", err)
+	}
+	return oldValue.Symbol, nil
+}
+
+// ResetSymbol resets all changes to the "symbol" field.
+func (m *TradingPairsMutation) ResetSymbol() {
+	m.symbol = nil
+}
+
+// SetBase sets the "base" field.
+func (m *TradingPairsMutation) SetBase(s string) {
+	m.base = &s
+}
+
+// Base returns the value of the "base" field in the mutation.
+func (m *TradingPairsMutation) Base() (r string, exists bool) {
+	v := m.base
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBase returns the old "base" field's value of the TradingPairs entity.
+// If the TradingPairs object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TradingPairsMutation) OldBase(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBase is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBase requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBase: %w", err)
+	}
+	return oldValue.Base, nil
+}
+
+// ResetBase resets all changes to the "base" field.
+func (m *TradingPairsMutation) ResetBase() {
+	m.base = nil
+}
+
+// SetBasePrecision sets the "base_precision" field.
+func (m *TradingPairsMutation) SetBasePrecision(i int) {
+	m.base_precision = &i
+	m.addbase_precision = nil
+}
+
+// BasePrecision returns the value of the "base_precision" field in the mutation.
+func (m *TradingPairsMutation) BasePrecision() (r int, exists bool) {
+	v := m.base_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBasePrecision returns the old "base_precision" field's value of the TradingPairs entity.
+// If the TradingPairs object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TradingPairsMutation) OldBasePrecision(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBasePrecision is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBasePrecision requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBasePrecision: %w", err)
+	}
+	return oldValue.BasePrecision, nil
+}
+
+// AddBasePrecision adds i to the "base_precision" field.
+func (m *TradingPairsMutation) AddBasePrecision(i int) {
+	if m.addbase_precision != nil {
+		*m.addbase_precision += i
+	} else {
+		m.addbase_precision = &i
+	}
+}
+
+// AddedBasePrecision returns the value that was added to the "base_precision" field in this mutation.
+func (m *TradingPairsMutation) AddedBasePrecision() (r int, exists bool) {
+	v := m.addbase_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBasePrecision resets all changes to the "base_precision" field.
+func (m *TradingPairsMutation) ResetBasePrecision() {
+	m.base_precision = nil
+	m.addbase_precision = nil
+}
+
+// SetCounter sets the "counter" field.
+func (m *TradingPairsMutation) SetCounter(s string) {
+	m.counter = &s
+}
+
+// Counter returns the value of the "counter" field in the mutation.
+func (m *TradingPairsMutation) Counter() (r string, exists bool) {
+	v := m.counter
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCounter returns the old "counter" field's value of the TradingPairs entity.
+// If the TradingPairs object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TradingPairsMutation) OldCounter(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCounter is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCounter requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCounter: %w", err)
+	}
+	return oldValue.Counter, nil
+}
+
+// ResetCounter resets all changes to the "counter" field.
+func (m *TradingPairsMutation) ResetCounter() {
+	m.counter = nil
+}
+
+// SetCounterPrecision sets the "counter_precision" field.
+func (m *TradingPairsMutation) SetCounterPrecision(i int) {
+	m.counter_precision = &i
+	m.addcounter_precision = nil
+}
+
+// CounterPrecision returns the value of the "counter_precision" field in the mutation.
+func (m *TradingPairsMutation) CounterPrecision() (r int, exists bool) {
+	v := m.counter_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCounterPrecision returns the old "counter_precision" field's value of the TradingPairs entity.
+// If the TradingPairs object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TradingPairsMutation) OldCounterPrecision(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCounterPrecision is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCounterPrecision requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCounterPrecision: %w", err)
+	}
+	return oldValue.CounterPrecision, nil
+}
+
+// AddCounterPrecision adds i to the "counter_precision" field.
+func (m *TradingPairsMutation) AddCounterPrecision(i int) {
+	if m.addcounter_precision != nil {
+		*m.addcounter_precision += i
+	} else {
+		m.addcounter_precision = &i
+	}
+}
+
+// AddedCounterPrecision returns the value that was added to the "counter_precision" field in this mutation.
+func (m *TradingPairsMutation) AddedCounterPrecision() (r int, exists bool) {
+	v := m.addcounter_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCounterPrecision resets all changes to the "counter_precision" field.
+func (m *TradingPairsMutation) ResetCounterPrecision() {
+	m.counter_precision = nil
+	m.addcounter_precision = nil
+}
+
+// SetExchangeID sets the "exchange" edge to the Exchange entity by id.
+func (m *TradingPairsMutation) SetExchangeID(id int) {
+	m.exchange = &id
+}
+
+// ClearExchange clears the "exchange" edge to the Exchange entity.
+func (m *TradingPairsMutation) ClearExchange() {
+	m.clearedexchange = true
+}
+
+// ExchangeCleared reports if the "exchange" edge to the Exchange entity was cleared.
+func (m *TradingPairsMutation) ExchangeCleared() bool {
+	return m.clearedexchange
+}
+
+// ExchangeID returns the "exchange" edge ID in the mutation.
+func (m *TradingPairsMutation) ExchangeID() (id int, exists bool) {
+	if m.exchange != nil {
+		return *m.exchange, true
+	}
+	return
+}
+
+// ExchangeIDs returns the "exchange" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ExchangeID instead. It exists only for internal usage by the builders.
+func (m *TradingPairsMutation) ExchangeIDs() (ids []int) {
+	if id := m.exchange; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetExchange resets all changes to the "exchange" edge.
+func (m *TradingPairsMutation) ResetExchange() {
+	m.exchange = nil
+	m.clearedexchange = false
+}
+
+// Where appends a list predicates to the TradingPairsMutation builder.
+func (m *TradingPairsMutation) Where(ps ...predicate.TradingPairs) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *TradingPairsMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (TradingPairs).
+func (m *TradingPairsMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TradingPairsMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.symbol != nil {
+		fields = append(fields, tradingpairs.FieldSymbol)
+	}
+	if m.base != nil {
+		fields = append(fields, tradingpairs.FieldBase)
+	}
+	if m.base_precision != nil {
+		fields = append(fields, tradingpairs.FieldBasePrecision)
+	}
+	if m.counter != nil {
+		fields = append(fields, tradingpairs.FieldCounter)
+	}
+	if m.counter_precision != nil {
+		fields = append(fields, tradingpairs.FieldCounterPrecision)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TradingPairsMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case tradingpairs.FieldSymbol:
+		return m.Symbol()
+	case tradingpairs.FieldBase:
+		return m.Base()
+	case tradingpairs.FieldBasePrecision:
+		return m.BasePrecision()
+	case tradingpairs.FieldCounter:
+		return m.Counter()
+	case tradingpairs.FieldCounterPrecision:
+		return m.CounterPrecision()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TradingPairsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case tradingpairs.FieldSymbol:
+		return m.OldSymbol(ctx)
+	case tradingpairs.FieldBase:
+		return m.OldBase(ctx)
+	case tradingpairs.FieldBasePrecision:
+		return m.OldBasePrecision(ctx)
+	case tradingpairs.FieldCounter:
+		return m.OldCounter(ctx)
+	case tradingpairs.FieldCounterPrecision:
+		return m.OldCounterPrecision(ctx)
+	}
+	return nil, fmt.Errorf("unknown TradingPairs field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TradingPairsMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case tradingpairs.FieldSymbol:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbol(v)
+		return nil
+	case tradingpairs.FieldBase:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBase(v)
+		return nil
+	case tradingpairs.FieldBasePrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBasePrecision(v)
+		return nil
+	case tradingpairs.FieldCounter:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCounter(v)
+		return nil
+	case tradingpairs.FieldCounterPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCounterPrecision(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TradingPairs field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TradingPairsMutation) AddedFields() []string {
+	var fields []string
+	if m.addbase_precision != nil {
+		fields = append(fields, tradingpairs.FieldBasePrecision)
+	}
+	if m.addcounter_precision != nil {
+		fields = append(fields, tradingpairs.FieldCounterPrecision)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TradingPairsMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case tradingpairs.FieldBasePrecision:
+		return m.AddedBasePrecision()
+	case tradingpairs.FieldCounterPrecision:
+		return m.AddedCounterPrecision()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TradingPairsMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case tradingpairs.FieldBasePrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBasePrecision(v)
+		return nil
+	case tradingpairs.FieldCounterPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCounterPrecision(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TradingPairs numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TradingPairsMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TradingPairsMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TradingPairsMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown TradingPairs nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TradingPairsMutation) ResetField(name string) error {
+	switch name {
+	case tradingpairs.FieldSymbol:
+		m.ResetSymbol()
+		return nil
+	case tradingpairs.FieldBase:
+		m.ResetBase()
+		return nil
+	case tradingpairs.FieldBasePrecision:
+		m.ResetBasePrecision()
+		return nil
+	case tradingpairs.FieldCounter:
+		m.ResetCounter()
+		return nil
+	case tradingpairs.FieldCounterPrecision:
+		m.ResetCounterPrecision()
+		return nil
+	}
+	return fmt.Errorf("unknown TradingPairs field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TradingPairsMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.exchange != nil {
+		edges = append(edges, tradingpairs.EdgeExchange)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TradingPairsMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case tradingpairs.EdgeExchange:
+		if id := m.exchange; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TradingPairsMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TradingPairsMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TradingPairsMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedexchange {
+		edges = append(edges, tradingpairs.EdgeExchange)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TradingPairsMutation) EdgeCleared(name string) bool {
+	switch name {
+	case tradingpairs.EdgeExchange:
+		return m.clearedexchange
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TradingPairsMutation) ClearEdge(name string) error {
+	switch name {
+	case tradingpairs.EdgeExchange:
+		m.ClearExchange()
+		return nil
+	}
+	return fmt.Errorf("unknown TradingPairs unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TradingPairsMutation) ResetEdge(name string) error {
+	switch name {
+	case tradingpairs.EdgeExchange:
+		m.ResetExchange()
+		return nil
+	}
+	return fmt.Errorf("unknown TradingPairs edge %s", name)
 }

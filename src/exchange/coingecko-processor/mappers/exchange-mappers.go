@@ -94,8 +94,10 @@ func FromCoingeckoExchangeDetailsToExchange(
 func fromCoingeckoTickerToTicker(ticker coingeckov3.Ticker) models.Ticker {
 	return models.Ticker{
 		Base:                   ticker.Base,
+		BaseCoinId:             ticker.CoinId,
+		Counter:                ticker.Target,
+		CounterCoinId:          ticker.TargetCoinId,
 		BidAskSpreadPercentage: ticker.BidAskSpreadPercentage,
-		CoinId:                 ticker.CoinId,
 		ConvertedLast: models.ConvertedDetails{
 			Btc: *ticker.ConvertedLast.Btc,
 			Eth: *ticker.ConvertedLast.Eth,
@@ -116,8 +118,6 @@ func fromCoingeckoTickerToTicker(ticker coingeckov3.Ticker) models.Ticker {
 			Identifier:          *ticker.Market.Identifier,
 			Name:                *ticker.Market.Name,
 		},
-		Target:       ticker.Target,
-		TargetCoinId: ticker.TargetCoinId,
 		Timestamp:    ticker.Timestamp,
 		TokenInfoUrl: ticker.TokenInfoUrl,
 		TradeUrl:     ticker.TradeUrl,

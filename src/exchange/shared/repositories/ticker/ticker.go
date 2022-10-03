@@ -9,8 +9,12 @@ const (
 	FieldID = "id"
 	// FieldBase holds the string denoting the base field in the database.
 	FieldBase = "base"
-	// FieldTarget holds the string denoting the target field in the database.
-	FieldTarget = "target"
+	// FieldBaseCoinID holds the string denoting the base_coin_id field in the database.
+	FieldBaseCoinID = "base_coin_id"
+	// FieldCounter holds the string denoting the counter field in the database.
+	FieldCounter = "counter"
+	// FieldCounterCoinID holds the string denoting the counter_coin_id field in the database.
+	FieldCounterCoinID = "counter_coin_id"
 	// FieldMarket holds the string denoting the market field in the database.
 	FieldMarket = "market"
 	// FieldLast holds the string denoting the last field in the database.
@@ -39,10 +43,6 @@ const (
 	FieldTradeURL = "trade_url"
 	// FieldTokenInfoURL holds the string denoting the token_info_url field in the database.
 	FieldTokenInfoURL = "token_info_url"
-	// FieldCoinID holds the string denoting the coin_id field in the database.
-	FieldCoinID = "coin_id"
-	// FieldTargetCoinID holds the string denoting the target_coin_id field in the database.
-	FieldTargetCoinID = "target_coin_id"
 	// EdgeExchange holds the string denoting the exchange edge name in mutations.
 	EdgeExchange = "exchange"
 	// Table holds the table name of the ticker in the database.
@@ -60,7 +60,9 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldBase,
-	FieldTarget,
+	FieldBaseCoinID,
+	FieldCounter,
+	FieldCounterCoinID,
 	FieldMarket,
 	FieldLast,
 	FieldVolume,
@@ -75,8 +77,6 @@ var Columns = []string{
 	FieldIsStale,
 	FieldTradeURL,
 	FieldTokenInfoURL,
-	FieldCoinID,
-	FieldTargetCoinID,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "tickers"

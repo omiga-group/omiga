@@ -182,7 +182,9 @@ var (
 	TickersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "base", Type: field.TypeString},
-		{Name: "target", Type: field.TypeString},
+		{Name: "base_coin_id", Type: field.TypeString, Nullable: true},
+		{Name: "counter", Type: field.TypeString},
+		{Name: "counter_coin_id", Type: field.TypeString, Nullable: true},
 		{Name: "market", Type: field.TypeJSON, Nullable: true},
 		{Name: "last", Type: field.TypeFloat64, Nullable: true},
 		{Name: "volume", Type: field.TypeFloat64, Nullable: true},
@@ -197,8 +199,6 @@ var (
 		{Name: "is_stale", Type: field.TypeBool, Nullable: true},
 		{Name: "trade_url", Type: field.TypeString, Nullable: true},
 		{Name: "token_info_url", Type: field.TypeString, Nullable: true},
-		{Name: "coin_id", Type: field.TypeString, Nullable: true},
-		{Name: "target_coin_id", Type: field.TypeString, Nullable: true},
 		{Name: "exchange_ticker", Type: field.TypeInt},
 	}
 	// TickersTable holds the schema information for the "tickers" table.
@@ -221,74 +221,125 @@ var (
 				Columns: []*schema.Column{TickersColumns[1]},
 			},
 			{
-				Name:    "ticker_target",
+				Name:    "ticker_base_coin_id",
 				Unique:  false,
 				Columns: []*schema.Column{TickersColumns[2]},
 			},
 			{
-				Name:    "ticker_last",
+				Name:    "ticker_counter",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[3]},
+			},
+			{
+				Name:    "ticker_counter_coin_id",
 				Unique:  false,
 				Columns: []*schema.Column{TickersColumns[4]},
 			},
 			{
+				Name:    "ticker_last",
+				Unique:  false,
+				Columns: []*schema.Column{TickersColumns[6]},
+			},
+			{
 				Name:    "ticker_volume",
 				Unique:  false,
-				Columns: []*schema.Column{TickersColumns[5]},
+				Columns: []*schema.Column{TickersColumns[7]},
 			},
 			{
 				Name:    "ticker_trust_score",
 				Unique:  false,
-				Columns: []*schema.Column{TickersColumns[8]},
+				Columns: []*schema.Column{TickersColumns[10]},
 			},
 			{
 				Name:    "ticker_bid_ask_spread_percentage",
 				Unique:  false,
-				Columns: []*schema.Column{TickersColumns[9]},
+				Columns: []*schema.Column{TickersColumns[11]},
 			},
 			{
 				Name:    "ticker_timestamp",
 				Unique:  false,
-				Columns: []*schema.Column{TickersColumns[10]},
+				Columns: []*schema.Column{TickersColumns[12]},
 			},
 			{
 				Name:    "ticker_last_traded_at",
 				Unique:  false,
-				Columns: []*schema.Column{TickersColumns[11]},
+				Columns: []*schema.Column{TickersColumns[13]},
 			},
 			{
 				Name:    "ticker_last_fetch_at",
 				Unique:  false,
-				Columns: []*schema.Column{TickersColumns[12]},
+				Columns: []*schema.Column{TickersColumns[14]},
 			},
 			{
 				Name:    "ticker_is_anomaly",
 				Unique:  false,
-				Columns: []*schema.Column{TickersColumns[13]},
+				Columns: []*schema.Column{TickersColumns[15]},
 			},
 			{
 				Name:    "ticker_is_stale",
 				Unique:  false,
-				Columns: []*schema.Column{TickersColumns[14]},
+				Columns: []*schema.Column{TickersColumns[16]},
 			},
 			{
 				Name:    "ticker_trade_url",
 				Unique:  false,
-				Columns: []*schema.Column{TickersColumns[15]},
+				Columns: []*schema.Column{TickersColumns[17]},
 			},
 			{
 				Name:    "ticker_token_info_url",
 				Unique:  false,
-				Columns: []*schema.Column{TickersColumns[16]},
-			},
-			{
-				Name:    "ticker_coin_id",
-				Unique:  false,
-				Columns: []*schema.Column{TickersColumns[17]},
-			},
-			{
-				Name:    "ticker_target_coin_id",
-				Unique:  false,
 				Columns: []*schema.Column{TickersColumns[18]},
+			},
+		},
+	}
+	// TradingPairsColumns holds the columns for the "trading_pairs" table.
+	TradingPairsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "symbol", Type: field.TypeString},
+		{Name: "base", Type: field.TypeString},
+		{Name: "base_precision", Type: field.TypeInt},
+		{Name: "counter", Type: field.TypeString},
+		{Name: "counter_precision", Type: field.TypeInt},
+		{Name: "exchange_trading_pairs", Type: field.TypeInt},
+	}
+	// TradingPairsTable holds the schema information for the "trading_pairs" table.
+	TradingPairsTable = &schema.Table{
+		Name:       "trading_pairs",
+		Columns:    TradingPairsColumns,
+		PrimaryKey: []*schema.Column{TradingPairsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "trading_pairs_exchanges_trading_pairs",
+				Columns:    []*schema.Column{TradingPairsColumns[6]},
+				RefColumns: []*schema.Column{ExchangesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "tradingpairs_symbol",
+				Unique:  false,
+				Columns: []*schema.Column{TradingPairsColumns[1]},
+			},
+			{
+				Name:    "tradingpairs_base",
+				Unique:  false,
+				Columns: []*schema.Column{TradingPairsColumns[2]},
+			},
+			{
+				Name:    "tradingpairs_base_precision",
+				Unique:  false,
+				Columns: []*schema.Column{TradingPairsColumns[3]},
+			},
+			{
+				Name:    "tradingpairs_counter",
+				Unique:  false,
+				Columns: []*schema.Column{TradingPairsColumns[4]},
+			},
+			{
+				Name:    "tradingpairs_counter_precision",
+				Unique:  false,
+				Columns: []*schema.Column{TradingPairsColumns[5]},
 			},
 		},
 	}
@@ -298,9 +349,11 @@ var (
 		ExchangesTable,
 		OutboxesTable,
 		TickersTable,
+		TradingPairsTable,
 	}
 )
 
 func init() {
 	TickersTable.ForeignKeys[0].RefTable = ExchangesTable
+	TradingPairsTable.ForeignKeys[0].RefTable = ExchangesTable
 }

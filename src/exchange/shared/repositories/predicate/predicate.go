@@ -17,3 +17,6 @@ type Outbox func(*sql.Selector)
 
 // Ticker is the predicate function for ticker builders.
 type Ticker func(*sql.Selector)
+
+// TradingPairs is the predicate function for tradingpairs builders.
+type TradingPairs func(*sql.Selector)

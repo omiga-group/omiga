@@ -105,6 +105,18 @@ func (e *ExchangeQuery) collectField(ctx context.Context, op *graphql.OperationC
 			e.WithNamedTicker(alias, func(wq *TickerQuery) {
 				*wq = *query
 			})
+		case "tradingPairs", "trading_pairs":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &TradingPairsQuery{config: e.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			e.WithNamedTradingPairs(alias, func(wq *TradingPairsQuery) {
+				*wq = *query
+			})
 		}
 	}
 	return nil
@@ -285,6 +297,88 @@ func newTickerPaginateArgs(rv map[string]interface{}) *tickerPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*TickerWhereInput); ok {
 		args.opts = append(args.opts, WithTickerFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (tp *TradingPairsQuery) CollectFields(ctx context.Context, satisfies ...string) (*TradingPairsQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return tp, nil
+	}
+	if err := tp.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return tp, nil
+}
+
+func (tp *TradingPairsQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+		switch field.Name {
+		case "exchange":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &ExchangeQuery{config: tp.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			tp.withExchange = query
+		}
+	}
+	return nil
+}
+
+type tradingpairsPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []TradingPairsPaginateOption
+}
+
+func newTradingPairsPaginateArgs(rv map[string]interface{}) *tradingpairsPaginateArgs {
+	args := &tradingpairsPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]interface{}:
+			var (
+				err1, err2 error
+				order      = &TradingPairsOrder{Field: &TradingPairsOrderField{}}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithTradingPairsOrder(order))
+			}
+		case *TradingPairsOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithTradingPairsOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*TradingPairsWhereInput); ok {
+		args.opts = append(args.opts, WithTradingPairsFilter(v.Filter))
 	}
 	return args
 }
