@@ -61,15 +61,15 @@ func (f TickerFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.V
 	return f(ctx, mv)
 }
 
-// The TradingPairsFunc type is an adapter to allow the use of ordinary
-// function as TradingPairs mutator.
-type TradingPairsFunc func(context.Context, *entities.TradingPairsMutation) (entities.Value, error)
+// The TradingPairFunc type is an adapter to allow the use of ordinary
+// function as TradingPair mutator.
+type TradingPairFunc func(context.Context, *entities.TradingPairMutation) (entities.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f TradingPairsFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
-	mv, ok := m.(*entities.TradingPairsMutation)
+func (f TradingPairFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
+	mv, ok := m.(*entities.TradingPairMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.TradingPairsMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.TradingPairMutation", m)
 	}
 	return f(ctx, mv)
 }

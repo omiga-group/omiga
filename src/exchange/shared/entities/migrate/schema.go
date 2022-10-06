@@ -317,27 +317,27 @@ var (
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "tradingpairs_symbol",
+				Name:    "tradingpair_symbol",
 				Unique:  false,
 				Columns: []*schema.Column{TradingPairsColumns[1]},
 			},
 			{
-				Name:    "tradingpairs_base",
+				Name:    "tradingpair_base",
 				Unique:  false,
 				Columns: []*schema.Column{TradingPairsColumns[2]},
 			},
 			{
-				Name:    "tradingpairs_base_precision",
+				Name:    "tradingpair_base_precision",
 				Unique:  false,
 				Columns: []*schema.Column{TradingPairsColumns[3]},
 			},
 			{
-				Name:    "tradingpairs_counter",
+				Name:    "tradingpair_counter",
 				Unique:  false,
 				Columns: []*schema.Column{TradingPairsColumns[4]},
 			},
 			{
-				Name:    "tradingpairs_counter_precision",
+				Name:    "tradingpair_counter_precision",
 				Unique:  false,
 				Columns: []*schema.Column{TradingPairsColumns[5]},
 			},

@@ -6,9 +6,9 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 )
 
-func FromBinanceSymbolsToTradingPairs(symbols []binance.Symbol) []models.TradingPairs {
-	return slices.Map(symbols, func(symbol binance.Symbol) models.TradingPairs {
-		return models.TradingPairs{
+func FromBinanceSymbolsToTradingPairs(symbols []binance.Symbol) []models.TradingPair {
+	return slices.Map(symbols, func(symbol binance.Symbol) models.TradingPair {
+		return models.TradingPair{
 			Symbol:           symbol.Symbol,
 			Base:             symbol.BaseAsset,
 			BasePrecision:    symbol.BaseAssetPrecision,

@@ -115,11 +115,11 @@ func NewBinanceTradingPairsSubscriber(ctx context.Context, logger *zap.SugaredLo
 	if err != nil {
 		return nil, err
 	}
-	tradingPairsRepository, err := repositories.NewTradingPairsRepository(logger, entgoClient)
+	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}
-	binanceTradingPairsSubscriber, err := subscribers.NewBinanceTradingPairsSubscriber(ctx, logger, binanceConfig, exchangeConfig, cronService, tradingPairsRepository)
+	binanceTradingPairsSubscriber, err := subscribers.NewBinanceTradingPairsSubscriber(ctx, logger, binanceConfig, exchangeConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

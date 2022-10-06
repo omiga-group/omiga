@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpairs"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
 // ExchangeCreate is the builder for creating a Exchange entity.
@@ -274,14 +274,14 @@ func (ec *ExchangeCreate) AddTicker(t ...*Ticker) *ExchangeCreate {
 	return ec.AddTickerIDs(ids...)
 }
 
-// AddTradingPairIDs adds the "trading_pairs" edge to the TradingPairs entity by IDs.
+// AddTradingPairIDs adds the "trading_pairs" edge to the TradingPair entity by IDs.
 func (ec *ExchangeCreate) AddTradingPairIDs(ids ...int) *ExchangeCreate {
 	ec.mutation.AddTradingPairIDs(ids...)
 	return ec
 }
 
-// AddTradingPairs adds the "trading_pairs" edges to the TradingPairs entity.
-func (ec *ExchangeCreate) AddTradingPairs(t ...*TradingPairs) *ExchangeCreate {
+// AddTradingPairs adds the "trading_pairs" edges to the TradingPair entity.
+func (ec *ExchangeCreate) AddTradingPairs(t ...*TradingPair) *ExchangeCreate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -571,11 +571,11 @@ func (ec *ExchangeCreate) createSpec() (*Exchange, *sqlgraph.CreateSpec) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: tradingpairs.FieldID,
+					Column: tradingpair.FieldID,
 				},
 			},
 		}
-		edge.Schema = ec.schemaConfig.TradingPairs
+		edge.Schema = ec.schemaConfig.TradingPair
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

@@ -14,7 +14,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpairs"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -34,8 +34,8 @@ type Client struct {
 	Outbox *OutboxClient
 	// Ticker is the client for interacting with the Ticker builders.
 	Ticker *TickerClient
-	// TradingPairs is the client for interacting with the TradingPairs builders.
-	TradingPairs *TradingPairsClient
+	// TradingPair is the client for interacting with the TradingPair builders.
+	TradingPair *TradingPairClient
 	// additional fields for node api
 	tables tables
 }
@@ -55,7 +55,7 @@ func (c *Client) init() {
 	c.Exchange = NewExchangeClient(c.config)
 	c.Outbox = NewOutboxClient(c.config)
 	c.Ticker = NewTickerClient(c.config)
-	c.TradingPairs = NewTradingPairsClient(c.config)
+	c.TradingPair = NewTradingPairClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -87,13 +87,13 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:          ctx,
-		config:       cfg,
-		Coin:         NewCoinClient(cfg),
-		Exchange:     NewExchangeClient(cfg),
-		Outbox:       NewOutboxClient(cfg),
-		Ticker:       NewTickerClient(cfg),
-		TradingPairs: NewTradingPairsClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Coin:        NewCoinClient(cfg),
+		Exchange:    NewExchangeClient(cfg),
+		Outbox:      NewOutboxClient(cfg),
+		Ticker:      NewTickerClient(cfg),
+		TradingPair: NewTradingPairClient(cfg),
 	}, nil
 }
 
@@ -111,13 +111,13 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:          ctx,
-		config:       cfg,
-		Coin:         NewCoinClient(cfg),
-		Exchange:     NewExchangeClient(cfg),
-		Outbox:       NewOutboxClient(cfg),
-		Ticker:       NewTickerClient(cfg),
-		TradingPairs: NewTradingPairsClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Coin:        NewCoinClient(cfg),
+		Exchange:    NewExchangeClient(cfg),
+		Outbox:      NewOutboxClient(cfg),
+		Ticker:      NewTickerClient(cfg),
+		TradingPair: NewTradingPairClient(cfg),
 	}, nil
 }
 
@@ -150,7 +150,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Exchange.Use(hooks...)
 	c.Outbox.Use(hooks...)
 	c.Ticker.Use(hooks...)
-	c.TradingPairs.Use(hooks...)
+	c.TradingPair.Use(hooks...)
 }
 
 // CoinClient is a client for the Coin schema.
@@ -348,18 +348,18 @@ func (c *ExchangeClient) QueryTicker(e *Exchange) *TickerQuery {
 }
 
 // QueryTradingPairs queries the trading_pairs edge of a Exchange.
-func (c *ExchangeClient) QueryTradingPairs(e *Exchange) *TradingPairsQuery {
-	query := &TradingPairsQuery{config: c.config}
+func (c *ExchangeClient) QueryTradingPairs(e *Exchange) *TradingPairQuery {
+	query := &TradingPairQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := e.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(exchange.Table, exchange.FieldID, id),
-			sqlgraph.To(tradingpairs.Table, tradingpairs.FieldID),
+			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, exchange.TradingPairsTable, exchange.TradingPairsColumn),
 		)
 		schemaConfig := e.schemaConfig
-		step.To.Schema = schemaConfig.TradingPairs
-		step.Edge.Schema = schemaConfig.TradingPairs
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -570,84 +570,84 @@ func (c *TickerClient) Hooks() []Hook {
 	return c.hooks.Ticker
 }
 
-// TradingPairsClient is a client for the TradingPairs schema.
-type TradingPairsClient struct {
+// TradingPairClient is a client for the TradingPair schema.
+type TradingPairClient struct {
 	config
 }
 
-// NewTradingPairsClient returns a client for the TradingPairs from the given config.
-func NewTradingPairsClient(c config) *TradingPairsClient {
-	return &TradingPairsClient{config: c}
+// NewTradingPairClient returns a client for the TradingPair from the given config.
+func NewTradingPairClient(c config) *TradingPairClient {
+	return &TradingPairClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `tradingpairs.Hooks(f(g(h())))`.
-func (c *TradingPairsClient) Use(hooks ...Hook) {
-	c.hooks.TradingPairs = append(c.hooks.TradingPairs, hooks...)
+// A call to `Use(f, g, h)` equals to `tradingpair.Hooks(f(g(h())))`.
+func (c *TradingPairClient) Use(hooks ...Hook) {
+	c.hooks.TradingPair = append(c.hooks.TradingPair, hooks...)
 }
 
-// Create returns a builder for creating a TradingPairs entity.
-func (c *TradingPairsClient) Create() *TradingPairsCreate {
-	mutation := newTradingPairsMutation(c.config, OpCreate)
-	return &TradingPairsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a TradingPair entity.
+func (c *TradingPairClient) Create() *TradingPairCreate {
+	mutation := newTradingPairMutation(c.config, OpCreate)
+	return &TradingPairCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of TradingPairs entities.
-func (c *TradingPairsClient) CreateBulk(builders ...*TradingPairsCreate) *TradingPairsCreateBulk {
-	return &TradingPairsCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of TradingPair entities.
+func (c *TradingPairClient) CreateBulk(builders ...*TradingPairCreate) *TradingPairCreateBulk {
+	return &TradingPairCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for TradingPairs.
-func (c *TradingPairsClient) Update() *TradingPairsUpdate {
-	mutation := newTradingPairsMutation(c.config, OpUpdate)
-	return &TradingPairsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for TradingPair.
+func (c *TradingPairClient) Update() *TradingPairUpdate {
+	mutation := newTradingPairMutation(c.config, OpUpdate)
+	return &TradingPairUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *TradingPairsClient) UpdateOne(tp *TradingPairs) *TradingPairsUpdateOne {
-	mutation := newTradingPairsMutation(c.config, OpUpdateOne, withTradingPairs(tp))
-	return &TradingPairsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *TradingPairClient) UpdateOne(tp *TradingPair) *TradingPairUpdateOne {
+	mutation := newTradingPairMutation(c.config, OpUpdateOne, withTradingPair(tp))
+	return &TradingPairUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TradingPairsClient) UpdateOneID(id int) *TradingPairsUpdateOne {
-	mutation := newTradingPairsMutation(c.config, OpUpdateOne, withTradingPairsID(id))
-	return &TradingPairsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *TradingPairClient) UpdateOneID(id int) *TradingPairUpdateOne {
+	mutation := newTradingPairMutation(c.config, OpUpdateOne, withTradingPairID(id))
+	return &TradingPairUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for TradingPairs.
-func (c *TradingPairsClient) Delete() *TradingPairsDelete {
-	mutation := newTradingPairsMutation(c.config, OpDelete)
-	return &TradingPairsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for TradingPair.
+func (c *TradingPairClient) Delete() *TradingPairDelete {
+	mutation := newTradingPairMutation(c.config, OpDelete)
+	return &TradingPairDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *TradingPairsClient) DeleteOne(tp *TradingPairs) *TradingPairsDeleteOne {
+func (c *TradingPairClient) DeleteOne(tp *TradingPair) *TradingPairDeleteOne {
 	return c.DeleteOneID(tp.ID)
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *TradingPairsClient) DeleteOneID(id int) *TradingPairsDeleteOne {
-	builder := c.Delete().Where(tradingpairs.ID(id))
+func (c *TradingPairClient) DeleteOneID(id int) *TradingPairDeleteOne {
+	builder := c.Delete().Where(tradingpair.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &TradingPairsDeleteOne{builder}
+	return &TradingPairDeleteOne{builder}
 }
 
-// Query returns a query builder for TradingPairs.
-func (c *TradingPairsClient) Query() *TradingPairsQuery {
-	return &TradingPairsQuery{
+// Query returns a query builder for TradingPair.
+func (c *TradingPairClient) Query() *TradingPairQuery {
+	return &TradingPairQuery{
 		config: c.config,
 	}
 }
 
-// Get returns a TradingPairs entity by its id.
-func (c *TradingPairsClient) Get(ctx context.Context, id int) (*TradingPairs, error) {
-	return c.Query().Where(tradingpairs.ID(id)).Only(ctx)
+// Get returns a TradingPair entity by its id.
+func (c *TradingPairClient) Get(ctx context.Context, id int) (*TradingPair, error) {
+	return c.Query().Where(tradingpair.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TradingPairsClient) GetX(ctx context.Context, id int) *TradingPairs {
+func (c *TradingPairClient) GetX(ctx context.Context, id int) *TradingPair {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -655,19 +655,19 @@ func (c *TradingPairsClient) GetX(ctx context.Context, id int) *TradingPairs {
 	return obj
 }
 
-// QueryExchange queries the exchange edge of a TradingPairs.
-func (c *TradingPairsClient) QueryExchange(tp *TradingPairs) *ExchangeQuery {
+// QueryExchange queries the exchange edge of a TradingPair.
+func (c *TradingPairClient) QueryExchange(tp *TradingPair) *ExchangeQuery {
 	query := &ExchangeQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := tp.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(tradingpairs.Table, tradingpairs.FieldID, id),
+			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, id),
 			sqlgraph.To(exchange.Table, exchange.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, tradingpairs.ExchangeTable, tradingpairs.ExchangeColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, tradingpair.ExchangeTable, tradingpair.ExchangeColumn),
 		)
 		schemaConfig := tp.schemaConfig
 		step.To.Schema = schemaConfig.Exchange
-		step.Edge.Schema = schemaConfig.TradingPairs
+		step.Edge.Schema = schemaConfig.TradingPair
 		fromV = sqlgraph.Neighbors(tp.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -675,6 +675,6 @@ func (c *TradingPairsClient) QueryExchange(tp *TradingPairs) *ExchangeQuery {
 }
 
 // Hooks returns the client hooks.
-func (c *TradingPairsClient) Hooks() []Hook {
-	return c.hooks.TradingPairs
+func (c *TradingPairClient) Hooks() []Hook {
+	return c.hooks.TradingPair
 }

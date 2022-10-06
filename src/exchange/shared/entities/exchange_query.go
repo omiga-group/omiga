@@ -16,7 +16,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpairs"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
 // ExchangeQuery is the builder for querying Exchange entities.
@@ -29,11 +29,11 @@ type ExchangeQuery struct {
 	fields                []string
 	predicates            []predicate.Exchange
 	withTicker            *TickerQuery
-	withTradingPairs      *TradingPairsQuery
+	withTradingPairs      *TradingPairQuery
 	loadTotal             []func(context.Context, []*Exchange) error
 	modifiers             []func(*sql.Selector)
 	withNamedTicker       map[string]*TickerQuery
-	withNamedTradingPairs map[string]*TradingPairsQuery
+	withNamedTradingPairs map[string]*TradingPairQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -96,8 +96,8 @@ func (eq *ExchangeQuery) QueryTicker() *TickerQuery {
 }
 
 // QueryTradingPairs chains the current query on the "trading_pairs" edge.
-func (eq *ExchangeQuery) QueryTradingPairs() *TradingPairsQuery {
-	query := &TradingPairsQuery{config: eq.config}
+func (eq *ExchangeQuery) QueryTradingPairs() *TradingPairQuery {
+	query := &TradingPairQuery{config: eq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := eq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -108,12 +108,12 @@ func (eq *ExchangeQuery) QueryTradingPairs() *TradingPairsQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(exchange.Table, exchange.FieldID, selector),
-			sqlgraph.To(tradingpairs.Table, tradingpairs.FieldID),
+			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, exchange.TradingPairsTable, exchange.TradingPairsColumn),
 		)
 		schemaConfig := eq.schemaConfig
-		step.To.Schema = schemaConfig.TradingPairs
-		step.Edge.Schema = schemaConfig.TradingPairs
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -323,8 +323,8 @@ func (eq *ExchangeQuery) WithTicker(opts ...func(*TickerQuery)) *ExchangeQuery {
 
 // WithTradingPairs tells the query-builder to eager-load the nodes that are connected to
 // the "trading_pairs" edge. The optional arguments are used to configure the query builder of the edge.
-func (eq *ExchangeQuery) WithTradingPairs(opts ...func(*TradingPairsQuery)) *ExchangeQuery {
-	query := &TradingPairsQuery{config: eq.config}
+func (eq *ExchangeQuery) WithTradingPairs(opts ...func(*TradingPairQuery)) *ExchangeQuery {
+	query := &TradingPairQuery{config: eq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -437,8 +437,8 @@ func (eq *ExchangeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Exc
 	}
 	if query := eq.withTradingPairs; query != nil {
 		if err := eq.loadTradingPairs(ctx, query, nodes,
-			func(n *Exchange) { n.Edges.TradingPairs = []*TradingPairs{} },
-			func(n *Exchange, e *TradingPairs) { n.Edges.TradingPairs = append(n.Edges.TradingPairs, e) }); err != nil {
+			func(n *Exchange) { n.Edges.TradingPairs = []*TradingPair{} },
+			func(n *Exchange, e *TradingPair) { n.Edges.TradingPairs = append(n.Edges.TradingPairs, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -452,7 +452,7 @@ func (eq *ExchangeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Exc
 	for name, query := range eq.withNamedTradingPairs {
 		if err := eq.loadTradingPairs(ctx, query, nodes,
 			func(n *Exchange) { n.appendNamedTradingPairs(name) },
-			func(n *Exchange, e *TradingPairs) { n.appendNamedTradingPairs(name, e) }); err != nil {
+			func(n *Exchange, e *TradingPair) { n.appendNamedTradingPairs(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -495,7 +495,7 @@ func (eq *ExchangeQuery) loadTicker(ctx context.Context, query *TickerQuery, nod
 	}
 	return nil
 }
-func (eq *ExchangeQuery) loadTradingPairs(ctx context.Context, query *TradingPairsQuery, nodes []*Exchange, init func(*Exchange), assign func(*Exchange, *TradingPairs)) error {
+func (eq *ExchangeQuery) loadTradingPairs(ctx context.Context, query *TradingPairQuery, nodes []*Exchange, init func(*Exchange), assign func(*Exchange, *TradingPair)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int]*Exchange)
 	for i := range nodes {
@@ -506,7 +506,7 @@ func (eq *ExchangeQuery) loadTradingPairs(ctx context.Context, query *TradingPai
 		}
 	}
 	query.withFKs = true
-	query.Where(predicate.TradingPairs(func(s *sql.Selector) {
+	query.Where(predicate.TradingPair(func(s *sql.Selector) {
 		s.Where(sql.InValues(exchange.TradingPairsColumn, fks...))
 	}))
 	neighbors, err := query.All(ctx)
@@ -683,13 +683,13 @@ func (eq *ExchangeQuery) WithNamedTicker(name string, opts ...func(*TickerQuery)
 
 // WithNamedTradingPairs tells the query-builder to eager-load the nodes that are connected to the "trading_pairs"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (eq *ExchangeQuery) WithNamedTradingPairs(name string, opts ...func(*TradingPairsQuery)) *ExchangeQuery {
-	query := &TradingPairsQuery{config: eq.config}
+func (eq *ExchangeQuery) WithNamedTradingPairs(name string, opts ...func(*TradingPairQuery)) *ExchangeQuery {
+	query := &TradingPairQuery{config: eq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
 	if eq.withNamedTradingPairs == nil {
-		eq.withNamedTradingPairs = make(map[string]*TradingPairsQuery)
+		eq.withNamedTradingPairs = make(map[string]*TradingPairQuery)
 	}
 	eq.withNamedTradingPairs[name] = query
 	return eq

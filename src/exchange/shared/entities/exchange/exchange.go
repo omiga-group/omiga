@@ -58,8 +58,8 @@ const (
 	TickerColumn = "exchange_ticker"
 	// TradingPairsTable is the table that holds the trading_pairs relation/edge.
 	TradingPairsTable = "trading_pairs"
-	// TradingPairsInverseTable is the table name for the TradingPairs entity.
-	// It exists in this package in order to avoid circular dependency with the "tradingpairs" package.
+	// TradingPairsInverseTable is the table name for the TradingPair entity.
+	// It exists in this package in order to avoid circular dependency with the "tradingpair" package.
 	TradingPairsInverseTable = "trading_pairs"
 	// TradingPairsColumn is the table column denoting the trading_pairs relation/edge.
 	TradingPairsColumn = "exchange_trading_pairs"

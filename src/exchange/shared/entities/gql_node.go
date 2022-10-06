@@ -19,7 +19,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpairs"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 	"golang.org/x/sync/semaphore"
 )
 
@@ -240,11 +240,11 @@ func (e *Exchange) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-		Type: "TradingPairs",
+		Type: "TradingPair",
 		Name: "trading_pairs",
 	}
 	err = e.QueryTradingPairs().
-		Select(tradingpairs.FieldID).
+		Select(tradingpair.FieldID).
 		Scan(ctx, &node.Edges[1].IDs)
 	if err != nil {
 		return nil, err
@@ -500,10 +500,10 @@ func (t *Ticker) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (tp *TradingPairs) Node(ctx context.Context) (node *Node, err error) {
+func (tp *TradingPair) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     tp.ID,
-		Type:   "TradingPairs",
+		Type:   "TradingPair",
 		Fields: make([]*Field, 5),
 		Edges:  make([]*Edge, 1),
 	}
@@ -675,10 +675,10 @@ func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error)
 			return nil, err
 		}
 		return n, nil
-	case tradingpairs.Table:
-		query := c.TradingPairs.Query().
-			Where(tradingpairs.ID(id))
-		query, err := query.CollectFields(ctx, "TradingPairs")
+	case tradingpair.Table:
+		query := c.TradingPair.Query().
+			Where(tradingpair.ID(id))
+		query, err := query.CollectFields(ctx, "TradingPair")
 		if err != nil {
 			return nil, err
 		}
@@ -824,10 +824,10 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 				*noder = node
 			}
 		}
-	case tradingpairs.Table:
-		query := c.TradingPairs.Query().
-			Where(tradingpairs.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "TradingPairs")
+	case tradingpair.Table:
+		query := c.TradingPair.Query().
+			Where(tradingpair.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "TradingPair")
 		if err != nil {
 			return nil, err
 		}

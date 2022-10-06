@@ -246,28 +246,28 @@ func (f TickerMutationRuleFunc) EvalMutation(ctx context.Context, m entities.Mut
 	return Denyf("entities/privacy: unexpected mutation type %T, expect *entities.TickerMutation", m)
 }
 
-// The TradingPairsQueryRuleFunc type is an adapter to allow the use of ordinary
+// The TradingPairQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type TradingPairsQueryRuleFunc func(context.Context, *entities.TradingPairsQuery) error
+type TradingPairQueryRuleFunc func(context.Context, *entities.TradingPairQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f TradingPairsQueryRuleFunc) EvalQuery(ctx context.Context, q entities.Query) error {
-	if q, ok := q.(*entities.TradingPairsQuery); ok {
+func (f TradingPairQueryRuleFunc) EvalQuery(ctx context.Context, q entities.Query) error {
+	if q, ok := q.(*entities.TradingPairQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("entities/privacy: unexpected query type %T, expect *entities.TradingPairsQuery", q)
+	return Denyf("entities/privacy: unexpected query type %T, expect *entities.TradingPairQuery", q)
 }
 
-// The TradingPairsMutationRuleFunc type is an adapter to allow the use of ordinary
+// The TradingPairMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type TradingPairsMutationRuleFunc func(context.Context, *entities.TradingPairsMutation) error
+type TradingPairMutationRuleFunc func(context.Context, *entities.TradingPairMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f TradingPairsMutationRuleFunc) EvalMutation(ctx context.Context, m entities.Mutation) error {
-	if m, ok := m.(*entities.TradingPairsMutation); ok {
+func (f TradingPairMutationRuleFunc) EvalMutation(ctx context.Context, m entities.Mutation) error {
+	if m, ok := m.(*entities.TradingPairMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("entities/privacy: unexpected mutation type %T, expect *entities.TradingPairsMutation", m)
+	return Denyf("entities/privacy: unexpected mutation type %T, expect *entities.TradingPairMutation", m)
 }
 
 type (
@@ -313,7 +313,7 @@ func queryFilter(q entities.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *entities.TickerQuery:
 		return q.Filter(), nil
-	case *entities.TradingPairsQuery:
+	case *entities.TradingPairQuery:
 		return q.Filter(), nil
 	default:
 		return nil, Denyf("entities/privacy: unexpected query type %T for query filter", q)
@@ -330,7 +330,7 @@ func mutationFilter(m entities.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *entities.TickerMutation:
 		return m.Filter(), nil
-	case *entities.TradingPairsMutation:
+	case *entities.TradingPairMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("entities/privacy: unexpected mutation type %T for mutation filter", m)

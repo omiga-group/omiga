@@ -31,11 +31,11 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
-	Coin         []ent.Hook
-	Exchange     []ent.Hook
-	Outbox       []ent.Hook
-	Ticker       []ent.Hook
-	TradingPairs []ent.Hook
+	Coin        []ent.Hook
+	Exchange    []ent.Hook
+	Outbox      []ent.Hook
+	Ticker      []ent.Hook
+	TradingPair []ent.Hook
 }
 
 // Options applies the options on the config object.

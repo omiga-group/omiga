@@ -11,24 +11,24 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpairs"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
-// TradingPairsDelete is the builder for deleting a TradingPairs entity.
-type TradingPairsDelete struct {
+// TradingPairDelete is the builder for deleting a TradingPair entity.
+type TradingPairDelete struct {
 	config
 	hooks    []Hook
-	mutation *TradingPairsMutation
+	mutation *TradingPairMutation
 }
 
-// Where appends a list predicates to the TradingPairsDelete builder.
-func (tpd *TradingPairsDelete) Where(ps ...predicate.TradingPairs) *TradingPairsDelete {
+// Where appends a list predicates to the TradingPairDelete builder.
+func (tpd *TradingPairDelete) Where(ps ...predicate.TradingPair) *TradingPairDelete {
 	tpd.mutation.Where(ps...)
 	return tpd
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (tpd *TradingPairsDelete) Exec(ctx context.Context) (int, error) {
+func (tpd *TradingPairDelete) Exec(ctx context.Context) (int, error) {
 	var (
 		err      error
 		affected int
@@ -37,7 +37,7 @@ func (tpd *TradingPairsDelete) Exec(ctx context.Context) (int, error) {
 		affected, err = tpd.sqlExec(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*TradingPairsMutation)
+			mutation, ok := m.(*TradingPairMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -60,7 +60,7 @@ func (tpd *TradingPairsDelete) Exec(ctx context.Context) (int, error) {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tpd *TradingPairsDelete) ExecX(ctx context.Context) int {
+func (tpd *TradingPairDelete) ExecX(ctx context.Context) int {
 	n, err := tpd.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -68,17 +68,17 @@ func (tpd *TradingPairsDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (tpd *TradingPairsDelete) sqlExec(ctx context.Context) (int, error) {
+func (tpd *TradingPairDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := &sqlgraph.DeleteSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table: tradingpairs.Table,
+			Table: tradingpair.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: tradingpairs.FieldID,
+				Column: tradingpair.FieldID,
 			},
 		},
 	}
-	_spec.Node.Schema = tpd.schemaConfig.TradingPairs
+	_spec.Node.Schema = tpd.schemaConfig.TradingPair
 	ctx = internal.NewSchemaConfigContext(ctx, tpd.schemaConfig)
 	if ps := tpd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -94,25 +94,25 @@ func (tpd *TradingPairsDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// TradingPairsDeleteOne is the builder for deleting a single TradingPairs entity.
-type TradingPairsDeleteOne struct {
-	tpd *TradingPairsDelete
+// TradingPairDeleteOne is the builder for deleting a single TradingPair entity.
+type TradingPairDeleteOne struct {
+	tpd *TradingPairDelete
 }
 
 // Exec executes the deletion query.
-func (tpdo *TradingPairsDeleteOne) Exec(ctx context.Context) error {
+func (tpdo *TradingPairDeleteOne) Exec(ctx context.Context) error {
 	n, err := tpdo.tpd.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{tradingpairs.Label}
+		return &NotFoundError{tradingpair.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tpdo *TradingPairsDeleteOne) ExecX(ctx context.Context) {
+func (tpdo *TradingPairDeleteOne) ExecX(ctx context.Context) {
 	tpdo.tpd.ExecX(ctx)
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpairs"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -35,11 +35,11 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		coin.Table:         coin.ValidColumn,
-		exchange.Table:     exchange.ValidColumn,
-		outbox.Table:       outbox.ValidColumn,
-		ticker.Table:       ticker.ValidColumn,
-		tradingpairs.Table: tradingpairs.ValidColumn,
+		coin.Table:        coin.ValidColumn,
+		exchange.Table:    exchange.ValidColumn,
+		outbox.Table:      outbox.ValidColumn,
+		ticker.Table:      ticker.ValidColumn,
+		tradingpair.Table: tradingpair.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

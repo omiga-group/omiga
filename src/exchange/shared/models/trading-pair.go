@@ -1,6 +1,6 @@
 package models
 
-type TradingPairs struct {
+type TradingPair struct {
 	Symbol           string
 	Base             string
 	BasePrecision    int

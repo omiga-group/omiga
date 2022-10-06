@@ -11,68 +11,68 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpairs"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
-// TradingPairsCreate is the builder for creating a TradingPairs entity.
-type TradingPairsCreate struct {
+// TradingPairCreate is the builder for creating a TradingPair entity.
+type TradingPairCreate struct {
 	config
-	mutation *TradingPairsMutation
+	mutation *TradingPairMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
 }
 
 // SetSymbol sets the "symbol" field.
-func (tpc *TradingPairsCreate) SetSymbol(s string) *TradingPairsCreate {
+func (tpc *TradingPairCreate) SetSymbol(s string) *TradingPairCreate {
 	tpc.mutation.SetSymbol(s)
 	return tpc
 }
 
 // SetBase sets the "base" field.
-func (tpc *TradingPairsCreate) SetBase(s string) *TradingPairsCreate {
+func (tpc *TradingPairCreate) SetBase(s string) *TradingPairCreate {
 	tpc.mutation.SetBase(s)
 	return tpc
 }
 
 // SetBasePrecision sets the "base_precision" field.
-func (tpc *TradingPairsCreate) SetBasePrecision(i int) *TradingPairsCreate {
+func (tpc *TradingPairCreate) SetBasePrecision(i int) *TradingPairCreate {
 	tpc.mutation.SetBasePrecision(i)
 	return tpc
 }
 
 // SetCounter sets the "counter" field.
-func (tpc *TradingPairsCreate) SetCounter(s string) *TradingPairsCreate {
+func (tpc *TradingPairCreate) SetCounter(s string) *TradingPairCreate {
 	tpc.mutation.SetCounter(s)
 	return tpc
 }
 
 // SetCounterPrecision sets the "counter_precision" field.
-func (tpc *TradingPairsCreate) SetCounterPrecision(i int) *TradingPairsCreate {
+func (tpc *TradingPairCreate) SetCounterPrecision(i int) *TradingPairCreate {
 	tpc.mutation.SetCounterPrecision(i)
 	return tpc
 }
 
 // SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
-func (tpc *TradingPairsCreate) SetExchangeID(id int) *TradingPairsCreate {
+func (tpc *TradingPairCreate) SetExchangeID(id int) *TradingPairCreate {
 	tpc.mutation.SetExchangeID(id)
 	return tpc
 }
 
 // SetExchange sets the "exchange" edge to the Exchange entity.
-func (tpc *TradingPairsCreate) SetExchange(e *Exchange) *TradingPairsCreate {
+func (tpc *TradingPairCreate) SetExchange(e *Exchange) *TradingPairCreate {
 	return tpc.SetExchangeID(e.ID)
 }
 
-// Mutation returns the TradingPairsMutation object of the builder.
-func (tpc *TradingPairsCreate) Mutation() *TradingPairsMutation {
+// Mutation returns the TradingPairMutation object of the builder.
+func (tpc *TradingPairCreate) Mutation() *TradingPairMutation {
 	return tpc.mutation
 }
 
-// Save creates the TradingPairs in the database.
-func (tpc *TradingPairsCreate) Save(ctx context.Context) (*TradingPairs, error) {
+// Save creates the TradingPair in the database.
+func (tpc *TradingPairCreate) Save(ctx context.Context) (*TradingPair, error) {
 	var (
 		err  error
-		node *TradingPairs
+		node *TradingPair
 	)
 	if len(tpc.hooks) == 0 {
 		if err = tpc.check(); err != nil {
@@ -81,7 +81,7 @@ func (tpc *TradingPairsCreate) Save(ctx context.Context) (*TradingPairs, error) 
 		node, err = tpc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*TradingPairsMutation)
+			mutation, ok := m.(*TradingPairMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -106,9 +106,9 @@ func (tpc *TradingPairsCreate) Save(ctx context.Context) (*TradingPairs, error) 
 		if err != nil {
 			return nil, err
 		}
-		nv, ok := v.(*TradingPairs)
+		nv, ok := v.(*TradingPair)
 		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from TradingPairsMutation", v)
+			return nil, fmt.Errorf("unexpected node type %T returned from TradingPairMutation", v)
 		}
 		node = nv
 	}
@@ -116,7 +116,7 @@ func (tpc *TradingPairsCreate) Save(ctx context.Context) (*TradingPairs, error) 
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (tpc *TradingPairsCreate) SaveX(ctx context.Context) *TradingPairs {
+func (tpc *TradingPairCreate) SaveX(ctx context.Context) *TradingPair {
 	v, err := tpc.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -125,42 +125,42 @@ func (tpc *TradingPairsCreate) SaveX(ctx context.Context) *TradingPairs {
 }
 
 // Exec executes the query.
-func (tpc *TradingPairsCreate) Exec(ctx context.Context) error {
+func (tpc *TradingPairCreate) Exec(ctx context.Context) error {
 	_, err := tpc.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tpc *TradingPairsCreate) ExecX(ctx context.Context) {
+func (tpc *TradingPairCreate) ExecX(ctx context.Context) {
 	if err := tpc.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tpc *TradingPairsCreate) check() error {
+func (tpc *TradingPairCreate) check() error {
 	if _, ok := tpc.mutation.Symbol(); !ok {
-		return &ValidationError{Name: "symbol", err: errors.New(`entities: missing required field "TradingPairs.symbol"`)}
+		return &ValidationError{Name: "symbol", err: errors.New(`entities: missing required field "TradingPair.symbol"`)}
 	}
 	if _, ok := tpc.mutation.Base(); !ok {
-		return &ValidationError{Name: "base", err: errors.New(`entities: missing required field "TradingPairs.base"`)}
+		return &ValidationError{Name: "base", err: errors.New(`entities: missing required field "TradingPair.base"`)}
 	}
 	if _, ok := tpc.mutation.BasePrecision(); !ok {
-		return &ValidationError{Name: "base_precision", err: errors.New(`entities: missing required field "TradingPairs.base_precision"`)}
+		return &ValidationError{Name: "base_precision", err: errors.New(`entities: missing required field "TradingPair.base_precision"`)}
 	}
 	if _, ok := tpc.mutation.Counter(); !ok {
-		return &ValidationError{Name: "counter", err: errors.New(`entities: missing required field "TradingPairs.counter"`)}
+		return &ValidationError{Name: "counter", err: errors.New(`entities: missing required field "TradingPair.counter"`)}
 	}
 	if _, ok := tpc.mutation.CounterPrecision(); !ok {
-		return &ValidationError{Name: "counter_precision", err: errors.New(`entities: missing required field "TradingPairs.counter_precision"`)}
+		return &ValidationError{Name: "counter_precision", err: errors.New(`entities: missing required field "TradingPair.counter_precision"`)}
 	}
 	if _, ok := tpc.mutation.ExchangeID(); !ok {
-		return &ValidationError{Name: "exchange", err: errors.New(`entities: missing required edge "TradingPairs.exchange"`)}
+		return &ValidationError{Name: "exchange", err: errors.New(`entities: missing required edge "TradingPair.exchange"`)}
 	}
 	return nil
 }
 
-func (tpc *TradingPairsCreate) sqlSave(ctx context.Context) (*TradingPairs, error) {
+func (tpc *TradingPairCreate) sqlSave(ctx context.Context) (*TradingPair, error) {
 	_node, _spec := tpc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, tpc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -173,24 +173,24 @@ func (tpc *TradingPairsCreate) sqlSave(ctx context.Context) (*TradingPairs, erro
 	return _node, nil
 }
 
-func (tpc *TradingPairsCreate) createSpec() (*TradingPairs, *sqlgraph.CreateSpec) {
+func (tpc *TradingPairCreate) createSpec() (*TradingPair, *sqlgraph.CreateSpec) {
 	var (
-		_node = &TradingPairs{config: tpc.config}
+		_node = &TradingPair{config: tpc.config}
 		_spec = &sqlgraph.CreateSpec{
-			Table: tradingpairs.Table,
+			Table: tradingpair.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: tradingpairs.FieldID,
+				Column: tradingpair.FieldID,
 			},
 		}
 	)
-	_spec.Schema = tpc.schemaConfig.TradingPairs
+	_spec.Schema = tpc.schemaConfig.TradingPair
 	_spec.OnConflict = tpc.conflict
 	if value, ok := tpc.mutation.Symbol(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: tradingpairs.FieldSymbol,
+			Column: tradingpair.FieldSymbol,
 		})
 		_node.Symbol = value
 	}
@@ -198,7 +198,7 @@ func (tpc *TradingPairsCreate) createSpec() (*TradingPairs, *sqlgraph.CreateSpec
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: tradingpairs.FieldBase,
+			Column: tradingpair.FieldBase,
 		})
 		_node.Base = value
 	}
@@ -206,7 +206,7 @@ func (tpc *TradingPairsCreate) createSpec() (*TradingPairs, *sqlgraph.CreateSpec
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpairs.FieldBasePrecision,
+			Column: tradingpair.FieldBasePrecision,
 		})
 		_node.BasePrecision = value
 	}
@@ -214,7 +214,7 @@ func (tpc *TradingPairsCreate) createSpec() (*TradingPairs, *sqlgraph.CreateSpec
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: tradingpairs.FieldCounter,
+			Column: tradingpair.FieldCounter,
 		})
 		_node.Counter = value
 	}
@@ -222,7 +222,7 @@ func (tpc *TradingPairsCreate) createSpec() (*TradingPairs, *sqlgraph.CreateSpec
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpairs.FieldCounterPrecision,
+			Column: tradingpair.FieldCounterPrecision,
 		})
 		_node.CounterPrecision = value
 	}
@@ -230,8 +230,8 @@ func (tpc *TradingPairsCreate) createSpec() (*TradingPairs, *sqlgraph.CreateSpec
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tradingpairs.ExchangeTable,
-			Columns: []string{tradingpairs.ExchangeColumn},
+			Table:   tradingpair.ExchangeTable,
+			Columns: []string{tradingpair.ExchangeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -240,7 +240,7 @@ func (tpc *TradingPairsCreate) createSpec() (*TradingPairs, *sqlgraph.CreateSpec
 				},
 			},
 		}
-		edge.Schema = tpc.schemaConfig.TradingPairs
+		edge.Schema = tpc.schemaConfig.TradingPair
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -253,7 +253,7 @@ func (tpc *TradingPairsCreate) createSpec() (*TradingPairs, *sqlgraph.CreateSpec
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.TradingPairs.Create().
+//	client.TradingPair.Create().
 //		SetSymbol(v).
 //		OnConflict(
 //			// Update the row with the new values
@@ -262,13 +262,13 @@ func (tpc *TradingPairsCreate) createSpec() (*TradingPairs, *sqlgraph.CreateSpec
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		Update(func(u *ent.TradingPairsUpsert) {
+//		Update(func(u *ent.TradingPairUpsert) {
 //			SetSymbol(v+v).
 //		}).
 //		Exec(ctx)
-func (tpc *TradingPairsCreate) OnConflict(opts ...sql.ConflictOption) *TradingPairsUpsertOne {
+func (tpc *TradingPairCreate) OnConflict(opts ...sql.ConflictOption) *TradingPairUpsertOne {
 	tpc.conflict = opts
-	return &TradingPairsUpsertOne{
+	return &TradingPairUpsertOne{
 		create: tpc,
 	}
 }
@@ -276,110 +276,110 @@ func (tpc *TradingPairsCreate) OnConflict(opts ...sql.ConflictOption) *TradingPa
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.TradingPairs.Create().
+//	client.TradingPair.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (tpc *TradingPairsCreate) OnConflictColumns(columns ...string) *TradingPairsUpsertOne {
+func (tpc *TradingPairCreate) OnConflictColumns(columns ...string) *TradingPairUpsertOne {
 	tpc.conflict = append(tpc.conflict, sql.ConflictColumns(columns...))
-	return &TradingPairsUpsertOne{
+	return &TradingPairUpsertOne{
 		create: tpc,
 	}
 }
 
 type (
-	// TradingPairsUpsertOne is the builder for "upsert"-ing
-	//  one TradingPairs node.
-	TradingPairsUpsertOne struct {
-		create *TradingPairsCreate
+	// TradingPairUpsertOne is the builder for "upsert"-ing
+	//  one TradingPair node.
+	TradingPairUpsertOne struct {
+		create *TradingPairCreate
 	}
 
-	// TradingPairsUpsert is the "OnConflict" setter.
-	TradingPairsUpsert struct {
+	// TradingPairUpsert is the "OnConflict" setter.
+	TradingPairUpsert struct {
 		*sql.UpdateSet
 	}
 )
 
 // SetSymbol sets the "symbol" field.
-func (u *TradingPairsUpsert) SetSymbol(v string) *TradingPairsUpsert {
-	u.Set(tradingpairs.FieldSymbol, v)
+func (u *TradingPairUpsert) SetSymbol(v string) *TradingPairUpsert {
+	u.Set(tradingpair.FieldSymbol, v)
 	return u
 }
 
 // UpdateSymbol sets the "symbol" field to the value that was provided on create.
-func (u *TradingPairsUpsert) UpdateSymbol() *TradingPairsUpsert {
-	u.SetExcluded(tradingpairs.FieldSymbol)
+func (u *TradingPairUpsert) UpdateSymbol() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldSymbol)
 	return u
 }
 
 // SetBase sets the "base" field.
-func (u *TradingPairsUpsert) SetBase(v string) *TradingPairsUpsert {
-	u.Set(tradingpairs.FieldBase, v)
+func (u *TradingPairUpsert) SetBase(v string) *TradingPairUpsert {
+	u.Set(tradingpair.FieldBase, v)
 	return u
 }
 
 // UpdateBase sets the "base" field to the value that was provided on create.
-func (u *TradingPairsUpsert) UpdateBase() *TradingPairsUpsert {
-	u.SetExcluded(tradingpairs.FieldBase)
+func (u *TradingPairUpsert) UpdateBase() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldBase)
 	return u
 }
 
 // SetBasePrecision sets the "base_precision" field.
-func (u *TradingPairsUpsert) SetBasePrecision(v int) *TradingPairsUpsert {
-	u.Set(tradingpairs.FieldBasePrecision, v)
+func (u *TradingPairUpsert) SetBasePrecision(v int) *TradingPairUpsert {
+	u.Set(tradingpair.FieldBasePrecision, v)
 	return u
 }
 
 // UpdateBasePrecision sets the "base_precision" field to the value that was provided on create.
-func (u *TradingPairsUpsert) UpdateBasePrecision() *TradingPairsUpsert {
-	u.SetExcluded(tradingpairs.FieldBasePrecision)
+func (u *TradingPairUpsert) UpdateBasePrecision() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldBasePrecision)
 	return u
 }
 
 // AddBasePrecision adds v to the "base_precision" field.
-func (u *TradingPairsUpsert) AddBasePrecision(v int) *TradingPairsUpsert {
-	u.Add(tradingpairs.FieldBasePrecision, v)
+func (u *TradingPairUpsert) AddBasePrecision(v int) *TradingPairUpsert {
+	u.Add(tradingpair.FieldBasePrecision, v)
 	return u
 }
 
 // SetCounter sets the "counter" field.
-func (u *TradingPairsUpsert) SetCounter(v string) *TradingPairsUpsert {
-	u.Set(tradingpairs.FieldCounter, v)
+func (u *TradingPairUpsert) SetCounter(v string) *TradingPairUpsert {
+	u.Set(tradingpair.FieldCounter, v)
 	return u
 }
 
 // UpdateCounter sets the "counter" field to the value that was provided on create.
-func (u *TradingPairsUpsert) UpdateCounter() *TradingPairsUpsert {
-	u.SetExcluded(tradingpairs.FieldCounter)
+func (u *TradingPairUpsert) UpdateCounter() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldCounter)
 	return u
 }
 
 // SetCounterPrecision sets the "counter_precision" field.
-func (u *TradingPairsUpsert) SetCounterPrecision(v int) *TradingPairsUpsert {
-	u.Set(tradingpairs.FieldCounterPrecision, v)
+func (u *TradingPairUpsert) SetCounterPrecision(v int) *TradingPairUpsert {
+	u.Set(tradingpair.FieldCounterPrecision, v)
 	return u
 }
 
 // UpdateCounterPrecision sets the "counter_precision" field to the value that was provided on create.
-func (u *TradingPairsUpsert) UpdateCounterPrecision() *TradingPairsUpsert {
-	u.SetExcluded(tradingpairs.FieldCounterPrecision)
+func (u *TradingPairUpsert) UpdateCounterPrecision() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldCounterPrecision)
 	return u
 }
 
 // AddCounterPrecision adds v to the "counter_precision" field.
-func (u *TradingPairsUpsert) AddCounterPrecision(v int) *TradingPairsUpsert {
-	u.Add(tradingpairs.FieldCounterPrecision, v)
+func (u *TradingPairUpsert) AddCounterPrecision(v int) *TradingPairUpsert {
+	u.Add(tradingpair.FieldCounterPrecision, v)
 	return u
 }
 
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
-//	client.TradingPairs.Create().
+//	client.TradingPair.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
-func (u *TradingPairsUpsertOne) UpdateNewValues() *TradingPairsUpsertOne {
+func (u *TradingPairUpsertOne) UpdateNewValues() *TradingPairUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
 }
@@ -387,131 +387,131 @@ func (u *TradingPairsUpsertOne) UpdateNewValues() *TradingPairsUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.TradingPairs.Create().
+//	client.TradingPair.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
-func (u *TradingPairsUpsertOne) Ignore() *TradingPairsUpsertOne {
+func (u *TradingPairUpsertOne) Ignore() *TradingPairUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
 }
 
 // DoNothing configures the conflict_action to `DO NOTHING`.
 // Supported only by SQLite and PostgreSQL.
-func (u *TradingPairsUpsertOne) DoNothing() *TradingPairsUpsertOne {
+func (u *TradingPairUpsertOne) DoNothing() *TradingPairUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.DoNothing())
 	return u
 }
 
-// Update allows overriding fields `UPDATE` values. See the TradingPairsCreate.OnConflict
+// Update allows overriding fields `UPDATE` values. See the TradingPairCreate.OnConflict
 // documentation for more info.
-func (u *TradingPairsUpsertOne) Update(set func(*TradingPairsUpsert)) *TradingPairsUpsertOne {
+func (u *TradingPairUpsertOne) Update(set func(*TradingPairUpsert)) *TradingPairUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
-		set(&TradingPairsUpsert{UpdateSet: update})
+		set(&TradingPairUpsert{UpdateSet: update})
 	}))
 	return u
 }
 
 // SetSymbol sets the "symbol" field.
-func (u *TradingPairsUpsertOne) SetSymbol(v string) *TradingPairsUpsertOne {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertOne) SetSymbol(v string) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.SetSymbol(v)
 	})
 }
 
 // UpdateSymbol sets the "symbol" field to the value that was provided on create.
-func (u *TradingPairsUpsertOne) UpdateSymbol() *TradingPairsUpsertOne {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertOne) UpdateSymbol() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateSymbol()
 	})
 }
 
 // SetBase sets the "base" field.
-func (u *TradingPairsUpsertOne) SetBase(v string) *TradingPairsUpsertOne {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertOne) SetBase(v string) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.SetBase(v)
 	})
 }
 
 // UpdateBase sets the "base" field to the value that was provided on create.
-func (u *TradingPairsUpsertOne) UpdateBase() *TradingPairsUpsertOne {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertOne) UpdateBase() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateBase()
 	})
 }
 
 // SetBasePrecision sets the "base_precision" field.
-func (u *TradingPairsUpsertOne) SetBasePrecision(v int) *TradingPairsUpsertOne {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertOne) SetBasePrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.SetBasePrecision(v)
 	})
 }
 
 // AddBasePrecision adds v to the "base_precision" field.
-func (u *TradingPairsUpsertOne) AddBasePrecision(v int) *TradingPairsUpsertOne {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertOne) AddBasePrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.AddBasePrecision(v)
 	})
 }
 
 // UpdateBasePrecision sets the "base_precision" field to the value that was provided on create.
-func (u *TradingPairsUpsertOne) UpdateBasePrecision() *TradingPairsUpsertOne {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertOne) UpdateBasePrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateBasePrecision()
 	})
 }
 
 // SetCounter sets the "counter" field.
-func (u *TradingPairsUpsertOne) SetCounter(v string) *TradingPairsUpsertOne {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertOne) SetCounter(v string) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.SetCounter(v)
 	})
 }
 
 // UpdateCounter sets the "counter" field to the value that was provided on create.
-func (u *TradingPairsUpsertOne) UpdateCounter() *TradingPairsUpsertOne {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertOne) UpdateCounter() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateCounter()
 	})
 }
 
 // SetCounterPrecision sets the "counter_precision" field.
-func (u *TradingPairsUpsertOne) SetCounterPrecision(v int) *TradingPairsUpsertOne {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertOne) SetCounterPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.SetCounterPrecision(v)
 	})
 }
 
 // AddCounterPrecision adds v to the "counter_precision" field.
-func (u *TradingPairsUpsertOne) AddCounterPrecision(v int) *TradingPairsUpsertOne {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertOne) AddCounterPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.AddCounterPrecision(v)
 	})
 }
 
 // UpdateCounterPrecision sets the "counter_precision" field to the value that was provided on create.
-func (u *TradingPairsUpsertOne) UpdateCounterPrecision() *TradingPairsUpsertOne {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertOne) UpdateCounterPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateCounterPrecision()
 	})
 }
 
 // Exec executes the query.
-func (u *TradingPairsUpsertOne) Exec(ctx context.Context) error {
+func (u *TradingPairUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
-		return errors.New("entities: missing options for TradingPairsCreate.OnConflict")
+		return errors.New("entities: missing options for TradingPairCreate.OnConflict")
 	}
 	return u.create.Exec(ctx)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (u *TradingPairsUpsertOne) ExecX(ctx context.Context) {
+func (u *TradingPairUpsertOne) ExecX(ctx context.Context) {
 	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *TradingPairsUpsertOne) ID(ctx context.Context) (id int, err error) {
+func (u *TradingPairUpsertOne) ID(ctx context.Context) (id int, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -520,7 +520,7 @@ func (u *TradingPairsUpsertOne) ID(ctx context.Context) (id int, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *TradingPairsUpsertOne) IDX(ctx context.Context) int {
+func (u *TradingPairUpsertOne) IDX(ctx context.Context) int {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -528,23 +528,23 @@ func (u *TradingPairsUpsertOne) IDX(ctx context.Context) int {
 	return id
 }
 
-// TradingPairsCreateBulk is the builder for creating many TradingPairs entities in bulk.
-type TradingPairsCreateBulk struct {
+// TradingPairCreateBulk is the builder for creating many TradingPair entities in bulk.
+type TradingPairCreateBulk struct {
 	config
-	builders []*TradingPairsCreate
+	builders []*TradingPairCreate
 	conflict []sql.ConflictOption
 }
 
-// Save creates the TradingPairs entities in the database.
-func (tpcb *TradingPairsCreateBulk) Save(ctx context.Context) ([]*TradingPairs, error) {
+// Save creates the TradingPair entities in the database.
+func (tpcb *TradingPairCreateBulk) Save(ctx context.Context) ([]*TradingPair, error) {
 	specs := make([]*sqlgraph.CreateSpec, len(tpcb.builders))
-	nodes := make([]*TradingPairs, len(tpcb.builders))
+	nodes := make([]*TradingPair, len(tpcb.builders))
 	mutators := make([]Mutator, len(tpcb.builders))
 	for i := range tpcb.builders {
 		func(i int, root context.Context) {
 			builder := tpcb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*TradingPairsMutation)
+				mutation, ok := m.(*TradingPairMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -592,7 +592,7 @@ func (tpcb *TradingPairsCreateBulk) Save(ctx context.Context) ([]*TradingPairs, 
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tpcb *TradingPairsCreateBulk) SaveX(ctx context.Context) []*TradingPairs {
+func (tpcb *TradingPairCreateBulk) SaveX(ctx context.Context) []*TradingPair {
 	v, err := tpcb.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -601,13 +601,13 @@ func (tpcb *TradingPairsCreateBulk) SaveX(ctx context.Context) []*TradingPairs {
 }
 
 // Exec executes the query.
-func (tpcb *TradingPairsCreateBulk) Exec(ctx context.Context) error {
+func (tpcb *TradingPairCreateBulk) Exec(ctx context.Context) error {
 	_, err := tpcb.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tpcb *TradingPairsCreateBulk) ExecX(ctx context.Context) {
+func (tpcb *TradingPairCreateBulk) ExecX(ctx context.Context) {
 	if err := tpcb.Exec(ctx); err != nil {
 		panic(err)
 	}
@@ -616,7 +616,7 @@ func (tpcb *TradingPairsCreateBulk) ExecX(ctx context.Context) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.TradingPairs.CreateBulk(builders...).
+//	client.TradingPair.CreateBulk(builders...).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -624,13 +624,13 @@ func (tpcb *TradingPairsCreateBulk) ExecX(ctx context.Context) {
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		Update(func(u *ent.TradingPairsUpsert) {
+//		Update(func(u *ent.TradingPairUpsert) {
 //			SetSymbol(v+v).
 //		}).
 //		Exec(ctx)
-func (tpcb *TradingPairsCreateBulk) OnConflict(opts ...sql.ConflictOption) *TradingPairsUpsertBulk {
+func (tpcb *TradingPairCreateBulk) OnConflict(opts ...sql.ConflictOption) *TradingPairUpsertBulk {
 	tpcb.conflict = opts
-	return &TradingPairsUpsertBulk{
+	return &TradingPairUpsertBulk{
 		create: tpcb,
 	}
 }
@@ -638,31 +638,31 @@ func (tpcb *TradingPairsCreateBulk) OnConflict(opts ...sql.ConflictOption) *Trad
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.TradingPairs.Create().
+//	client.TradingPair.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (tpcb *TradingPairsCreateBulk) OnConflictColumns(columns ...string) *TradingPairsUpsertBulk {
+func (tpcb *TradingPairCreateBulk) OnConflictColumns(columns ...string) *TradingPairUpsertBulk {
 	tpcb.conflict = append(tpcb.conflict, sql.ConflictColumns(columns...))
-	return &TradingPairsUpsertBulk{
+	return &TradingPairUpsertBulk{
 		create: tpcb,
 	}
 }
 
-// TradingPairsUpsertBulk is the builder for "upsert"-ing
-// a bulk of TradingPairs nodes.
-type TradingPairsUpsertBulk struct {
-	create *TradingPairsCreateBulk
+// TradingPairUpsertBulk is the builder for "upsert"-ing
+// a bulk of TradingPair nodes.
+type TradingPairUpsertBulk struct {
+	create *TradingPairCreateBulk
 }
 
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.TradingPairs.Create().
+//	client.TradingPair.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
-func (u *TradingPairsUpsertBulk) UpdateNewValues() *TradingPairsUpsertBulk {
+func (u *TradingPairUpsertBulk) UpdateNewValues() *TradingPairUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
 }
@@ -670,129 +670,129 @@ func (u *TradingPairsUpsertBulk) UpdateNewValues() *TradingPairsUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.TradingPairs.Create().
+//	client.TradingPair.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-func (u *TradingPairsUpsertBulk) Ignore() *TradingPairsUpsertBulk {
+func (u *TradingPairUpsertBulk) Ignore() *TradingPairUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
 }
 
 // DoNothing configures the conflict_action to `DO NOTHING`.
 // Supported only by SQLite and PostgreSQL.
-func (u *TradingPairsUpsertBulk) DoNothing() *TradingPairsUpsertBulk {
+func (u *TradingPairUpsertBulk) DoNothing() *TradingPairUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.DoNothing())
 	return u
 }
 
-// Update allows overriding fields `UPDATE` values. See the TradingPairsCreateBulk.OnConflict
+// Update allows overriding fields `UPDATE` values. See the TradingPairCreateBulk.OnConflict
 // documentation for more info.
-func (u *TradingPairsUpsertBulk) Update(set func(*TradingPairsUpsert)) *TradingPairsUpsertBulk {
+func (u *TradingPairUpsertBulk) Update(set func(*TradingPairUpsert)) *TradingPairUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
-		set(&TradingPairsUpsert{UpdateSet: update})
+		set(&TradingPairUpsert{UpdateSet: update})
 	}))
 	return u
 }
 
 // SetSymbol sets the "symbol" field.
-func (u *TradingPairsUpsertBulk) SetSymbol(v string) *TradingPairsUpsertBulk {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertBulk) SetSymbol(v string) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.SetSymbol(v)
 	})
 }
 
 // UpdateSymbol sets the "symbol" field to the value that was provided on create.
-func (u *TradingPairsUpsertBulk) UpdateSymbol() *TradingPairsUpsertBulk {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertBulk) UpdateSymbol() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateSymbol()
 	})
 }
 
 // SetBase sets the "base" field.
-func (u *TradingPairsUpsertBulk) SetBase(v string) *TradingPairsUpsertBulk {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertBulk) SetBase(v string) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.SetBase(v)
 	})
 }
 
 // UpdateBase sets the "base" field to the value that was provided on create.
-func (u *TradingPairsUpsertBulk) UpdateBase() *TradingPairsUpsertBulk {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertBulk) UpdateBase() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateBase()
 	})
 }
 
 // SetBasePrecision sets the "base_precision" field.
-func (u *TradingPairsUpsertBulk) SetBasePrecision(v int) *TradingPairsUpsertBulk {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertBulk) SetBasePrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.SetBasePrecision(v)
 	})
 }
 
 // AddBasePrecision adds v to the "base_precision" field.
-func (u *TradingPairsUpsertBulk) AddBasePrecision(v int) *TradingPairsUpsertBulk {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertBulk) AddBasePrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.AddBasePrecision(v)
 	})
 }
 
 // UpdateBasePrecision sets the "base_precision" field to the value that was provided on create.
-func (u *TradingPairsUpsertBulk) UpdateBasePrecision() *TradingPairsUpsertBulk {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertBulk) UpdateBasePrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateBasePrecision()
 	})
 }
 
 // SetCounter sets the "counter" field.
-func (u *TradingPairsUpsertBulk) SetCounter(v string) *TradingPairsUpsertBulk {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertBulk) SetCounter(v string) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.SetCounter(v)
 	})
 }
 
 // UpdateCounter sets the "counter" field to the value that was provided on create.
-func (u *TradingPairsUpsertBulk) UpdateCounter() *TradingPairsUpsertBulk {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertBulk) UpdateCounter() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateCounter()
 	})
 }
 
 // SetCounterPrecision sets the "counter_precision" field.
-func (u *TradingPairsUpsertBulk) SetCounterPrecision(v int) *TradingPairsUpsertBulk {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertBulk) SetCounterPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.SetCounterPrecision(v)
 	})
 }
 
 // AddCounterPrecision adds v to the "counter_precision" field.
-func (u *TradingPairsUpsertBulk) AddCounterPrecision(v int) *TradingPairsUpsertBulk {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertBulk) AddCounterPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.AddCounterPrecision(v)
 	})
 }
 
 // UpdateCounterPrecision sets the "counter_precision" field to the value that was provided on create.
-func (u *TradingPairsUpsertBulk) UpdateCounterPrecision() *TradingPairsUpsertBulk {
-	return u.Update(func(s *TradingPairsUpsert) {
+func (u *TradingPairUpsertBulk) UpdateCounterPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateCounterPrecision()
 	})
 }
 
 // Exec executes the query.
-func (u *TradingPairsUpsertBulk) Exec(ctx context.Context) error {
+func (u *TradingPairUpsertBulk) Exec(ctx context.Context) error {
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
-			return fmt.Errorf("entities: OnConflict was set for builder %d. Set it on the TradingPairsCreateBulk instead", i)
+			return fmt.Errorf("entities: OnConflict was set for builder %d. Set it on the TradingPairCreateBulk instead", i)
 		}
 	}
 	if len(u.create.conflict) == 0 {
-		return errors.New("entities: missing options for TradingPairsCreateBulk.OnConflict")
+		return errors.New("entities: missing options for TradingPairCreateBulk.OnConflict")
 	}
 	return u.create.Exec(ctx)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (u *TradingPairsUpsertBulk) ExecX(ctx context.Context) {
+func (u *TradingPairUpsertBulk) ExecX(ctx context.Context) {
 	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}

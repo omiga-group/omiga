@@ -7,36 +7,36 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	exchangerepo "github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpairs"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	"go.uber.org/zap"
 )
 
-type TradingPairsRepository interface {
+type TradingPairRepository interface {
 	CreateTradingPairs(
 		ctx context.Context,
 		exchangeId string,
-		tradingPairs []models.TradingPairs) error
+		tradingPairs []models.TradingPair) error
 }
 
-type tradingPairsRepository struct {
+type tradingPairRepository struct {
 	logger      *zap.SugaredLogger
 	entgoClient entities.EntgoClient
 }
 
-func NewTradingPairsRepository(
+func NewTradingPairRepository(
 	logger *zap.SugaredLogger,
-	entgoClient entities.EntgoClient) (TradingPairsRepository, error) {
-	return &tradingPairsRepository{
+	entgoClient entities.EntgoClient) (TradingPairRepository, error) {
+	return &tradingPairRepository{
 		logger:      logger,
 		entgoClient: entgoClient,
 	}, nil
 }
 
-func (tpr *tradingPairsRepository) CreateTradingPairs(
+func (tpr *tradingPairRepository) CreateTradingPairs(
 	ctx context.Context,
 	exchangeId string,
-	tradingPairs []models.TradingPairs) error {
+	tradingPairs []models.TradingPair) error {
 	client := tpr.entgoClient.GetClient()
 
 	err := client.Exchange.
@@ -59,9 +59,9 @@ func (tpr *tradingPairsRepository) CreateTradingPairs(
 		return err
 	}
 
-	existingTradingPairs, err := client.TradingPairs.
+	existingTradingPairs, err := client.TradingPair.
 		Query().
-		Where(tradingpairs.HasExchangeWith(exchangerepo.ExchangeID(exchangeId))).
+		Where(tradingpair.HasExchangeWith(exchangerepo.ExchangeID(exchangeId))).
 		All(ctx)
 	if err != nil {
 		tpr.logger.Errorf("Failed to fetch existing trading pairs for exchange Id: %s. Error: %v", savedExchange.ExchangeID, err)
@@ -71,20 +71,20 @@ func (tpr *tradingPairsRepository) CreateTradingPairs(
 
 	tickersToCreate := slices.Map(
 		tradingPairs,
-		func(item models.TradingPairs) *entities.TradingPairsCreate {
-			return client.TradingPairs.
+		func(tradingPair models.TradingPair) *entities.TradingPairCreate {
+			return client.TradingPair.
 				Create().
 				SetExchange(savedExchange).
-				SetSymbol(item.Symbol).
-				SetBase(item.Base).
-				SetBasePrecision(item.BasePrecision).
-				SetCounter(item.Counter).
-				SetCounterPrecision(item.CounterPrecision)
+				SetSymbol(tradingPair.Symbol).
+				SetBase(tradingPair.Base).
+				SetBasePrecision(tradingPair.BasePrecision).
+				SetCounter(tradingPair.Counter).
+				SetCounterPrecision(tradingPair.CounterPrecision)
 		})
 
-	if err = client.TradingPairs.
+	if err = client.TradingPair.
 		CreateBulk(tickersToCreate...).
-		OnConflictColumns(tradingpairs.FieldSymbol, tradingpairs.ExchangeColumn).
+		OnConflictColumns(tradingpair.FieldSymbol, tradingpair.ExchangeColumn).
 		UpdateNewValues().
 		Exec(ctx); err != nil {
 		tpr.logger.Errorf("Failed to save trading pairs for exchange Id: %s. Error: %v", savedExchange.ExchangeID, err)
@@ -92,21 +92,21 @@ func (tpr *tradingPairsRepository) CreateTradingPairs(
 		return err
 	}
 
-	tradingPairsToDelete := slices.Filter(existingTradingPairs, func(newTradingPairs *entities.TradingPairs) bool {
-		return !slices.Any(tradingPairs, func(item models.TradingPairs) bool {
-			return item.Symbol == newTradingPairs.Symbol
+	tradingPairsToDelete := slices.Filter(existingTradingPairs, func(existingTradingPair *entities.TradingPair) bool {
+		return !slices.Any(tradingPairs, func(tradingPair models.TradingPair) bool {
+			return tradingPair.Symbol == existingTradingPair.Symbol
 		})
 	})
 
-	tradingPairsIdsToDelete := slices.Map(
+	tradingPairIdsToDelete := slices.Map(
 		tradingPairsToDelete,
-		func(item *entities.TradingPairs) int {
-			return item.ID
+		func(tradingPair *entities.TradingPair) int {
+			return tradingPair.ID
 		})
 
-	if _, err = client.TradingPairs.
+	if _, err = client.TradingPair.
 		Delete().
-		Where(tradingpairs.IDIn(tradingPairsIdsToDelete...)).
+		Where(tradingpair.IDIn(tradingPairIdsToDelete...)).
 		Exec(ctx); err != nil {
 		tpr.logger.Errorf("Failed to delete old trading pairs for exchange Id: %s. Error: %v", savedExchange.ExchangeID, err)
 

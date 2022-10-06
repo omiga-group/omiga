@@ -8,13 +8,13 @@ import (
 	"entgo.io/ent/schema/index"
 )
 
-// TradingPairs holds the schema definition for the TradingPairs entity.
-type TradingPairs struct {
+// TradingPair holds the schema definition for the TradingPair entity.
+type TradingPair struct {
 	ent.Schema
 }
 
-// Fields of the TradingPairs.
-func (TradingPairs) Fields() []ent.Field {
+// Fields of the TradingPair.
+func (TradingPair) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("symbol").Annotations(entgql.OrderField("symbol")),
 		field.String("base").Annotations(entgql.OrderField("base")),
@@ -24,8 +24,8 @@ func (TradingPairs) Fields() []ent.Field {
 	}
 }
 
-// Edges of the TradingPairs.
-func (TradingPairs) Edges() []ent.Edge {
+// Edges of the TradingPair.
+func (TradingPair) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("exchange", Exchange.Type).
 			Ref("trading_pairs").
@@ -34,7 +34,7 @@ func (TradingPairs) Edges() []ent.Edge {
 	}
 }
 
-func (TradingPairs) Indexes() []ent.Index {
+func (TradingPair) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("symbol"),
 		index.Fields("base"),

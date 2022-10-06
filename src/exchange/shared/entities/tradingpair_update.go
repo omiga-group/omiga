@@ -13,91 +13,91 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpairs"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
-// TradingPairsUpdate is the builder for updating TradingPairs entities.
-type TradingPairsUpdate struct {
+// TradingPairUpdate is the builder for updating TradingPair entities.
+type TradingPairUpdate struct {
 	config
 	hooks     []Hook
-	mutation  *TradingPairsMutation
+	mutation  *TradingPairMutation
 	modifiers []func(*sql.UpdateBuilder)
 }
 
-// Where appends a list predicates to the TradingPairsUpdate builder.
-func (tpu *TradingPairsUpdate) Where(ps ...predicate.TradingPairs) *TradingPairsUpdate {
+// Where appends a list predicates to the TradingPairUpdate builder.
+func (tpu *TradingPairUpdate) Where(ps ...predicate.TradingPair) *TradingPairUpdate {
 	tpu.mutation.Where(ps...)
 	return tpu
 }
 
 // SetSymbol sets the "symbol" field.
-func (tpu *TradingPairsUpdate) SetSymbol(s string) *TradingPairsUpdate {
+func (tpu *TradingPairUpdate) SetSymbol(s string) *TradingPairUpdate {
 	tpu.mutation.SetSymbol(s)
 	return tpu
 }
 
 // SetBase sets the "base" field.
-func (tpu *TradingPairsUpdate) SetBase(s string) *TradingPairsUpdate {
+func (tpu *TradingPairUpdate) SetBase(s string) *TradingPairUpdate {
 	tpu.mutation.SetBase(s)
 	return tpu
 }
 
 // SetBasePrecision sets the "base_precision" field.
-func (tpu *TradingPairsUpdate) SetBasePrecision(i int) *TradingPairsUpdate {
+func (tpu *TradingPairUpdate) SetBasePrecision(i int) *TradingPairUpdate {
 	tpu.mutation.ResetBasePrecision()
 	tpu.mutation.SetBasePrecision(i)
 	return tpu
 }
 
 // AddBasePrecision adds i to the "base_precision" field.
-func (tpu *TradingPairsUpdate) AddBasePrecision(i int) *TradingPairsUpdate {
+func (tpu *TradingPairUpdate) AddBasePrecision(i int) *TradingPairUpdate {
 	tpu.mutation.AddBasePrecision(i)
 	return tpu
 }
 
 // SetCounter sets the "counter" field.
-func (tpu *TradingPairsUpdate) SetCounter(s string) *TradingPairsUpdate {
+func (tpu *TradingPairUpdate) SetCounter(s string) *TradingPairUpdate {
 	tpu.mutation.SetCounter(s)
 	return tpu
 }
 
 // SetCounterPrecision sets the "counter_precision" field.
-func (tpu *TradingPairsUpdate) SetCounterPrecision(i int) *TradingPairsUpdate {
+func (tpu *TradingPairUpdate) SetCounterPrecision(i int) *TradingPairUpdate {
 	tpu.mutation.ResetCounterPrecision()
 	tpu.mutation.SetCounterPrecision(i)
 	return tpu
 }
 
 // AddCounterPrecision adds i to the "counter_precision" field.
-func (tpu *TradingPairsUpdate) AddCounterPrecision(i int) *TradingPairsUpdate {
+func (tpu *TradingPairUpdate) AddCounterPrecision(i int) *TradingPairUpdate {
 	tpu.mutation.AddCounterPrecision(i)
 	return tpu
 }
 
 // SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
-func (tpu *TradingPairsUpdate) SetExchangeID(id int) *TradingPairsUpdate {
+func (tpu *TradingPairUpdate) SetExchangeID(id int) *TradingPairUpdate {
 	tpu.mutation.SetExchangeID(id)
 	return tpu
 }
 
 // SetExchange sets the "exchange" edge to the Exchange entity.
-func (tpu *TradingPairsUpdate) SetExchange(e *Exchange) *TradingPairsUpdate {
+func (tpu *TradingPairUpdate) SetExchange(e *Exchange) *TradingPairUpdate {
 	return tpu.SetExchangeID(e.ID)
 }
 
-// Mutation returns the TradingPairsMutation object of the builder.
-func (tpu *TradingPairsUpdate) Mutation() *TradingPairsMutation {
+// Mutation returns the TradingPairMutation object of the builder.
+func (tpu *TradingPairUpdate) Mutation() *TradingPairMutation {
 	return tpu.mutation
 }
 
 // ClearExchange clears the "exchange" edge to the Exchange entity.
-func (tpu *TradingPairsUpdate) ClearExchange() *TradingPairsUpdate {
+func (tpu *TradingPairUpdate) ClearExchange() *TradingPairUpdate {
 	tpu.mutation.ClearExchange()
 	return tpu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (tpu *TradingPairsUpdate) Save(ctx context.Context) (int, error) {
+func (tpu *TradingPairUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error
 		affected int
@@ -109,7 +109,7 @@ func (tpu *TradingPairsUpdate) Save(ctx context.Context) (int, error) {
 		affected, err = tpu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*TradingPairsMutation)
+			mutation, ok := m.(*TradingPairMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -135,7 +135,7 @@ func (tpu *TradingPairsUpdate) Save(ctx context.Context) (int, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tpu *TradingPairsUpdate) SaveX(ctx context.Context) int {
+func (tpu *TradingPairUpdate) SaveX(ctx context.Context) int {
 	affected, err := tpu.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -144,40 +144,40 @@ func (tpu *TradingPairsUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (tpu *TradingPairsUpdate) Exec(ctx context.Context) error {
+func (tpu *TradingPairUpdate) Exec(ctx context.Context) error {
 	_, err := tpu.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tpu *TradingPairsUpdate) ExecX(ctx context.Context) {
+func (tpu *TradingPairUpdate) ExecX(ctx context.Context) {
 	if err := tpu.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tpu *TradingPairsUpdate) check() error {
+func (tpu *TradingPairUpdate) check() error {
 	if _, ok := tpu.mutation.ExchangeID(); tpu.mutation.ExchangeCleared() && !ok {
-		return errors.New(`entities: clearing a required unique edge "TradingPairs.exchange"`)
+		return errors.New(`entities: clearing a required unique edge "TradingPair.exchange"`)
 	}
 	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (tpu *TradingPairsUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TradingPairsUpdate {
+func (tpu *TradingPairUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TradingPairUpdate {
 	tpu.modifiers = append(tpu.modifiers, modifiers...)
 	return tpu
 }
 
-func (tpu *TradingPairsUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   tradingpairs.Table,
-			Columns: tradingpairs.Columns,
+			Table:   tradingpair.Table,
+			Columns: tradingpair.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: tradingpairs.FieldID,
+				Column: tradingpair.FieldID,
 			},
 		},
 	}
@@ -192,57 +192,57 @@ func (tpu *TradingPairsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: tradingpairs.FieldSymbol,
+			Column: tradingpair.FieldSymbol,
 		})
 	}
 	if value, ok := tpu.mutation.Base(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: tradingpairs.FieldBase,
+			Column: tradingpair.FieldBase,
 		})
 	}
 	if value, ok := tpu.mutation.BasePrecision(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpairs.FieldBasePrecision,
+			Column: tradingpair.FieldBasePrecision,
 		})
 	}
 	if value, ok := tpu.mutation.AddedBasePrecision(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpairs.FieldBasePrecision,
+			Column: tradingpair.FieldBasePrecision,
 		})
 	}
 	if value, ok := tpu.mutation.Counter(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: tradingpairs.FieldCounter,
+			Column: tradingpair.FieldCounter,
 		})
 	}
 	if value, ok := tpu.mutation.CounterPrecision(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpairs.FieldCounterPrecision,
+			Column: tradingpair.FieldCounterPrecision,
 		})
 	}
 	if value, ok := tpu.mutation.AddedCounterPrecision(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpairs.FieldCounterPrecision,
+			Column: tradingpair.FieldCounterPrecision,
 		})
 	}
 	if tpu.mutation.ExchangeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tradingpairs.ExchangeTable,
-			Columns: []string{tradingpairs.ExchangeColumn},
+			Table:   tradingpair.ExchangeTable,
+			Columns: []string{tradingpair.ExchangeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -251,15 +251,15 @@ func (tpu *TradingPairsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				},
 			},
 		}
-		edge.Schema = tpu.schemaConfig.TradingPairs
+		edge.Schema = tpu.schemaConfig.TradingPair
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tpu.mutation.ExchangeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tradingpairs.ExchangeTable,
-			Columns: []string{tradingpairs.ExchangeColumn},
+			Table:   tradingpair.ExchangeTable,
+			Columns: []string{tradingpair.ExchangeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -268,18 +268,18 @@ func (tpu *TradingPairsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				},
 			},
 		}
-		edge.Schema = tpu.schemaConfig.TradingPairs
+		edge.Schema = tpu.schemaConfig.TradingPair
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_spec.Node.Schema = tpu.schemaConfig.TradingPairs
+	_spec.Node.Schema = tpu.schemaConfig.TradingPair
 	ctx = internal.NewSchemaConfigContext(ctx, tpu.schemaConfig)
 	_spec.Modifiers = tpu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, tpu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{tradingpairs.Label}
+			err = &NotFoundError{tradingpair.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -288,93 +288,93 @@ func (tpu *TradingPairsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	return n, nil
 }
 
-// TradingPairsUpdateOne is the builder for updating a single TradingPairs entity.
-type TradingPairsUpdateOne struct {
+// TradingPairUpdateOne is the builder for updating a single TradingPair entity.
+type TradingPairUpdateOne struct {
 	config
 	fields    []string
 	hooks     []Hook
-	mutation  *TradingPairsMutation
+	mutation  *TradingPairMutation
 	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetSymbol sets the "symbol" field.
-func (tpuo *TradingPairsUpdateOne) SetSymbol(s string) *TradingPairsUpdateOne {
+func (tpuo *TradingPairUpdateOne) SetSymbol(s string) *TradingPairUpdateOne {
 	tpuo.mutation.SetSymbol(s)
 	return tpuo
 }
 
 // SetBase sets the "base" field.
-func (tpuo *TradingPairsUpdateOne) SetBase(s string) *TradingPairsUpdateOne {
+func (tpuo *TradingPairUpdateOne) SetBase(s string) *TradingPairUpdateOne {
 	tpuo.mutation.SetBase(s)
 	return tpuo
 }
 
 // SetBasePrecision sets the "base_precision" field.
-func (tpuo *TradingPairsUpdateOne) SetBasePrecision(i int) *TradingPairsUpdateOne {
+func (tpuo *TradingPairUpdateOne) SetBasePrecision(i int) *TradingPairUpdateOne {
 	tpuo.mutation.ResetBasePrecision()
 	tpuo.mutation.SetBasePrecision(i)
 	return tpuo
 }
 
 // AddBasePrecision adds i to the "base_precision" field.
-func (tpuo *TradingPairsUpdateOne) AddBasePrecision(i int) *TradingPairsUpdateOne {
+func (tpuo *TradingPairUpdateOne) AddBasePrecision(i int) *TradingPairUpdateOne {
 	tpuo.mutation.AddBasePrecision(i)
 	return tpuo
 }
 
 // SetCounter sets the "counter" field.
-func (tpuo *TradingPairsUpdateOne) SetCounter(s string) *TradingPairsUpdateOne {
+func (tpuo *TradingPairUpdateOne) SetCounter(s string) *TradingPairUpdateOne {
 	tpuo.mutation.SetCounter(s)
 	return tpuo
 }
 
 // SetCounterPrecision sets the "counter_precision" field.
-func (tpuo *TradingPairsUpdateOne) SetCounterPrecision(i int) *TradingPairsUpdateOne {
+func (tpuo *TradingPairUpdateOne) SetCounterPrecision(i int) *TradingPairUpdateOne {
 	tpuo.mutation.ResetCounterPrecision()
 	tpuo.mutation.SetCounterPrecision(i)
 	return tpuo
 }
 
 // AddCounterPrecision adds i to the "counter_precision" field.
-func (tpuo *TradingPairsUpdateOne) AddCounterPrecision(i int) *TradingPairsUpdateOne {
+func (tpuo *TradingPairUpdateOne) AddCounterPrecision(i int) *TradingPairUpdateOne {
 	tpuo.mutation.AddCounterPrecision(i)
 	return tpuo
 }
 
 // SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
-func (tpuo *TradingPairsUpdateOne) SetExchangeID(id int) *TradingPairsUpdateOne {
+func (tpuo *TradingPairUpdateOne) SetExchangeID(id int) *TradingPairUpdateOne {
 	tpuo.mutation.SetExchangeID(id)
 	return tpuo
 }
 
 // SetExchange sets the "exchange" edge to the Exchange entity.
-func (tpuo *TradingPairsUpdateOne) SetExchange(e *Exchange) *TradingPairsUpdateOne {
+func (tpuo *TradingPairUpdateOne) SetExchange(e *Exchange) *TradingPairUpdateOne {
 	return tpuo.SetExchangeID(e.ID)
 }
 
-// Mutation returns the TradingPairsMutation object of the builder.
-func (tpuo *TradingPairsUpdateOne) Mutation() *TradingPairsMutation {
+// Mutation returns the TradingPairMutation object of the builder.
+func (tpuo *TradingPairUpdateOne) Mutation() *TradingPairMutation {
 	return tpuo.mutation
 }
 
 // ClearExchange clears the "exchange" edge to the Exchange entity.
-func (tpuo *TradingPairsUpdateOne) ClearExchange() *TradingPairsUpdateOne {
+func (tpuo *TradingPairUpdateOne) ClearExchange() *TradingPairUpdateOne {
 	tpuo.mutation.ClearExchange()
 	return tpuo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (tpuo *TradingPairsUpdateOne) Select(field string, fields ...string) *TradingPairsUpdateOne {
+func (tpuo *TradingPairUpdateOne) Select(field string, fields ...string) *TradingPairUpdateOne {
 	tpuo.fields = append([]string{field}, fields...)
 	return tpuo
 }
 
-// Save executes the query and returns the updated TradingPairs entity.
-func (tpuo *TradingPairsUpdateOne) Save(ctx context.Context) (*TradingPairs, error) {
+// Save executes the query and returns the updated TradingPair entity.
+func (tpuo *TradingPairUpdateOne) Save(ctx context.Context) (*TradingPair, error) {
 	var (
 		err  error
-		node *TradingPairs
+		node *TradingPair
 	)
 	if len(tpuo.hooks) == 0 {
 		if err = tpuo.check(); err != nil {
@@ -383,7 +383,7 @@ func (tpuo *TradingPairsUpdateOne) Save(ctx context.Context) (*TradingPairs, err
 		node, err = tpuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*TradingPairsMutation)
+			mutation, ok := m.(*TradingPairMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -405,9 +405,9 @@ func (tpuo *TradingPairsUpdateOne) Save(ctx context.Context) (*TradingPairs, err
 		if err != nil {
 			return nil, err
 		}
-		nv, ok := v.(*TradingPairs)
+		nv, ok := v.(*TradingPair)
 		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from TradingPairsMutation", v)
+			return nil, fmt.Errorf("unexpected node type %T returned from TradingPairMutation", v)
 		}
 		node = nv
 	}
@@ -415,7 +415,7 @@ func (tpuo *TradingPairsUpdateOne) Save(ctx context.Context) (*TradingPairs, err
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tpuo *TradingPairsUpdateOne) SaveX(ctx context.Context) *TradingPairs {
+func (tpuo *TradingPairUpdateOne) SaveX(ctx context.Context) *TradingPair {
 	node, err := tpuo.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -424,56 +424,56 @@ func (tpuo *TradingPairsUpdateOne) SaveX(ctx context.Context) *TradingPairs {
 }
 
 // Exec executes the query on the entity.
-func (tpuo *TradingPairsUpdateOne) Exec(ctx context.Context) error {
+func (tpuo *TradingPairUpdateOne) Exec(ctx context.Context) error {
 	_, err := tpuo.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tpuo *TradingPairsUpdateOne) ExecX(ctx context.Context) {
+func (tpuo *TradingPairUpdateOne) ExecX(ctx context.Context) {
 	if err := tpuo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tpuo *TradingPairsUpdateOne) check() error {
+func (tpuo *TradingPairUpdateOne) check() error {
 	if _, ok := tpuo.mutation.ExchangeID(); tpuo.mutation.ExchangeCleared() && !ok {
-		return errors.New(`entities: clearing a required unique edge "TradingPairs.exchange"`)
+		return errors.New(`entities: clearing a required unique edge "TradingPair.exchange"`)
 	}
 	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (tpuo *TradingPairsUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TradingPairsUpdateOne {
+func (tpuo *TradingPairUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TradingPairUpdateOne {
 	tpuo.modifiers = append(tpuo.modifiers, modifiers...)
 	return tpuo
 }
 
-func (tpuo *TradingPairsUpdateOne) sqlSave(ctx context.Context) (_node *TradingPairs, err error) {
+func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPair, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   tradingpairs.Table,
-			Columns: tradingpairs.Columns,
+			Table:   tradingpair.Table,
+			Columns: tradingpair.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: tradingpairs.FieldID,
+				Column: tradingpair.FieldID,
 			},
 		},
 	}
 	id, ok := tpuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`entities: missing "TradingPairs.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`entities: missing "TradingPair.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := tpuo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, tradingpairs.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, tradingpair.FieldID)
 		for _, f := range fields {
-			if !tradingpairs.ValidColumn(f) {
+			if !tradingpair.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("entities: invalid field %q for query", f)}
 			}
-			if f != tradingpairs.FieldID {
+			if f != tradingpair.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -489,57 +489,57 @@ func (tpuo *TradingPairsUpdateOne) sqlSave(ctx context.Context) (_node *TradingP
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: tradingpairs.FieldSymbol,
+			Column: tradingpair.FieldSymbol,
 		})
 	}
 	if value, ok := tpuo.mutation.Base(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: tradingpairs.FieldBase,
+			Column: tradingpair.FieldBase,
 		})
 	}
 	if value, ok := tpuo.mutation.BasePrecision(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpairs.FieldBasePrecision,
+			Column: tradingpair.FieldBasePrecision,
 		})
 	}
 	if value, ok := tpuo.mutation.AddedBasePrecision(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpairs.FieldBasePrecision,
+			Column: tradingpair.FieldBasePrecision,
 		})
 	}
 	if value, ok := tpuo.mutation.Counter(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: tradingpairs.FieldCounter,
+			Column: tradingpair.FieldCounter,
 		})
 	}
 	if value, ok := tpuo.mutation.CounterPrecision(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpairs.FieldCounterPrecision,
+			Column: tradingpair.FieldCounterPrecision,
 		})
 	}
 	if value, ok := tpuo.mutation.AddedCounterPrecision(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpairs.FieldCounterPrecision,
+			Column: tradingpair.FieldCounterPrecision,
 		})
 	}
 	if tpuo.mutation.ExchangeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tradingpairs.ExchangeTable,
-			Columns: []string{tradingpairs.ExchangeColumn},
+			Table:   tradingpair.ExchangeTable,
+			Columns: []string{tradingpair.ExchangeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -548,15 +548,15 @@ func (tpuo *TradingPairsUpdateOne) sqlSave(ctx context.Context) (_node *TradingP
 				},
 			},
 		}
-		edge.Schema = tpuo.schemaConfig.TradingPairs
+		edge.Schema = tpuo.schemaConfig.TradingPair
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tpuo.mutation.ExchangeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tradingpairs.ExchangeTable,
-			Columns: []string{tradingpairs.ExchangeColumn},
+			Table:   tradingpair.ExchangeTable,
+			Columns: []string{tradingpair.ExchangeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -565,21 +565,21 @@ func (tpuo *TradingPairsUpdateOne) sqlSave(ctx context.Context) (_node *TradingP
 				},
 			},
 		}
-		edge.Schema = tpuo.schemaConfig.TradingPairs
+		edge.Schema = tpuo.schemaConfig.TradingPair
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_spec.Node.Schema = tpuo.schemaConfig.TradingPairs
+	_spec.Node.Schema = tpuo.schemaConfig.TradingPair
 	ctx = internal.NewSchemaConfigContext(ctx, tpuo.schemaConfig)
 	_spec.Modifiers = tpuo.modifiers
-	_node = &TradingPairs{config: tpuo.config}
+	_node = &TradingPair{config: tpuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, tpuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{tradingpairs.Label}
+			err = &NotFoundError{tradingpair.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

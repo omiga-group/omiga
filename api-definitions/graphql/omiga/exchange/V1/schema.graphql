@@ -214,7 +214,7 @@ type Exchange implements Node {
   tradeVolume24hBtc: Float
   tradeVolume24hBtcNormalized: Float
   tickers: [Ticker!]!
-  tradingPairs: [TradingPairs!]!
+  tradingPairs: [TradingPair!]!
   makerFee: Float
   takerFee: Float
   spreadFee: Boolean
@@ -252,7 +252,7 @@ type Ticker implements Node {
   tokenInfoUrl: String
 }
 
-type TradingPairs implements Node {
+type TradingPair implements Node {
   id: ID!
   symbol: String!
   base: String!

@@ -45,7 +45,7 @@ func (Exchange) Edges() []ent.Edge {
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),
-		edge.To("trading_pairs", TradingPairs.Type).
+		edge.To("trading_pairs", TradingPair.Type).
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),

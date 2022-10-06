@@ -102,7 +102,7 @@ func NewBinanceTradingPairsSubscriber(
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
-		repositories.NewTradingPairsRepository,
+		repositories.NewTradingPairRepository,
 		subscribers.NewBinanceTradingPairsSubscriber)
 
 	return nil, nil

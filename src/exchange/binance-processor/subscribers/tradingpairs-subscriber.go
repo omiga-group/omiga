@@ -16,11 +16,11 @@ type BinanceTradingPairsSubscriber interface {
 }
 
 type binanceTradingPairsSubscriber struct {
-	ctx                    context.Context
-	logger                 *zap.SugaredLogger
-	binanceConfig          configuration.BinanceConfig
-	exchangeConfig         exchangeConfiguration.ExchangeConfig
-	tradingPairsRepository repositories.TradingPairsRepository
+	ctx                   context.Context
+	logger                *zap.SugaredLogger
+	binanceConfig         configuration.BinanceConfig
+	exchangeConfig        exchangeConfiguration.ExchangeConfig
+	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewBinanceTradingPairsSubscriber(
@@ -29,14 +29,14 @@ func NewBinanceTradingPairsSubscriber(
 	binanceConfig configuration.BinanceConfig,
 	exchangeConfig exchangeConfiguration.ExchangeConfig,
 	cronService cron.CronService,
-	tradingPairsRepository repositories.TradingPairsRepository) (BinanceTradingPairsSubscriber, error) {
+	tradingPairRepository repositories.TradingPairRepository) (BinanceTradingPairsSubscriber, error) {
 
 	instance := &binanceTradingPairsSubscriber{
-		ctx:                    ctx,
-		logger:                 logger,
-		binanceConfig:          binanceConfig,
-		exchangeConfig:         exchangeConfig,
-		tradingPairsRepository: tradingPairsRepository,
+		ctx:                   ctx,
+		logger:                logger,
+		binanceConfig:         binanceConfig,
+		exchangeConfig:        exchangeConfig,
+		tradingPairRepository: tradingPairRepository,
 	}
 
 	// Run at minute 0
@@ -60,7 +60,7 @@ func (btps *binanceTradingPairsSubscriber) Run() {
 		return
 	}
 
-	if err = btps.tradingPairsRepository.CreateTradingPairs(
+	if err = btps.tradingPairRepository.CreateTradingPairs(
 		btps.ctx,
 		btps.exchangeConfig.Id,
 		mappers.FromBinanceSymbolsToTradingPairs(exchangeInfo.Symbols)); err != nil {
