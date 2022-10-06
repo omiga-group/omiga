@@ -16,7 +16,7 @@ func (e *Exchange) Ticker(ctx context.Context) ([]*Ticker, error) {
 	return result, err
 }
 
-func (e *Exchange) TradingPairs(ctx context.Context) ([]*TradingPairs, error) {
+func (e *Exchange) TradingPairs(ctx context.Context) ([]*TradingPair, error) {
 	result, err := e.NamedTradingPairs(graphql.GetFieldContext(ctx).Field.Alias)
 	if IsNotLoaded(err) {
 		result, err = e.QueryTradingPairs().All(ctx)
@@ -32,7 +32,7 @@ func (t *Ticker) Exchange(ctx context.Context) (*Exchange, error) {
 	return result, err
 }
 
-func (tp *TradingPairs) Exchange(ctx context.Context) (*Exchange, error) {
+func (tp *TradingPair) Exchange(ctx context.Context) (*Exchange, error) {
 	result, err := tp.Edges.ExchangeOrErr()
 	if IsNotLoaded(err) {
 		result, err = tp.QueryExchange().Only(ctx)

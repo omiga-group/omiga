@@ -23,9 +23,9 @@ import (
 
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/configuration"
-	coingeckorepositories "github.com/omiga-group/omiga/src/exchange/coingecko-processor/repositories"
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -60,7 +60,7 @@ func NewCoingeckoExchangeSubscriber(
 		entities.NewEntgoClient,
 		time.NewTimeHelper,
 		subscribers.NewCoingeckoExchangeSubscriber,
-		coingeckorepositories.NewExchangeRepository)
+		repositories.NewExchangeRepository)
 
 	return nil, nil
 }
@@ -75,9 +75,8 @@ func NewCoingeckoCoinSubscriber(
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
-		time.NewTimeHelper,
 		subscribers.NewCoingeckoCoinSubscriber,
-		coingeckorepositories.NewCoinRepository)
+		repositories.NewCoinRepository)
 
 	return nil, nil
 }

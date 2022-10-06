@@ -22,8 +22,8 @@ type Tx struct {
 	Outbox *OutboxClient
 	// Ticker is the client for interacting with the Ticker builders.
 	Ticker *TickerClient
-	// TradingPairs is the client for interacting with the TradingPairs builders.
-	TradingPairs *TradingPairsClient
+	// TradingPair is the client for interacting with the TradingPair builders.
+	TradingPair *TradingPairClient
 
 	// lazily loaded.
 	client     *Client
@@ -163,7 +163,7 @@ func (tx *Tx) init() {
 	tx.Exchange = NewExchangeClient(tx.config)
 	tx.Outbox = NewOutboxClient(tx.config)
 	tx.Ticker = NewTickerClient(tx.config)
-	tx.TradingPairs = NewTradingPairsClient(tx.config)
+	tx.TradingPair = NewTradingPairClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

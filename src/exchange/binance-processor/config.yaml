@@ -1,6 +1,9 @@
 app:
   source: "urn::omiga::binance-processor"
 
+exchange:
+  id: "binance"
+
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "binance-processor"
@@ -13,6 +16,8 @@ postgres:
   maxOpenConns: 5
 
 binance:
+  apiKey: ""
+  secretKey: ""
   useTestnet: false
   orderBook:
     pairs:

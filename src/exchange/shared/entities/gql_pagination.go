@@ -18,7 +18,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpairs"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"github.com/vmihailenco/msgpack/v5"
 )
@@ -1732,20 +1732,20 @@ func (t *Ticker) ToEdge(order *TickerOrder) *TickerEdge {
 	}
 }
 
-// TradingPairsEdge is the edge representation of TradingPairs.
-type TradingPairsEdge struct {
-	Node   *TradingPairs `json:"node"`
-	Cursor Cursor        `json:"cursor"`
+// TradingPairEdge is the edge representation of TradingPair.
+type TradingPairEdge struct {
+	Node   *TradingPair `json:"node"`
+	Cursor Cursor       `json:"cursor"`
 }
 
-// TradingPairsConnection is the connection containing edges to TradingPairs.
-type TradingPairsConnection struct {
-	Edges      []*TradingPairsEdge `json:"edges"`
-	PageInfo   PageInfo            `json:"pageInfo"`
-	TotalCount int                 `json:"totalCount"`
+// TradingPairConnection is the connection containing edges to TradingPair.
+type TradingPairConnection struct {
+	Edges      []*TradingPairEdge `json:"edges"`
+	PageInfo   PageInfo           `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
 }
 
-func (c *TradingPairsConnection) build(nodes []*TradingPairs, pager *tradingpairsPager, after *Cursor, first *int, before *Cursor, last *int) {
+func (c *TradingPairConnection) build(nodes []*TradingPair, pager *tradingpairPager, after *Cursor, first *int, before *Cursor, last *int) {
 	c.PageInfo.HasNextPage = before != nil
 	c.PageInfo.HasPreviousPage = after != nil
 	if first != nil && *first+1 == len(nodes) {
@@ -1755,21 +1755,21 @@ func (c *TradingPairsConnection) build(nodes []*TradingPairs, pager *tradingpair
 		c.PageInfo.HasPreviousPage = true
 		nodes = nodes[:len(nodes)-1]
 	}
-	var nodeAt func(int) *TradingPairs
+	var nodeAt func(int) *TradingPair
 	if last != nil {
 		n := len(nodes) - 1
-		nodeAt = func(i int) *TradingPairs {
+		nodeAt = func(i int) *TradingPair {
 			return nodes[n-i]
 		}
 	} else {
-		nodeAt = func(i int) *TradingPairs {
+		nodeAt = func(i int) *TradingPair {
 			return nodes[i]
 		}
 	}
-	c.Edges = make([]*TradingPairsEdge, len(nodes))
+	c.Edges = make([]*TradingPairEdge, len(nodes))
 	for i := range nodes {
 		node := nodeAt(i)
-		c.Edges[i] = &TradingPairsEdge{
+		c.Edges[i] = &TradingPairEdge{
 			Node:   node,
 			Cursor: pager.toCursor(node),
 		}
@@ -1783,118 +1783,118 @@ func (c *TradingPairsConnection) build(nodes []*TradingPairs, pager *tradingpair
 	}
 }
 
-// TradingPairsPaginateOption enables pagination customization.
-type TradingPairsPaginateOption func(*tradingpairsPager) error
+// TradingPairPaginateOption enables pagination customization.
+type TradingPairPaginateOption func(*tradingpairPager) error
 
-// WithTradingPairsOrder configures pagination ordering.
-func WithTradingPairsOrder(order *TradingPairsOrder) TradingPairsPaginateOption {
+// WithTradingPairOrder configures pagination ordering.
+func WithTradingPairOrder(order *TradingPairOrder) TradingPairPaginateOption {
 	if order == nil {
-		order = DefaultTradingPairsOrder
+		order = DefaultTradingPairOrder
 	}
 	o := *order
-	return func(pager *tradingpairsPager) error {
+	return func(pager *tradingpairPager) error {
 		if err := o.Direction.Validate(); err != nil {
 			return err
 		}
 		if o.Field == nil {
-			o.Field = DefaultTradingPairsOrder.Field
+			o.Field = DefaultTradingPairOrder.Field
 		}
 		pager.order = &o
 		return nil
 	}
 }
 
-// WithTradingPairsFilter configures pagination filter.
-func WithTradingPairsFilter(filter func(*TradingPairsQuery) (*TradingPairsQuery, error)) TradingPairsPaginateOption {
-	return func(pager *tradingpairsPager) error {
+// WithTradingPairFilter configures pagination filter.
+func WithTradingPairFilter(filter func(*TradingPairQuery) (*TradingPairQuery, error)) TradingPairPaginateOption {
+	return func(pager *tradingpairPager) error {
 		if filter == nil {
-			return errors.New("TradingPairsQuery filter cannot be nil")
+			return errors.New("TradingPairQuery filter cannot be nil")
 		}
 		pager.filter = filter
 		return nil
 	}
 }
 
-type tradingpairsPager struct {
-	order  *TradingPairsOrder
-	filter func(*TradingPairsQuery) (*TradingPairsQuery, error)
+type tradingpairPager struct {
+	order  *TradingPairOrder
+	filter func(*TradingPairQuery) (*TradingPairQuery, error)
 }
 
-func newTradingPairsPager(opts []TradingPairsPaginateOption) (*tradingpairsPager, error) {
-	pager := &tradingpairsPager{}
+func newTradingPairPager(opts []TradingPairPaginateOption) (*tradingpairPager, error) {
+	pager := &tradingpairPager{}
 	for _, opt := range opts {
 		if err := opt(pager); err != nil {
 			return nil, err
 		}
 	}
 	if pager.order == nil {
-		pager.order = DefaultTradingPairsOrder
+		pager.order = DefaultTradingPairOrder
 	}
 	return pager, nil
 }
 
-func (p *tradingpairsPager) applyFilter(query *TradingPairsQuery) (*TradingPairsQuery, error) {
+func (p *tradingpairPager) applyFilter(query *TradingPairQuery) (*TradingPairQuery, error) {
 	if p.filter != nil {
 		return p.filter(query)
 	}
 	return query, nil
 }
 
-func (p *tradingpairsPager) toCursor(tp *TradingPairs) Cursor {
+func (p *tradingpairPager) toCursor(tp *TradingPair) Cursor {
 	return p.order.Field.toCursor(tp)
 }
 
-func (p *tradingpairsPager) applyCursors(query *TradingPairsQuery, after, before *Cursor) *TradingPairsQuery {
+func (p *tradingpairPager) applyCursors(query *TradingPairQuery, after, before *Cursor) *TradingPairQuery {
 	for _, predicate := range cursorsToPredicates(
 		p.order.Direction, after, before,
-		p.order.Field.field, DefaultTradingPairsOrder.Field.field,
+		p.order.Field.field, DefaultTradingPairOrder.Field.field,
 	) {
 		query = query.Where(predicate)
 	}
 	return query
 }
 
-func (p *tradingpairsPager) applyOrder(query *TradingPairsQuery, reverse bool) *TradingPairsQuery {
+func (p *tradingpairPager) applyOrder(query *TradingPairQuery, reverse bool) *TradingPairQuery {
 	direction := p.order.Direction
 	if reverse {
 		direction = direction.reverse()
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultTradingPairsOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultTradingPairsOrder.Field.field))
+	if p.order.Field != DefaultTradingPairOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultTradingPairOrder.Field.field))
 	}
 	return query
 }
 
-func (p *tradingpairsPager) orderExpr(reverse bool) sql.Querier {
+func (p *tradingpairPager) orderExpr(reverse bool) sql.Querier {
 	direction := p.order.Direction
 	if reverse {
 		direction = direction.reverse()
 	}
 	return sql.ExprFunc(func(b *sql.Builder) {
 		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
-		if p.order.Field != DefaultTradingPairsOrder.Field {
-			b.Comma().Ident(DefaultTradingPairsOrder.Field.field).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultTradingPairOrder.Field {
+			b.Comma().Ident(DefaultTradingPairOrder.Field.field).Pad().WriteString(string(direction))
 		}
 	})
 }
 
-// Paginate executes the query and returns a relay based cursor connection to TradingPairs.
-func (tp *TradingPairsQuery) Paginate(
+// Paginate executes the query and returns a relay based cursor connection to TradingPair.
+func (tp *TradingPairQuery) Paginate(
 	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...TradingPairsPaginateOption,
-) (*TradingPairsConnection, error) {
+	before *Cursor, last *int, opts ...TradingPairPaginateOption,
+) (*TradingPairConnection, error) {
 	if err := validateFirstLast(first, last); err != nil {
 		return nil, err
 	}
-	pager, err := newTradingPairsPager(opts)
+	pager, err := newTradingPairPager(opts)
 	if err != nil {
 		return nil, err
 	}
 	if tp, err = pager.applyFilter(tp); err != nil {
 		return nil, err
 	}
-	conn := &TradingPairsConnection{Edges: []*TradingPairsEdge{}}
+	conn := &TradingPairConnection{Edges: []*TradingPairEdge{}}
 	ignoredEdges := !hasCollectedField(ctx, edgesField)
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
@@ -1930,50 +1930,50 @@ func (tp *TradingPairsQuery) Paginate(
 }
 
 var (
-	// TradingPairsOrderFieldSymbol orders TradingPairs by symbol.
-	TradingPairsOrderFieldSymbol = &TradingPairsOrderField{
-		field: tradingpairs.FieldSymbol,
-		toCursor: func(tp *TradingPairs) Cursor {
+	// TradingPairOrderFieldSymbol orders TradingPair by symbol.
+	TradingPairOrderFieldSymbol = &TradingPairOrderField{
+		field: tradingpair.FieldSymbol,
+		toCursor: func(tp *TradingPair) Cursor {
 			return Cursor{
 				ID:    tp.ID,
 				Value: tp.Symbol,
 			}
 		},
 	}
-	// TradingPairsOrderFieldBase orders TradingPairs by base.
-	TradingPairsOrderFieldBase = &TradingPairsOrderField{
-		field: tradingpairs.FieldBase,
-		toCursor: func(tp *TradingPairs) Cursor {
+	// TradingPairOrderFieldBase orders TradingPair by base.
+	TradingPairOrderFieldBase = &TradingPairOrderField{
+		field: tradingpair.FieldBase,
+		toCursor: func(tp *TradingPair) Cursor {
 			return Cursor{
 				ID:    tp.ID,
 				Value: tp.Base,
 			}
 		},
 	}
-	// TradingPairsOrderFieldBasePrecision orders TradingPairs by base_precision.
-	TradingPairsOrderFieldBasePrecision = &TradingPairsOrderField{
-		field: tradingpairs.FieldBasePrecision,
-		toCursor: func(tp *TradingPairs) Cursor {
+	// TradingPairOrderFieldBasePrecision orders TradingPair by base_precision.
+	TradingPairOrderFieldBasePrecision = &TradingPairOrderField{
+		field: tradingpair.FieldBasePrecision,
+		toCursor: func(tp *TradingPair) Cursor {
 			return Cursor{
 				ID:    tp.ID,
 				Value: tp.BasePrecision,
 			}
 		},
 	}
-	// TradingPairsOrderFieldCounter orders TradingPairs by counter.
-	TradingPairsOrderFieldCounter = &TradingPairsOrderField{
-		field: tradingpairs.FieldCounter,
-		toCursor: func(tp *TradingPairs) Cursor {
+	// TradingPairOrderFieldCounter orders TradingPair by counter.
+	TradingPairOrderFieldCounter = &TradingPairOrderField{
+		field: tradingpair.FieldCounter,
+		toCursor: func(tp *TradingPair) Cursor {
 			return Cursor{
 				ID:    tp.ID,
 				Value: tp.Counter,
 			}
 		},
 	}
-	// TradingPairsOrderFieldCounterPrecision orders TradingPairs by counter_precision.
-	TradingPairsOrderFieldCounterPrecision = &TradingPairsOrderField{
-		field: tradingpairs.FieldCounterPrecision,
-		toCursor: func(tp *TradingPairs) Cursor {
+	// TradingPairOrderFieldCounterPrecision orders TradingPair by counter_precision.
+	TradingPairOrderFieldCounterPrecision = &TradingPairOrderField{
+		field: tradingpair.FieldCounterPrecision,
+		toCursor: func(tp *TradingPair) Cursor {
 			return Cursor{
 				ID:    tp.ID,
 				Value: tp.CounterPrecision,
@@ -1983,80 +1983,80 @@ var (
 )
 
 // String implement fmt.Stringer interface.
-func (f TradingPairsOrderField) String() string {
+func (f TradingPairOrderField) String() string {
 	var str string
 	switch f.field {
-	case tradingpairs.FieldSymbol:
+	case tradingpair.FieldSymbol:
 		str = "symbol"
-	case tradingpairs.FieldBase:
+	case tradingpair.FieldBase:
 		str = "base"
-	case tradingpairs.FieldBasePrecision:
+	case tradingpair.FieldBasePrecision:
 		str = "basePrecision"
-	case tradingpairs.FieldCounter:
+	case tradingpair.FieldCounter:
 		str = "counter"
-	case tradingpairs.FieldCounterPrecision:
+	case tradingpair.FieldCounterPrecision:
 		str = "counterPrecision"
 	}
 	return str
 }
 
 // MarshalGQL implements graphql.Marshaler interface.
-func (f TradingPairsOrderField) MarshalGQL(w io.Writer) {
+func (f TradingPairOrderField) MarshalGQL(w io.Writer) {
 	io.WriteString(w, strconv.Quote(f.String()))
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (f *TradingPairsOrderField) UnmarshalGQL(v interface{}) error {
+func (f *TradingPairOrderField) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("TradingPairsOrderField %T must be a string", v)
+		return fmt.Errorf("TradingPairOrderField %T must be a string", v)
 	}
 	switch str {
 	case "symbol":
-		*f = *TradingPairsOrderFieldSymbol
+		*f = *TradingPairOrderFieldSymbol
 	case "base":
-		*f = *TradingPairsOrderFieldBase
+		*f = *TradingPairOrderFieldBase
 	case "basePrecision":
-		*f = *TradingPairsOrderFieldBasePrecision
+		*f = *TradingPairOrderFieldBasePrecision
 	case "counter":
-		*f = *TradingPairsOrderFieldCounter
+		*f = *TradingPairOrderFieldCounter
 	case "counterPrecision":
-		*f = *TradingPairsOrderFieldCounterPrecision
+		*f = *TradingPairOrderFieldCounterPrecision
 	default:
-		return fmt.Errorf("%s is not a valid TradingPairsOrderField", str)
+		return fmt.Errorf("%s is not a valid TradingPairOrderField", str)
 	}
 	return nil
 }
 
-// TradingPairsOrderField defines the ordering field of TradingPairs.
-type TradingPairsOrderField struct {
+// TradingPairOrderField defines the ordering field of TradingPair.
+type TradingPairOrderField struct {
 	field    string
-	toCursor func(*TradingPairs) Cursor
+	toCursor func(*TradingPair) Cursor
 }
 
-// TradingPairsOrder defines the ordering of TradingPairs.
-type TradingPairsOrder struct {
-	Direction OrderDirection          `json:"direction"`
-	Field     *TradingPairsOrderField `json:"field"`
+// TradingPairOrder defines the ordering of TradingPair.
+type TradingPairOrder struct {
+	Direction OrderDirection         `json:"direction"`
+	Field     *TradingPairOrderField `json:"field"`
 }
 
-// DefaultTradingPairsOrder is the default ordering of TradingPairs.
-var DefaultTradingPairsOrder = &TradingPairsOrder{
+// DefaultTradingPairOrder is the default ordering of TradingPair.
+var DefaultTradingPairOrder = &TradingPairOrder{
 	Direction: OrderDirectionAsc,
-	Field: &TradingPairsOrderField{
-		field: tradingpairs.FieldID,
-		toCursor: func(tp *TradingPairs) Cursor {
+	Field: &TradingPairOrderField{
+		field: tradingpair.FieldID,
+		toCursor: func(tp *TradingPair) Cursor {
 			return Cursor{ID: tp.ID}
 		},
 	},
 }
 
-// ToEdge converts TradingPairs into TradingPairsEdge.
-func (tp *TradingPairs) ToEdge(order *TradingPairsOrder) *TradingPairsEdge {
+// ToEdge converts TradingPair into TradingPairEdge.
+func (tp *TradingPair) ToEdge(order *TradingPairOrder) *TradingPairEdge {
 	if order == nil {
-		order = DefaultTradingPairsOrder
+		order = DefaultTradingPairOrder
 	}
-	return &TradingPairsEdge{
+	return &TradingPairEdge{
 		Node:   tp,
 		Cursor: order.Field.toCursor(tp),
 	}

@@ -12,7 +12,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpairs"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
 // CoinWhereInput represents a where input for filtering Coin queries.
@@ -485,8 +485,8 @@ type ExchangeWhereInput struct {
 	HasTickerWith []*TickerWhereInput `json:"hasTickerWith,omitempty"`
 
 	// "trading_pairs" edge predicates.
-	HasTradingPairs     *bool                     `json:"hasTradingPairs,omitempty"`
-	HasTradingPairsWith []*TradingPairsWhereInput `json:"hasTradingPairsWith,omitempty"`
+	HasTradingPairs     *bool                    `json:"hasTradingPairs,omitempty"`
+	HasTradingPairsWith []*TradingPairWhereInput `json:"hasTradingPairsWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -1133,7 +1133,7 @@ func (i *ExchangeWhereInput) P() (predicate.Exchange, error) {
 		predicates = append(predicates, p)
 	}
 	if len(i.HasTradingPairsWith) > 0 {
-		with := make([]predicate.TradingPairs, 0, len(i.HasTradingPairsWith))
+		with := make([]predicate.TradingPair, 0, len(i.HasTradingPairsWith))
 		for _, w := range i.HasTradingPairsWith {
 			p, err := w.P()
 			if err != nil {
@@ -2365,12 +2365,12 @@ func (i *TickerWhereInput) P() (predicate.Ticker, error) {
 	}
 }
 
-// TradingPairsWhereInput represents a where input for filtering TradingPairs queries.
-type TradingPairsWhereInput struct {
-	Predicates []predicate.TradingPairs  `json:"-"`
-	Not        *TradingPairsWhereInput   `json:"not,omitempty"`
-	Or         []*TradingPairsWhereInput `json:"or,omitempty"`
-	And        []*TradingPairsWhereInput `json:"and,omitempty"`
+// TradingPairWhereInput represents a where input for filtering TradingPair queries.
+type TradingPairWhereInput struct {
+	Predicates []predicate.TradingPair  `json:"-"`
+	Not        *TradingPairWhereInput   `json:"not,omitempty"`
+	Or         []*TradingPairWhereInput `json:"or,omitempty"`
+	And        []*TradingPairWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
 	ID      *int  `json:"id,omitempty"`
@@ -2453,18 +2453,18 @@ type TradingPairsWhereInput struct {
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
-func (i *TradingPairsWhereInput) AddPredicates(predicates ...predicate.TradingPairs) {
+func (i *TradingPairWhereInput) AddPredicates(predicates ...predicate.TradingPair) {
 	i.Predicates = append(i.Predicates, predicates...)
 }
 
-// Filter applies the TradingPairsWhereInput filter on the TradingPairsQuery builder.
-func (i *TradingPairsWhereInput) Filter(q *TradingPairsQuery) (*TradingPairsQuery, error) {
+// Filter applies the TradingPairWhereInput filter on the TradingPairQuery builder.
+func (i *TradingPairWhereInput) Filter(q *TradingPairQuery) (*TradingPairQuery, error) {
 	if i == nil {
 		return q, nil
 	}
 	p, err := i.P()
 	if err != nil {
-		if err == ErrEmptyTradingPairsWhereInput {
+		if err == ErrEmptyTradingPairWhereInput {
 			return q, nil
 		}
 		return nil, err
@@ -2472,19 +2472,19 @@ func (i *TradingPairsWhereInput) Filter(q *TradingPairsQuery) (*TradingPairsQuer
 	return q.Where(p), nil
 }
 
-// ErrEmptyTradingPairsWhereInput is returned in case the TradingPairsWhereInput is empty.
-var ErrEmptyTradingPairsWhereInput = errors.New("entities: empty predicate TradingPairsWhereInput")
+// ErrEmptyTradingPairWhereInput is returned in case the TradingPairWhereInput is empty.
+var ErrEmptyTradingPairWhereInput = errors.New("entities: empty predicate TradingPairWhereInput")
 
-// P returns a predicate for filtering tradingpairsslice.
+// P returns a predicate for filtering tradingpairs.
 // An error is returned if the input is empty or invalid.
-func (i *TradingPairsWhereInput) P() (predicate.TradingPairs, error) {
-	var predicates []predicate.TradingPairs
+func (i *TradingPairWhereInput) P() (predicate.TradingPair, error) {
+	var predicates []predicate.TradingPair
 	if i.Not != nil {
 		p, err := i.Not.P()
 		if err != nil {
 			return nil, fmt.Errorf("%w: field 'not'", err)
 		}
-		predicates = append(predicates, tradingpairs.Not(p))
+		predicates = append(predicates, tradingpair.Not(p))
 	}
 	switch n := len(i.Or); {
 	case n == 1:
@@ -2494,7 +2494,7 @@ func (i *TradingPairsWhereInput) P() (predicate.TradingPairs, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		or := make([]predicate.TradingPairs, 0, n)
+		or := make([]predicate.TradingPair, 0, n)
 		for _, w := range i.Or {
 			p, err := w.P()
 			if err != nil {
@@ -2502,7 +2502,7 @@ func (i *TradingPairsWhereInput) P() (predicate.TradingPairs, error) {
 			}
 			or = append(or, p)
 		}
-		predicates = append(predicates, tradingpairs.Or(or...))
+		predicates = append(predicates, tradingpair.Or(or...))
 	}
 	switch n := len(i.And); {
 	case n == 1:
@@ -2512,7 +2512,7 @@ func (i *TradingPairsWhereInput) P() (predicate.TradingPairs, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		and := make([]predicate.TradingPairs, 0, n)
+		and := make([]predicate.TradingPair, 0, n)
 		for _, w := range i.And {
 			p, err := w.P()
 			if err != nil {
@@ -2520,203 +2520,203 @@ func (i *TradingPairsWhereInput) P() (predicate.TradingPairs, error) {
 			}
 			and = append(and, p)
 		}
-		predicates = append(predicates, tradingpairs.And(and...))
+		predicates = append(predicates, tradingpair.And(and...))
 	}
 	predicates = append(predicates, i.Predicates...)
 	if i.ID != nil {
-		predicates = append(predicates, tradingpairs.IDEQ(*i.ID))
+		predicates = append(predicates, tradingpair.IDEQ(*i.ID))
 	}
 	if i.IDNEQ != nil {
-		predicates = append(predicates, tradingpairs.IDNEQ(*i.IDNEQ))
+		predicates = append(predicates, tradingpair.IDNEQ(*i.IDNEQ))
 	}
 	if len(i.IDIn) > 0 {
-		predicates = append(predicates, tradingpairs.IDIn(i.IDIn...))
+		predicates = append(predicates, tradingpair.IDIn(i.IDIn...))
 	}
 	if len(i.IDNotIn) > 0 {
-		predicates = append(predicates, tradingpairs.IDNotIn(i.IDNotIn...))
+		predicates = append(predicates, tradingpair.IDNotIn(i.IDNotIn...))
 	}
 	if i.IDGT != nil {
-		predicates = append(predicates, tradingpairs.IDGT(*i.IDGT))
+		predicates = append(predicates, tradingpair.IDGT(*i.IDGT))
 	}
 	if i.IDGTE != nil {
-		predicates = append(predicates, tradingpairs.IDGTE(*i.IDGTE))
+		predicates = append(predicates, tradingpair.IDGTE(*i.IDGTE))
 	}
 	if i.IDLT != nil {
-		predicates = append(predicates, tradingpairs.IDLT(*i.IDLT))
+		predicates = append(predicates, tradingpair.IDLT(*i.IDLT))
 	}
 	if i.IDLTE != nil {
-		predicates = append(predicates, tradingpairs.IDLTE(*i.IDLTE))
+		predicates = append(predicates, tradingpair.IDLTE(*i.IDLTE))
 	}
 	if i.Symbol != nil {
-		predicates = append(predicates, tradingpairs.SymbolEQ(*i.Symbol))
+		predicates = append(predicates, tradingpair.SymbolEQ(*i.Symbol))
 	}
 	if i.SymbolNEQ != nil {
-		predicates = append(predicates, tradingpairs.SymbolNEQ(*i.SymbolNEQ))
+		predicates = append(predicates, tradingpair.SymbolNEQ(*i.SymbolNEQ))
 	}
 	if len(i.SymbolIn) > 0 {
-		predicates = append(predicates, tradingpairs.SymbolIn(i.SymbolIn...))
+		predicates = append(predicates, tradingpair.SymbolIn(i.SymbolIn...))
 	}
 	if len(i.SymbolNotIn) > 0 {
-		predicates = append(predicates, tradingpairs.SymbolNotIn(i.SymbolNotIn...))
+		predicates = append(predicates, tradingpair.SymbolNotIn(i.SymbolNotIn...))
 	}
 	if i.SymbolGT != nil {
-		predicates = append(predicates, tradingpairs.SymbolGT(*i.SymbolGT))
+		predicates = append(predicates, tradingpair.SymbolGT(*i.SymbolGT))
 	}
 	if i.SymbolGTE != nil {
-		predicates = append(predicates, tradingpairs.SymbolGTE(*i.SymbolGTE))
+		predicates = append(predicates, tradingpair.SymbolGTE(*i.SymbolGTE))
 	}
 	if i.SymbolLT != nil {
-		predicates = append(predicates, tradingpairs.SymbolLT(*i.SymbolLT))
+		predicates = append(predicates, tradingpair.SymbolLT(*i.SymbolLT))
 	}
 	if i.SymbolLTE != nil {
-		predicates = append(predicates, tradingpairs.SymbolLTE(*i.SymbolLTE))
+		predicates = append(predicates, tradingpair.SymbolLTE(*i.SymbolLTE))
 	}
 	if i.SymbolContains != nil {
-		predicates = append(predicates, tradingpairs.SymbolContains(*i.SymbolContains))
+		predicates = append(predicates, tradingpair.SymbolContains(*i.SymbolContains))
 	}
 	if i.SymbolHasPrefix != nil {
-		predicates = append(predicates, tradingpairs.SymbolHasPrefix(*i.SymbolHasPrefix))
+		predicates = append(predicates, tradingpair.SymbolHasPrefix(*i.SymbolHasPrefix))
 	}
 	if i.SymbolHasSuffix != nil {
-		predicates = append(predicates, tradingpairs.SymbolHasSuffix(*i.SymbolHasSuffix))
+		predicates = append(predicates, tradingpair.SymbolHasSuffix(*i.SymbolHasSuffix))
 	}
 	if i.SymbolEqualFold != nil {
-		predicates = append(predicates, tradingpairs.SymbolEqualFold(*i.SymbolEqualFold))
+		predicates = append(predicates, tradingpair.SymbolEqualFold(*i.SymbolEqualFold))
 	}
 	if i.SymbolContainsFold != nil {
-		predicates = append(predicates, tradingpairs.SymbolContainsFold(*i.SymbolContainsFold))
+		predicates = append(predicates, tradingpair.SymbolContainsFold(*i.SymbolContainsFold))
 	}
 	if i.Base != nil {
-		predicates = append(predicates, tradingpairs.BaseEQ(*i.Base))
+		predicates = append(predicates, tradingpair.BaseEQ(*i.Base))
 	}
 	if i.BaseNEQ != nil {
-		predicates = append(predicates, tradingpairs.BaseNEQ(*i.BaseNEQ))
+		predicates = append(predicates, tradingpair.BaseNEQ(*i.BaseNEQ))
 	}
 	if len(i.BaseIn) > 0 {
-		predicates = append(predicates, tradingpairs.BaseIn(i.BaseIn...))
+		predicates = append(predicates, tradingpair.BaseIn(i.BaseIn...))
 	}
 	if len(i.BaseNotIn) > 0 {
-		predicates = append(predicates, tradingpairs.BaseNotIn(i.BaseNotIn...))
+		predicates = append(predicates, tradingpair.BaseNotIn(i.BaseNotIn...))
 	}
 	if i.BaseGT != nil {
-		predicates = append(predicates, tradingpairs.BaseGT(*i.BaseGT))
+		predicates = append(predicates, tradingpair.BaseGT(*i.BaseGT))
 	}
 	if i.BaseGTE != nil {
-		predicates = append(predicates, tradingpairs.BaseGTE(*i.BaseGTE))
+		predicates = append(predicates, tradingpair.BaseGTE(*i.BaseGTE))
 	}
 	if i.BaseLT != nil {
-		predicates = append(predicates, tradingpairs.BaseLT(*i.BaseLT))
+		predicates = append(predicates, tradingpair.BaseLT(*i.BaseLT))
 	}
 	if i.BaseLTE != nil {
-		predicates = append(predicates, tradingpairs.BaseLTE(*i.BaseLTE))
+		predicates = append(predicates, tradingpair.BaseLTE(*i.BaseLTE))
 	}
 	if i.BaseContains != nil {
-		predicates = append(predicates, tradingpairs.BaseContains(*i.BaseContains))
+		predicates = append(predicates, tradingpair.BaseContains(*i.BaseContains))
 	}
 	if i.BaseHasPrefix != nil {
-		predicates = append(predicates, tradingpairs.BaseHasPrefix(*i.BaseHasPrefix))
+		predicates = append(predicates, tradingpair.BaseHasPrefix(*i.BaseHasPrefix))
 	}
 	if i.BaseHasSuffix != nil {
-		predicates = append(predicates, tradingpairs.BaseHasSuffix(*i.BaseHasSuffix))
+		predicates = append(predicates, tradingpair.BaseHasSuffix(*i.BaseHasSuffix))
 	}
 	if i.BaseEqualFold != nil {
-		predicates = append(predicates, tradingpairs.BaseEqualFold(*i.BaseEqualFold))
+		predicates = append(predicates, tradingpair.BaseEqualFold(*i.BaseEqualFold))
 	}
 	if i.BaseContainsFold != nil {
-		predicates = append(predicates, tradingpairs.BaseContainsFold(*i.BaseContainsFold))
+		predicates = append(predicates, tradingpair.BaseContainsFold(*i.BaseContainsFold))
 	}
 	if i.BasePrecision != nil {
-		predicates = append(predicates, tradingpairs.BasePrecisionEQ(*i.BasePrecision))
+		predicates = append(predicates, tradingpair.BasePrecisionEQ(*i.BasePrecision))
 	}
 	if i.BasePrecisionNEQ != nil {
-		predicates = append(predicates, tradingpairs.BasePrecisionNEQ(*i.BasePrecisionNEQ))
+		predicates = append(predicates, tradingpair.BasePrecisionNEQ(*i.BasePrecisionNEQ))
 	}
 	if len(i.BasePrecisionIn) > 0 {
-		predicates = append(predicates, tradingpairs.BasePrecisionIn(i.BasePrecisionIn...))
+		predicates = append(predicates, tradingpair.BasePrecisionIn(i.BasePrecisionIn...))
 	}
 	if len(i.BasePrecisionNotIn) > 0 {
-		predicates = append(predicates, tradingpairs.BasePrecisionNotIn(i.BasePrecisionNotIn...))
+		predicates = append(predicates, tradingpair.BasePrecisionNotIn(i.BasePrecisionNotIn...))
 	}
 	if i.BasePrecisionGT != nil {
-		predicates = append(predicates, tradingpairs.BasePrecisionGT(*i.BasePrecisionGT))
+		predicates = append(predicates, tradingpair.BasePrecisionGT(*i.BasePrecisionGT))
 	}
 	if i.BasePrecisionGTE != nil {
-		predicates = append(predicates, tradingpairs.BasePrecisionGTE(*i.BasePrecisionGTE))
+		predicates = append(predicates, tradingpair.BasePrecisionGTE(*i.BasePrecisionGTE))
 	}
 	if i.BasePrecisionLT != nil {
-		predicates = append(predicates, tradingpairs.BasePrecisionLT(*i.BasePrecisionLT))
+		predicates = append(predicates, tradingpair.BasePrecisionLT(*i.BasePrecisionLT))
 	}
 	if i.BasePrecisionLTE != nil {
-		predicates = append(predicates, tradingpairs.BasePrecisionLTE(*i.BasePrecisionLTE))
+		predicates = append(predicates, tradingpair.BasePrecisionLTE(*i.BasePrecisionLTE))
 	}
 	if i.Counter != nil {
-		predicates = append(predicates, tradingpairs.CounterEQ(*i.Counter))
+		predicates = append(predicates, tradingpair.CounterEQ(*i.Counter))
 	}
 	if i.CounterNEQ != nil {
-		predicates = append(predicates, tradingpairs.CounterNEQ(*i.CounterNEQ))
+		predicates = append(predicates, tradingpair.CounterNEQ(*i.CounterNEQ))
 	}
 	if len(i.CounterIn) > 0 {
-		predicates = append(predicates, tradingpairs.CounterIn(i.CounterIn...))
+		predicates = append(predicates, tradingpair.CounterIn(i.CounterIn...))
 	}
 	if len(i.CounterNotIn) > 0 {
-		predicates = append(predicates, tradingpairs.CounterNotIn(i.CounterNotIn...))
+		predicates = append(predicates, tradingpair.CounterNotIn(i.CounterNotIn...))
 	}
 	if i.CounterGT != nil {
-		predicates = append(predicates, tradingpairs.CounterGT(*i.CounterGT))
+		predicates = append(predicates, tradingpair.CounterGT(*i.CounterGT))
 	}
 	if i.CounterGTE != nil {
-		predicates = append(predicates, tradingpairs.CounterGTE(*i.CounterGTE))
+		predicates = append(predicates, tradingpair.CounterGTE(*i.CounterGTE))
 	}
 	if i.CounterLT != nil {
-		predicates = append(predicates, tradingpairs.CounterLT(*i.CounterLT))
+		predicates = append(predicates, tradingpair.CounterLT(*i.CounterLT))
 	}
 	if i.CounterLTE != nil {
-		predicates = append(predicates, tradingpairs.CounterLTE(*i.CounterLTE))
+		predicates = append(predicates, tradingpair.CounterLTE(*i.CounterLTE))
 	}
 	if i.CounterContains != nil {
-		predicates = append(predicates, tradingpairs.CounterContains(*i.CounterContains))
+		predicates = append(predicates, tradingpair.CounterContains(*i.CounterContains))
 	}
 	if i.CounterHasPrefix != nil {
-		predicates = append(predicates, tradingpairs.CounterHasPrefix(*i.CounterHasPrefix))
+		predicates = append(predicates, tradingpair.CounterHasPrefix(*i.CounterHasPrefix))
 	}
 	if i.CounterHasSuffix != nil {
-		predicates = append(predicates, tradingpairs.CounterHasSuffix(*i.CounterHasSuffix))
+		predicates = append(predicates, tradingpair.CounterHasSuffix(*i.CounterHasSuffix))
 	}
 	if i.CounterEqualFold != nil {
-		predicates = append(predicates, tradingpairs.CounterEqualFold(*i.CounterEqualFold))
+		predicates = append(predicates, tradingpair.CounterEqualFold(*i.CounterEqualFold))
 	}
 	if i.CounterContainsFold != nil {
-		predicates = append(predicates, tradingpairs.CounterContainsFold(*i.CounterContainsFold))
+		predicates = append(predicates, tradingpair.CounterContainsFold(*i.CounterContainsFold))
 	}
 	if i.CounterPrecision != nil {
-		predicates = append(predicates, tradingpairs.CounterPrecisionEQ(*i.CounterPrecision))
+		predicates = append(predicates, tradingpair.CounterPrecisionEQ(*i.CounterPrecision))
 	}
 	if i.CounterPrecisionNEQ != nil {
-		predicates = append(predicates, tradingpairs.CounterPrecisionNEQ(*i.CounterPrecisionNEQ))
+		predicates = append(predicates, tradingpair.CounterPrecisionNEQ(*i.CounterPrecisionNEQ))
 	}
 	if len(i.CounterPrecisionIn) > 0 {
-		predicates = append(predicates, tradingpairs.CounterPrecisionIn(i.CounterPrecisionIn...))
+		predicates = append(predicates, tradingpair.CounterPrecisionIn(i.CounterPrecisionIn...))
 	}
 	if len(i.CounterPrecisionNotIn) > 0 {
-		predicates = append(predicates, tradingpairs.CounterPrecisionNotIn(i.CounterPrecisionNotIn...))
+		predicates = append(predicates, tradingpair.CounterPrecisionNotIn(i.CounterPrecisionNotIn...))
 	}
 	if i.CounterPrecisionGT != nil {
-		predicates = append(predicates, tradingpairs.CounterPrecisionGT(*i.CounterPrecisionGT))
+		predicates = append(predicates, tradingpair.CounterPrecisionGT(*i.CounterPrecisionGT))
 	}
 	if i.CounterPrecisionGTE != nil {
-		predicates = append(predicates, tradingpairs.CounterPrecisionGTE(*i.CounterPrecisionGTE))
+		predicates = append(predicates, tradingpair.CounterPrecisionGTE(*i.CounterPrecisionGTE))
 	}
 	if i.CounterPrecisionLT != nil {
-		predicates = append(predicates, tradingpairs.CounterPrecisionLT(*i.CounterPrecisionLT))
+		predicates = append(predicates, tradingpair.CounterPrecisionLT(*i.CounterPrecisionLT))
 	}
 	if i.CounterPrecisionLTE != nil {
-		predicates = append(predicates, tradingpairs.CounterPrecisionLTE(*i.CounterPrecisionLTE))
+		predicates = append(predicates, tradingpair.CounterPrecisionLTE(*i.CounterPrecisionLTE))
 	}
 
 	if i.HasExchange != nil {
-		p := tradingpairs.HasExchange()
+		p := tradingpair.HasExchange()
 		if !*i.HasExchange {
-			p = tradingpairs.Not(p)
+			p = tradingpair.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
@@ -2729,14 +2729,14 @@ func (i *TradingPairsWhereInput) P() (predicate.TradingPairs, error) {
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, tradingpairs.HasExchangeWith(with...))
+		predicates = append(predicates, tradingpair.HasExchangeWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
-		return nil, ErrEmptyTradingPairsWhereInput
+		return nil, ErrEmptyTradingPairWhereInput
 	case 1:
 		return predicates[0], nil
 	default:
-		return tradingpairs.And(predicates...), nil
+		return tradingpair.And(predicates...), nil
 	}
 }

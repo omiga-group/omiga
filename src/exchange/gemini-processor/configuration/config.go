@@ -1,14 +1,16 @@
 package configuration
 
 import (
+	exchangeConfiguration "github.com/omiga-group/omiga/src/exchange/shared/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 )
 
 type Config struct {
-	App    configuration.AppConfig `yaml:"app"`
-	Pulsar pulsar.PulsarConfig     `yaml:"pulsar"`
-	Gemini GeminiConfig            `yaml:"gemini"`
+	App      configuration.AppConfig              `yaml:"app"`
+	Exchange exchangeConfiguration.ExchangeConfig `yaml:"exchange"`
+	Pulsar   pulsar.PulsarConfig                  `yaml:"pulsar"`
+	Gemini   GeminiConfig                         `yaml:"gemini"`
 }
 
 type GeminiConfig struct {

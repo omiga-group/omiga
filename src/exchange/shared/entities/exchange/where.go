@@ -1578,14 +1578,14 @@ func HasTradingPairs() predicate.Exchange {
 			sqlgraph.Edge(sqlgraph.O2M, false, TradingPairsTable, TradingPairsColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.TradingPairs
-		step.Edge.Schema = schemaConfig.TradingPairs
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
 // HasTradingPairsWith applies the HasEdge predicate on the "trading_pairs" edge with a given conditions (other predicates).
-func HasTradingPairsWith(preds ...predicate.TradingPairs) predicate.Exchange {
+func HasTradingPairsWith(preds ...predicate.TradingPair) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
@@ -1593,8 +1593,8 @@ func HasTradingPairsWith(preds ...predicate.TradingPairs) predicate.Exchange {
 			sqlgraph.Edge(sqlgraph.O2M, false, TradingPairsTable, TradingPairsColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.TradingPairs
-		step.Edge.Schema = schemaConfig.TradingPairs
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

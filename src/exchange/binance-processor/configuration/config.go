@@ -1,19 +1,23 @@
 package configuration
 
 import (
+	exchangeConfiguration "github.com/omiga-group/omiga/src/exchange/shared/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 )
 
 type Config struct {
-	App      configuration.AppConfig `yaml:"app"`
-	Pulsar   pulsar.PulsarConfig     `yaml:"pulsar"`
-	Binance  BinanceConfig           `yaml:"binance"`
-	Postgres postgres.PostgresConfig `yaml:"postgres"`
+	App      configuration.AppConfig              `yaml:"app"`
+	Exchange exchangeConfiguration.ExchangeConfig `yaml:"exchange"`
+	Pulsar   pulsar.PulsarConfig                  `yaml:"pulsar"`
+	Binance  BinanceConfig                        `yaml:"binance"`
+	Postgres postgres.PostgresConfig              `yaml:"postgres"`
 }
 
 type BinanceConfig struct {
+	ApiKey     string    `yaml:"apiKey" env:"OMIGA_BINANCE_APIKEY"`
+	SecretKey  string    `yaml:"secretKey" env:"OMIGA_BINANCE_SECRETKEY"`
 	UseTestnet bool      `yaml:"useTestnet" env:"OMIGA_BINANCE_USETESTNET"`
 	OrderBook  OrderBook `yaml:"orderBook"`
 }

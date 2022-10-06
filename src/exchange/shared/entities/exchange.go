@@ -62,7 +62,7 @@ type ExchangeEdges struct {
 	// Ticker holds the value of the ticker edge.
 	Ticker []*Ticker `json:"ticker,omitempty"`
 	// TradingPairs holds the value of the trading_pairs edge.
-	TradingPairs []*TradingPairs `json:"trading_pairs,omitempty"`
+	TradingPairs []*TradingPair `json:"trading_pairs,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -70,7 +70,7 @@ type ExchangeEdges struct {
 	totalCount [2]map[string]int
 
 	namedTicker       map[string][]*Ticker
-	namedTradingPairs map[string][]*TradingPairs
+	namedTradingPairs map[string][]*TradingPair
 }
 
 // TickerOrErr returns the Ticker value or an error if the edge
@@ -84,7 +84,7 @@ func (e ExchangeEdges) TickerOrErr() ([]*Ticker, error) {
 
 // TradingPairsOrErr returns the TradingPairs value or an error if the edge
 // was not loaded in eager-loading.
-func (e ExchangeEdges) TradingPairsOrErr() ([]*TradingPairs, error) {
+func (e ExchangeEdges) TradingPairsOrErr() ([]*TradingPair, error) {
 	if e.loadedTypes[1] {
 		return e.TradingPairs, nil
 	}
@@ -248,7 +248,7 @@ func (e *Exchange) QueryTicker() *TickerQuery {
 }
 
 // QueryTradingPairs queries the "trading_pairs" edge of the Exchange entity.
-func (e *Exchange) QueryTradingPairs() *TradingPairsQuery {
+func (e *Exchange) QueryTradingPairs() *TradingPairQuery {
 	return (&ExchangeClient{config: e.config}).QueryTradingPairs(e)
 }
 
@@ -358,7 +358,7 @@ func (e *Exchange) appendNamedTicker(name string, edges ...*Ticker) {
 
 // NamedTradingPairs returns the TradingPairs named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (e *Exchange) NamedTradingPairs(name string) ([]*TradingPairs, error) {
+func (e *Exchange) NamedTradingPairs(name string) ([]*TradingPair, error) {
 	if e.Edges.namedTradingPairs == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
@@ -369,12 +369,12 @@ func (e *Exchange) NamedTradingPairs(name string) ([]*TradingPairs, error) {
 	return nodes, nil
 }
 
-func (e *Exchange) appendNamedTradingPairs(name string, edges ...*TradingPairs) {
+func (e *Exchange) appendNamedTradingPairs(name string, edges ...*TradingPair) {
 	if e.Edges.namedTradingPairs == nil {
-		e.Edges.namedTradingPairs = make(map[string][]*TradingPairs)
+		e.Edges.namedTradingPairs = make(map[string][]*TradingPair)
 	}
 	if len(edges) == 0 {
-		e.Edges.namedTradingPairs[name] = []*TradingPairs{}
+		e.Edges.namedTradingPairs[name] = []*TradingPair{}
 	} else {
 		e.Edges.namedTradingPairs[name] = append(e.Edges.namedTradingPairs[name], edges...)
 	}

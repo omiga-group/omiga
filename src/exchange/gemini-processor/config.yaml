@@ -1,6 +1,9 @@
 app:
   source: "urn::omiga::gemini-processor"
 
+exchange:
+  id: "gemini"
+
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "gemini-processor"

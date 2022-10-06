@@ -24,18 +24,30 @@ import (
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/subscribers"
+	exchangeConfiguration "github.com/omiga-group/omiga/src/exchange/shared/configuration"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/exchange/shared/services"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
+
+func NewCronService(
+	logger *zap.SugaredLogger) (cron.CronService, error) {
+	wire.Build(
+		time.NewTimeHelper,
+		cron.NewCronService)
+
+	return nil, nil
+}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	wire.Build(
@@ -76,6 +88,22 @@ func NewBinanceOrderBookSubscriber(
 		publishers.NewOrderBookPublisher,
 		subscribers.NewBinanceOrderBookSubscriber,
 		services.NewCoinHelper)
+
+	return nil, nil
+}
+
+func NewBinanceTradingPairsSubscriber(
+	ctx context.Context,
+	logger *zap.SugaredLogger,
+	binanceConfig configuration.BinanceConfig,
+	exchangeConfig exchangeConfiguration.ExchangeConfig,
+	cronService cron.CronService,
+	postgresConfig postgres.PostgresConfig) (subscribers.BinanceTradingPairsSubscriber, error) {
+	wire.Build(
+		postgres.NewPostgres,
+		entities.NewEntgoClient,
+		repositories.NewTradingPairRepository,
+		subscribers.NewBinanceTradingPairsSubscriber)
 
 	return nil, nil
 }

@@ -33,11 +33,9 @@ type binanceOrderBookSubscriber struct {
 func NewBinanceOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	binanceConfig configuration.BinanceConfig,
 	pairConfig configuration.PairConfig,
 	orderBookPublisher publishers.OrderBookPublisher,
 	coinHelper services.CoinHelper) (BinanceOrderBookSubscriber, error) {
-	binance.UseTestnet = binanceConfig.UseTestnet
 
 	pairs := strings.Split(pairConfig.Pair, "/")
 	symbol1 := strings.ToLower(pairs[0])

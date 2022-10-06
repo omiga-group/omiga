@@ -8,7 +8,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpairs"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -120,20 +120,20 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   tradingpairs.Table,
-			Columns: tradingpairs.Columns,
+			Table:   tradingpair.Table,
+			Columns: tradingpair.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: tradingpairs.FieldID,
+				Column: tradingpair.FieldID,
 			},
 		},
-		Type: "TradingPairs",
+		Type: "TradingPair",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			tradingpairs.FieldSymbol:           {Type: field.TypeString, Column: tradingpairs.FieldSymbol},
-			tradingpairs.FieldBase:             {Type: field.TypeString, Column: tradingpairs.FieldBase},
-			tradingpairs.FieldBasePrecision:    {Type: field.TypeInt, Column: tradingpairs.FieldBasePrecision},
-			tradingpairs.FieldCounter:          {Type: field.TypeString, Column: tradingpairs.FieldCounter},
-			tradingpairs.FieldCounterPrecision: {Type: field.TypeInt, Column: tradingpairs.FieldCounterPrecision},
+			tradingpair.FieldSymbol:           {Type: field.TypeString, Column: tradingpair.FieldSymbol},
+			tradingpair.FieldBase:             {Type: field.TypeString, Column: tradingpair.FieldBase},
+			tradingpair.FieldBasePrecision:    {Type: field.TypeInt, Column: tradingpair.FieldBasePrecision},
+			tradingpair.FieldCounter:          {Type: field.TypeString, Column: tradingpair.FieldCounter},
+			tradingpair.FieldCounterPrecision: {Type: field.TypeInt, Column: tradingpair.FieldCounterPrecision},
 		},
 	}
 	graph.MustAddE(
@@ -158,7 +158,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Bidi:    false,
 		},
 		"Exchange",
-		"TradingPairs",
+		"TradingPair",
 	)
 	graph.MustAddE(
 		"exchange",
@@ -177,11 +177,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tradingpairs.ExchangeTable,
-			Columns: []string{tradingpairs.ExchangeColumn},
+			Table:   tradingpair.ExchangeTable,
+			Columns: []string{tradingpair.ExchangeColumn},
 			Bidi:    false,
 		},
-		"TradingPairs",
+		"TradingPair",
 		"Exchange",
 	)
 	return graph
@@ -393,7 +393,7 @@ func (f *ExchangeFilter) WhereHasTradingPairs() {
 }
 
 // WhereHasTradingPairsWith applies a predicate to check if query has an edge trading_pairs with a given conditions (other predicates).
-func (f *ExchangeFilter) WhereHasTradingPairsWith(preds ...predicate.TradingPairs) {
+func (f *ExchangeFilter) WhereHasTradingPairsWith(preds ...predicate.TradingPair) {
 	f.Where(entql.HasEdgeWith("trading_pairs", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
@@ -631,33 +631,33 @@ func (f *TickerFilter) WhereHasExchangeWith(preds ...predicate.Exchange) {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (tpq *TradingPairsQuery) addPredicate(pred func(s *sql.Selector)) {
+func (tpq *TradingPairQuery) addPredicate(pred func(s *sql.Selector)) {
 	tpq.predicates = append(tpq.predicates, pred)
 }
 
-// Filter returns a Filter implementation to apply filters on the TradingPairsQuery builder.
-func (tpq *TradingPairsQuery) Filter() *TradingPairsFilter {
-	return &TradingPairsFilter{config: tpq.config, predicateAdder: tpq}
+// Filter returns a Filter implementation to apply filters on the TradingPairQuery builder.
+func (tpq *TradingPairQuery) Filter() *TradingPairFilter {
+	return &TradingPairFilter{config: tpq.config, predicateAdder: tpq}
 }
 
 // addPredicate implements the predicateAdder interface.
-func (m *TradingPairsMutation) addPredicate(pred func(s *sql.Selector)) {
+func (m *TradingPairMutation) addPredicate(pred func(s *sql.Selector)) {
 	m.predicates = append(m.predicates, pred)
 }
 
-// Filter returns an entql.Where implementation to apply filters on the TradingPairsMutation builder.
-func (m *TradingPairsMutation) Filter() *TradingPairsFilter {
-	return &TradingPairsFilter{config: m.config, predicateAdder: m}
+// Filter returns an entql.Where implementation to apply filters on the TradingPairMutation builder.
+func (m *TradingPairMutation) Filter() *TradingPairFilter {
+	return &TradingPairFilter{config: m.config, predicateAdder: m}
 }
 
-// TradingPairsFilter provides a generic filtering capability at runtime for TradingPairsQuery.
-type TradingPairsFilter struct {
+// TradingPairFilter provides a generic filtering capability at runtime for TradingPairQuery.
+type TradingPairFilter struct {
 	predicateAdder
 	config
 }
 
 // Where applies the entql predicate on the query filter.
-func (f *TradingPairsFilter) Where(p entql.P) {
+func (f *TradingPairFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
 		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
@@ -666,42 +666,42 @@ func (f *TradingPairsFilter) Where(p entql.P) {
 }
 
 // WhereID applies the entql int predicate on the id field.
-func (f *TradingPairsFilter) WhereID(p entql.IntP) {
-	f.Where(p.Field(tradingpairs.FieldID))
+func (f *TradingPairFilter) WhereID(p entql.IntP) {
+	f.Where(p.Field(tradingpair.FieldID))
 }
 
 // WhereSymbol applies the entql string predicate on the symbol field.
-func (f *TradingPairsFilter) WhereSymbol(p entql.StringP) {
-	f.Where(p.Field(tradingpairs.FieldSymbol))
+func (f *TradingPairFilter) WhereSymbol(p entql.StringP) {
+	f.Where(p.Field(tradingpair.FieldSymbol))
 }
 
 // WhereBase applies the entql string predicate on the base field.
-func (f *TradingPairsFilter) WhereBase(p entql.StringP) {
-	f.Where(p.Field(tradingpairs.FieldBase))
+func (f *TradingPairFilter) WhereBase(p entql.StringP) {
+	f.Where(p.Field(tradingpair.FieldBase))
 }
 
 // WhereBasePrecision applies the entql int predicate on the base_precision field.
-func (f *TradingPairsFilter) WhereBasePrecision(p entql.IntP) {
-	f.Where(p.Field(tradingpairs.FieldBasePrecision))
+func (f *TradingPairFilter) WhereBasePrecision(p entql.IntP) {
+	f.Where(p.Field(tradingpair.FieldBasePrecision))
 }
 
 // WhereCounter applies the entql string predicate on the counter field.
-func (f *TradingPairsFilter) WhereCounter(p entql.StringP) {
-	f.Where(p.Field(tradingpairs.FieldCounter))
+func (f *TradingPairFilter) WhereCounter(p entql.StringP) {
+	f.Where(p.Field(tradingpair.FieldCounter))
 }
 
 // WhereCounterPrecision applies the entql int predicate on the counter_precision field.
-func (f *TradingPairsFilter) WhereCounterPrecision(p entql.IntP) {
-	f.Where(p.Field(tradingpairs.FieldCounterPrecision))
+func (f *TradingPairFilter) WhereCounterPrecision(p entql.IntP) {
+	f.Where(p.Field(tradingpair.FieldCounterPrecision))
 }
 
 // WhereHasExchange applies a predicate to check if query has an edge exchange.
-func (f *TradingPairsFilter) WhereHasExchange() {
+func (f *TradingPairFilter) WhereHasExchange() {
 	f.Where(entql.HasEdge("exchange"))
 }
 
 // WhereHasExchangeWith applies a predicate to check if query has an edge exchange with a given conditions (other predicates).
-func (f *TradingPairsFilter) WhereHasExchangeWith(preds ...predicate.Exchange) {
+func (f *TradingPairFilter) WhereHasExchangeWith(preds ...predicate.Exchange) {
 	f.Where(entql.HasEdgeWith("exchange", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)

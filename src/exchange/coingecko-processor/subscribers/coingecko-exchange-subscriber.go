@@ -8,9 +8,9 @@ import (
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/mappers"
-	coingeckorepositories "github.com/omiga-group/omiga/src/exchange/coingecko-processor/repositories"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	coingeckov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingecko/v3"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	timeex "github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -27,7 +27,7 @@ type coingeckoExchangeSubscriber struct {
 	exchanges          map[string]configuration.Exchange
 	entgoClient        entities.EntgoClient
 	timeHelper         timeex.TimeHelper
-	exchangeRepository coingeckorepositories.ExchangeRepository
+	exchangeRepository repositories.ExchangeRepository
 }
 
 func NewCoingeckoExchangeSubscriber(
@@ -38,7 +38,7 @@ func NewCoingeckoExchangeSubscriber(
 	exchanges map[string]configuration.Exchange,
 	entgoClient entities.EntgoClient,
 	timeHelper timeex.TimeHelper,
-	exchangeRepository coingeckorepositories.ExchangeRepository) (CoingeckoExchangeSubscriber, error) {
+	exchangeRepository repositories.ExchangeRepository) (CoingeckoExchangeSubscriber, error) {
 	instance := &coingeckoExchangeSubscriber{
 		ctx:                ctx,
 		logger:             logger,
