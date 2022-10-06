@@ -7,12 +7,11 @@ import (
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/mappers"
-	coingeckorepositories "github.com/omiga-group/omiga/src/exchange/coingecko-processor/repositories"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	coingeckov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingecko/v3"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
-	timeex "github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
@@ -25,8 +24,7 @@ type coingeckoCoinSubscriber struct {
 	coingeckoConfig configuration.CoingeckoConfig
 	exchanges       map[string]configuration.Exchange
 	entgoClient     entities.EntgoClient
-	timeHelper      timeex.TimeHelper
-	coinRepository  coingeckorepositories.CoinRepository
+	coinRepository  repositories.CoinRepository
 }
 
 func NewCoingeckoCoinSubscriber(
@@ -36,15 +34,13 @@ func NewCoingeckoCoinSubscriber(
 	coingeckoConfig configuration.CoingeckoConfig,
 	exchanges map[string]configuration.Exchange,
 	entgoClient entities.EntgoClient,
-	timeHelper timeex.TimeHelper,
-	coinRepository coingeckorepositories.CoinRepository) (CoingeckoCoinSubscriber, error) {
+	coinRepository repositories.CoinRepository) (CoingeckoCoinSubscriber, error) {
 	instance := &coingeckoCoinSubscriber{
 		ctx:             ctx,
 		logger:          logger,
 		coingeckoConfig: coingeckoConfig,
 		exchanges:       exchanges,
 		entgoClient:     entgoClient,
-		timeHelper:      timeHelper,
 		coinRepository:  coinRepository,
 	}
 
@@ -62,6 +58,7 @@ func (ces *coingeckoCoinSubscriber) Run() {
 	coingeckoClient, err := coingeckov3.NewClientWithResponses(ces.coingeckoConfig.BaseUrl)
 	if err != nil {
 		ces.logger.Errorf("Failed to create coingecko client. Error: %v", err)
+
 		return
 	}
 

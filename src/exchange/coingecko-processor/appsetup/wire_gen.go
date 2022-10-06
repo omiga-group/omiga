@@ -9,9 +9,9 @@ package appsetup
 import (
 	"context"
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/configuration"
-	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/repositories"
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/subscribers"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -73,15 +73,11 @@ func NewCoingeckoCoinSubscriber(ctx context.Context, logger *zap.SugaredLogger, 
 	if err != nil {
 		return nil, err
 	}
-	timeHelper, err := time.NewTimeHelper()
-	if err != nil {
-		return nil, err
-	}
 	coinRepository, err := repositories.NewCoinRepository(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}
-	coingeckoCoinSubscriber, err := subscribers.NewCoingeckoCoinSubscriber(ctx, logger, cronService, coingeckoConfig, exchanges, entgoClient, timeHelper, coinRepository)
+	coingeckoCoinSubscriber, err := subscribers.NewCoingeckoCoinSubscriber(ctx, logger, cronService, coingeckoConfig, exchanges, entgoClient, coinRepository)
 	if err != nil {
 		return nil, err
 	}

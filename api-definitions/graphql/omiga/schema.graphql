@@ -48,6 +48,7 @@ type Exchange implements Node {
   tradeVolume24hBtc: Float
   tradeVolume24hBtcNormalized: Float
   tickers: [Ticker!]!
+  tradingPairs: [TradingPairs!]!
   makerFee: Float
   takerFee: Float
   spreadFee: Boolean
@@ -188,6 +189,14 @@ type Ticker implements Node {
   isStale: Boolean
   tradeUrl: String
   tokenInfoUrl: String
+}
+type TradingPairs implements Node {
+  id: ID!
+  symbol: String!
+  base: String!
+  basePrecision: Int
+  counter: String!
+  counterPrecision: Int
 }
 "An object with an ID"
 interface Node {

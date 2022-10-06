@@ -108,40 +108,40 @@ func (er *exchangeRepository) CreateExchange(
 
 	tickersToCreate := slices.Map(
 		exchange.Tickers,
-		func(ticker models.Ticker) *entities.TickerCreate {
+		func(item models.Ticker) *entities.TickerCreate {
 			return client.Ticker.
 				Create().
 				SetExchangeID(savedExchange.ID).
-				SetBase(ticker.Base).
-				SetCounter(ticker.Counter).
+				SetBase(item.Base).
+				SetCounter(item.Counter).
 				SetMarket(modelsexchange.Market{
-					HasTradingIncentive: ticker.Market.HasTradingIncentive,
-					Identifier:          ticker.Market.Identifier,
-					Name:                ticker.Market.Name,
+					HasTradingIncentive: item.Market.HasTradingIncentive,
+					Identifier:          item.Market.Identifier,
+					Name:                item.Market.Name,
 				}).
-				SetLast(ticker.Last).
-				SetVolume(ticker.Volume).
+				SetLast(item.Last).
+				SetVolume(item.Volume).
 				SetConvertedLast(modelsexchange.ConvertedDetails{
-					Btc: ticker.ConvertedLast.Btc,
-					Eth: ticker.ConvertedLast.Eth,
-					Usd: ticker.ConvertedLast.Usd,
+					Btc: item.ConvertedLast.Btc,
+					Eth: item.ConvertedLast.Eth,
+					Usd: item.ConvertedLast.Usd,
 				}).
 				SetConvertedVolume(modelsexchange.ConvertedDetails{
-					Btc: ticker.ConvertedVolume.Btc,
-					Eth: ticker.ConvertedVolume.Eth,
-					Usd: ticker.ConvertedVolume.Usd,
+					Btc: item.ConvertedVolume.Btc,
+					Eth: item.ConvertedVolume.Eth,
+					Usd: item.ConvertedVolume.Usd,
 				}).
-				SetTrustScore(ticker.TrustScore).
-				SetBidAskSpreadPercentage(ticker.BidAskSpreadPercentage).
-				SetTimestamp(ticker.Timestamp).
-				SetLastTradedAt(ticker.LastTradedAt).
-				SetLastFetchAt(ticker.LastFetchAt).
-				SetIsAnomaly(ticker.IsAnomaly).
-				SetIsStale(ticker.IsStale).
-				SetTradeURL(ticker.TradeUrl).
-				SetNillableTokenInfoURL(ticker.TokenInfoUrl).
-				SetBaseCoinID(ticker.BaseCoinId).
-				SetCounterCoinID(ticker.CounterCoinId)
+				SetTrustScore(item.TrustScore).
+				SetBidAskSpreadPercentage(item.BidAskSpreadPercentage).
+				SetTimestamp(item.Timestamp).
+				SetLastTradedAt(item.LastTradedAt).
+				SetLastFetchAt(item.LastFetchAt).
+				SetIsAnomaly(item.IsAnomaly).
+				SetIsStale(item.IsStale).
+				SetTradeURL(item.TradeUrl).
+				SetNillableTokenInfoURL(item.TokenInfoUrl).
+				SetBaseCoinID(item.BaseCoinId).
+				SetCounterCoinID(item.CounterCoinId)
 		})
 
 	if err = client.Ticker.
@@ -168,8 +168,8 @@ func (er *exchangeRepository) CreateExchange(
 
 	tickerIdsToDelete := slices.Map(
 		tickersToDelete,
-		func(ticker *entities.Ticker) int {
-			return ticker.ID
+		func(item *entities.Ticker) int {
+			return item.ID
 		})
 
 	if _, err = client.Ticker.

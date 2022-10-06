@@ -10,12 +10,15 @@ import (
 	"context"
 	configuration2 "github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/subscribers"
+	configuration3 "github.com/omiga-group/omiga/src/exchange/shared/configuration"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/exchange/shared/services"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
@@ -24,6 +27,18 @@ import (
 )
 
 // Injectors from wire.go:
+
+func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	cronService, err := cron.NewCronService(logger, timeHelper)
+	if err != nil {
+		return nil, err
+	}
+	return cronService, nil
+}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	timeHelper, err := time.NewTimeHelper()
@@ -84,9 +99,29 @@ func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
-	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, binanceConfig, pairConfig, orderBookPublisher, coinHelper)
+	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, pairConfig, orderBookPublisher, coinHelper)
 	if err != nil {
 		return nil, err
 	}
 	return binanceOrderBookSubscriber, nil
+}
+
+func NewBinanceTradingPairsSubscriber(ctx context.Context, logger *zap.SugaredLogger, binanceConfig configuration2.BinanceConfig, exchangeConfig configuration3.ExchangeConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.BinanceTradingPairsSubscriber, error) {
+	database, err := postgres.NewPostgres(logger, postgresConfig)
+	if err != nil {
+		return nil, err
+	}
+	entgoClient, err := entities.NewEntgoClient(logger, database)
+	if err != nil {
+		return nil, err
+	}
+	tradingPairsRepository, err := repositories.NewTradingPairsRepository(logger, entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	binanceTradingPairsSubscriber, err := subscribers.NewBinanceTradingPairsSubscriber(ctx, logger, binanceConfig, exchangeConfig, cronService, tradingPairsRepository)
+	if err != nil {
+		return nil, err
+	}
+	return binanceTradingPairsSubscriber, nil
 }

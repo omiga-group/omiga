@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/adshao/go-binance/v2"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/appsetup"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
@@ -61,6 +62,8 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
+			binance.UseTestnet = config.Binance.UseTestnet
+
 			for _, pairConfig := range config.Binance.OrderBook.Pairs {
 				binanceOrderBookSubscriber, err := appsetup.NewBinanceOrderBookSubscriber(
 					ctx,
@@ -76,6 +79,23 @@ func startCommand() *cobra.Command {
 				}
 
 				defer binanceOrderBookSubscriber.Close()
+			}
+
+			cronService, err := appsetup.NewCronService(sugarLogger)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer cronService.Close()
+
+			if _, err = appsetup.NewBinanceTradingPairsSubscriber(
+				ctx,
+				sugarLogger,
+				config.Binance,
+				config.Exchange,
+				cronService,
+				config.Postgres); err != nil {
+				sugarLogger.Fatal(err)
 			}
 
 			timeHelper, err := appsetup.NewTimeHelper()

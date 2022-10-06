@@ -90,6 +90,7 @@ type ComplexityRoot struct {
 		Tickers                     func(childComplexity int) int
 		TradeVolume24hBtc           func(childComplexity int) int
 		TradeVolume24hBtcNormalized func(childComplexity int) int
+		TradingPairs                func(childComplexity int) int
 		TrustScore                  func(childComplexity int) int
 		TrustScoreRank              func(childComplexity int) int
 		YearEstablished             func(childComplexity int) int
@@ -156,6 +157,15 @@ type ComplexityRoot struct {
 		TradeURL               func(childComplexity int) int
 		TrustScore             func(childComplexity int) int
 		Volume                 func(childComplexity int) int
+	}
+
+	TradingPairs struct {
+		Base             func(childComplexity int) int
+		BasePrecision    func(childComplexity int) int
+		Counter          func(childComplexity int) int
+		CounterPrecision func(childComplexity int) int
+		ID               func(childComplexity int) int
+		Symbol           func(childComplexity int) int
 	}
 
 	_Service struct {
@@ -398,6 +408,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exchange.TradeVolume24hBtcNormalized(childComplexity), true
+
+	case "Exchange.tradingPairs":
+		if e.complexity.Exchange.TradingPairs == nil {
+			break
+		}
+
+		return e.complexity.Exchange.TradingPairs(childComplexity), true
 
 	case "Exchange.trustScore":
 		if e.complexity.Exchange.TrustScore == nil {
@@ -734,6 +751,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Ticker.Volume(childComplexity), true
 
+	case "TradingPairs.base":
+		if e.complexity.TradingPairs.Base == nil {
+			break
+		}
+
+		return e.complexity.TradingPairs.Base(childComplexity), true
+
+	case "TradingPairs.basePrecision":
+		if e.complexity.TradingPairs.BasePrecision == nil {
+			break
+		}
+
+		return e.complexity.TradingPairs.BasePrecision(childComplexity), true
+
+	case "TradingPairs.counter":
+		if e.complexity.TradingPairs.Counter == nil {
+			break
+		}
+
+		return e.complexity.TradingPairs.Counter(childComplexity), true
+
+	case "TradingPairs.counterPrecision":
+		if e.complexity.TradingPairs.CounterPrecision == nil {
+			break
+		}
+
+		return e.complexity.TradingPairs.CounterPrecision(childComplexity), true
+
+	case "TradingPairs.id":
+		if e.complexity.TradingPairs.ID == nil {
+			break
+		}
+
+		return e.complexity.TradingPairs.ID(childComplexity), true
+
+	case "TradingPairs.symbol":
+		if e.complexity.TradingPairs.Symbol == nil {
+			break
+		}
+
+		return e.complexity.TradingPairs.Symbol(childComplexity), true
+
 	case "_Service.sdl":
 		if e.complexity._Service.SDL == nil {
 			break
@@ -1017,6 +1076,7 @@ type Exchange implements Node {
   tradeVolume24hBtc: Float
   tradeVolume24hBtcNormalized: Float
   tickers: [Ticker!]!
+  tradingPairs: [TradingPairs!]!
   makerFee: Float
   takerFee: Float
   spreadFee: Boolean
@@ -1052,6 +1112,15 @@ type Ticker implements Node {
   isStale: Boolean
   tradeUrl: String
   tokenInfoUrl: String
+}
+
+type TradingPairs implements Node {
+  id: ID!
+  symbol: String!
+  base: String!
+  basePrecision: Int
+  counter: String!
+  counterPrecision: Int
 }
 
 type Market {
@@ -3190,6 +3259,64 @@ func (ec *executionContext) fieldContext_Exchange_tickers(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Exchange_tradingPairs(ctx context.Context, field graphql.CollectedField, obj *entities.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_tradingPairs(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TradingPairs(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*entities.TradingPairs)
+	fc.Result = res
+	return ec.marshalNTradingPairs2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐTradingPairsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_tradingPairs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TradingPairs_id(ctx, field)
+			case "symbol":
+				return ec.fieldContext_TradingPairs_symbol(ctx, field)
+			case "base":
+				return ec.fieldContext_TradingPairs_base(ctx, field)
+			case "basePrecision":
+				return ec.fieldContext_TradingPairs_basePrecision(ctx, field)
+			case "counter":
+				return ec.fieldContext_TradingPairs_counter(ctx, field)
+			case "counterPrecision":
+				return ec.fieldContext_TradingPairs_counterPrecision(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TradingPairs", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Exchange_makerFee(ctx context.Context, field graphql.CollectedField, obj *entities.Exchange) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Exchange_makerFee(ctx, field)
 	if err != nil {
@@ -3564,6 +3691,8 @@ func (ec *executionContext) fieldContext_ExchangeEdge_node(ctx context.Context, 
 				return ec.fieldContext_Exchange_tradeVolume24hBtcNormalized(ctx, field)
 			case "tickers":
 				return ec.fieldContext_Exchange_tickers(ctx, field)
+			case "tradingPairs":
+				return ec.fieldContext_Exchange_tradingPairs(ctx, field)
 			case "makerFee":
 				return ec.fieldContext_Exchange_makerFee(ctx, field)
 			case "takerFee":
@@ -4356,6 +4485,8 @@ func (ec *executionContext) fieldContext_Query_exchange(ctx context.Context, fie
 				return ec.fieldContext_Exchange_tradeVolume24hBtcNormalized(ctx, field)
 			case "tickers":
 				return ec.fieldContext_Exchange_tickers(ctx, field)
+			case "tradingPairs":
+				return ec.fieldContext_Exchange_tradingPairs(ctx, field)
 			case "makerFee":
 				return ec.fieldContext_Exchange_makerFee(ctx, field)
 			case "takerFee":
@@ -5426,6 +5557,264 @@ func (ec *executionContext) fieldContext_Ticker_tokenInfoUrl(ctx context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPairs_id(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPairs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPairs_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPairs_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPairs",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPairs_symbol(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPairs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPairs_symbol(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Symbol, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPairs_symbol(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPairs",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPairs_base(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPairs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPairs_base(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Base, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPairs_base(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPairs",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPairs_basePrecision(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPairs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPairs_basePrecision(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BasePrecision, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPairs_basePrecision(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPairs",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPairs_counter(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPairs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPairs_counter(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Counter, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPairs_counter(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPairs",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPairs_counterPrecision(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPairs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPairs_counterPrecision(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CounterPrecision, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPairs_counterPrecision(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPairs",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -11812,6 +12201,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Ticker(ctx, sel, obj)
+	case *entities.TradingPairs:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._TradingPairs(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -12072,6 +12466,26 @@ func (ec *executionContext) _Exchange(ctx context.Context, sel ast.SelectionSet,
 					}
 				}()
 				res = ec._Exchange_tickers(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "tradingPairs":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Exchange_tradingPairs(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -12582,6 +12996,63 @@ func (ec *executionContext) _Ticker(ctx context.Context, sel ast.SelectionSet, o
 		case "tokenInfoUrl":
 
 			out.Values[i] = ec._Ticker_tokenInfoUrl(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var tradingPairsImplementors = []string{"TradingPairs", "Node"}
+
+func (ec *executionContext) _TradingPairs(ctx context.Context, sel ast.SelectionSet, obj *entities.TradingPairs) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tradingPairsImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TradingPairs")
+		case "id":
+
+			out.Values[i] = ec._TradingPairs_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "symbol":
+
+			out.Values[i] = ec._TradingPairs_symbol(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "base":
+
+			out.Values[i] = ec._TradingPairs_base(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "basePrecision":
+
+			out.Values[i] = ec._TradingPairs_basePrecision(ctx, field, obj)
+
+		case "counter":
+
+			out.Values[i] = ec._TradingPairs_counter(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "counterPrecision":
+
+			out.Values[i] = ec._TradingPairs_counterPrecision(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -13157,6 +13628,60 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNTradingPairs2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐTradingPairsᚄ(ctx context.Context, sel ast.SelectionSet, v []*entities.TradingPairs) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTradingPairs2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐTradingPairs(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNTradingPairs2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐTradingPairs(ctx context.Context, sel ast.SelectionSet, v *entities.TradingPairs) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TradingPairs(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNTradingPairsWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐTradingPairsWhereInput(ctx context.Context, v interface{}) (*entities.TradingPairsWhereInput, error) {
