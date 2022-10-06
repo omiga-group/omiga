@@ -1,6 +1,9 @@
 app:
   source: "urn::omiga::kraken-processor"
 
+exchange:
+  id: "kraken"
+
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "kraken-processor"
