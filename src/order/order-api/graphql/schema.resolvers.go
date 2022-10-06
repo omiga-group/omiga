@@ -10,7 +10,7 @@ import (
 	"github.com/omiga-group/omiga/src/order/order-api/graphql/generated"
 	"github.com/omiga-group/omiga/src/order/order-api/graphql/models"
 	"github.com/omiga-group/omiga/src/order/order-api/mappers"
-	"github.com/omiga-group/omiga/src/order/shared/repositories"
+	"github.com/omiga-group/omiga/src/order/shared/entities"
 )
 
 // SubmitOrder is the resolver for the submitOrder field.
@@ -26,7 +26,7 @@ func (r *mutationResolver) SubmitOrder(ctx context.Context, input models.SubmitO
 
 	return &models.OrderPayload{
 		ClientMutationID: input.ClientMutationID,
-		Order: &repositories.Order{
+		Order: &entities.Order{
 			ID: submittedOrder.Id,
 		},
 	}, nil
@@ -38,14 +38,14 @@ func (r *mutationResolver) CancelOrder(ctx context.Context, input models.CancelO
 }
 
 // Order is the resolver for the order field.
-func (r *queryResolver) Order(ctx context.Context, where *repositories.OrderWhereInput) (*repositories.Order, error) {
+func (r *queryResolver) Order(ctx context.Context, where *entities.OrderWhereInput) (*entities.Order, error) {
 	query, err := where.Filter(r.client.Order.Query())
 	if err != nil {
 		return nil, err
 	}
 
 	result, err := query.First(ctx)
-	if _, ok := err.(*repositories.NotFoundError); ok {
+	if _, ok := err.(*entities.NotFoundError); ok {
 		return nil, nil
 	} else if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (r *queryResolver) Order(ctx context.Context, where *repositories.OrderWher
 }
 
 // Orders is the resolver for the orders field.
-func (r *queryResolver) Orders(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, where *repositories.OrderWhereInput) (*repositories.OrderConnection, error) {
+func (r *queryResolver) Orders(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, where *entities.OrderWhereInput) (*entities.OrderConnection, error) {
 	return r.client.Order.
 		Query().
 		Paginate(
@@ -64,7 +64,7 @@ func (r *queryResolver) Orders(ctx context.Context, after *repositories.Cursor, 
 			first,
 			before,
 			last,
-			repositories.WithOrderFilter(where.Filter))
+			entities.WithOrderFilter(where.Filter))
 }
 
 // Mutation returns generated.MutationResolver implementation.

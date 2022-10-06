@@ -7,7 +7,7 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/omiga-group/omiga/src/order/shared/repositories"
+	"github.com/omiga-group/omiga/src/order/shared/entities"
 )
 
 type CancelOrderInput struct {
@@ -36,8 +36,8 @@ type OrderDetailsInput struct {
 }
 
 type OrderPayload struct {
-	ClientMutationID *string             `json:"clientMutationId"`
-	Order            *repositories.Order `json:"order"`
+	ClientMutationID *string         `json:"clientMutationId"`
+	Order            *entities.Order `json:"order"`
 }
 
 type QuantityInput struct {

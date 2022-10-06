@@ -5,8 +5,8 @@ import (
 
 	"github.com/omiga-group/omiga/src/order/order-api/publishers"
 	orderrepositories "github.com/omiga-group/omiga/src/order/order-api/repositories"
+	"github.com/omiga-group/omiga/src/order/shared/entities"
 	"github.com/omiga-group/omiga/src/order/shared/models"
-	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"go.uber.org/zap"
 )
 
@@ -16,14 +16,14 @@ type OrderService interface {
 
 type orderService struct {
 	logger          *zap.SugaredLogger
-	entgoClient     repositories.EntgoClient
+	entgoClient     entities.EntgoClient
 	orderRepository orderrepositories.OrderRepository
 	orderPublisher  publishers.OrderPublisher
 }
 
 func NewOrderService(
 	logger *zap.SugaredLogger,
-	entgoClient repositories.EntgoClient,
+	entgoClient entities.EntgoClient,
 	orderRepository orderrepositories.OrderRepository,
 	orderPublisher publishers.OrderPublisher) (OrderService, error) {
 	return &orderService{

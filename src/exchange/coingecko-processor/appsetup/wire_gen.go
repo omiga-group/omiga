@@ -9,9 +9,9 @@ package appsetup
 import (
 	"context"
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/configuration"
-	repositories2 "github.com/omiga-group/omiga/src/exchange/coingecko-processor/repositories"
+	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/repositories"
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/subscribers"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -45,7 +45,7 @@ func NewCoingeckoExchangeSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	entgoClient, err := repositories.NewEntgoClient(logger, database)
+	entgoClient, err := entities.NewEntgoClient(logger, database)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func NewCoingeckoExchangeSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	exchangeRepository, err := repositories2.NewExchangeRepository(logger, entgoClient)
+	exchangeRepository, err := repositories.NewExchangeRepository(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func NewCoingeckoCoinSubscriber(ctx context.Context, logger *zap.SugaredLogger, 
 	if err != nil {
 		return nil, err
 	}
-	entgoClient, err := repositories.NewEntgoClient(logger, database)
+	entgoClient, err := entities.NewEntgoClient(logger, database)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func NewCoingeckoCoinSubscriber(ctx context.Context, logger *zap.SugaredLogger, 
 	if err != nil {
 		return nil, err
 	}
-	coinRepository, err := repositories2.NewCoinRepository(logger, entgoClient)
+	coinRepository, err := repositories.NewCoinRepository(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}

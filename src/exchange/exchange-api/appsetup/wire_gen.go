@@ -9,7 +9,7 @@ package appsetup
 import (
 	"github.com/omiga-group/omiga/src/exchange/exchange-api/graphql"
 	"github.com/omiga-group/omiga/src/exchange/exchange-api/http"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"go.uber.org/zap"
@@ -17,19 +17,19 @@ import (
 
 // Injectors from wire.go:
 
-func NewEntgoClient(logger *zap.SugaredLogger, postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
+func NewEntgoClient(logger *zap.SugaredLogger, postgresConfig postgres.PostgresConfig) (entities.EntgoClient, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
 	}
-	entgoClient, err := repositories.NewEntgoClient(logger, database)
+	entgoClient, err := entities.NewEntgoClient(logger, database)
 	if err != nil {
 		return nil, err
 	}
 	return entgoClient, nil
 }
 
-func NewHttpServer(logger *zap.SugaredLogger, appConfig configuration.AppConfig, entgoClient repositories.EntgoClient) (http.HttpServer, error) {
+func NewHttpServer(logger *zap.SugaredLogger, appConfig configuration.AppConfig, entgoClient entities.EntgoClient) (http.HttpServer, error) {
 	server, err := graphql.NewGraphQLServer(entgoClient)
 	if err != nil {
 		return nil, err

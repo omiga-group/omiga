@@ -22,7 +22,7 @@ import (
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/exchange/exchange-api/graphql"
 	"github.com/omiga-group/omiga/src/exchange/exchange-api/http"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"go.uber.org/zap"
@@ -30,10 +30,10 @@ import (
 
 func NewEntgoClient(
 	logger *zap.SugaredLogger,
-	postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
+	postgresConfig postgres.PostgresConfig) (entities.EntgoClient, error) {
 	wire.Build(
 		postgres.NewPostgres,
-		repositories.NewEntgoClient)
+		entities.NewEntgoClient)
 
 	return nil, nil
 }
@@ -41,7 +41,7 @@ func NewEntgoClient(
 func NewHttpServer(
 	logger *zap.SugaredLogger,
 	appConfig configuration.AppConfig,
-	entgoClient repositories.EntgoClient) (http.HttpServer, error) {
+	entgoClient entities.EntgoClient) (http.HttpServer, error) {
 	wire.Build(
 		http.NewHttpServer,
 		graphql.NewGraphQLServer)

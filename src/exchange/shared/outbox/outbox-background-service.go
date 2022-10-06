@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
-	outboxmodel "github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
+	outboxmodel "github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/outbox"
@@ -23,7 +23,7 @@ type outboxBackgroundService struct {
 	logger          *zap.SugaredLogger
 	outboxConfig    outbox.OutboxConfig
 	messageProducer messaging.MessageProducer
-	entgoClient     repositories.EntgoClient
+	entgoClient     entities.EntgoClient
 	globalMutex     sync.Mutex
 }
 
@@ -32,7 +32,7 @@ func NewOutboxBackgroundService(
 	logger *zap.SugaredLogger,
 	outboxConfig outbox.OutboxConfig,
 	messageProducer messaging.MessageProducer,
-	entgoClient repositories.EntgoClient,
+	entgoClient entities.EntgoClient,
 	cronService cron.CronService) (OutboxBackgroundService, error) {
 
 	instance := &outboxBackgroundService{
@@ -90,12 +90,12 @@ func (obs *outboxBackgroundService) Run() {
 	mu := sync.Mutex{}
 	wg := sync.WaitGroup{}
 	failedRecords := make([]failedRecord, 0)
-	succeededRecords := make([]*repositories.Outbox, 0)
+	succeededRecords := make([]*entities.Outbox, 0)
 
 	for _, record := range records {
 		wg.Add(1)
 
-		go func(record *repositories.Outbox) {
+		go func(record *entities.Outbox) {
 			defer wg.Done()
 
 			err := obs.messageProducer.Produce(
@@ -165,6 +165,6 @@ func (obs *outboxBackgroundService) Run() {
 }
 
 type failedRecord struct {
-	record *repositories.Outbox
+	record *entities.Outbox
 	err    error
 }

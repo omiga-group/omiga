@@ -9,8 +9,8 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	entities "github.com/omiga-group/omiga/src/order/shared/entities"
 	models "github.com/omiga-group/omiga/src/order/shared/models"
-	repositories "github.com/omiga-group/omiga/src/order/shared/repositories"
 )
 
 // MockOrderRepository is a mock of OrderRepository interface.
@@ -37,7 +37,7 @@ func (m *MockOrderRepository) EXPECT() *MockOrderRepositoryMockRecorder {
 }
 
 // CreateOrder mocks base method.
-func (m *MockOrderRepository) CreateOrder(ctx context.Context, tx *repositories.Tx, order models.Order) (models.Order, error) {
+func (m *MockOrderRepository) CreateOrder(ctx context.Context, tx *entities.Tx, order models.Order) (models.Order, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateOrder", ctx, tx, order)
 	ret0, _ := ret[0].(models.Order)

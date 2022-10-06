@@ -25,11 +25,11 @@ resolver:
   package: graphql
 
 autobind:
-  - github.com/omiga-group/omiga/src/exchange/shared/repositories
+  - github.com/omiga-group/omiga/src/exchange/shared/entities
 
 models:
   ID:
     model:
       - github.com/99designs/gqlgen/graphql.IntID
   Node:
-    model: github.com/omiga-group/omiga/src/exchange/shared/repositories.Noder
+    model: github.com/omiga-group/omiga/src/exchange/shared/entities.Noder

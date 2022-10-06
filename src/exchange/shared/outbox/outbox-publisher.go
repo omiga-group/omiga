@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories/outbox"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"go.uber.org/zap"
 )
 
@@ -19,7 +19,7 @@ type OutboxPublisher interface {
 		event interface{}) error
 	Publish(
 		ctx context.Context,
-		transaction *repositories.Tx,
+		transaction *entities.Tx,
 		topic string,
 		key string,
 		headers map[string]string,
@@ -28,12 +28,12 @@ type OutboxPublisher interface {
 
 type outboxPublisher struct {
 	logger      *zap.SugaredLogger
-	entgoClient repositories.EntgoClient
+	entgoClient entities.EntgoClient
 }
 
 func NewOutboxPublisher(
 	logger *zap.SugaredLogger,
-	entgoClient repositories.EntgoClient) (OutboxPublisher, error) {
+	entgoClient entities.EntgoClient) (OutboxPublisher, error) {
 	return &outboxPublisher{
 		logger:      logger,
 		entgoClient: entgoClient,
@@ -78,7 +78,7 @@ func (op *outboxPublisher) PublishWithoutTransaction(
 
 func (op *outboxPublisher) Publish(
 	ctx context.Context,
-	transaction *repositories.Tx,
+	transaction *entities.Tx,
 	topic string,
 	key string,
 	headers map[string]string,

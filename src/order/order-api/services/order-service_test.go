@@ -16,9 +16,9 @@ import (
 	mock_publishers "github.com/omiga-group/omiga/src/order/order-api/publishers/mock"
 	mock_orderrepositories "github.com/omiga-group/omiga/src/order/order-api/repositories/mock"
 	"github.com/omiga-group/omiga/src/order/order-api/services"
+	"github.com/omiga-group/omiga/src/order/shared/entities"
+	mock_repositories "github.com/omiga-group/omiga/src/order/shared/entities/mock"
 	"github.com/omiga-group/omiga/src/order/shared/models"
-	"github.com/omiga-group/omiga/src/order/shared/repositories"
-	mock_repositories "github.com/omiga-group/omiga/src/order/shared/repositories/mock"
 )
 
 func TestOrderServiceSubmit(t *testing.T) {
@@ -36,7 +36,7 @@ var _ = Describe("Order Service Submit Tests", func() {
 		fakeOrderPublisher  *mock_publishers.MockOrderPublisher
 		sut                 services.OrderService
 		ctx                 context.Context
-		expectedTransaction *repositories.Tx
+		expectedTransaction *entities.Tx
 		expectedOrder       models.Order
 		expectedError       error
 	)
@@ -61,7 +61,7 @@ var _ = Describe("Order Service Submit Tests", func() {
 		Ω(err).Should(BeNil())
 
 		ctx = context.Background()
-		expectedTransaction = &repositories.Tx{}
+		expectedTransaction = &entities.Tx{}
 		expectedOrder = models.Order{}
 		expectedError = errors.New(cuid.New())
 	})

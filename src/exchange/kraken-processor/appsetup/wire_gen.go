@@ -10,8 +10,8 @@ import (
 	"context"
 	configuration2 "github.com/omiga-group/omiga/src/exchange/kraken-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/kraken-processor/subscribers"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/exchange/shared/services"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
@@ -76,7 +76,7 @@ func NewKrakenOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	if err != nil {
 		return nil, err
 	}
-	entgoClient, err := repositories.NewEntgoClient(logger, database)
+	entgoClient, err := entities.NewEntgoClient(logger, database)
 	if err != nil {
 		return nil, err
 	}

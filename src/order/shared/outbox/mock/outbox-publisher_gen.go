@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	repositories "github.com/omiga-group/omiga/src/order/shared/repositories"
+	entities "github.com/omiga-group/omiga/src/order/shared/entities"
 )
 
 // MockOutboxPublisher is a mock of OutboxPublisher interface.
@@ -36,7 +36,7 @@ func (m *MockOutboxPublisher) EXPECT() *MockOutboxPublisherMockRecorder {
 }
 
 // Publish mocks base method.
-func (m *MockOutboxPublisher) Publish(ctx context.Context, transaction *repositories.Tx, topic, key string, headers map[string]string, event interface{}) error {
+func (m *MockOutboxPublisher) Publish(ctx context.Context, transaction *entities.Tx, topic, key string, headers map[string]string, event interface{}) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Publish", ctx, transaction, topic, key, headers, event)
 	ret0, _ := ret[0].(error)

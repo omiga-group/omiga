@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/omiga-group/omiga/src/order/shared/entities"
 	"github.com/omiga-group/omiga/src/order/shared/mappers"
 	"github.com/omiga-group/omiga/src/order/shared/models"
 	"github.com/omiga-group/omiga/src/order/shared/outbox"
-	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"go.uber.org/zap"
@@ -17,7 +17,7 @@ import (
 type OrderPublisher interface {
 	Publish(
 		ctx context.Context,
-		tx *repositories.Tx,
+		tx *entities.Tx,
 		orderBeforeState *models.Order,
 		orderAfterState models.Order) error
 }
@@ -41,7 +41,7 @@ func NewOrderPublisher(
 
 func (op *orderPublisher) Publish(
 	ctx context.Context,
-	tx *repositories.Tx,
+	tx *entities.Tx,
 	orderBeforeState *models.Order,
 	orderAfterState models.Order) error {
 

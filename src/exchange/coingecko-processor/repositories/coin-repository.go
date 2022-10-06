@@ -3,9 +3,9 @@ package repositories
 import (
 	"context"
 
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
+	coinrepo "github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
-	coinrepo "github.com/omiga-group/omiga/src/exchange/shared/repositories/coin"
 	"go.uber.org/zap"
 )
 
@@ -21,12 +21,12 @@ type CoinRepository interface {
 
 type coinRepository struct {
 	logger      *zap.SugaredLogger
-	entgoClient repositories.EntgoClient
+	entgoClient entities.EntgoClient
 }
 
 func NewCoinRepository(
 	logger *zap.SugaredLogger,
-	entgoClient repositories.EntgoClient) (CoinRepository, error) {
+	entgoClient entities.EntgoClient) (CoinRepository, error) {
 	return &coinRepository{
 		logger:      logger,
 		entgoClient: entgoClient,

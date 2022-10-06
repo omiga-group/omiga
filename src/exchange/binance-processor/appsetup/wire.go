@@ -24,8 +24,8 @@ import (
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/subscribers"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/exchange/shared/services"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
@@ -69,7 +69,7 @@ func NewBinanceOrderBookSubscriber(
 	wire.Build(
 		os.NewOsHelper,
 		postgres.NewPostgres,
-		repositories.NewEntgoClient,
+		entities.NewEntgoClient,
 		orderbookv1.NewProducer,
 		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageProducer,

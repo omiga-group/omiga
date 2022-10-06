@@ -9,8 +9,8 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	entities "github.com/omiga-group/omiga/src/order/shared/entities"
 	models "github.com/omiga-group/omiga/src/order/shared/models"
-	repositories "github.com/omiga-group/omiga/src/order/shared/repositories"
 )
 
 // MockOrderPublisher is a mock of OrderPublisher interface.
@@ -37,7 +37,7 @@ func (m *MockOrderPublisher) EXPECT() *MockOrderPublisherMockRecorder {
 }
 
 // Publish mocks base method.
-func (m *MockOrderPublisher) Publish(ctx context.Context, tx *repositories.Tx, orderBeforeState *models.Order, orderAfterState models.Order) error {
+func (m *MockOrderPublisher) Publish(ctx context.Context, tx *entities.Tx, orderBeforeState *models.Order, orderAfterState models.Order) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Publish", ctx, tx, orderBeforeState, orderAfterState)
 	ret0, _ := ret[0].(error)

@@ -9,8 +9,8 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/mappers"
 	coingeckorepositories "github.com/omiga-group/omiga/src/exchange/coingecko-processor/repositories"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	coingeckov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingecko/v3"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	timeex "github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -25,7 +25,7 @@ type coingeckoExchangeSubscriber struct {
 	logger             *zap.SugaredLogger
 	coingeckoConfig    configuration.CoingeckoConfig
 	exchanges          map[string]configuration.Exchange
-	entgoClient        repositories.EntgoClient
+	entgoClient        entities.EntgoClient
 	timeHelper         timeex.TimeHelper
 	exchangeRepository coingeckorepositories.ExchangeRepository
 }
@@ -36,7 +36,7 @@ func NewCoingeckoExchangeSubscriber(
 	cronService cron.CronService,
 	coingeckoConfig configuration.CoingeckoConfig,
 	exchanges map[string]configuration.Exchange,
-	entgoClient repositories.EntgoClient,
+	entgoClient entities.EntgoClient,
 	timeHelper timeex.TimeHelper,
 	exchangeRepository coingeckorepositories.ExchangeRepository) (CoingeckoExchangeSubscriber, error) {
 	instance := &coingeckoExchangeSubscriber{

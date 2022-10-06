@@ -9,13 +9,13 @@ import (
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/exchange-api/graphql/generated"
 	"github.com/omiga-group/omiga/src/exchange/exchange-api/graphql/models"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 )
 
 // Links is the resolver for the links field.
-func (r *exchangeResolver) Links(ctx context.Context, obj *repositories.Exchange) (*models.Links, error) {
+func (r *exchangeResolver) Links(ctx context.Context, obj *entities.Exchange) (*models.Links, error) {
 	links := models.Links{}
 
 	if link, ok := obj.Links["website"]; ok {
@@ -46,7 +46,7 @@ func (r *exchangeResolver) Links(ctx context.Context, obj *repositories.Exchange
 }
 
 // Tickers is the resolver for the tickers field.
-func (r *exchangeResolver) Tickers(ctx context.Context, obj *repositories.Exchange) ([]*repositories.Ticker, error) {
+func (r *exchangeResolver) Tickers(ctx context.Context, obj *entities.Exchange) ([]*entities.Ticker, error) {
 	return r.client.Ticker.
 		Query().
 		Where(ticker.HasExchangeWith(exchange.IDEQ(obj.ID))).
@@ -54,14 +54,14 @@ func (r *exchangeResolver) Tickers(ctx context.Context, obj *repositories.Exchan
 }
 
 // Coin is the resolver for the coin field.
-func (r *queryResolver) Coin(ctx context.Context, where *repositories.CoinWhereInput) (*repositories.Coin, error) {
+func (r *queryResolver) Coin(ctx context.Context, where *entities.CoinWhereInput) (*entities.Coin, error) {
 	query, err := where.Filter(r.client.Coin.Query())
 	if err != nil {
 		return nil, err
 	}
 
 	result, err := query.First(ctx)
-	if _, ok := err.(*repositories.NotFoundError); ok {
+	if _, ok := err.(*entities.NotFoundError); ok {
 		return nil, nil
 	} else if err != nil {
 		return nil, err
@@ -71,14 +71,14 @@ func (r *queryResolver) Coin(ctx context.Context, where *repositories.CoinWhereI
 }
 
 // Coins is the resolver for the coins field.
-func (r *queryResolver) Coins(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, orderBy []*repositories.CoinOrder, where *repositories.CoinWhereInput) (*repositories.CoinConnection, error) {
+func (r *queryResolver) Coins(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.CoinOrder, where *entities.CoinWhereInput) (*entities.CoinConnection, error) {
 	orderBy = slices.Reverse(orderBy)
 
-	pageOrder := slices.Map(orderBy, func(item *repositories.CoinOrder) repositories.CoinPaginateOption {
-		return repositories.WithCoinOrder(item)
+	pageOrder := slices.Map(orderBy, func(item *entities.CoinOrder) entities.CoinPaginateOption {
+		return entities.WithCoinOrder(item)
 	})
 
-	pageOrderAndFilter := append(pageOrder, repositories.WithCoinFilter(where.Filter))
+	pageOrderAndFilter := append(pageOrder, entities.WithCoinFilter(where.Filter))
 
 	return r.client.Coin.
 		Query().
@@ -92,14 +92,14 @@ func (r *queryResolver) Coins(ctx context.Context, after *repositories.Cursor, f
 }
 
 // Exchange is the resolver for the exchange field.
-func (r *queryResolver) Exchange(ctx context.Context, where *repositories.ExchangeWhereInput) (*repositories.Exchange, error) {
+func (r *queryResolver) Exchange(ctx context.Context, where *entities.ExchangeWhereInput) (*entities.Exchange, error) {
 	query, err := where.Filter(r.client.Exchange.Query())
 	if err != nil {
 		return nil, err
 	}
 
 	result, err := query.First(ctx)
-	if _, ok := err.(*repositories.NotFoundError); ok {
+	if _, ok := err.(*entities.NotFoundError); ok {
 		return nil, nil
 	} else if err != nil {
 		return nil, err
@@ -109,14 +109,14 @@ func (r *queryResolver) Exchange(ctx context.Context, where *repositories.Exchan
 }
 
 // Exchanges is the resolver for the exchanges field.
-func (r *queryResolver) Exchanges(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, orderBy []*repositories.ExchangeOrder, where *repositories.ExchangeWhereInput) (*repositories.ExchangeConnection, error) {
+func (r *queryResolver) Exchanges(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.ExchangeOrder, where *entities.ExchangeWhereInput) (*entities.ExchangeConnection, error) {
 	orderBy = slices.Reverse(orderBy)
 
-	pageOrder := slices.Map(orderBy, func(item *repositories.ExchangeOrder) repositories.ExchangePaginateOption {
-		return repositories.WithExchangeOrder(item)
+	pageOrder := slices.Map(orderBy, func(item *entities.ExchangeOrder) entities.ExchangePaginateOption {
+		return entities.WithExchangeOrder(item)
 	})
 
-	pageOrderAndFilter := append(pageOrder, repositories.WithExchangeFilter(where.Filter))
+	pageOrderAndFilter := append(pageOrder, entities.WithExchangeFilter(where.Filter))
 
 	return r.client.Exchange.
 		Query().
@@ -130,7 +130,7 @@ func (r *queryResolver) Exchanges(ctx context.Context, after *repositories.Curso
 }
 
 // Market is the resolver for the market field.
-func (r *tickerResolver) Market(ctx context.Context, obj *repositories.Ticker) (*models.Market, error) {
+func (r *tickerResolver) Market(ctx context.Context, obj *entities.Ticker) (*models.Market, error) {
 	return &models.Market{
 		HasTradingIncentive: obj.Market.HasTradingIncentive,
 		Identifier:          obj.Market.Identifier,
@@ -139,7 +139,7 @@ func (r *tickerResolver) Market(ctx context.Context, obj *repositories.Ticker) (
 }
 
 // ConvertedLast is the resolver for the convertedLast field.
-func (r *tickerResolver) ConvertedLast(ctx context.Context, obj *repositories.Ticker) (*models.ConvertedDetails, error) {
+func (r *tickerResolver) ConvertedLast(ctx context.Context, obj *entities.Ticker) (*models.ConvertedDetails, error) {
 	return &models.ConvertedDetails{
 		Btc: obj.ConvertedLast.Btc,
 		Eth: obj.ConvertedLast.Eth,
@@ -148,7 +148,7 @@ func (r *tickerResolver) ConvertedLast(ctx context.Context, obj *repositories.Ti
 }
 
 // ConvertedVolume is the resolver for the convertedVolume field.
-func (r *tickerResolver) ConvertedVolume(ctx context.Context, obj *repositories.Ticker) (*models.ConvertedDetails, error) {
+func (r *tickerResolver) ConvertedVolume(ctx context.Context, obj *entities.Ticker) (*models.ConvertedDetails, error) {
 	return &models.ConvertedDetails{
 		Btc: obj.ConvertedVolume.Btc,
 		Eth: obj.ConvertedVolume.Eth,

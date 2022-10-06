@@ -11,10 +11,10 @@ import (
 	"github.com/omiga-group/omiga/src/order/order-api/graphql"
 	"github.com/omiga-group/omiga/src/order/order-api/http"
 	"github.com/omiga-group/omiga/src/order/order-api/publishers"
-	repositories2 "github.com/omiga-group/omiga/src/order/order-api/repositories"
+	"github.com/omiga-group/omiga/src/order/order-api/repositories"
 	"github.com/omiga-group/omiga/src/order/order-api/services"
+	"github.com/omiga-group/omiga/src/order/shared/entities"
 	outbox2 "github.com/omiga-group/omiga/src/order/shared/outbox"
-	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
@@ -39,19 +39,19 @@ func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
 	return cronService, nil
 }
 
-func NewEntgoClient(logger *zap.SugaredLogger, postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
+func NewEntgoClient(logger *zap.SugaredLogger, postgresConfig postgres.PostgresConfig) (entities.EntgoClient, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
 	}
-	entgoClient, err := repositories.NewEntgoClient(logger, database)
+	entgoClient, err := entities.NewEntgoClient(logger, database)
 	if err != nil {
 		return nil, err
 	}
 	return entgoClient, nil
 }
 
-func NewOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, outboxConfig outbox.OutboxConfig, entgoClient repositories.EntgoClient, cronService cron.CronService) (outbox2.OutboxBackgroundService, error) {
+func NewOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, outboxConfig outbox.OutboxConfig, entgoClient entities.EntgoClient, cronService cron.CronService) (outbox2.OutboxBackgroundService, error) {
 	osHelper, err := os.NewOsHelper()
 	if err != nil {
 		return nil, err
@@ -71,8 +71,8 @@ func NewOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, 
 	return outboxBackgroundService, nil
 }
 
-func NewHttpServer(logger *zap.SugaredLogger, appConfig configuration.AppConfig, entgoClient repositories.EntgoClient, orderOutboxBackgroundService outbox2.OutboxBackgroundService) (http.HttpServer, error) {
-	orderRepository, err := repositories2.NewOrderRepository()
+func NewHttpServer(logger *zap.SugaredLogger, appConfig configuration.AppConfig, entgoClient entities.EntgoClient, orderOutboxBackgroundService outbox2.OutboxBackgroundService) (http.HttpServer, error) {
+	orderRepository, err := repositories.NewOrderRepository()
 	if err != nil {
 		return nil, err
 	}

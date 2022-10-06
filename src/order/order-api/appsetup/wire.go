@@ -25,10 +25,10 @@ import (
 	"github.com/omiga-group/omiga/src/order/order-api/graphql"
 	"github.com/omiga-group/omiga/src/order/order-api/http"
 	"github.com/omiga-group/omiga/src/order/order-api/publishers"
-	orderrepositories "github.com/omiga-group/omiga/src/order/order-api/repositories"
+	"github.com/omiga-group/omiga/src/order/order-api/repositories"
 	"github.com/omiga-group/omiga/src/order/order-api/services"
+	"github.com/omiga-group/omiga/src/order/shared/entities"
 	"github.com/omiga-group/omiga/src/order/shared/outbox"
-	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
@@ -50,10 +50,10 @@ func NewCronService(
 
 func NewEntgoClient(
 	logger *zap.SugaredLogger,
-	postgresConfig postgres.PostgresConfig) (repositories.EntgoClient, error) {
+	postgresConfig postgres.PostgresConfig) (entities.EntgoClient, error) {
 	wire.Build(
 		postgres.NewPostgres,
-		repositories.NewEntgoClient)
+		entities.NewEntgoClient)
 
 	return nil, nil
 }
@@ -63,7 +63,7 @@ func NewOutboxBackgroundService(
 	logger *zap.SugaredLogger,
 	pulsarConfig pulsar.PulsarConfig,
 	outboxConfig enterpriseOutbox.OutboxConfig,
-	entgoClient repositories.EntgoClient,
+	entgoClient entities.EntgoClient,
 	cronService cron.CronService) (outbox.OutboxBackgroundService, error) {
 	wire.Build(
 		os.NewOsHelper,
@@ -77,7 +77,7 @@ func NewOutboxBackgroundService(
 func NewHttpServer(
 	logger *zap.SugaredLogger,
 	appConfig configuration.AppConfig,
-	entgoClient repositories.EntgoClient,
+	entgoClient entities.EntgoClient,
 	orderOutboxBackgroundService outbox.OutboxBackgroundService) (http.HttpServer, error) {
 	wire.Build(
 		http.NewHttpServer,
@@ -85,7 +85,7 @@ func NewHttpServer(
 		services.NewOrderService,
 		publishers.NewOrderPublisher,
 		outbox.NewOutboxPublisher,
-		orderrepositories.NewOrderRepository)
+		repositories.NewOrderRepository)
 
 	return nil, nil
 }

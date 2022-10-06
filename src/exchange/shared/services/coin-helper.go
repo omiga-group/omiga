@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/life4/genesis/slices"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories/coin"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories/predicate"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 )
 
 type CoinHelper interface {
@@ -14,11 +14,11 @@ type CoinHelper interface {
 }
 
 type coinHelper struct {
-	entgoClient repositories.EntgoClient
+	entgoClient entities.EntgoClient
 }
 
 func NewCoinHelper(
-	entgoClient repositories.EntgoClient) (CoinHelper, error) {
+	entgoClient entities.EntgoClient) (CoinHelper, error) {
 	return &coinHelper{
 		entgoClient: entgoClient,
 	}, nil
@@ -40,7 +40,7 @@ func (ch *coinHelper) GetCoinsNames(
 	return slices.Reduce(
 		results,
 		make(map[string]string),
-		func(coin *repositories.Coin, acc map[string]string) map[string]string {
+		func(coin *entities.Coin, acc map[string]string) map[string]string {
 			return acc
 		}), nil
 }

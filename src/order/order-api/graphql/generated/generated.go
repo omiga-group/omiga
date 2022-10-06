@@ -16,7 +16,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/99designs/gqlgen/plugin/federation/fedruntime"
 	"github.com/omiga-group/omiga/src/order/order-api/graphql/models"
-	"github.com/omiga-group/omiga/src/order/shared/repositories"
+	"github.com/omiga-group/omiga/src/order/shared/entities"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -81,8 +81,8 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Order              func(childComplexity int, where *repositories.OrderWhereInput) int
-		Orders             func(childComplexity int, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, where *repositories.OrderWhereInput) int
+		Order              func(childComplexity int, where *entities.OrderWhereInput) int
+		Orders             func(childComplexity int, after *entities.Cursor, first *int, before *entities.Cursor, last *int, where *entities.OrderWhereInput) int
 		__resolve__service func(childComplexity int) int
 	}
 
@@ -96,15 +96,15 @@ type MutationResolver interface {
 	CancelOrder(ctx context.Context, input models.CancelOrderInput) (*models.OrderPayload, error)
 }
 type QueryResolver interface {
-	Order(ctx context.Context, where *repositories.OrderWhereInput) (*repositories.Order, error)
-	Orders(ctx context.Context, after *repositories.Cursor, first *int, before *repositories.Cursor, last *int, where *repositories.OrderWhereInput) (*repositories.OrderConnection, error)
+	Order(ctx context.Context, where *entities.OrderWhereInput) (*entities.Order, error)
+	Orders(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, where *entities.OrderWhereInput) (*entities.OrderConnection, error)
 }
 
 type OutboxWhereInputResolver interface {
-	Status(ctx context.Context, obj *repositories.OutboxWhereInput, data *models.OutboxStatus) error
-	StatusNeq(ctx context.Context, obj *repositories.OutboxWhereInput, data *models.OutboxStatus) error
-	StatusIn(ctx context.Context, obj *repositories.OutboxWhereInput, data []models.OutboxStatus) error
-	StatusNotIn(ctx context.Context, obj *repositories.OutboxWhereInput, data []models.OutboxStatus) error
+	Status(ctx context.Context, obj *entities.OutboxWhereInput, data *models.OutboxStatus) error
+	StatusNeq(ctx context.Context, obj *entities.OutboxWhereInput, data *models.OutboxStatus) error
+	StatusIn(ctx context.Context, obj *entities.OutboxWhereInput, data []models.OutboxStatus) error
+	StatusNotIn(ctx context.Context, obj *entities.OutboxWhereInput, data []models.OutboxStatus) error
 }
 
 type executableSchema struct {
@@ -240,7 +240,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Order(childComplexity, args["where"].(*repositories.OrderWhereInput)), true
+		return e.complexity.Query.Order(childComplexity, args["where"].(*entities.OrderWhereInput)), true
 
 	case "Query.orders":
 		if e.complexity.Query.Orders == nil {
@@ -252,7 +252,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Orders(childComplexity, args["after"].(*repositories.Cursor), args["first"].(*int), args["before"].(*repositories.Cursor), args["last"].(*int), args["where"].(*repositories.OrderWhereInput)), true
+		return e.complexity.Query.Orders(childComplexity, args["after"].(*entities.Cursor), args["first"].(*int), args["before"].(*entities.Cursor), args["last"].(*int), args["where"].(*entities.OrderWhereInput)), true
 
 	case "Query._service":
 		if e.complexity.Query.__resolve__service == nil {
@@ -701,10 +701,10 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_order_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *repositories.OrderWhereInput
+	var arg0 *entities.OrderWhereInput
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg0, err = ec.unmarshalOOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderWhereInput(ctx, tmp)
+		arg0, err = ec.unmarshalOOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -716,10 +716,10 @@ func (ec *executionContext) field_Query_order_args(ctx context.Context, rawArgs 
 func (ec *executionContext) field_Query_orders_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *repositories.Cursor
+	var arg0 *entities.Cursor
 	if tmp, ok := rawArgs["after"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐCursor(ctx, tmp)
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -734,10 +734,10 @@ func (ec *executionContext) field_Query_orders_args(ctx context.Context, rawArgs
 		}
 	}
 	args["first"] = arg1
-	var arg2 *repositories.Cursor
+	var arg2 *entities.Cursor
 	if tmp, ok := rawArgs["before"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐCursor(ctx, tmp)
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐCursor(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -752,10 +752,10 @@ func (ec *executionContext) field_Query_orders_args(ctx context.Context, rawArgs
 		}
 	}
 	args["last"] = arg3
-	var arg4 *repositories.OrderWhereInput
+	var arg4 *entities.OrderWhereInput
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg4, err = ec.unmarshalOOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderWhereInput(ctx, tmp)
+		arg4, err = ec.unmarshalOOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -918,7 +918,7 @@ func (ec *executionContext) fieldContext_Mutation_cancelOrder(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Order_id(ctx context.Context, field graphql.CollectedField, obj *repositories.Order) (ret graphql.Marshaler) {
+func (ec *executionContext) _Order_id(ctx context.Context, field graphql.CollectedField, obj *entities.Order) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Order_id(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -962,7 +962,7 @@ func (ec *executionContext) fieldContext_Order_id(ctx context.Context, field gra
 	return fc, nil
 }
 
-func (ec *executionContext) _OrderConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *repositories.OrderConnection) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *entities.OrderConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrderConnection_pageInfo(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -988,9 +988,9 @@ func (ec *executionContext) _OrderConnection_pageInfo(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(repositories.PageInfo)
+	res := resTmp.(entities.PageInfo)
 	fc.Result = res
-	return ec.marshalNPageInfo2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐPageInfo(ctx, field.Selections, res)
+	return ec.marshalNPageInfo2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐPageInfo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrderConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1016,7 +1016,7 @@ func (ec *executionContext) fieldContext_OrderConnection_pageInfo(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _OrderConnection_edges(ctx context.Context, field graphql.CollectedField, obj *repositories.OrderConnection) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderConnection_edges(ctx context.Context, field graphql.CollectedField, obj *entities.OrderConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrderConnection_edges(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1039,9 +1039,9 @@ func (ec *executionContext) _OrderConnection_edges(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*repositories.OrderEdge)
+	res := resTmp.([]*entities.OrderEdge)
 	fc.Result = res
-	return ec.marshalOOrderEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderEdge(ctx, field.Selections, res)
+	return ec.marshalOOrderEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderEdge(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrderConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1063,7 +1063,7 @@ func (ec *executionContext) fieldContext_OrderConnection_edges(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _OrderConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *repositories.OrderConnection) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *entities.OrderConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrderConnection_totalCount(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1104,7 +1104,7 @@ func (ec *executionContext) fieldContext_OrderConnection_totalCount(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _OrderEdge_node(ctx context.Context, field graphql.CollectedField, obj *repositories.OrderEdge) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderEdge_node(ctx context.Context, field graphql.CollectedField, obj *entities.OrderEdge) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrderEdge_node(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1127,9 +1127,9 @@ func (ec *executionContext) _OrderEdge_node(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*repositories.Order)
+	res := resTmp.(*entities.Order)
 	fc.Result = res
-	return ec.marshalOOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrder(ctx, field.Selections, res)
+	return ec.marshalOOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrder(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrderEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1149,7 +1149,7 @@ func (ec *executionContext) fieldContext_OrderEdge_node(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _OrderEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *repositories.OrderEdge) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *entities.OrderEdge) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrderEdge_cursor(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1175,9 +1175,9 @@ func (ec *executionContext) _OrderEdge_cursor(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(repositories.Cursor)
+	res := resTmp.(entities.Cursor)
 	fc.Result = res
-	return ec.marshalNCursor2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐCursor(ctx, field.Selections, res)
+	return ec.marshalNCursor2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrderEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1257,9 +1257,9 @@ func (ec *executionContext) _OrderPayload_order(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*repositories.Order)
+	res := resTmp.(*entities.Order)
 	fc.Result = res
-	return ec.marshalOOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrder(ctx, field.Selections, res)
+	return ec.marshalOOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrder(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrderPayload_order(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1279,7 +1279,7 @@ func (ec *executionContext) fieldContext_OrderPayload_order(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _PageInfo_hasNextPage(ctx context.Context, field graphql.CollectedField, obj *repositories.PageInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PageInfo_hasNextPage(ctx context.Context, field graphql.CollectedField, obj *entities.PageInfo) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_hasNextPage(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1323,7 +1323,7 @@ func (ec *executionContext) fieldContext_PageInfo_hasNextPage(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _PageInfo_hasPreviousPage(ctx context.Context, field graphql.CollectedField, obj *repositories.PageInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PageInfo_hasPreviousPage(ctx context.Context, field graphql.CollectedField, obj *entities.PageInfo) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1367,7 +1367,7 @@ func (ec *executionContext) fieldContext_PageInfo_hasPreviousPage(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field graphql.CollectedField, obj *repositories.PageInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field graphql.CollectedField, obj *entities.PageInfo) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_startCursor(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1390,9 +1390,9 @@ func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*repositories.Cursor)
+	res := resTmp.(*entities.Cursor)
 	fc.Result = res
-	return ec.marshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐCursor(ctx, field.Selections, res)
+	return ec.marshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PageInfo_startCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1408,7 +1408,7 @@ func (ec *executionContext) fieldContext_PageInfo_startCursor(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graphql.CollectedField, obj *repositories.PageInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graphql.CollectedField, obj *entities.PageInfo) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_endCursor(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1431,9 +1431,9 @@ func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*repositories.Cursor)
+	res := resTmp.(*entities.Cursor)
 	fc.Result = res
-	return ec.marshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐCursor(ctx, field.Selections, res)
+	return ec.marshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PageInfo_endCursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1463,7 +1463,7 @@ func (ec *executionContext) _Query_order(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Order(rctx, fc.Args["where"].(*repositories.OrderWhereInput))
+		return ec.resolvers.Query().Order(rctx, fc.Args["where"].(*entities.OrderWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1472,9 +1472,9 @@ func (ec *executionContext) _Query_order(ctx context.Context, field graphql.Coll
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*repositories.Order)
+	res := resTmp.(*entities.Order)
 	fc.Result = res
-	return ec.marshalOOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrder(ctx, field.Selections, res)
+	return ec.marshalOOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrder(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_order(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1519,7 +1519,7 @@ func (ec *executionContext) _Query_orders(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Orders(rctx, fc.Args["after"].(*repositories.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*repositories.Cursor), fc.Args["last"].(*int), fc.Args["where"].(*repositories.OrderWhereInput))
+		return ec.resolvers.Query().Orders(rctx, fc.Args["after"].(*entities.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*entities.Cursor), fc.Args["last"].(*int), fc.Args["where"].(*entities.OrderWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1528,9 +1528,9 @@ func (ec *executionContext) _Query_orders(ctx context.Context, field graphql.Col
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*repositories.OrderConnection)
+	res := resTmp.(*entities.OrderConnection)
 	fc.Result = res
-	return ec.marshalOOrderConnection2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderConnection(ctx, field.Selections, res)
+	return ec.marshalOOrderConnection2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_orders(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3740,8 +3740,8 @@ func (ec *executionContext) unmarshalInputOrderDetailsInput(ctx context.Context,
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputOrderWhereInput(ctx context.Context, obj interface{}) (repositories.OrderWhereInput, error) {
-	var it repositories.OrderWhereInput
+func (ec *executionContext) unmarshalInputOrderWhereInput(ctx context.Context, obj interface{}) (entities.OrderWhereInput, error) {
+	var it entities.OrderWhereInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -3758,7 +3758,7 @@ func (ec *executionContext) unmarshalInputOrderWhereInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
-			it.Not, err = ec.unmarshalOOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderWhereInput(ctx, v)
+			it.Not, err = ec.unmarshalOOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderWhereInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3766,7 +3766,7 @@ func (ec *executionContext) unmarshalInputOrderWhereInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
-			it.And, err = ec.unmarshalOOrderWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderWhereInputᚄ(ctx, v)
+			it.And, err = ec.unmarshalOOrderWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3774,7 +3774,7 @@ func (ec *executionContext) unmarshalInputOrderWhereInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
-			it.Or, err = ec.unmarshalOOrderWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderWhereInputᚄ(ctx, v)
+			it.Or, err = ec.unmarshalOOrderWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3848,8 +3848,8 @@ func (ec *executionContext) unmarshalInputOrderWhereInput(ctx context.Context, o
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, obj interface{}) (repositories.OutboxWhereInput, error) {
-	var it repositories.OutboxWhereInput
+func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, obj interface{}) (entities.OutboxWhereInput, error) {
+	var it entities.OutboxWhereInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -3866,7 +3866,7 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
-			it.Not, err = ec.unmarshalOOutboxWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOutboxWhereInput(ctx, v)
+			it.Not, err = ec.unmarshalOOutboxWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOutboxWhereInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3874,7 +3874,7 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
-			it.And, err = ec.unmarshalOOutboxWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOutboxWhereInputᚄ(ctx, v)
+			it.And, err = ec.unmarshalOOutboxWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOutboxWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3882,7 +3882,7 @@ func (ec *executionContext) unmarshalInputOutboxWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
-			it.Or, err = ec.unmarshalOOutboxWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOutboxWhereInputᚄ(ctx, v)
+			it.Or, err = ec.unmarshalOOutboxWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOutboxWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4500,11 +4500,11 @@ func (ec *executionContext) unmarshalInputSubmitOrderInput(ctx context.Context, 
 
 // region    ************************** interface.gotpl ***************************
 
-func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj repositories.Noder) graphql.Marshaler {
+func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj entities.Noder) graphql.Marshaler {
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case *repositories.Order:
+	case *entities.Order:
 		if obj == nil {
 			return graphql.Null
 		}
@@ -4562,7 +4562,7 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 var orderImplementors = []string{"Order", "Node"}
 
-func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, obj *repositories.Order) graphql.Marshaler {
+func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, obj *entities.Order) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, orderImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -4590,7 +4590,7 @@ func (ec *executionContext) _Order(ctx context.Context, sel ast.SelectionSet, ob
 
 var orderConnectionImplementors = []string{"OrderConnection"}
 
-func (ec *executionContext) _OrderConnection(ctx context.Context, sel ast.SelectionSet, obj *repositories.OrderConnection) graphql.Marshaler {
+func (ec *executionContext) _OrderConnection(ctx context.Context, sel ast.SelectionSet, obj *entities.OrderConnection) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, orderConnectionImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -4626,7 +4626,7 @@ func (ec *executionContext) _OrderConnection(ctx context.Context, sel ast.Select
 
 var orderEdgeImplementors = []string{"OrderEdge"}
 
-func (ec *executionContext) _OrderEdge(ctx context.Context, sel ast.SelectionSet, obj *repositories.OrderEdge) graphql.Marshaler {
+func (ec *executionContext) _OrderEdge(ctx context.Context, sel ast.SelectionSet, obj *entities.OrderEdge) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, orderEdgeImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -4687,7 +4687,7 @@ func (ec *executionContext) _OrderPayload(ctx context.Context, sel ast.Selection
 
 var pageInfoImplementors = []string{"PageInfo"}
 
-func (ec *executionContext) _PageInfo(ctx context.Context, sel ast.SelectionSet, obj *repositories.PageInfo) graphql.Marshaler {
+func (ec *executionContext) _PageInfo(ctx context.Context, sel ast.SelectionSet, obj *entities.PageInfo) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, pageInfoImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -5201,13 +5201,13 @@ func (ec *executionContext) unmarshalNCurrencyInput2ᚖgithubᚗcomᚋomigaᚑgr
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐCursor(ctx context.Context, v interface{}) (repositories.Cursor, error) {
-	var res repositories.Cursor
+func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐCursor(ctx context.Context, v interface{}) (entities.Cursor, error) {
+	var res entities.Cursor
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNCursor2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐCursor(ctx context.Context, sel ast.SelectionSet, v repositories.Cursor) graphql.Marshaler {
+func (ec *executionContext) marshalNCursor2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐCursor(ctx context.Context, sel ast.SelectionSet, v entities.Cursor) graphql.Marshaler {
 	return v
 }
 
@@ -5271,7 +5271,7 @@ func (ec *executionContext) marshalNOrderType2githubᚗcomᚋomigaᚑgroupᚋomi
 	return v
 }
 
-func (ec *executionContext) unmarshalNOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderWhereInput(ctx context.Context, v interface{}) (*repositories.OrderWhereInput, error) {
+func (ec *executionContext) unmarshalNOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderWhereInput(ctx context.Context, v interface{}) (*entities.OrderWhereInput, error) {
 	res, err := ec.unmarshalInputOrderWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
@@ -5286,12 +5286,12 @@ func (ec *executionContext) marshalNOutboxStatus2githubᚗcomᚋomigaᚑgroupᚋ
 	return v
 }
 
-func (ec *executionContext) unmarshalNOutboxWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOutboxWhereInput(ctx context.Context, v interface{}) (*repositories.OutboxWhereInput, error) {
+func (ec *executionContext) unmarshalNOutboxWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOutboxWhereInput(ctx context.Context, v interface{}) (*entities.OutboxWhereInput, error) {
 	res, err := ec.unmarshalInputOutboxWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNPageInfo2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v repositories.PageInfo) graphql.Marshaler {
+func (ec *executionContext) marshalNPageInfo2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v entities.PageInfo) graphql.Marshaler {
 	return ec._PageInfo(ctx, sel, &v)
 }
 
@@ -5633,16 +5633,16 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐCursor(ctx context.Context, v interface{}) (*repositories.Cursor, error) {
+func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐCursor(ctx context.Context, v interface{}) (*entities.Cursor, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(repositories.Cursor)
+	var res = new(entities.Cursor)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐCursor(ctx context.Context, sel ast.SelectionSet, v *repositories.Cursor) graphql.Marshaler {
+func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐCursor(ctx context.Context, sel ast.SelectionSet, v *entities.Cursor) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5787,21 +5787,21 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
-func (ec *executionContext) marshalOOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrder(ctx context.Context, sel ast.SelectionSet, v *repositories.Order) graphql.Marshaler {
+func (ec *executionContext) marshalOOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrder(ctx context.Context, sel ast.SelectionSet, v *entities.Order) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Order(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOOrderConnection2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderConnection(ctx context.Context, sel ast.SelectionSet, v *repositories.OrderConnection) graphql.Marshaler {
+func (ec *executionContext) marshalOOrderConnection2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderConnection(ctx context.Context, sel ast.SelectionSet, v *entities.OrderConnection) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._OrderConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOOrderEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderEdge(ctx context.Context, sel ast.SelectionSet, v []*repositories.OrderEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOOrderEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderEdge(ctx context.Context, sel ast.SelectionSet, v []*entities.OrderEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5828,7 +5828,7 @@ func (ec *executionContext) marshalOOrderEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroup
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOOrderEdge2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderEdge(ctx, sel, v[i])
+			ret[i] = ec.marshalOOrderEdge2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5842,7 +5842,7 @@ func (ec *executionContext) marshalOOrderEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroup
 	return ret
 }
 
-func (ec *executionContext) marshalOOrderEdge2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderEdge(ctx context.Context, sel ast.SelectionSet, v *repositories.OrderEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOOrderEdge2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderEdge(ctx context.Context, sel ast.SelectionSet, v *entities.OrderEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5856,7 +5856,7 @@ func (ec *executionContext) marshalOOrderPayload2ᚖgithubᚗcomᚋomigaᚑgroup
 	return ec._OrderPayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOOrderWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderWhereInputᚄ(ctx context.Context, v interface{}) ([]*repositories.OrderWhereInput, error) {
+func (ec *executionContext) unmarshalOOrderWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderWhereInputᚄ(ctx context.Context, v interface{}) ([]*entities.OrderWhereInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -5865,10 +5865,10 @@ func (ec *executionContext) unmarshalOOrderWhereInput2ᚕᚖgithubᚗcomᚋomiga
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]*repositories.OrderWhereInput, len(vSlice))
+	res := make([]*entities.OrderWhereInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderWhereInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderWhereInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -5876,7 +5876,7 @@ func (ec *executionContext) unmarshalOOrderWhereInput2ᚕᚖgithubᚗcomᚋomiga
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOrderWhereInput(ctx context.Context, v interface{}) (*repositories.OrderWhereInput, error) {
+func (ec *executionContext) unmarshalOOrderWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOrderWhereInput(ctx context.Context, v interface{}) (*entities.OrderWhereInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -5967,7 +5967,7 @@ func (ec *executionContext) marshalOOutboxStatus2ᚖgithubᚗcomᚋomigaᚑgroup
 	return v
 }
 
-func (ec *executionContext) unmarshalOOutboxWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOutboxWhereInputᚄ(ctx context.Context, v interface{}) ([]*repositories.OutboxWhereInput, error) {
+func (ec *executionContext) unmarshalOOutboxWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOutboxWhereInputᚄ(ctx context.Context, v interface{}) ([]*entities.OutboxWhereInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -5976,10 +5976,10 @@ func (ec *executionContext) unmarshalOOutboxWhereInput2ᚕᚖgithubᚗcomᚋomig
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]*repositories.OutboxWhereInput, len(vSlice))
+	res := make([]*entities.OutboxWhereInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNOutboxWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOutboxWhereInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNOutboxWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOutboxWhereInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -5987,7 +5987,7 @@ func (ec *executionContext) unmarshalOOutboxWhereInput2ᚕᚖgithubᚗcomᚋomig
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOOutboxWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋrepositoriesᚐOutboxWhereInput(ctx context.Context, v interface{}) (*repositories.OutboxWhereInput, error) {
+func (ec *executionContext) unmarshalOOutboxWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋorderᚋsharedᚋentitiesᚐOutboxWhereInput(ctx context.Context, v interface{}) (*entities.OutboxWhereInput, error) {
 	if v == nil {
 		return nil, nil
 	}

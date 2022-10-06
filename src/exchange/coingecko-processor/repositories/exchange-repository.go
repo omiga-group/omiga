@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/life4/genesis/slices"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
+	exchangerepo "github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	modelsexchange "github.com/omiga-group/omiga/src/exchange/shared/models"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
-	exchangerepo "github.com/omiga-group/omiga/src/exchange/shared/repositories/exchange"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories/ticker"
 	"go.uber.org/zap"
 )
 
@@ -24,12 +24,12 @@ type ExchangeRepository interface {
 
 type exchangeRepository struct {
 	logger      *zap.SugaredLogger
-	entgoClient repositories.EntgoClient
+	entgoClient entities.EntgoClient
 }
 
 func NewExchangeRepository(
 	logger *zap.SugaredLogger,
-	entgoClient repositories.EntgoClient) (ExchangeRepository, error) {
+	entgoClient entities.EntgoClient) (ExchangeRepository, error) {
 	return &exchangeRepository{
 		logger:      logger,
 		entgoClient: entgoClient,
@@ -108,7 +108,7 @@ func (er *exchangeRepository) CreateExchange(
 
 	tickersToCreate := slices.Map(
 		exchange.Tickers,
-		func(ticker models.Ticker) *repositories.TickerCreate {
+		func(ticker models.Ticker) *entities.TickerCreate {
 			return client.Ticker.
 				Create().
 				SetExchangeID(savedExchange.ID).
@@ -156,7 +156,7 @@ func (er *exchangeRepository) CreateExchange(
 
 	tickersToDelete := slices.Filter(
 		tickers,
-		func(existingTicker *repositories.Ticker) bool {
+		func(existingTicker *entities.Ticker) bool {
 			if exchange.Tickers == nil {
 				return true
 			}
@@ -168,7 +168,7 @@ func (er *exchangeRepository) CreateExchange(
 
 	tickerIdsToDelete := slices.Map(
 		tickersToDelete,
-		func(ticker *repositories.Ticker) int {
+		func(ticker *entities.Ticker) int {
 			return ticker.ID
 		})
 

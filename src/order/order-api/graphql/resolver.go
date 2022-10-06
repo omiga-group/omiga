@@ -4,12 +4,12 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/omiga-group/omiga/src/order/order-api/graphql/generated"
 	"github.com/omiga-group/omiga/src/order/order-api/services"
+	"github.com/omiga-group/omiga/src/order/shared/entities"
 	"github.com/omiga-group/omiga/src/order/shared/outbox"
-	"github.com/omiga-group/omiga/src/order/shared/repositories"
 )
 
 type Resolver struct {
-	client                  *repositories.Client
+	client                  *entities.Client
 	orderService            services.OrderService
 	outboxBackgroundService outbox.OutboxBackgroundService
 }
@@ -18,7 +18,7 @@ type GraphQLServer interface {
 }
 
 func NewGraphQLServer(
-	entgoClient repositories.EntgoClient,
+	entgoClient entities.EntgoClient,
 	orderService services.OrderService,
 	outboxBackgroundService outbox.OutboxBackgroundService) (*handler.Server, error) {
 	executableSchema := generated.NewExecutableSchema(generated.Config{
