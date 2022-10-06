@@ -8,9 +8,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/omiga-group/omiga/src/order/shared/entities/cli/appsetup"
-	"github.com/omiga-group/omiga/src/order/shared/entities/cli/configuration"
-	"github.com/omiga-group/omiga/src/order/shared/entities/migrate"
+	"github.com/omiga-group/omiga/src/exchange/shared/cli/appsetup"
+	"github.com/omiga-group/omiga/src/exchange/shared/cli/configuration"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/migrate"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/spf13/cobra"

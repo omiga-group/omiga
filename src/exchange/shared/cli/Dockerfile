@@ -9,15 +9,15 @@ FROM $BUILD_IMAGE as build
 
 RUN mkdir -p /src/shared/enterprise \
     mkdir -p /src/exchange/shared \
-    mkdir -p /src/exchange/shared/entities/cli
+    mkdir -p /src/exchange/shared/cli
 
 COPY go.mod /src/
 COPY go.sum /src/
 COPY shared/enterprise /src/shared/enterprise
 COPY exchange/shared /src/exchange/shared
-COPY exchange/shared/entities/cli /src/exchange/shared/entities/cli
+COPY exchange/shared/cli /src/exchange/shared/cli
 
-WORKDIR /src/exchange/shared/entities/cli
+WORKDIR /src/exchange/shared/cli
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/exchange-database-migration main.go
 
@@ -33,6 +33,6 @@ FROM base AS final
 
 WORKDIR /omiga
 COPY --from=build /bin/exchange-database-migration /omiga
-COPY --from=build /src/exchange/shared/entities/cli/config.yaml /omiga
-COPY --from=build /src/exchange/shared/entities/cli/post-migration-script.sql /omiga
+COPY --from=build /src/exchange/shared/cli/config.yaml /omiga
+COPY --from=build /src/exchange/shared/cli/post-migration-script.sql /omiga
 CMD ["/omiga/exchange-database-migration", "migrate", "--post-migration-script-path", "post-migration-script.sql"]

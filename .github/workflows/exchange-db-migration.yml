@@ -52,7 +52,7 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
              --pull \
              --target build \
-            --file ./src/exchange/shared/entities/cli/Dockerfile \
+            --file ./src/exchange/shared/cli/Dockerfile \
             ./src
 
       - name: Unit Tests
@@ -62,7 +62,7 @@ jobs:
              --pull \
              --target test \
             --tag omiga/exchange-db-migration-unittests:$GitVersion_SemVer \
-            --file ./src/exchange/shared/entities/cli/Dockerfile \
+            --file ./src/exchange/shared/cli/Dockerfile \
             ./src
           mkdir -p ./coverage/reports
           docker create --name extract-container omiga/exchange-db-migration-unittests:$GitVersion_SemVer
@@ -86,7 +86,7 @@ jobs:
              --target final \
             --tag omiga/exchange-db-migration:$GitVersion_SemVer \
             --tag omiga/exchange-db-migration:${{ github.sha }} \
-            --file ./src/exchange/shared/entities/cli/Dockerfile \
+            --file ./src/exchange/shared/cli/Dockerfile \
             ./src
 
       - name: Run Trivy vulnerability scanner
