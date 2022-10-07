@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/omiga-group/omiga/src/exchange/kraken-processor/appsetup"
 	"github.com/omiga-group/omiga/src/exchange/kraken-processor/configuration"
@@ -75,20 +74,29 @@ func startCommand() *cobra.Command {
 
 			defer krakenOrderBookSubscriber.Close()
 
+			cronService, err := appsetup.NewCronService(sugarLogger)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer cronService.Close()
+
+			if _, err = appsetup.NewKrakenTradingPairsSubscriber(
+				ctx,
+				sugarLogger,
+				config.Kraken,
+				config.Exchange,
+				cronService,
+				config.Postgres); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
 			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
 
-			for {
-				if ctx.Err() == context.Canceled {
-					break
-				}
-
-				timeHelper.SleepOrWaitForContextGetCancelled(
-					ctx,
-					time.Second)
-			}
+			timeHelper.WaitUntilCancelled(ctx)
 		},
 	}
 

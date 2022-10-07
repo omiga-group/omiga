@@ -16,6 +16,8 @@ type Config struct {
 }
 
 type KrakenConfig struct {
+	ApiKey    string    `yaml:"apiKey" env:"OMIGA_KRAKEN_APIKEY"`
+	SecretKey string    `yaml:"secretKey" env:"OMIGA_KRAKEN_SECRETKEY"`
 	OrderBook OrderBook `yaml:"orderBook"`
 }
 

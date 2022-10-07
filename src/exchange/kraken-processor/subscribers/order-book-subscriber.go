@@ -126,7 +126,7 @@ func (kobs *krakenOrderBookSubscriber) connectAndSubscribe() {
 				baseCoinName := coins[symbol1]
 				counterCoinName := coins[symbol2]
 
-				orderBook := mappers.FromKrakenOrderBookToOrderBook(
+				orderBook := mappers.KrakenOrderBookToOrderBook(
 					exchangeModels.Currency{
 						Name:         baseCoinName,
 						Code:         pairs[0],

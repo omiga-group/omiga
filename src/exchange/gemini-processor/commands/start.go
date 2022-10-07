@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/omiga-group/omiga/src/exchange/gemini-processor/appsetup"
 	"github.com/omiga-group/omiga/src/exchange/gemini-processor/configuration"
@@ -80,15 +79,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			for {
-				if ctx.Err() == context.Canceled {
-					break
-				}
-
-				timeHelper.SleepOrWaitForContextGetCancelled(
-					ctx,
-					time.Second)
-			}
+			timeHelper.WaitUntilCancelled(ctx)
 		},
 	}
 

@@ -63,7 +63,7 @@ func (btps *binanceTradingPairsSubscriber) Run() {
 	if err = btps.tradingPairRepository.CreateTradingPairs(
 		btps.ctx,
 		btps.exchangeConfig.Id,
-		mappers.FromBinanceSymbolsToTradingPairs(exchangeInfo.Symbols)); err != nil {
+		mappers.BinanceSymbolsToTradingPairs(exchangeInfo.Symbols)); err != nil {
 		btps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return

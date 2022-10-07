@@ -16,6 +16,8 @@ postgres:
   maxOpenConns: 5
 
 kraken:
+  apiKey: ""
+  secretKey: ""
   orderBook:
     pairs:
       - pair: XBT/USD
