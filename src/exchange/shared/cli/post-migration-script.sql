@@ -51,10 +51,10 @@ BEGIN
                        ON nsp.oid = connamespace
        WHERE nsp.nspname = 'public'
              AND rel.relname = 'trading_pairs'
-             AND con.conname = 'trading_pairs_symbol_exchange_trading_pairs_key') THEN
+             AND con.conname = 'trading_pairs_symbol_exchange_trading_pair_key') THEN
 		ALTER TABLE public.trading_pairs 
-		ADD CONSTRAINT trading_pairs_symbol_exchange_trading_pairs_key
-		UNIQUE (symbol, exchange_trading_pairs); 
+		ADD CONSTRAINT trading_pairs_symbol_exchange_trading_pair_key
+		UNIQUE (symbol, exchange_trading_pair); 
 	END IF;
 END
 $do$

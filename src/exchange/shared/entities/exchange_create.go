@@ -274,14 +274,14 @@ func (ec *ExchangeCreate) AddTicker(t ...*Ticker) *ExchangeCreate {
 	return ec.AddTickerIDs(ids...)
 }
 
-// AddTradingPairIDs adds the "trading_pairs" edge to the TradingPair entity by IDs.
+// AddTradingPairIDs adds the "trading_pair" edge to the TradingPair entity by IDs.
 func (ec *ExchangeCreate) AddTradingPairIDs(ids ...int) *ExchangeCreate {
 	ec.mutation.AddTradingPairIDs(ids...)
 	return ec
 }
 
-// AddTradingPairs adds the "trading_pairs" edges to the TradingPair entity.
-func (ec *ExchangeCreate) AddTradingPairs(t ...*TradingPair) *ExchangeCreate {
+// AddTradingPair adds the "trading_pair" edges to the TradingPair entity.
+func (ec *ExchangeCreate) AddTradingPair(t ...*TradingPair) *ExchangeCreate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -561,12 +561,12 @@ func (ec *ExchangeCreate) createSpec() (*Exchange, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ec.mutation.TradingPairsIDs(); len(nodes) > 0 {
+	if nodes := ec.mutation.TradingPairIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   exchange.TradingPairsTable,
-			Columns: []string{exchange.TradingPairsColumn},
+			Table:   exchange.TradingPairTable,
+			Columns: []string{exchange.TradingPairColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

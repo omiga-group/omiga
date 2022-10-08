@@ -4,6 +4,8 @@ package coin
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 )
 
@@ -301,6 +303,74 @@ func NameEqualFold(v string) predicate.Coin {
 func NameContainsFold(v string) predicate.Coin {
 	return predicate.Coin(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldName), v))
+	})
+}
+
+// HasCoinBase applies the HasEdge predicate on the "coin_base" edge.
+func HasCoinBase() predicate.Coin {
+	return predicate.Coin(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CoinBaseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CoinBaseTable, CoinBaseColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCoinBaseWith applies the HasEdge predicate on the "coin_base" edge with a given conditions (other predicates).
+func HasCoinBaseWith(preds ...predicate.TradingPair) predicate.Coin {
+	return predicate.Coin(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CoinBaseInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CoinBaseTable, CoinBaseColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasCoinCounter applies the HasEdge predicate on the "coin_counter" edge.
+func HasCoinCounter() predicate.Coin {
+	return predicate.Coin(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CoinCounterTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CoinCounterTable, CoinCounterColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCoinCounterWith applies the HasEdge predicate on the "coin_counter" edge with a given conditions (other predicates).
+func HasCoinCounterWith(preds ...predicate.TradingPair) predicate.Coin {
+	return predicate.Coin(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CoinCounterInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CoinCounterTable, CoinCounterColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

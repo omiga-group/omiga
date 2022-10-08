@@ -238,6 +238,44 @@ func (c *CoinClient) GetX(ctx context.Context, id int) *Coin {
 	return obj
 }
 
+// QueryCoinBase queries the coin_base edge of a Coin.
+func (c *CoinClient) QueryCoinBase(co *Coin) *TradingPairQuery {
+	query := &TradingPairQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(coin.Table, coin.FieldID, id),
+			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, coin.CoinBaseTable, coin.CoinBaseColumn),
+		)
+		schemaConfig := co.schemaConfig
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCoinCounter queries the coin_counter edge of a Coin.
+func (c *CoinClient) QueryCoinCounter(co *Coin) *TradingPairQuery {
+	query := &TradingPairQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(coin.Table, coin.FieldID, id),
+			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, coin.CoinCounterTable, coin.CoinCounterColumn),
+		)
+		schemaConfig := co.schemaConfig
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *CoinClient) Hooks() []Hook {
 	return c.hooks.Coin
@@ -347,15 +385,15 @@ func (c *ExchangeClient) QueryTicker(e *Exchange) *TickerQuery {
 	return query
 }
 
-// QueryTradingPairs queries the trading_pairs edge of a Exchange.
-func (c *ExchangeClient) QueryTradingPairs(e *Exchange) *TradingPairQuery {
+// QueryTradingPair queries the trading_pair edge of a Exchange.
+func (c *ExchangeClient) QueryTradingPair(e *Exchange) *TradingPairQuery {
 	query := &TradingPairQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := e.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(exchange.Table, exchange.FieldID, id),
 			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, exchange.TradingPairsTable, exchange.TradingPairsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, exchange.TradingPairTable, exchange.TradingPairColumn),
 		)
 		schemaConfig := e.schemaConfig
 		step.To.Schema = schemaConfig.TradingPair
@@ -667,6 +705,44 @@ func (c *TradingPairClient) QueryExchange(tp *TradingPair) *ExchangeQuery {
 		)
 		schemaConfig := tp.schemaConfig
 		step.To.Schema = schemaConfig.Exchange
+		step.Edge.Schema = schemaConfig.TradingPair
+		fromV = sqlgraph.Neighbors(tp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBase queries the base edge of a TradingPair.
+func (c *TradingPairClient) QueryBase(tp *TradingPair) *CoinQuery {
+	query := &CoinQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := tp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, id),
+			sqlgraph.To(coin.Table, coin.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tradingpair.BaseTable, tradingpair.BaseColumn),
+		)
+		schemaConfig := tp.schemaConfig
+		step.To.Schema = schemaConfig.Coin
+		step.Edge.Schema = schemaConfig.TradingPair
+		fromV = sqlgraph.Neighbors(tp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCounter queries the counter edge of a TradingPair.
+func (c *TradingPairClient) QueryCounter(tp *TradingPair) *CoinQuery {
+	query := &CoinQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := tp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, id),
+			sqlgraph.To(coin.Table, coin.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tradingpair.CounterTable, tradingpair.CounterColumn),
+		)
+		schemaConfig := tp.schemaConfig
+		step.To.Schema = schemaConfig.Coin
 		step.Edge.Schema = schemaConfig.TradingPair
 		fromV = sqlgraph.Neighbors(tp.driver.Dialect(), step)
 		return fromV, nil

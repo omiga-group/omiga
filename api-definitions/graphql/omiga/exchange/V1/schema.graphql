@@ -255,9 +255,9 @@ type Ticker implements Node {
 type TradingPair implements Node {
   id: ID!
   symbol: String!
-  base: String!
+  base: Coin!
   basePrecision: Int
-  counter: String!
+  counter: Coin!
   counterPrecision: Int
 }
 

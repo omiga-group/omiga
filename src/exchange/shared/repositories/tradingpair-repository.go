@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 
+	"github.com/life4/genesis/maps"
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
@@ -20,16 +21,19 @@ type TradingPairRepository interface {
 }
 
 type tradingPairRepository struct {
-	logger      *zap.SugaredLogger
-	entgoClient entities.EntgoClient
+	logger         *zap.SugaredLogger
+	entgoClient    entities.EntgoClient
+	coinRepository CoinRepository
 }
 
 func NewTradingPairRepository(
 	logger *zap.SugaredLogger,
-	entgoClient entities.EntgoClient) (TradingPairRepository, error) {
+	entgoClient entities.EntgoClient,
+	coinRepository CoinRepository) (TradingPairRepository, error) {
 	return &tradingPairRepository{
-		logger:      logger,
-		entgoClient: entgoClient,
+		logger:         logger,
+		entgoClient:    entgoClient,
+		coinRepository: coinRepository,
 	}, nil
 }
 
@@ -59,12 +63,24 @@ func (tpr *tradingPairRepository) CreateTradingPairs(
 		return err
 	}
 
-	existingTradingPairs, err := client.TradingPair.
-		Query().
-		Where(tradingpair.HasExchangeWith(exchangerepo.ExchangeID(exchangeId))).
-		All(ctx)
+	allCoins := maps.Keys(slices.Reduce(
+		tradingPairs,
+		make(map[models.Coin]struct{}),
+		func(tradingPair models.TradingPair, reduction map[models.Coin]struct{}) map[models.Coin]struct{} {
+			reduction[models.Coin{
+				Symbol: tradingPair.Base,
+			}] = struct{}{}
+
+			reduction[models.Coin{
+				Symbol: tradingPair.Counter,
+			}] = struct{}{}
+
+			return reduction
+		}))
+
+	savedCoinsIds, err := tpr.coinRepository.CreateCoins(ctx, allCoins)
 	if err != nil {
-		tpr.logger.Errorf("Failed to fetch existing trading pairs for exchange Id: %s. Error: %v", savedExchange.ExchangeID, err)
+		tpr.logger.Errorf("Failed to create coins. Error: %v", err)
 
 		return err
 	}
@@ -76,9 +92,9 @@ func (tpr *tradingPairRepository) CreateTradingPairs(
 				Create().
 				SetExchange(savedExchange).
 				SetSymbol(tradingPair.Symbol).
-				SetBase(tradingPair.Base).
+				SetBaseID(savedCoinsIds[tradingPair.Base]).
 				SetBasePrecision(tradingPair.BasePrecision).
-				SetCounter(tradingPair.Counter).
+				SetCounterID(savedCoinsIds[tradingPair.Counter]).
 				SetCounterPrecision(tradingPair.CounterPrecision)
 		})
 
@@ -88,6 +104,16 @@ func (tpr *tradingPairRepository) CreateTradingPairs(
 		UpdateNewValues().
 		Exec(ctx); err != nil {
 		tpr.logger.Errorf("Failed to save trading pairs for exchange Id: %s. Error: %v", savedExchange.ExchangeID, err)
+
+		return err
+	}
+
+	existingTradingPairs, err := client.TradingPair.
+		Query().
+		Where(tradingpair.HasExchangeWith(exchangerepo.ExchangeID(exchangeId))).
+		All(ctx)
+	if err != nil {
+		tpr.logger.Errorf("Failed to fetch existing trading pairs for exchange Id: %s. Error: %v", savedExchange.ExchangeID, err)
 
 		return err
 	}

@@ -4,6 +4,7 @@ package entities
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -14,19 +15,24 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
 // CoinQuery is the builder for querying Coin entities.
 type CoinQuery struct {
 	config
-	limit      *int
-	offset     *int
-	unique     *bool
-	order      []OrderFunc
-	fields     []string
-	predicates []predicate.Coin
-	loadTotal  []func(context.Context, []*Coin) error
-	modifiers  []func(*sql.Selector)
+	limit                *int
+	offset               *int
+	unique               *bool
+	order                []OrderFunc
+	fields               []string
+	predicates           []predicate.Coin
+	withCoinBase         *TradingPairQuery
+	withCoinCounter      *TradingPairQuery
+	loadTotal            []func(context.Context, []*Coin) error
+	modifiers            []func(*sql.Selector)
+	withNamedCoinBase    map[string]*TradingPairQuery
+	withNamedCoinCounter map[string]*TradingPairQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -61,6 +67,56 @@ func (cq *CoinQuery) Unique(unique bool) *CoinQuery {
 func (cq *CoinQuery) Order(o ...OrderFunc) *CoinQuery {
 	cq.order = append(cq.order, o...)
 	return cq
+}
+
+// QueryCoinBase chains the current query on the "coin_base" edge.
+func (cq *CoinQuery) QueryCoinBase() *TradingPairQuery {
+	query := &TradingPairQuery{config: cq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := cq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := cq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(coin.Table, coin.FieldID, selector),
+			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, coin.CoinBaseTable, coin.CoinBaseColumn),
+		)
+		schemaConfig := cq.schemaConfig
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
+		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCoinCounter chains the current query on the "coin_counter" edge.
+func (cq *CoinQuery) QueryCoinCounter() *TradingPairQuery {
+	query := &TradingPairQuery{config: cq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := cq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := cq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(coin.Table, coin.FieldID, selector),
+			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, coin.CoinCounterTable, coin.CoinCounterColumn),
+		)
+		schemaConfig := cq.schemaConfig
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
+		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Coin entity from the query.
@@ -239,16 +295,40 @@ func (cq *CoinQuery) Clone() *CoinQuery {
 		return nil
 	}
 	return &CoinQuery{
-		config:     cq.config,
-		limit:      cq.limit,
-		offset:     cq.offset,
-		order:      append([]OrderFunc{}, cq.order...),
-		predicates: append([]predicate.Coin{}, cq.predicates...),
+		config:          cq.config,
+		limit:           cq.limit,
+		offset:          cq.offset,
+		order:           append([]OrderFunc{}, cq.order...),
+		predicates:      append([]predicate.Coin{}, cq.predicates...),
+		withCoinBase:    cq.withCoinBase.Clone(),
+		withCoinCounter: cq.withCoinCounter.Clone(),
 		// clone intermediate query.
 		sql:    cq.sql.Clone(),
 		path:   cq.path,
 		unique: cq.unique,
 	}
+}
+
+// WithCoinBase tells the query-builder to eager-load the nodes that are connected to
+// the "coin_base" edge. The optional arguments are used to configure the query builder of the edge.
+func (cq *CoinQuery) WithCoinBase(opts ...func(*TradingPairQuery)) *CoinQuery {
+	query := &TradingPairQuery{config: cq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	cq.withCoinBase = query
+	return cq
+}
+
+// WithCoinCounter tells the query-builder to eager-load the nodes that are connected to
+// the "coin_counter" edge. The optional arguments are used to configure the query builder of the edge.
+func (cq *CoinQuery) WithCoinCounter(opts ...func(*TradingPairQuery)) *CoinQuery {
+	query := &TradingPairQuery{config: cq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	cq.withCoinCounter = query
+	return cq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -317,8 +397,12 @@ func (cq *CoinQuery) prepareQuery(ctx context.Context) error {
 
 func (cq *CoinQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Coin, error) {
 	var (
-		nodes = []*Coin{}
-		_spec = cq.querySpec()
+		nodes       = []*Coin{}
+		_spec       = cq.querySpec()
+		loadedTypes = [2]bool{
+			cq.withCoinBase != nil,
+			cq.withCoinCounter != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Coin).scanValues(nil, columns)
@@ -326,6 +410,7 @@ func (cq *CoinQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Coin, e
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Coin{config: cq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	_spec.Node.Schema = cq.schemaConfig.Coin
@@ -342,12 +427,103 @@ func (cq *CoinQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Coin, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := cq.withCoinBase; query != nil {
+		if err := cq.loadCoinBase(ctx, query, nodes,
+			func(n *Coin) { n.Edges.CoinBase = []*TradingPair{} },
+			func(n *Coin, e *TradingPair) { n.Edges.CoinBase = append(n.Edges.CoinBase, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := cq.withCoinCounter; query != nil {
+		if err := cq.loadCoinCounter(ctx, query, nodes,
+			func(n *Coin) { n.Edges.CoinCounter = []*TradingPair{} },
+			func(n *Coin, e *TradingPair) { n.Edges.CoinCounter = append(n.Edges.CoinCounter, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range cq.withNamedCoinBase {
+		if err := cq.loadCoinBase(ctx, query, nodes,
+			func(n *Coin) { n.appendNamedCoinBase(name) },
+			func(n *Coin, e *TradingPair) { n.appendNamedCoinBase(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range cq.withNamedCoinCounter {
+		if err := cq.loadCoinCounter(ctx, query, nodes,
+			func(n *Coin) { n.appendNamedCoinCounter(name) },
+			func(n *Coin, e *TradingPair) { n.appendNamedCoinCounter(name, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for i := range cq.loadTotal {
 		if err := cq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
+}
+
+func (cq *CoinQuery) loadCoinBase(ctx context.Context, query *TradingPairQuery, nodes []*Coin, init func(*Coin), assign func(*Coin, *TradingPair)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Coin)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.InValues(coin.CoinBaseColumn, fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.coin_coin_base
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "coin_coin_base" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "coin_coin_base" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (cq *CoinQuery) loadCoinCounter(ctx context.Context, query *TradingPairQuery, nodes []*Coin, init func(*Coin), assign func(*Coin, *TradingPair)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Coin)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.InValues(coin.CoinCounterColumn, fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.coin_coin_counter
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "coin_coin_counter" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "coin_coin_counter" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
 }
 
 func (cq *CoinQuery) sqlCount(ctx context.Context) (int, error) {
@@ -488,6 +664,34 @@ func (cq *CoinQuery) ForShare(opts ...sql.LockOption) *CoinQuery {
 func (cq *CoinQuery) Modify(modifiers ...func(s *sql.Selector)) *CoinSelect {
 	cq.modifiers = append(cq.modifiers, modifiers...)
 	return cq.Select()
+}
+
+// WithNamedCoinBase tells the query-builder to eager-load the nodes that are connected to the "coin_base"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (cq *CoinQuery) WithNamedCoinBase(name string, opts ...func(*TradingPairQuery)) *CoinQuery {
+	query := &TradingPairQuery{config: cq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	if cq.withNamedCoinBase == nil {
+		cq.withNamedCoinBase = make(map[string]*TradingPairQuery)
+	}
+	cq.withNamedCoinBase[name] = query
+	return cq
+}
+
+// WithNamedCoinCounter tells the query-builder to eager-load the nodes that are connected to the "coin_counter"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (cq *CoinQuery) WithNamedCoinCounter(name string, opts ...func(*TradingPairQuery)) *CoinQuery {
+	query := &TradingPairQuery{config: cq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	if cq.withNamedCoinCounter == nil {
+		cq.withNamedCoinCounter = make(map[string]*TradingPairQuery)
+	}
+	cq.withNamedCoinCounter[name] = query
+	return cq
 }
 
 // CoinGroupBy is the group-by builder for Coin entities.

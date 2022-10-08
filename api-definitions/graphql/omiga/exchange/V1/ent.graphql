@@ -45,6 +45,12 @@ input CoinWhereInput {
   nameNotNil: Boolean
   nameEqualFold: String
   nameContainsFold: String
+  """coin_base edge predicates"""
+  hasCoinBase: Boolean
+  hasCoinBaseWith: [TradingPairWhereInput!]
+  """coin_counter edge predicates"""
+  hasCoinCounter: Boolean
+  hasCoinCounterWith: [TradingPairWhereInput!]
 }
 """
 ExchangeWhereInput is used for filtering Exchange objects.
@@ -257,9 +263,9 @@ input ExchangeWhereInput {
   """ticker edge predicates"""
   hasTicker: Boolean
   hasTickerWith: [TickerWhereInput!]
-  """trading_pairs edge predicates"""
-  hasTradingPairs: Boolean
-  hasTradingPairsWith: [TradingPairWhereInput!]
+  """trading_pair edge predicates"""
+  hasTradingPair: Boolean
+  hasTradingPairWith: [TradingPairWhereInput!]
 }
 """
 OutboxWhereInput is used for filtering Outbox objects.
@@ -577,20 +583,6 @@ input TradingPairWhereInput {
   symbolHasSuffix: String
   symbolEqualFold: String
   symbolContainsFold: String
-  """base field predicates"""
-  base: String
-  baseNEQ: String
-  baseIn: [String!]
-  baseNotIn: [String!]
-  baseGT: String
-  baseGTE: String
-  baseLT: String
-  baseLTE: String
-  baseContains: String
-  baseHasPrefix: String
-  baseHasSuffix: String
-  baseEqualFold: String
-  baseContainsFold: String
   """base_precision field predicates"""
   basePrecision: Int
   basePrecisionNEQ: Int
@@ -600,20 +592,6 @@ input TradingPairWhereInput {
   basePrecisionGTE: Int
   basePrecisionLT: Int
   basePrecisionLTE: Int
-  """counter field predicates"""
-  counter: String
-  counterNEQ: String
-  counterIn: [String!]
-  counterNotIn: [String!]
-  counterGT: String
-  counterGTE: String
-  counterLT: String
-  counterLTE: String
-  counterContains: String
-  counterHasPrefix: String
-  counterHasSuffix: String
-  counterEqualFold: String
-  counterContainsFold: String
   """counter_precision field predicates"""
   counterPrecision: Int
   counterPrecisionNEQ: Int
@@ -626,4 +604,10 @@ input TradingPairWhereInput {
   """exchange edge predicates"""
   hasExchange: Boolean
   hasExchangeWith: [ExchangeWhereInput!]
+  """base edge predicates"""
+  hasBase: Boolean
+  hasBaseWith: [CoinWhereInput!]
+  """counter edge predicates"""
+  hasCounter: Boolean
+  hasCounterWith: [CoinWhereInput!]
 }

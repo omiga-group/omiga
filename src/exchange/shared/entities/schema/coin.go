@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 )
@@ -22,7 +23,10 @@ func (Coin) Fields() []ent.Field {
 
 // Edges of the Coin.
 func (Coin) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+		edge.To("coin_base", TradingPair.Type),
+		edge.To("coin_counter", TradingPair.Type),
+	}
 }
 
 func (Coin) Indexes() []ent.Index {
