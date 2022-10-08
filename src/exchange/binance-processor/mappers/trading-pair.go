@@ -6,7 +6,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 )
 
-func FromBinanceSymbolsToTradingPairs(symbols []binance.Symbol) []models.TradingPair {
+func BinanceSymbolsToTradingPairs(symbols []binance.Symbol) []models.TradingPair {
 	return slices.Map(symbols, func(symbol binance.Symbol) models.TradingPair {
 		return models.TradingPair{
 			Symbol:           symbol.Symbol,

@@ -69,7 +69,7 @@ func (tpr *tradingPairRepository) CreateTradingPairs(
 		return err
 	}
 
-	tickersToCreate := slices.Map(
+	tradingpairsToCreate := slices.Map(
 		tradingPairs,
 		func(tradingPair models.TradingPair) *entities.TradingPairCreate {
 			return client.TradingPair.
@@ -83,7 +83,7 @@ func (tpr *tradingPairRepository) CreateTradingPairs(
 		})
 
 	if err = client.TradingPair.
-		CreateBulk(tickersToCreate...).
+		CreateBulk(tradingpairsToCreate...).
 		OnConflictColumns(tradingpair.FieldSymbol, tradingpair.ExchangeColumn).
 		UpdateNewValues().
 		Exec(ctx); err != nil {

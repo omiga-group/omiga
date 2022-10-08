@@ -46,3 +46,15 @@ func (mr *MockTimeHelperMockRecorder) SleepOrWaitForContextGetCancelled(ctx, del
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SleepOrWaitForContextGetCancelled", reflect.TypeOf((*MockTimeHelper)(nil).SleepOrWaitForContextGetCancelled), ctx, delay)
 }
+
+// WaitUntilCancelled mocks base method.
+func (m *MockTimeHelper) WaitUntilCancelled(ctx context.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "WaitUntilCancelled", ctx)
+}
+
+// WaitUntilCancelled indicates an expected call of WaitUntilCancelled.
+func (mr *MockTimeHelperMockRecorder) WaitUntilCancelled(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitUntilCancelled", reflect.TypeOf((*MockTimeHelper)(nil).WaitUntilCancelled), ctx)
+}

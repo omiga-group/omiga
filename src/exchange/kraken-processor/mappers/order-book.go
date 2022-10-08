@@ -11,7 +11,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/decimal"
 )
 
-func FromKrakenOrderBookToOrderBook(
+func KrakenOrderBookToOrderBook(
 	baseCurrency exchangeModels.Currency,
 	counterCurrency exchangeModels.Currency,
 	orderBook []models.KrakenOrderBookEntry) exchangeModels.OrderBook {
