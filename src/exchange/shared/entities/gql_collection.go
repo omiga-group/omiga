@@ -23,6 +23,34 @@ func (c *CoinQuery) CollectFields(ctx context.Context, satisfies ...string) (*Co
 
 func (c *CoinQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+		switch field.Name {
+		case "coinBase", "coin_base":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &TradingPairQuery{config: c.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			c.WithNamedCoinBase(alias, func(wq *TradingPairQuery) {
+				*wq = *query
+			})
+		case "coinCounter", "coin_counter":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &TradingPairQuery{config: c.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			c.WithNamedCoinCounter(alias, func(wq *TradingPairQuery) {
+				*wq = *query
+			})
+		}
+	}
 	return nil
 }
 
@@ -105,7 +133,7 @@ func (e *ExchangeQuery) collectField(ctx context.Context, op *graphql.OperationC
 			e.WithNamedTicker(alias, func(wq *TickerQuery) {
 				*wq = *query
 			})
-		case "tradingPairs", "trading_pairs":
+		case "tradingPair", "trading_pair":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -114,7 +142,7 @@ func (e *ExchangeQuery) collectField(ctx context.Context, op *graphql.OperationC
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
-			e.WithNamedTradingPairs(alias, func(wq *TradingPairQuery) {
+			e.WithNamedTradingPair(alias, func(wq *TradingPairQuery) {
 				*wq = *query
 			})
 		}
@@ -327,6 +355,26 @@ func (tp *TradingPairQuery) collectField(ctx context.Context, op *graphql.Operat
 				return err
 			}
 			tp.withExchange = query
+		case "base":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &CoinQuery{config: tp.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			tp.withBase = query
+		case "counter":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &CoinQuery{config: tp.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			tp.withCounter = query
 		}
 	}
 	return nil

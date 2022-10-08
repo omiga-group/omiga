@@ -19,6 +19,43 @@ type Coin struct {
 	Symbol string `json:"symbol,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the CoinQuery when eager-loading is set.
+	Edges CoinEdges `json:"edges"`
+}
+
+// CoinEdges holds the relations/edges for other nodes in the graph.
+type CoinEdges struct {
+	// CoinBase holds the value of the coin_base edge.
+	CoinBase []*TradingPair `json:"coin_base,omitempty"`
+	// CoinCounter holds the value of the coin_counter edge.
+	CoinCounter []*TradingPair `json:"coin_counter,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+	// totalCount holds the count of the edges above.
+	totalCount [2]map[string]int
+
+	namedCoinBase    map[string][]*TradingPair
+	namedCoinCounter map[string][]*TradingPair
+}
+
+// CoinBaseOrErr returns the CoinBase value or an error if the edge
+// was not loaded in eager-loading.
+func (e CoinEdges) CoinBaseOrErr() ([]*TradingPair, error) {
+	if e.loadedTypes[0] {
+		return e.CoinBase, nil
+	}
+	return nil, &NotLoadedError{edge: "coin_base"}
+}
+
+// CoinCounterOrErr returns the CoinCounter value or an error if the edge
+// was not loaded in eager-loading.
+func (e CoinEdges) CoinCounterOrErr() ([]*TradingPair, error) {
+	if e.loadedTypes[1] {
+		return e.CoinCounter, nil
+	}
+	return nil, &NotLoadedError{edge: "coin_counter"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -68,6 +105,16 @@ func (c *Coin) assignValues(columns []string, values []any) error {
 	return nil
 }
 
+// QueryCoinBase queries the "coin_base" edge of the Coin entity.
+func (c *Coin) QueryCoinBase() *TradingPairQuery {
+	return (&CoinClient{config: c.config}).QueryCoinBase(c)
+}
+
+// QueryCoinCounter queries the "coin_counter" edge of the Coin entity.
+func (c *Coin) QueryCoinCounter() *TradingPairQuery {
+	return (&CoinClient{config: c.config}).QueryCoinCounter(c)
+}
+
 // Update returns a builder for updating this Coin.
 // Note that you need to call Coin.Unwrap() before calling this method if this Coin
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -98,6 +145,54 @@ func (c *Coin) String() string {
 	builder.WriteString(c.Name)
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedCoinBase returns the CoinBase named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (c *Coin) NamedCoinBase(name string) ([]*TradingPair, error) {
+	if c.Edges.namedCoinBase == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := c.Edges.namedCoinBase[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (c *Coin) appendNamedCoinBase(name string, edges ...*TradingPair) {
+	if c.Edges.namedCoinBase == nil {
+		c.Edges.namedCoinBase = make(map[string][]*TradingPair)
+	}
+	if len(edges) == 0 {
+		c.Edges.namedCoinBase[name] = []*TradingPair{}
+	} else {
+		c.Edges.namedCoinBase[name] = append(c.Edges.namedCoinBase[name], edges...)
+	}
+}
+
+// NamedCoinCounter returns the CoinCounter named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (c *Coin) NamedCoinCounter(name string) ([]*TradingPair, error) {
+	if c.Edges.namedCoinCounter == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := c.Edges.namedCoinCounter[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (c *Coin) appendNamedCoinCounter(name string, edges ...*TradingPair) {
+	if c.Edges.namedCoinCounter == nil {
+		c.Edges.namedCoinCounter = make(map[string][]*TradingPair)
+	}
+	if len(edges) == 0 {
+		c.Edges.namedCoinCounter[name] = []*TradingPair{}
+	} else {
+		c.Edges.namedCoinCounter[name] = append(c.Edges.namedCoinCounter[name], edges...)
+	}
 }
 
 // Coins is a parsable slice of Coin.

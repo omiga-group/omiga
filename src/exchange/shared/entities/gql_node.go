@@ -55,7 +55,7 @@ func (c *Coin) Node(ctx context.Context) (node *Node, err error) {
 		ID:     c.ID,
 		Type:   "Coin",
 		Fields: make([]*Field, 2),
-		Edges:  make([]*Edge, 0),
+		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(c.Symbol); err != nil {
@@ -73,6 +73,26 @@ func (c *Coin) Node(ctx context.Context) (node *Node, err error) {
 		Type:  "string",
 		Name:  "name",
 		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "TradingPair",
+		Name: "coin_base",
+	}
+	err = c.QueryCoinBase().
+		Select(tradingpair.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "TradingPair",
+		Name: "coin_counter",
+	}
+	err = c.QueryCoinCounter().
+		Select(tradingpair.FieldID).
+		Scan(ctx, &node.Edges[1].IDs)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -241,9 +261,9 @@ func (e *Exchange) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[1] = &Edge{
 		Type: "TradingPair",
-		Name: "trading_pairs",
+		Name: "trading_pair",
 	}
-	err = e.QueryTradingPairs().
+	err = e.QueryTradingPair().
 		Select(tradingpair.FieldID).
 		Scan(ctx, &node.Edges[1].IDs)
 	if err != nil {
@@ -504,8 +524,8 @@ func (tp *TradingPair) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     tp.ID,
 		Type:   "TradingPair",
-		Fields: make([]*Field, 5),
-		Edges:  make([]*Edge, 1),
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(tp.Symbol); err != nil {
@@ -516,34 +536,18 @@ func (tp *TradingPair) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "symbol",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(tp.Base); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "string",
-		Name:  "base",
-		Value: string(buf),
-	}
 	if buf, err = json.Marshal(tp.BasePrecision); err != nil {
 		return nil, err
 	}
-	node.Fields[2] = &Field{
+	node.Fields[1] = &Field{
 		Type:  "int",
 		Name:  "base_precision",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(tp.Counter); err != nil {
-		return nil, err
-	}
-	node.Fields[3] = &Field{
-		Type:  "string",
-		Name:  "counter",
 		Value: string(buf),
 	}
 	if buf, err = json.Marshal(tp.CounterPrecision); err != nil {
 		return nil, err
 	}
-	node.Fields[4] = &Field{
+	node.Fields[2] = &Field{
 		Type:  "int",
 		Name:  "counter_precision",
 		Value: string(buf),
@@ -555,6 +559,26 @@ func (tp *TradingPair) Node(ctx context.Context) (node *Node, err error) {
 	err = tp.QueryExchange().
 		Select(exchange.FieldID).
 		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Coin",
+		Name: "base",
+	}
+	err = tp.QueryBase().
+		Select(coin.FieldID).
+		Scan(ctx, &node.Edges[1].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "Coin",
+		Name: "counter",
+	}
+	err = tp.QueryCounter().
+		Select(coin.FieldID).
+		Scan(ctx, &node.Edges[2].IDs)
 	if err != nil {
 		return nil, err
 	}

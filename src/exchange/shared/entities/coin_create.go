@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
 // CoinCreate is the builder for creating a Coin entity.
@@ -39,6 +40,36 @@ func (cc *CoinCreate) SetNillableName(s *string) *CoinCreate {
 		cc.SetName(*s)
 	}
 	return cc
+}
+
+// AddCoinBaseIDs adds the "coin_base" edge to the TradingPair entity by IDs.
+func (cc *CoinCreate) AddCoinBaseIDs(ids ...int) *CoinCreate {
+	cc.mutation.AddCoinBaseIDs(ids...)
+	return cc
+}
+
+// AddCoinBase adds the "coin_base" edges to the TradingPair entity.
+func (cc *CoinCreate) AddCoinBase(t ...*TradingPair) *CoinCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cc.AddCoinBaseIDs(ids...)
+}
+
+// AddCoinCounterIDs adds the "coin_counter" edge to the TradingPair entity by IDs.
+func (cc *CoinCreate) AddCoinCounterIDs(ids ...int) *CoinCreate {
+	cc.mutation.AddCoinCounterIDs(ids...)
+	return cc
+}
+
+// AddCoinCounter adds the "coin_counter" edges to the TradingPair entity.
+func (cc *CoinCreate) AddCoinCounter(t ...*TradingPair) *CoinCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cc.AddCoinCounterIDs(ids...)
 }
 
 // Mutation returns the CoinMutation object of the builder.
@@ -164,6 +195,46 @@ func (cc *CoinCreate) createSpec() (*Coin, *sqlgraph.CreateSpec) {
 			Column: coin.FieldName,
 		})
 		_node.Name = value
+	}
+	if nodes := cc.mutation.CoinBaseIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinBaseTable,
+			Columns: []string{coin.CoinBaseColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cc.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := cc.mutation.CoinCounterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinCounterTable,
+			Columns: []string{coin.CoinCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cc.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

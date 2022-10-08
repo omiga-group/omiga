@@ -12,11 +12,11 @@ import (
 type CoinRepository interface {
 	CreateCoins(
 		ctx context.Context,
-		coins []models.Coin) error
+		coins []models.Coin) (map[string]int, error)
 
 	CreateCoin(
 		ctx context.Context,
-		coin models.Coin) error
+		coin models.Coin) (int, error)
 }
 
 type coinRepository struct {
@@ -35,19 +35,23 @@ func NewCoinRepository(
 
 func (cr *coinRepository) CreateCoins(
 	ctx context.Context,
-	coins []models.Coin) error {
+	coins []models.Coin) (map[string]int, error) {
+	createdCoins := make(map[string]int)
+
 	for _, coin := range coins {
-		if err := cr.CreateCoin(ctx, coin); err != nil {
-			return err
+		if savedCoinId, err := cr.CreateCoin(ctx, coin); err != nil {
+			return nil, err
+		} else {
+			createdCoins[coin.Symbol] = savedCoinId
 		}
 	}
 
-	return nil
+	return createdCoins, nil
 }
 
 func (cr *coinRepository) CreateCoin(
 	ctx context.Context,
-	coin models.Coin) error {
+	coin models.Coin) (int, error) {
 	client := cr.entgoClient.GetClient()
 	err := client.Coin.
 		Create().
@@ -58,8 +62,16 @@ func (cr *coinRepository) CreateCoin(
 		Exec(ctx)
 	if err != nil {
 		cr.logger.Errorf("Failed to save coin. Error: %v", err)
-		return err
+		return -1, err
 	}
 
-	return nil
+	savedCoin, err := client.Coin.
+		Query().
+		Where(coinrepo.SymbolEQ(coin.Symbol)).
+		First(ctx)
+	if err != nil {
+		return -1, err
+	}
+
+	return savedCoin.ID, nil
 }

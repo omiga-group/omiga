@@ -89,7 +89,7 @@ func (ces *coingeckoCoinSubscriber) Run() {
 		return mappers.FromCoingeckoCoinToCoin(coin)
 	})
 
-	err = ces.coinRepository.CreateCoins(ces.ctx, coins)
+	_, err = ces.coinRepository.CreateCoins(ces.ctx, coins)
 	if err != nil {
 		ces.logger.Errorf("Failed to save coins. Error: %v", err)
 

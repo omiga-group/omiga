@@ -61,16 +61,16 @@ type Exchange struct {
 type ExchangeEdges struct {
 	// Ticker holds the value of the ticker edge.
 	Ticker []*Ticker `json:"ticker,omitempty"`
-	// TradingPairs holds the value of the trading_pairs edge.
-	TradingPairs []*TradingPair `json:"trading_pairs,omitempty"`
+	// TradingPair holds the value of the trading_pair edge.
+	TradingPair []*TradingPair `json:"trading_pair,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
 	totalCount [2]map[string]int
 
-	namedTicker       map[string][]*Ticker
-	namedTradingPairs map[string][]*TradingPair
+	namedTicker      map[string][]*Ticker
+	namedTradingPair map[string][]*TradingPair
 }
 
 // TickerOrErr returns the Ticker value or an error if the edge
@@ -82,13 +82,13 @@ func (e ExchangeEdges) TickerOrErr() ([]*Ticker, error) {
 	return nil, &NotLoadedError{edge: "ticker"}
 }
 
-// TradingPairsOrErr returns the TradingPairs value or an error if the edge
+// TradingPairOrErr returns the TradingPair value or an error if the edge
 // was not loaded in eager-loading.
-func (e ExchangeEdges) TradingPairsOrErr() ([]*TradingPair, error) {
+func (e ExchangeEdges) TradingPairOrErr() ([]*TradingPair, error) {
 	if e.loadedTypes[1] {
-		return e.TradingPairs, nil
+		return e.TradingPair, nil
 	}
-	return nil, &NotLoadedError{edge: "trading_pairs"}
+	return nil, &NotLoadedError{edge: "trading_pair"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -247,9 +247,9 @@ func (e *Exchange) QueryTicker() *TickerQuery {
 	return (&ExchangeClient{config: e.config}).QueryTicker(e)
 }
 
-// QueryTradingPairs queries the "trading_pairs" edge of the Exchange entity.
-func (e *Exchange) QueryTradingPairs() *TradingPairQuery {
-	return (&ExchangeClient{config: e.config}).QueryTradingPairs(e)
+// QueryTradingPair queries the "trading_pair" edge of the Exchange entity.
+func (e *Exchange) QueryTradingPair() *TradingPairQuery {
+	return (&ExchangeClient{config: e.config}).QueryTradingPair(e)
 }
 
 // Update returns a builder for updating this Exchange.
@@ -356,27 +356,27 @@ func (e *Exchange) appendNamedTicker(name string, edges ...*Ticker) {
 	}
 }
 
-// NamedTradingPairs returns the TradingPairs named value or an error if the edge was not
+// NamedTradingPair returns the TradingPair named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (e *Exchange) NamedTradingPairs(name string) ([]*TradingPair, error) {
-	if e.Edges.namedTradingPairs == nil {
+func (e *Exchange) NamedTradingPair(name string) ([]*TradingPair, error) {
+	if e.Edges.namedTradingPair == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := e.Edges.namedTradingPairs[name]
+	nodes, ok := e.Edges.namedTradingPair[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (e *Exchange) appendNamedTradingPairs(name string, edges ...*TradingPair) {
-	if e.Edges.namedTradingPairs == nil {
-		e.Edges.namedTradingPairs = make(map[string][]*TradingPair)
+func (e *Exchange) appendNamedTradingPair(name string, edges ...*TradingPair) {
+	if e.Edges.namedTradingPair == nil {
+		e.Edges.namedTradingPair = make(map[string][]*TradingPair)
 	}
 	if len(edges) == 0 {
-		e.Edges.namedTradingPairs[name] = []*TradingPair{}
+		e.Edges.namedTradingPair[name] = []*TradingPair{}
 	} else {
-		e.Edges.namedTradingPairs[name] = append(e.Edges.namedTradingPairs[name], edges...)
+		e.Edges.namedTradingPair[name] = append(e.Edges.namedTradingPair[name], edges...)
 	}
 }
 

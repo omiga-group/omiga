@@ -45,8 +45,8 @@ const (
 	FieldSupportAPI = "support_api"
 	// EdgeTicker holds the string denoting the ticker edge name in mutations.
 	EdgeTicker = "ticker"
-	// EdgeTradingPairs holds the string denoting the trading_pairs edge name in mutations.
-	EdgeTradingPairs = "trading_pairs"
+	// EdgeTradingPair holds the string denoting the trading_pair edge name in mutations.
+	EdgeTradingPair = "trading_pair"
 	// Table holds the table name of the exchange in the database.
 	Table = "exchanges"
 	// TickerTable is the table that holds the ticker relation/edge.
@@ -56,13 +56,13 @@ const (
 	TickerInverseTable = "tickers"
 	// TickerColumn is the table column denoting the ticker relation/edge.
 	TickerColumn = "exchange_ticker"
-	// TradingPairsTable is the table that holds the trading_pairs relation/edge.
-	TradingPairsTable = "trading_pairs"
-	// TradingPairsInverseTable is the table name for the TradingPair entity.
+	// TradingPairTable is the table that holds the trading_pair relation/edge.
+	TradingPairTable = "trading_pairs"
+	// TradingPairInverseTable is the table name for the TradingPair entity.
 	// It exists in this package in order to avoid circular dependency with the "tradingpair" package.
-	TradingPairsInverseTable = "trading_pairs"
-	// TradingPairsColumn is the table column denoting the trading_pairs relation/edge.
-	TradingPairsColumn = "exchange_trading_pairs"
+	TradingPairInverseTable = "trading_pairs"
+	// TradingPairColumn is the table column denoting the trading_pair relation/edge.
+	TradingPairColumn = "exchange_trading_pair"
 )
 
 // Columns holds all SQL columns for exchange fields.

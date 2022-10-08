@@ -63,6 +63,14 @@ type CoinWhereInput struct {
 	NameNotNil       bool     `json:"nameNotNil,omitempty"`
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
+
+	// "coin_base" edge predicates.
+	HasCoinBase     *bool                    `json:"hasCoinBase,omitempty"`
+	HasCoinBaseWith []*TradingPairWhereInput `json:"hasCoinBaseWith,omitempty"`
+
+	// "coin_counter" edge predicates.
+	HasCoinCounter     *bool                    `json:"hasCoinCounter,omitempty"`
+	HasCoinCounterWith []*TradingPairWhereInput `json:"hasCoinCounterWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -245,6 +253,42 @@ func (i *CoinWhereInput) P() (predicate.Coin, error) {
 		predicates = append(predicates, coin.NameContainsFold(*i.NameContainsFold))
 	}
 
+	if i.HasCoinBase != nil {
+		p := coin.HasCoinBase()
+		if !*i.HasCoinBase {
+			p = coin.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasCoinBaseWith) > 0 {
+		with := make([]predicate.TradingPair, 0, len(i.HasCoinBaseWith))
+		for _, w := range i.HasCoinBaseWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasCoinBaseWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, coin.HasCoinBaseWith(with...))
+	}
+	if i.HasCoinCounter != nil {
+		p := coin.HasCoinCounter()
+		if !*i.HasCoinCounter {
+			p = coin.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasCoinCounterWith) > 0 {
+		with := make([]predicate.TradingPair, 0, len(i.HasCoinCounterWith))
+		for _, w := range i.HasCoinCounterWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasCoinCounterWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, coin.HasCoinCounterWith(with...))
+	}
 	switch len(predicates) {
 	case 0:
 		return nil, ErrEmptyCoinWhereInput
@@ -484,9 +528,9 @@ type ExchangeWhereInput struct {
 	HasTicker     *bool               `json:"hasTicker,omitempty"`
 	HasTickerWith []*TickerWhereInput `json:"hasTickerWith,omitempty"`
 
-	// "trading_pairs" edge predicates.
-	HasTradingPairs     *bool                    `json:"hasTradingPairs,omitempty"`
-	HasTradingPairsWith []*TradingPairWhereInput `json:"hasTradingPairsWith,omitempty"`
+	// "trading_pair" edge predicates.
+	HasTradingPair     *bool                    `json:"hasTradingPair,omitempty"`
+	HasTradingPairWith []*TradingPairWhereInput `json:"hasTradingPairWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -1125,23 +1169,23 @@ func (i *ExchangeWhereInput) P() (predicate.Exchange, error) {
 		}
 		predicates = append(predicates, exchange.HasTickerWith(with...))
 	}
-	if i.HasTradingPairs != nil {
-		p := exchange.HasTradingPairs()
-		if !*i.HasTradingPairs {
+	if i.HasTradingPair != nil {
+		p := exchange.HasTradingPair()
+		if !*i.HasTradingPair {
 			p = exchange.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasTradingPairsWith) > 0 {
-		with := make([]predicate.TradingPair, 0, len(i.HasTradingPairsWith))
-		for _, w := range i.HasTradingPairsWith {
+	if len(i.HasTradingPairWith) > 0 {
+		with := make([]predicate.TradingPair, 0, len(i.HasTradingPairWith))
+		for _, w := range i.HasTradingPairWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasTradingPairsWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasTradingPairWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, exchange.HasTradingPairsWith(with...))
+		predicates = append(predicates, exchange.HasTradingPairWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
@@ -2397,21 +2441,6 @@ type TradingPairWhereInput struct {
 	SymbolEqualFold    *string  `json:"symbolEqualFold,omitempty"`
 	SymbolContainsFold *string  `json:"symbolContainsFold,omitempty"`
 
-	// "base" field predicates.
-	Base             *string  `json:"base,omitempty"`
-	BaseNEQ          *string  `json:"baseNEQ,omitempty"`
-	BaseIn           []string `json:"baseIn,omitempty"`
-	BaseNotIn        []string `json:"baseNotIn,omitempty"`
-	BaseGT           *string  `json:"baseGT,omitempty"`
-	BaseGTE          *string  `json:"baseGTE,omitempty"`
-	BaseLT           *string  `json:"baseLT,omitempty"`
-	BaseLTE          *string  `json:"baseLTE,omitempty"`
-	BaseContains     *string  `json:"baseContains,omitempty"`
-	BaseHasPrefix    *string  `json:"baseHasPrefix,omitempty"`
-	BaseHasSuffix    *string  `json:"baseHasSuffix,omitempty"`
-	BaseEqualFold    *string  `json:"baseEqualFold,omitempty"`
-	BaseContainsFold *string  `json:"baseContainsFold,omitempty"`
-
 	// "base_precision" field predicates.
 	BasePrecision      *int  `json:"basePrecision,omitempty"`
 	BasePrecisionNEQ   *int  `json:"basePrecisionNEQ,omitempty"`
@@ -2421,21 +2450,6 @@ type TradingPairWhereInput struct {
 	BasePrecisionGTE   *int  `json:"basePrecisionGTE,omitempty"`
 	BasePrecisionLT    *int  `json:"basePrecisionLT,omitempty"`
 	BasePrecisionLTE   *int  `json:"basePrecisionLTE,omitempty"`
-
-	// "counter" field predicates.
-	Counter             *string  `json:"counter,omitempty"`
-	CounterNEQ          *string  `json:"counterNEQ,omitempty"`
-	CounterIn           []string `json:"counterIn,omitempty"`
-	CounterNotIn        []string `json:"counterNotIn,omitempty"`
-	CounterGT           *string  `json:"counterGT,omitempty"`
-	CounterGTE          *string  `json:"counterGTE,omitempty"`
-	CounterLT           *string  `json:"counterLT,omitempty"`
-	CounterLTE          *string  `json:"counterLTE,omitempty"`
-	CounterContains     *string  `json:"counterContains,omitempty"`
-	CounterHasPrefix    *string  `json:"counterHasPrefix,omitempty"`
-	CounterHasSuffix    *string  `json:"counterHasSuffix,omitempty"`
-	CounterEqualFold    *string  `json:"counterEqualFold,omitempty"`
-	CounterContainsFold *string  `json:"counterContainsFold,omitempty"`
 
 	// "counter_precision" field predicates.
 	CounterPrecision      *int  `json:"counterPrecision,omitempty"`
@@ -2450,6 +2464,14 @@ type TradingPairWhereInput struct {
 	// "exchange" edge predicates.
 	HasExchange     *bool                 `json:"hasExchange,omitempty"`
 	HasExchangeWith []*ExchangeWhereInput `json:"hasExchangeWith,omitempty"`
+
+	// "base" edge predicates.
+	HasBase     *bool             `json:"hasBase,omitempty"`
+	HasBaseWith []*CoinWhereInput `json:"hasBaseWith,omitempty"`
+
+	// "counter" edge predicates.
+	HasCounter     *bool             `json:"hasCounter,omitempty"`
+	HasCounterWith []*CoinWhereInput `json:"hasCounterWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -2586,45 +2608,6 @@ func (i *TradingPairWhereInput) P() (predicate.TradingPair, error) {
 	if i.SymbolContainsFold != nil {
 		predicates = append(predicates, tradingpair.SymbolContainsFold(*i.SymbolContainsFold))
 	}
-	if i.Base != nil {
-		predicates = append(predicates, tradingpair.BaseEQ(*i.Base))
-	}
-	if i.BaseNEQ != nil {
-		predicates = append(predicates, tradingpair.BaseNEQ(*i.BaseNEQ))
-	}
-	if len(i.BaseIn) > 0 {
-		predicates = append(predicates, tradingpair.BaseIn(i.BaseIn...))
-	}
-	if len(i.BaseNotIn) > 0 {
-		predicates = append(predicates, tradingpair.BaseNotIn(i.BaseNotIn...))
-	}
-	if i.BaseGT != nil {
-		predicates = append(predicates, tradingpair.BaseGT(*i.BaseGT))
-	}
-	if i.BaseGTE != nil {
-		predicates = append(predicates, tradingpair.BaseGTE(*i.BaseGTE))
-	}
-	if i.BaseLT != nil {
-		predicates = append(predicates, tradingpair.BaseLT(*i.BaseLT))
-	}
-	if i.BaseLTE != nil {
-		predicates = append(predicates, tradingpair.BaseLTE(*i.BaseLTE))
-	}
-	if i.BaseContains != nil {
-		predicates = append(predicates, tradingpair.BaseContains(*i.BaseContains))
-	}
-	if i.BaseHasPrefix != nil {
-		predicates = append(predicates, tradingpair.BaseHasPrefix(*i.BaseHasPrefix))
-	}
-	if i.BaseHasSuffix != nil {
-		predicates = append(predicates, tradingpair.BaseHasSuffix(*i.BaseHasSuffix))
-	}
-	if i.BaseEqualFold != nil {
-		predicates = append(predicates, tradingpair.BaseEqualFold(*i.BaseEqualFold))
-	}
-	if i.BaseContainsFold != nil {
-		predicates = append(predicates, tradingpair.BaseContainsFold(*i.BaseContainsFold))
-	}
 	if i.BasePrecision != nil {
 		predicates = append(predicates, tradingpair.BasePrecisionEQ(*i.BasePrecision))
 	}
@@ -2648,45 +2631,6 @@ func (i *TradingPairWhereInput) P() (predicate.TradingPair, error) {
 	}
 	if i.BasePrecisionLTE != nil {
 		predicates = append(predicates, tradingpair.BasePrecisionLTE(*i.BasePrecisionLTE))
-	}
-	if i.Counter != nil {
-		predicates = append(predicates, tradingpair.CounterEQ(*i.Counter))
-	}
-	if i.CounterNEQ != nil {
-		predicates = append(predicates, tradingpair.CounterNEQ(*i.CounterNEQ))
-	}
-	if len(i.CounterIn) > 0 {
-		predicates = append(predicates, tradingpair.CounterIn(i.CounterIn...))
-	}
-	if len(i.CounterNotIn) > 0 {
-		predicates = append(predicates, tradingpair.CounterNotIn(i.CounterNotIn...))
-	}
-	if i.CounterGT != nil {
-		predicates = append(predicates, tradingpair.CounterGT(*i.CounterGT))
-	}
-	if i.CounterGTE != nil {
-		predicates = append(predicates, tradingpair.CounterGTE(*i.CounterGTE))
-	}
-	if i.CounterLT != nil {
-		predicates = append(predicates, tradingpair.CounterLT(*i.CounterLT))
-	}
-	if i.CounterLTE != nil {
-		predicates = append(predicates, tradingpair.CounterLTE(*i.CounterLTE))
-	}
-	if i.CounterContains != nil {
-		predicates = append(predicates, tradingpair.CounterContains(*i.CounterContains))
-	}
-	if i.CounterHasPrefix != nil {
-		predicates = append(predicates, tradingpair.CounterHasPrefix(*i.CounterHasPrefix))
-	}
-	if i.CounterHasSuffix != nil {
-		predicates = append(predicates, tradingpair.CounterHasSuffix(*i.CounterHasSuffix))
-	}
-	if i.CounterEqualFold != nil {
-		predicates = append(predicates, tradingpair.CounterEqualFold(*i.CounterEqualFold))
-	}
-	if i.CounterContainsFold != nil {
-		predicates = append(predicates, tradingpair.CounterContainsFold(*i.CounterContainsFold))
 	}
 	if i.CounterPrecision != nil {
 		predicates = append(predicates, tradingpair.CounterPrecisionEQ(*i.CounterPrecision))
@@ -2730,6 +2674,42 @@ func (i *TradingPairWhereInput) P() (predicate.TradingPair, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, tradingpair.HasExchangeWith(with...))
+	}
+	if i.HasBase != nil {
+		p := tradingpair.HasBase()
+		if !*i.HasBase {
+			p = tradingpair.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasBaseWith) > 0 {
+		with := make([]predicate.Coin, 0, len(i.HasBaseWith))
+		for _, w := range i.HasBaseWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasBaseWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, tradingpair.HasBaseWith(with...))
+	}
+	if i.HasCounter != nil {
+		p := tradingpair.HasCounter()
+		if !*i.HasCounter {
+			p = tradingpair.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasCounterWith) > 0 {
+		with := make([]predicate.Coin, 0, len(i.HasCounterWith))
+		for _, w := range i.HasCounterWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasCounterWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, tradingpair.HasCounterWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
