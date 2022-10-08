@@ -11,8 +11,12 @@ pulsar:
   operationTimeout: 30s
   connectionTimeout: 30s
 
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/exchange"
+  maxOpenConns: 5
+
 gemini:
-  apiUrl: https://api.sandbox.gemini.com/v1
+  apiUrl: https://api.gemini.com/v1
   websocketUrl: wss://api.sandbox.gemini.com
   timeout: 10
   orderBook:

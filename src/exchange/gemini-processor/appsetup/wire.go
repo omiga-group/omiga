@@ -15,8 +15,6 @@
 //go:build wireinject
 // +build wireinject
 
-// juses fucking christ, kiram dahanet mori!
-
 // The build tag makes sure the stub is not built in the final build.
 package appsetup
 
@@ -29,14 +27,28 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/gemini-processor/client"
 	"github.com/omiga-group/omiga/src/exchange/gemini-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/gemini-processor/subscribers"
+	exchangeConfiguration "github.com/omiga-group/omiga/src/exchange/shared/configuration"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 )
+
+func NewCronService(
+	logger *zap.SugaredLogger) (cron.CronService, error) {
+	wire.Build(
+		time.NewTimeHelper,
+		cron.NewCronService)
+
+	return nil, nil
+}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	wire.Build(
@@ -74,6 +86,24 @@ func NewGeminiOrderBookSubscriber(
 		publishers.NewOrderBookPublisher,
 		subscribers.NewGeminiOrderBookSubscriber,
 	)
+
+	return nil, nil
+}
+
+func NewGeminiTradingPairSubscriber(
+	ctx context.Context,
+	logger *zap.SugaredLogger,
+	geminiConfig configuration.GeminiConfig,
+	exchangeConfig exchangeConfiguration.ExchangeConfig,
+	cronService cron.CronService,
+	postgresConfig postgres.PostgresConfig) (subscribers.GeminiTradingPairSubscriber, error) {
+	wire.Build(
+		postgres.NewPostgres,
+		entities.NewEntgoClient,
+		repositories.NewCoinRepository,
+		repositories.NewExchangeRepository,
+		repositories.NewTradingPairRepository,
+		subscribers.NewGeminiTradingPairSubscriber)
 
 	return nil, nil
 }
