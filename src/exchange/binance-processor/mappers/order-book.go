@@ -7,7 +7,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/decimal"
 )
 
-func FromBinanceOrderBookToOrderBook(
+func BinanceOrderBookToOrderBook(
 	baseCurrency exchangeModels.Currency,
 	counterCurrency exchangeModels.Currency,
 	orderBook []models.BinanceOrderBookEntry) exchangeModels.OrderBook {

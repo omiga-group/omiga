@@ -1,7 +1,6 @@
 package cron
 
 import (
-	"context"
 	"strings"
 	"time"
 
@@ -50,15 +49,7 @@ func (cs *cronService) Close() {
 		cronCtx := cs.cron.Stop()
 
 		// Wait until all running jobs exit gracefully
-		for {
-			if cronCtx.Err() == context.Canceled {
-				break
-			}
-
-			cs.timeHelper.SleepOrWaitForContextGetCancelled(
-				cronCtx,
-				time.Millisecond*100)
-		}
+		cs.timeHelper.WaitUntilCancelled(cronCtx)
 
 		cs.cron = nil
 	}

@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/adshao/go-binance/v2"
 	"github.com/omiga-group/omiga/src/exchange/binance-processor/appsetup"
@@ -103,15 +102,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			for {
-				if ctx.Err() == context.Canceled {
-					break
-				}
-
-				timeHelper.SleepOrWaitForContextGetCancelled(
-					ctx,
-					time.Second)
-			}
+			timeHelper.WaitUntilCancelled(ctx)
 		},
 	}
 
