@@ -17,9 +17,7 @@ type TradingPair struct {
 func (TradingPair) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("symbol").Annotations(entgql.OrderField("symbol")),
-		field.String("base").Annotations(entgql.OrderField("base")),
 		field.Int("base_precision").Annotations(entgql.OrderField("basePrecision")),
-		field.String("counter").Annotations(entgql.OrderField("counter")),
 		field.Int("counter_precision").Annotations(entgql.OrderField("counterPrecision")),
 	}
 }
@@ -28,7 +26,15 @@ func (TradingPair) Fields() []ent.Field {
 func (TradingPair) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("exchange", Exchange.Type).
-			Ref("trading_pairs").
+			Ref("trading_pair").
+			Unique().
+			Required(),
+		edge.From("base", Coin.Type).
+			Ref("coin_base").
+			Unique().
+			Required(),
+		edge.From("counter", Coin.Type).
+			Ref("coin_counter").
 			Unique().
 			Required(),
 	}
@@ -37,9 +43,7 @@ func (TradingPair) Edges() []ent.Edge {
 func (TradingPair) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("symbol"),
-		index.Fields("base"),
 		index.Fields("base_precision"),
-		index.Fields("counter"),
 		index.Fields("counter_precision"),
 	}
 }

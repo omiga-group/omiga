@@ -433,14 +433,14 @@ func (eu *ExchangeUpdate) AddTicker(t ...*Ticker) *ExchangeUpdate {
 	return eu.AddTickerIDs(ids...)
 }
 
-// AddTradingPairIDs adds the "trading_pairs" edge to the TradingPair entity by IDs.
+// AddTradingPairIDs adds the "trading_pair" edge to the TradingPair entity by IDs.
 func (eu *ExchangeUpdate) AddTradingPairIDs(ids ...int) *ExchangeUpdate {
 	eu.mutation.AddTradingPairIDs(ids...)
 	return eu
 }
 
-// AddTradingPairs adds the "trading_pairs" edges to the TradingPair entity.
-func (eu *ExchangeUpdate) AddTradingPairs(t ...*TradingPair) *ExchangeUpdate {
+// AddTradingPair adds the "trading_pair" edges to the TradingPair entity.
+func (eu *ExchangeUpdate) AddTradingPair(t ...*TradingPair) *ExchangeUpdate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -474,20 +474,20 @@ func (eu *ExchangeUpdate) RemoveTicker(t ...*Ticker) *ExchangeUpdate {
 	return eu.RemoveTickerIDs(ids...)
 }
 
-// ClearTradingPairs clears all "trading_pairs" edges to the TradingPair entity.
-func (eu *ExchangeUpdate) ClearTradingPairs() *ExchangeUpdate {
-	eu.mutation.ClearTradingPairs()
+// ClearTradingPair clears all "trading_pair" edges to the TradingPair entity.
+func (eu *ExchangeUpdate) ClearTradingPair() *ExchangeUpdate {
+	eu.mutation.ClearTradingPair()
 	return eu
 }
 
-// RemoveTradingPairIDs removes the "trading_pairs" edge to TradingPair entities by IDs.
+// RemoveTradingPairIDs removes the "trading_pair" edge to TradingPair entities by IDs.
 func (eu *ExchangeUpdate) RemoveTradingPairIDs(ids ...int) *ExchangeUpdate {
 	eu.mutation.RemoveTradingPairIDs(ids...)
 	return eu
 }
 
-// RemoveTradingPairs removes "trading_pairs" edges to TradingPair entities.
-func (eu *ExchangeUpdate) RemoveTradingPairs(t ...*TradingPair) *ExchangeUpdate {
+// RemoveTradingPair removes "trading_pair" edges to TradingPair entities.
+func (eu *ExchangeUpdate) RemoveTradingPair(t ...*TradingPair) *ExchangeUpdate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -907,12 +907,12 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if eu.mutation.TradingPairsCleared() {
+	if eu.mutation.TradingPairCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   exchange.TradingPairsTable,
-			Columns: []string{exchange.TradingPairsColumn},
+			Table:   exchange.TradingPairTable,
+			Columns: []string{exchange.TradingPairColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -924,12 +924,12 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge.Schema = eu.schemaConfig.TradingPair
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.RemovedTradingPairsIDs(); len(nodes) > 0 && !eu.mutation.TradingPairsCleared() {
+	if nodes := eu.mutation.RemovedTradingPairIDs(); len(nodes) > 0 && !eu.mutation.TradingPairCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   exchange.TradingPairsTable,
-			Columns: []string{exchange.TradingPairsColumn},
+			Table:   exchange.TradingPairTable,
+			Columns: []string{exchange.TradingPairColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -944,12 +944,12 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.TradingPairsIDs(); len(nodes) > 0 {
+	if nodes := eu.mutation.TradingPairIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   exchange.TradingPairsTable,
-			Columns: []string{exchange.TradingPairsColumn},
+			Table:   exchange.TradingPairTable,
+			Columns: []string{exchange.TradingPairColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1389,14 +1389,14 @@ func (euo *ExchangeUpdateOne) AddTicker(t ...*Ticker) *ExchangeUpdateOne {
 	return euo.AddTickerIDs(ids...)
 }
 
-// AddTradingPairIDs adds the "trading_pairs" edge to the TradingPair entity by IDs.
+// AddTradingPairIDs adds the "trading_pair" edge to the TradingPair entity by IDs.
 func (euo *ExchangeUpdateOne) AddTradingPairIDs(ids ...int) *ExchangeUpdateOne {
 	euo.mutation.AddTradingPairIDs(ids...)
 	return euo
 }
 
-// AddTradingPairs adds the "trading_pairs" edges to the TradingPair entity.
-func (euo *ExchangeUpdateOne) AddTradingPairs(t ...*TradingPair) *ExchangeUpdateOne {
+// AddTradingPair adds the "trading_pair" edges to the TradingPair entity.
+func (euo *ExchangeUpdateOne) AddTradingPair(t ...*TradingPair) *ExchangeUpdateOne {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -1430,20 +1430,20 @@ func (euo *ExchangeUpdateOne) RemoveTicker(t ...*Ticker) *ExchangeUpdateOne {
 	return euo.RemoveTickerIDs(ids...)
 }
 
-// ClearTradingPairs clears all "trading_pairs" edges to the TradingPair entity.
-func (euo *ExchangeUpdateOne) ClearTradingPairs() *ExchangeUpdateOne {
-	euo.mutation.ClearTradingPairs()
+// ClearTradingPair clears all "trading_pair" edges to the TradingPair entity.
+func (euo *ExchangeUpdateOne) ClearTradingPair() *ExchangeUpdateOne {
+	euo.mutation.ClearTradingPair()
 	return euo
 }
 
-// RemoveTradingPairIDs removes the "trading_pairs" edge to TradingPair entities by IDs.
+// RemoveTradingPairIDs removes the "trading_pair" edge to TradingPair entities by IDs.
 func (euo *ExchangeUpdateOne) RemoveTradingPairIDs(ids ...int) *ExchangeUpdateOne {
 	euo.mutation.RemoveTradingPairIDs(ids...)
 	return euo
 }
 
-// RemoveTradingPairs removes "trading_pairs" edges to TradingPair entities.
-func (euo *ExchangeUpdateOne) RemoveTradingPairs(t ...*TradingPair) *ExchangeUpdateOne {
+// RemoveTradingPair removes "trading_pair" edges to TradingPair entities.
+func (euo *ExchangeUpdateOne) RemoveTradingPair(t ...*TradingPair) *ExchangeUpdateOne {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -1893,12 +1893,12 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if euo.mutation.TradingPairsCleared() {
+	if euo.mutation.TradingPairCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   exchange.TradingPairsTable,
-			Columns: []string{exchange.TradingPairsColumn},
+			Table:   exchange.TradingPairTable,
+			Columns: []string{exchange.TradingPairColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1910,12 +1910,12 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 		edge.Schema = euo.schemaConfig.TradingPair
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.RemovedTradingPairsIDs(); len(nodes) > 0 && !euo.mutation.TradingPairsCleared() {
+	if nodes := euo.mutation.RemovedTradingPairIDs(); len(nodes) > 0 && !euo.mutation.TradingPairCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   exchange.TradingPairsTable,
-			Columns: []string{exchange.TradingPairsColumn},
+			Table:   exchange.TradingPairTable,
+			Columns: []string{exchange.TradingPairColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1930,12 +1930,12 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.TradingPairsIDs(); len(nodes) > 0 {
+	if nodes := euo.mutation.TradingPairIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   exchange.TradingPairsTable,
-			Columns: []string{exchange.TradingPairsColumn},
+			Table:   exchange.TradingPairTable,
+			Columns: []string{exchange.TradingPairColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

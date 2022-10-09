@@ -87,24 +87,10 @@ func Symbol(v string) predicate.TradingPair {
 	})
 }
 
-// Base applies equality check predicate on the "base" field. It's identical to BaseEQ.
-func Base(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldBase), v))
-	})
-}
-
 // BasePrecision applies equality check predicate on the "base_precision" field. It's identical to BasePrecisionEQ.
 func BasePrecision(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldBasePrecision), v))
-	})
-}
-
-// Counter applies equality check predicate on the "counter" field. It's identical to CounterEQ.
-func Counter(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCounter), v))
 	})
 }
 
@@ -214,105 +200,6 @@ func SymbolContainsFold(v string) predicate.TradingPair {
 	})
 }
 
-// BaseEQ applies the EQ predicate on the "base" field.
-func BaseEQ(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldBase), v))
-	})
-}
-
-// BaseNEQ applies the NEQ predicate on the "base" field.
-func BaseNEQ(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldBase), v))
-	})
-}
-
-// BaseIn applies the In predicate on the "base" field.
-func BaseIn(vs ...string) predicate.TradingPair {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldBase), v...))
-	})
-}
-
-// BaseNotIn applies the NotIn predicate on the "base" field.
-func BaseNotIn(vs ...string) predicate.TradingPair {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldBase), v...))
-	})
-}
-
-// BaseGT applies the GT predicate on the "base" field.
-func BaseGT(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldBase), v))
-	})
-}
-
-// BaseGTE applies the GTE predicate on the "base" field.
-func BaseGTE(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldBase), v))
-	})
-}
-
-// BaseLT applies the LT predicate on the "base" field.
-func BaseLT(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldBase), v))
-	})
-}
-
-// BaseLTE applies the LTE predicate on the "base" field.
-func BaseLTE(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldBase), v))
-	})
-}
-
-// BaseContains applies the Contains predicate on the "base" field.
-func BaseContains(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldBase), v))
-	})
-}
-
-// BaseHasPrefix applies the HasPrefix predicate on the "base" field.
-func BaseHasPrefix(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldBase), v))
-	})
-}
-
-// BaseHasSuffix applies the HasSuffix predicate on the "base" field.
-func BaseHasSuffix(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldBase), v))
-	})
-}
-
-// BaseEqualFold applies the EqualFold predicate on the "base" field.
-func BaseEqualFold(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldBase), v))
-	})
-}
-
-// BaseContainsFold applies the ContainsFold predicate on the "base" field.
-func BaseContainsFold(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldBase), v))
-	})
-}
-
 // BasePrecisionEQ applies the EQ predicate on the "base_precision" field.
 func BasePrecisionEQ(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
@@ -374,105 +261,6 @@ func BasePrecisionLT(v int) predicate.TradingPair {
 func BasePrecisionLTE(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldBasePrecision), v))
-	})
-}
-
-// CounterEQ applies the EQ predicate on the "counter" field.
-func CounterEQ(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCounter), v))
-	})
-}
-
-// CounterNEQ applies the NEQ predicate on the "counter" field.
-func CounterNEQ(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCounter), v))
-	})
-}
-
-// CounterIn applies the In predicate on the "counter" field.
-func CounterIn(vs ...string) predicate.TradingPair {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldCounter), v...))
-	})
-}
-
-// CounterNotIn applies the NotIn predicate on the "counter" field.
-func CounterNotIn(vs ...string) predicate.TradingPair {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldCounter), v...))
-	})
-}
-
-// CounterGT applies the GT predicate on the "counter" field.
-func CounterGT(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCounter), v))
-	})
-}
-
-// CounterGTE applies the GTE predicate on the "counter" field.
-func CounterGTE(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCounter), v))
-	})
-}
-
-// CounterLT applies the LT predicate on the "counter" field.
-func CounterLT(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCounter), v))
-	})
-}
-
-// CounterLTE applies the LTE predicate on the "counter" field.
-func CounterLTE(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCounter), v))
-	})
-}
-
-// CounterContains applies the Contains predicate on the "counter" field.
-func CounterContains(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldCounter), v))
-	})
-}
-
-// CounterHasPrefix applies the HasPrefix predicate on the "counter" field.
-func CounterHasPrefix(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldCounter), v))
-	})
-}
-
-// CounterHasSuffix applies the HasSuffix predicate on the "counter" field.
-func CounterHasSuffix(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldCounter), v))
-	})
-}
-
-// CounterEqualFold applies the EqualFold predicate on the "counter" field.
-func CounterEqualFold(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldCounter), v))
-	})
-}
-
-// CounterContainsFold applies the ContainsFold predicate on the "counter" field.
-func CounterContainsFold(v string) predicate.TradingPair {
-	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldCounter), v))
 	})
 }
 
@@ -565,6 +353,74 @@ func HasExchangeWith(preds ...predicate.Exchange) predicate.TradingPair {
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.Exchange
+		step.Edge.Schema = schemaConfig.TradingPair
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasBase applies the HasEdge predicate on the "base" edge.
+func HasBase() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(BaseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, BaseTable, BaseColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Coin
+		step.Edge.Schema = schemaConfig.TradingPair
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasBaseWith applies the HasEdge predicate on the "base" edge with a given conditions (other predicates).
+func HasBaseWith(preds ...predicate.Coin) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(BaseInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, BaseTable, BaseColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Coin
+		step.Edge.Schema = schemaConfig.TradingPair
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasCounter applies the HasEdge predicate on the "counter" edge.
+func HasCounter() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CounterTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, CounterTable, CounterColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Coin
+		step.Edge.Schema = schemaConfig.TradingPair
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCounterWith applies the HasEdge predicate on the "counter" edge with a given conditions (other predicates).
+func HasCounterWith(preds ...predicate.Coin) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CounterInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, CounterTable, CounterColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Coin
 		step.Edge.Schema = schemaConfig.TradingPair
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

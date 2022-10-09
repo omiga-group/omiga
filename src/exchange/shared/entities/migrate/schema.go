@@ -296,11 +296,11 @@ var (
 	TradingPairsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "symbol", Type: field.TypeString},
-		{Name: "base", Type: field.TypeString},
 		{Name: "base_precision", Type: field.TypeInt},
-		{Name: "counter", Type: field.TypeString},
 		{Name: "counter_precision", Type: field.TypeInt},
-		{Name: "exchange_trading_pairs", Type: field.TypeInt},
+		{Name: "coin_coin_base", Type: field.TypeInt},
+		{Name: "coin_coin_counter", Type: field.TypeInt},
+		{Name: "exchange_trading_pair", Type: field.TypeInt},
 	}
 	// TradingPairsTable holds the schema information for the "trading_pairs" table.
 	TradingPairsTable = &schema.Table{
@@ -309,7 +309,19 @@ var (
 		PrimaryKey: []*schema.Column{TradingPairsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "trading_pairs_exchanges_trading_pairs",
+				Symbol:     "trading_pairs_coins_coin_base",
+				Columns:    []*schema.Column{TradingPairsColumns[4]},
+				RefColumns: []*schema.Column{CoinsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "trading_pairs_coins_coin_counter",
+				Columns:    []*schema.Column{TradingPairsColumns[5]},
+				RefColumns: []*schema.Column{CoinsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "trading_pairs_exchanges_trading_pair",
 				Columns:    []*schema.Column{TradingPairsColumns[6]},
 				RefColumns: []*schema.Column{ExchangesColumns[0]},
 				OnDelete:   schema.Cascade,
@@ -322,24 +334,14 @@ var (
 				Columns: []*schema.Column{TradingPairsColumns[1]},
 			},
 			{
-				Name:    "tradingpair_base",
+				Name:    "tradingpair_base_precision",
 				Unique:  false,
 				Columns: []*schema.Column{TradingPairsColumns[2]},
 			},
 			{
-				Name:    "tradingpair_base_precision",
-				Unique:  false,
-				Columns: []*schema.Column{TradingPairsColumns[3]},
-			},
-			{
-				Name:    "tradingpair_counter",
-				Unique:  false,
-				Columns: []*schema.Column{TradingPairsColumns[4]},
-			},
-			{
 				Name:    "tradingpair_counter_precision",
 				Unique:  false,
-				Columns: []*schema.Column{TradingPairsColumns[5]},
+				Columns: []*schema.Column{TradingPairsColumns[3]},
 			},
 		},
 	}
@@ -355,5 +357,7 @@ var (
 
 func init() {
 	TickersTable.ForeignKeys[0].RefTable = ExchangesTable
-	TradingPairsTable.ForeignKeys[0].RefTable = ExchangesTable
+	TradingPairsTable.ForeignKeys[0].RefTable = CoinsTable
+	TradingPairsTable.ForeignKeys[1].RefTable = CoinsTable
+	TradingPairsTable.ForeignKeys[2].RefTable = ExchangesTable
 }

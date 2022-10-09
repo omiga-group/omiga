@@ -1940,16 +1940,6 @@ var (
 			}
 		},
 	}
-	// TradingPairOrderFieldBase orders TradingPair by base.
-	TradingPairOrderFieldBase = &TradingPairOrderField{
-		field: tradingpair.FieldBase,
-		toCursor: func(tp *TradingPair) Cursor {
-			return Cursor{
-				ID:    tp.ID,
-				Value: tp.Base,
-			}
-		},
-	}
 	// TradingPairOrderFieldBasePrecision orders TradingPair by base_precision.
 	TradingPairOrderFieldBasePrecision = &TradingPairOrderField{
 		field: tradingpair.FieldBasePrecision,
@@ -1957,16 +1947,6 @@ var (
 			return Cursor{
 				ID:    tp.ID,
 				Value: tp.BasePrecision,
-			}
-		},
-	}
-	// TradingPairOrderFieldCounter orders TradingPair by counter.
-	TradingPairOrderFieldCounter = &TradingPairOrderField{
-		field: tradingpair.FieldCounter,
-		toCursor: func(tp *TradingPair) Cursor {
-			return Cursor{
-				ID:    tp.ID,
-				Value: tp.Counter,
 			}
 		},
 	}
@@ -1988,12 +1968,8 @@ func (f TradingPairOrderField) String() string {
 	switch f.field {
 	case tradingpair.FieldSymbol:
 		str = "symbol"
-	case tradingpair.FieldBase:
-		str = "base"
 	case tradingpair.FieldBasePrecision:
 		str = "basePrecision"
-	case tradingpair.FieldCounter:
-		str = "counter"
 	case tradingpair.FieldCounterPrecision:
 		str = "counterPrecision"
 	}
@@ -2014,12 +1990,8 @@ func (f *TradingPairOrderField) UnmarshalGQL(v interface{}) error {
 	switch str {
 	case "symbol":
 		*f = *TradingPairOrderFieldSymbol
-	case "base":
-		*f = *TradingPairOrderFieldBase
 	case "basePrecision":
 		*f = *TradingPairOrderFieldBasePrecision
-	case "counter":
-		*f = *TradingPairOrderFieldCounter
 	case "counterPrecision":
 		*f = *TradingPairOrderFieldCounterPrecision
 	default:

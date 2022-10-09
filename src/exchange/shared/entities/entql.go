@@ -130,12 +130,34 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "TradingPair",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			tradingpair.FieldSymbol:           {Type: field.TypeString, Column: tradingpair.FieldSymbol},
-			tradingpair.FieldBase:             {Type: field.TypeString, Column: tradingpair.FieldBase},
 			tradingpair.FieldBasePrecision:    {Type: field.TypeInt, Column: tradingpair.FieldBasePrecision},
-			tradingpair.FieldCounter:          {Type: field.TypeString, Column: tradingpair.FieldCounter},
 			tradingpair.FieldCounterPrecision: {Type: field.TypeInt, Column: tradingpair.FieldCounterPrecision},
 		},
 	}
+	graph.MustAddE(
+		"coin_base",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinBaseTable,
+			Columns: []string{coin.CoinBaseColumn},
+			Bidi:    false,
+		},
+		"Coin",
+		"TradingPair",
+	)
+	graph.MustAddE(
+		"coin_counter",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinCounterTable,
+			Columns: []string{coin.CoinCounterColumn},
+			Bidi:    false,
+		},
+		"Coin",
+		"TradingPair",
+	)
 	graph.MustAddE(
 		"ticker",
 		&sqlgraph.EdgeSpec{
@@ -149,12 +171,12 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Ticker",
 	)
 	graph.MustAddE(
-		"trading_pairs",
+		"trading_pair",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   exchange.TradingPairsTable,
-			Columns: []string{exchange.TradingPairsColumn},
+			Table:   exchange.TradingPairTable,
+			Columns: []string{exchange.TradingPairColumn},
 			Bidi:    false,
 		},
 		"Exchange",
@@ -183,6 +205,30 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"TradingPair",
 		"Exchange",
+	)
+	graph.MustAddE(
+		"base",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tradingpair.BaseTable,
+			Columns: []string{tradingpair.BaseColumn},
+			Bidi:    false,
+		},
+		"TradingPair",
+		"Coin",
+	)
+	graph.MustAddE(
+		"counter",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tradingpair.CounterTable,
+			Columns: []string{tradingpair.CounterColumn},
+			Bidi:    false,
+		},
+		"TradingPair",
+		"Coin",
 	)
 	return graph
 }()
@@ -241,6 +287,34 @@ func (f *CoinFilter) WhereSymbol(p entql.StringP) {
 // WhereName applies the entql string predicate on the name field.
 func (f *CoinFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(coin.FieldName))
+}
+
+// WhereHasCoinBase applies a predicate to check if query has an edge coin_base.
+func (f *CoinFilter) WhereHasCoinBase() {
+	f.Where(entql.HasEdge("coin_base"))
+}
+
+// WhereHasCoinBaseWith applies a predicate to check if query has an edge coin_base with a given conditions (other predicates).
+func (f *CoinFilter) WhereHasCoinBaseWith(preds ...predicate.TradingPair) {
+	f.Where(entql.HasEdgeWith("coin_base", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasCoinCounter applies a predicate to check if query has an edge coin_counter.
+func (f *CoinFilter) WhereHasCoinCounter() {
+	f.Where(entql.HasEdge("coin_counter"))
+}
+
+// WhereHasCoinCounterWith applies a predicate to check if query has an edge coin_counter with a given conditions (other predicates).
+func (f *CoinFilter) WhereHasCoinCounterWith(preds ...predicate.TradingPair) {
+	f.Where(entql.HasEdgeWith("coin_counter", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -387,14 +461,14 @@ func (f *ExchangeFilter) WhereHasTickerWith(preds ...predicate.Ticker) {
 	})))
 }
 
-// WhereHasTradingPairs applies a predicate to check if query has an edge trading_pairs.
-func (f *ExchangeFilter) WhereHasTradingPairs() {
-	f.Where(entql.HasEdge("trading_pairs"))
+// WhereHasTradingPair applies a predicate to check if query has an edge trading_pair.
+func (f *ExchangeFilter) WhereHasTradingPair() {
+	f.Where(entql.HasEdge("trading_pair"))
 }
 
-// WhereHasTradingPairsWith applies a predicate to check if query has an edge trading_pairs with a given conditions (other predicates).
-func (f *ExchangeFilter) WhereHasTradingPairsWith(preds ...predicate.TradingPair) {
-	f.Where(entql.HasEdgeWith("trading_pairs", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasTradingPairWith applies a predicate to check if query has an edge trading_pair with a given conditions (other predicates).
+func (f *ExchangeFilter) WhereHasTradingPairWith(preds ...predicate.TradingPair) {
+	f.Where(entql.HasEdgeWith("trading_pair", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -675,19 +749,9 @@ func (f *TradingPairFilter) WhereSymbol(p entql.StringP) {
 	f.Where(p.Field(tradingpair.FieldSymbol))
 }
 
-// WhereBase applies the entql string predicate on the base field.
-func (f *TradingPairFilter) WhereBase(p entql.StringP) {
-	f.Where(p.Field(tradingpair.FieldBase))
-}
-
 // WhereBasePrecision applies the entql int predicate on the base_precision field.
 func (f *TradingPairFilter) WhereBasePrecision(p entql.IntP) {
 	f.Where(p.Field(tradingpair.FieldBasePrecision))
-}
-
-// WhereCounter applies the entql string predicate on the counter field.
-func (f *TradingPairFilter) WhereCounter(p entql.StringP) {
-	f.Where(p.Field(tradingpair.FieldCounter))
 }
 
 // WhereCounterPrecision applies the entql int predicate on the counter_precision field.
@@ -703,6 +767,34 @@ func (f *TradingPairFilter) WhereHasExchange() {
 // WhereHasExchangeWith applies a predicate to check if query has an edge exchange with a given conditions (other predicates).
 func (f *TradingPairFilter) WhereHasExchangeWith(preds ...predicate.Exchange) {
 	f.Where(entql.HasEdgeWith("exchange", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasBase applies a predicate to check if query has an edge base.
+func (f *TradingPairFilter) WhereHasBase() {
+	f.Where(entql.HasEdge("base"))
+}
+
+// WhereHasBaseWith applies a predicate to check if query has an edge base with a given conditions (other predicates).
+func (f *TradingPairFilter) WhereHasBaseWith(preds ...predicate.Coin) {
+	f.Where(entql.HasEdgeWith("base", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasCounter applies a predicate to check if query has an edge counter.
+func (f *TradingPairFilter) WhereHasCounter() {
+	f.Where(entql.HasEdge("counter"))
+}
+
+// WhereHasCounterWith applies a predicate to check if query has an edge counter with a given conditions (other predicates).
+func (f *TradingPairFilter) WhereHasCounterWith(preds ...predicate.Coin) {
+	f.Where(entql.HasEdgeWith("counter", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

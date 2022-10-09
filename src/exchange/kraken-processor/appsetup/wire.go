@@ -101,6 +101,8 @@ func NewKrakenTradingPairsSubscriber(
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
+		repositories.NewCoinRepository,
+		repositories.NewExchangeRepository,
 		repositories.NewTradingPairRepository,
 		subscribers.NewKrakenTradingPairsSubscriber)
 

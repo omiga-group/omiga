@@ -115,7 +115,15 @@ func NewKrakenTradingPairsSubscriber(ctx context.Context, logger *zap.SugaredLog
 	if err != nil {
 		return nil, err
 	}
-	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient)
+	coinRepository, err := repositories.NewCoinRepository(logger, entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	exchangeRepository, err := repositories.NewExchangeRepository(logger, entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, coinRepository, exchangeRepository)
 	if err != nil {
 		return nil, err
 	}

@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
@@ -28,21 +29,9 @@ func (tpc *TradingPairCreate) SetSymbol(s string) *TradingPairCreate {
 	return tpc
 }
 
-// SetBase sets the "base" field.
-func (tpc *TradingPairCreate) SetBase(s string) *TradingPairCreate {
-	tpc.mutation.SetBase(s)
-	return tpc
-}
-
 // SetBasePrecision sets the "base_precision" field.
 func (tpc *TradingPairCreate) SetBasePrecision(i int) *TradingPairCreate {
 	tpc.mutation.SetBasePrecision(i)
-	return tpc
-}
-
-// SetCounter sets the "counter" field.
-func (tpc *TradingPairCreate) SetCounter(s string) *TradingPairCreate {
-	tpc.mutation.SetCounter(s)
 	return tpc
 }
 
@@ -61,6 +50,28 @@ func (tpc *TradingPairCreate) SetExchangeID(id int) *TradingPairCreate {
 // SetExchange sets the "exchange" edge to the Exchange entity.
 func (tpc *TradingPairCreate) SetExchange(e *Exchange) *TradingPairCreate {
 	return tpc.SetExchangeID(e.ID)
+}
+
+// SetBaseID sets the "base" edge to the Coin entity by ID.
+func (tpc *TradingPairCreate) SetBaseID(id int) *TradingPairCreate {
+	tpc.mutation.SetBaseID(id)
+	return tpc
+}
+
+// SetBase sets the "base" edge to the Coin entity.
+func (tpc *TradingPairCreate) SetBase(c *Coin) *TradingPairCreate {
+	return tpc.SetBaseID(c.ID)
+}
+
+// SetCounterID sets the "counter" edge to the Coin entity by ID.
+func (tpc *TradingPairCreate) SetCounterID(id int) *TradingPairCreate {
+	tpc.mutation.SetCounterID(id)
+	return tpc
+}
+
+// SetCounter sets the "counter" edge to the Coin entity.
+func (tpc *TradingPairCreate) SetCounter(c *Coin) *TradingPairCreate {
+	return tpc.SetCounterID(c.ID)
 }
 
 // Mutation returns the TradingPairMutation object of the builder.
@@ -142,20 +153,20 @@ func (tpc *TradingPairCreate) check() error {
 	if _, ok := tpc.mutation.Symbol(); !ok {
 		return &ValidationError{Name: "symbol", err: errors.New(`entities: missing required field "TradingPair.symbol"`)}
 	}
-	if _, ok := tpc.mutation.Base(); !ok {
-		return &ValidationError{Name: "base", err: errors.New(`entities: missing required field "TradingPair.base"`)}
-	}
 	if _, ok := tpc.mutation.BasePrecision(); !ok {
 		return &ValidationError{Name: "base_precision", err: errors.New(`entities: missing required field "TradingPair.base_precision"`)}
-	}
-	if _, ok := tpc.mutation.Counter(); !ok {
-		return &ValidationError{Name: "counter", err: errors.New(`entities: missing required field "TradingPair.counter"`)}
 	}
 	if _, ok := tpc.mutation.CounterPrecision(); !ok {
 		return &ValidationError{Name: "counter_precision", err: errors.New(`entities: missing required field "TradingPair.counter_precision"`)}
 	}
 	if _, ok := tpc.mutation.ExchangeID(); !ok {
 		return &ValidationError{Name: "exchange", err: errors.New(`entities: missing required edge "TradingPair.exchange"`)}
+	}
+	if _, ok := tpc.mutation.BaseID(); !ok {
+		return &ValidationError{Name: "base", err: errors.New(`entities: missing required edge "TradingPair.base"`)}
+	}
+	if _, ok := tpc.mutation.CounterID(); !ok {
+		return &ValidationError{Name: "counter", err: errors.New(`entities: missing required edge "TradingPair.counter"`)}
 	}
 	return nil
 }
@@ -194,14 +205,6 @@ func (tpc *TradingPairCreate) createSpec() (*TradingPair, *sqlgraph.CreateSpec) 
 		})
 		_node.Symbol = value
 	}
-	if value, ok := tpc.mutation.Base(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: tradingpair.FieldBase,
-		})
-		_node.Base = value
-	}
 	if value, ok := tpc.mutation.BasePrecision(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
@@ -209,14 +212,6 @@ func (tpc *TradingPairCreate) createSpec() (*TradingPair, *sqlgraph.CreateSpec) 
 			Column: tradingpair.FieldBasePrecision,
 		})
 		_node.BasePrecision = value
-	}
-	if value, ok := tpc.mutation.Counter(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: tradingpair.FieldCounter,
-		})
-		_node.Counter = value
 	}
 	if value, ok := tpc.mutation.CounterPrecision(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -244,7 +239,49 @@ func (tpc *TradingPairCreate) createSpec() (*TradingPair, *sqlgraph.CreateSpec) 
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.exchange_trading_pairs = &nodes[0]
+		_node.exchange_trading_pair = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tpc.mutation.BaseIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tradingpair.BaseTable,
+			Columns: []string{tradingpair.BaseColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: coin.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpc.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.coin_coin_base = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tpc.mutation.CounterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tradingpair.CounterTable,
+			Columns: []string{tradingpair.CounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: coin.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpc.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.coin_coin_counter = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -311,18 +348,6 @@ func (u *TradingPairUpsert) UpdateSymbol() *TradingPairUpsert {
 	return u
 }
 
-// SetBase sets the "base" field.
-func (u *TradingPairUpsert) SetBase(v string) *TradingPairUpsert {
-	u.Set(tradingpair.FieldBase, v)
-	return u
-}
-
-// UpdateBase sets the "base" field to the value that was provided on create.
-func (u *TradingPairUpsert) UpdateBase() *TradingPairUpsert {
-	u.SetExcluded(tradingpair.FieldBase)
-	return u
-}
-
 // SetBasePrecision sets the "base_precision" field.
 func (u *TradingPairUpsert) SetBasePrecision(v int) *TradingPairUpsert {
 	u.Set(tradingpair.FieldBasePrecision, v)
@@ -338,18 +363,6 @@ func (u *TradingPairUpsert) UpdateBasePrecision() *TradingPairUpsert {
 // AddBasePrecision adds v to the "base_precision" field.
 func (u *TradingPairUpsert) AddBasePrecision(v int) *TradingPairUpsert {
 	u.Add(tradingpair.FieldBasePrecision, v)
-	return u
-}
-
-// SetCounter sets the "counter" field.
-func (u *TradingPairUpsert) SetCounter(v string) *TradingPairUpsert {
-	u.Set(tradingpair.FieldCounter, v)
-	return u
-}
-
-// UpdateCounter sets the "counter" field to the value that was provided on create.
-func (u *TradingPairUpsert) UpdateCounter() *TradingPairUpsert {
-	u.SetExcluded(tradingpair.FieldCounter)
 	return u
 }
 
@@ -425,20 +438,6 @@ func (u *TradingPairUpsertOne) UpdateSymbol() *TradingPairUpsertOne {
 	})
 }
 
-// SetBase sets the "base" field.
-func (u *TradingPairUpsertOne) SetBase(v string) *TradingPairUpsertOne {
-	return u.Update(func(s *TradingPairUpsert) {
-		s.SetBase(v)
-	})
-}
-
-// UpdateBase sets the "base" field to the value that was provided on create.
-func (u *TradingPairUpsertOne) UpdateBase() *TradingPairUpsertOne {
-	return u.Update(func(s *TradingPairUpsert) {
-		s.UpdateBase()
-	})
-}
-
 // SetBasePrecision sets the "base_precision" field.
 func (u *TradingPairUpsertOne) SetBasePrecision(v int) *TradingPairUpsertOne {
 	return u.Update(func(s *TradingPairUpsert) {
@@ -457,20 +456,6 @@ func (u *TradingPairUpsertOne) AddBasePrecision(v int) *TradingPairUpsertOne {
 func (u *TradingPairUpsertOne) UpdateBasePrecision() *TradingPairUpsertOne {
 	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateBasePrecision()
-	})
-}
-
-// SetCounter sets the "counter" field.
-func (u *TradingPairUpsertOne) SetCounter(v string) *TradingPairUpsertOne {
-	return u.Update(func(s *TradingPairUpsert) {
-		s.SetCounter(v)
-	})
-}
-
-// UpdateCounter sets the "counter" field to the value that was provided on create.
-func (u *TradingPairUpsertOne) UpdateCounter() *TradingPairUpsertOne {
-	return u.Update(func(s *TradingPairUpsert) {
-		s.UpdateCounter()
 	})
 }
 
@@ -708,20 +693,6 @@ func (u *TradingPairUpsertBulk) UpdateSymbol() *TradingPairUpsertBulk {
 	})
 }
 
-// SetBase sets the "base" field.
-func (u *TradingPairUpsertBulk) SetBase(v string) *TradingPairUpsertBulk {
-	return u.Update(func(s *TradingPairUpsert) {
-		s.SetBase(v)
-	})
-}
-
-// UpdateBase sets the "base" field to the value that was provided on create.
-func (u *TradingPairUpsertBulk) UpdateBase() *TradingPairUpsertBulk {
-	return u.Update(func(s *TradingPairUpsert) {
-		s.UpdateBase()
-	})
-}
-
 // SetBasePrecision sets the "base_precision" field.
 func (u *TradingPairUpsertBulk) SetBasePrecision(v int) *TradingPairUpsertBulk {
 	return u.Update(func(s *TradingPairUpsert) {
@@ -740,20 +711,6 @@ func (u *TradingPairUpsertBulk) AddBasePrecision(v int) *TradingPairUpsertBulk {
 func (u *TradingPairUpsertBulk) UpdateBasePrecision() *TradingPairUpsertBulk {
 	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateBasePrecision()
-	})
-}
-
-// SetCounter sets the "counter" field.
-func (u *TradingPairUpsertBulk) SetCounter(v string) *TradingPairUpsertBulk {
-	return u.Update(func(s *TradingPairUpsert) {
-		s.SetCounter(v)
-	})
-}
-
-// UpdateCounter sets the "counter" field to the value that was provided on create.
-func (u *TradingPairUpsertBulk) UpdateCounter() *TradingPairUpsertBulk {
-	return u.Update(func(s *TradingPairUpsert) {
-		s.UpdateCounter()
 	})
 }
 

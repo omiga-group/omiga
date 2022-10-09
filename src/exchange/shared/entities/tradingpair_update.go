@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
@@ -36,12 +37,6 @@ func (tpu *TradingPairUpdate) SetSymbol(s string) *TradingPairUpdate {
 	return tpu
 }
 
-// SetBase sets the "base" field.
-func (tpu *TradingPairUpdate) SetBase(s string) *TradingPairUpdate {
-	tpu.mutation.SetBase(s)
-	return tpu
-}
-
 // SetBasePrecision sets the "base_precision" field.
 func (tpu *TradingPairUpdate) SetBasePrecision(i int) *TradingPairUpdate {
 	tpu.mutation.ResetBasePrecision()
@@ -52,12 +47,6 @@ func (tpu *TradingPairUpdate) SetBasePrecision(i int) *TradingPairUpdate {
 // AddBasePrecision adds i to the "base_precision" field.
 func (tpu *TradingPairUpdate) AddBasePrecision(i int) *TradingPairUpdate {
 	tpu.mutation.AddBasePrecision(i)
-	return tpu
-}
-
-// SetCounter sets the "counter" field.
-func (tpu *TradingPairUpdate) SetCounter(s string) *TradingPairUpdate {
-	tpu.mutation.SetCounter(s)
 	return tpu
 }
 
@@ -85,6 +74,28 @@ func (tpu *TradingPairUpdate) SetExchange(e *Exchange) *TradingPairUpdate {
 	return tpu.SetExchangeID(e.ID)
 }
 
+// SetBaseID sets the "base" edge to the Coin entity by ID.
+func (tpu *TradingPairUpdate) SetBaseID(id int) *TradingPairUpdate {
+	tpu.mutation.SetBaseID(id)
+	return tpu
+}
+
+// SetBase sets the "base" edge to the Coin entity.
+func (tpu *TradingPairUpdate) SetBase(c *Coin) *TradingPairUpdate {
+	return tpu.SetBaseID(c.ID)
+}
+
+// SetCounterID sets the "counter" edge to the Coin entity by ID.
+func (tpu *TradingPairUpdate) SetCounterID(id int) *TradingPairUpdate {
+	tpu.mutation.SetCounterID(id)
+	return tpu
+}
+
+// SetCounter sets the "counter" edge to the Coin entity.
+func (tpu *TradingPairUpdate) SetCounter(c *Coin) *TradingPairUpdate {
+	return tpu.SetCounterID(c.ID)
+}
+
 // Mutation returns the TradingPairMutation object of the builder.
 func (tpu *TradingPairUpdate) Mutation() *TradingPairMutation {
 	return tpu.mutation
@@ -93,6 +104,18 @@ func (tpu *TradingPairUpdate) Mutation() *TradingPairMutation {
 // ClearExchange clears the "exchange" edge to the Exchange entity.
 func (tpu *TradingPairUpdate) ClearExchange() *TradingPairUpdate {
 	tpu.mutation.ClearExchange()
+	return tpu
+}
+
+// ClearBase clears the "base" edge to the Coin entity.
+func (tpu *TradingPairUpdate) ClearBase() *TradingPairUpdate {
+	tpu.mutation.ClearBase()
+	return tpu
+}
+
+// ClearCounter clears the "counter" edge to the Coin entity.
+func (tpu *TradingPairUpdate) ClearCounter() *TradingPairUpdate {
+	tpu.mutation.ClearCounter()
 	return tpu
 }
 
@@ -161,6 +184,12 @@ func (tpu *TradingPairUpdate) check() error {
 	if _, ok := tpu.mutation.ExchangeID(); tpu.mutation.ExchangeCleared() && !ok {
 		return errors.New(`entities: clearing a required unique edge "TradingPair.exchange"`)
 	}
+	if _, ok := tpu.mutation.BaseID(); tpu.mutation.BaseCleared() && !ok {
+		return errors.New(`entities: clearing a required unique edge "TradingPair.base"`)
+	}
+	if _, ok := tpu.mutation.CounterID(); tpu.mutation.CounterCleared() && !ok {
+		return errors.New(`entities: clearing a required unique edge "TradingPair.counter"`)
+	}
 	return nil
 }
 
@@ -195,13 +224,6 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: tradingpair.FieldSymbol,
 		})
 	}
-	if value, ok := tpu.mutation.Base(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: tradingpair.FieldBase,
-		})
-	}
 	if value, ok := tpu.mutation.BasePrecision(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
@@ -214,13 +236,6 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeInt,
 			Value:  value,
 			Column: tradingpair.FieldBasePrecision,
-		})
-	}
-	if value, ok := tpu.mutation.Counter(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: tradingpair.FieldCounter,
 		})
 	}
 	if value, ok := tpu.mutation.CounterPrecision(); ok {
@@ -274,6 +289,80 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if tpu.mutation.BaseCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tradingpair.BaseTable,
+			Columns: []string{tradingpair.BaseColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: coin.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpu.schemaConfig.TradingPair
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tpu.mutation.BaseIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tradingpair.BaseTable,
+			Columns: []string{tradingpair.BaseColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: coin.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpu.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tpu.mutation.CounterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tradingpair.CounterTable,
+			Columns: []string{tradingpair.CounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: coin.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpu.schemaConfig.TradingPair
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tpu.mutation.CounterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tradingpair.CounterTable,
+			Columns: []string{tradingpair.CounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: coin.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpu.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.Node.Schema = tpu.schemaConfig.TradingPair
 	ctx = internal.NewSchemaConfigContext(ctx, tpu.schemaConfig)
 	_spec.Modifiers = tpu.modifiers
@@ -303,12 +392,6 @@ func (tpuo *TradingPairUpdateOne) SetSymbol(s string) *TradingPairUpdateOne {
 	return tpuo
 }
 
-// SetBase sets the "base" field.
-func (tpuo *TradingPairUpdateOne) SetBase(s string) *TradingPairUpdateOne {
-	tpuo.mutation.SetBase(s)
-	return tpuo
-}
-
 // SetBasePrecision sets the "base_precision" field.
 func (tpuo *TradingPairUpdateOne) SetBasePrecision(i int) *TradingPairUpdateOne {
 	tpuo.mutation.ResetBasePrecision()
@@ -319,12 +402,6 @@ func (tpuo *TradingPairUpdateOne) SetBasePrecision(i int) *TradingPairUpdateOne 
 // AddBasePrecision adds i to the "base_precision" field.
 func (tpuo *TradingPairUpdateOne) AddBasePrecision(i int) *TradingPairUpdateOne {
 	tpuo.mutation.AddBasePrecision(i)
-	return tpuo
-}
-
-// SetCounter sets the "counter" field.
-func (tpuo *TradingPairUpdateOne) SetCounter(s string) *TradingPairUpdateOne {
-	tpuo.mutation.SetCounter(s)
 	return tpuo
 }
 
@@ -352,6 +429,28 @@ func (tpuo *TradingPairUpdateOne) SetExchange(e *Exchange) *TradingPairUpdateOne
 	return tpuo.SetExchangeID(e.ID)
 }
 
+// SetBaseID sets the "base" edge to the Coin entity by ID.
+func (tpuo *TradingPairUpdateOne) SetBaseID(id int) *TradingPairUpdateOne {
+	tpuo.mutation.SetBaseID(id)
+	return tpuo
+}
+
+// SetBase sets the "base" edge to the Coin entity.
+func (tpuo *TradingPairUpdateOne) SetBase(c *Coin) *TradingPairUpdateOne {
+	return tpuo.SetBaseID(c.ID)
+}
+
+// SetCounterID sets the "counter" edge to the Coin entity by ID.
+func (tpuo *TradingPairUpdateOne) SetCounterID(id int) *TradingPairUpdateOne {
+	tpuo.mutation.SetCounterID(id)
+	return tpuo
+}
+
+// SetCounter sets the "counter" edge to the Coin entity.
+func (tpuo *TradingPairUpdateOne) SetCounter(c *Coin) *TradingPairUpdateOne {
+	return tpuo.SetCounterID(c.ID)
+}
+
 // Mutation returns the TradingPairMutation object of the builder.
 func (tpuo *TradingPairUpdateOne) Mutation() *TradingPairMutation {
 	return tpuo.mutation
@@ -360,6 +459,18 @@ func (tpuo *TradingPairUpdateOne) Mutation() *TradingPairMutation {
 // ClearExchange clears the "exchange" edge to the Exchange entity.
 func (tpuo *TradingPairUpdateOne) ClearExchange() *TradingPairUpdateOne {
 	tpuo.mutation.ClearExchange()
+	return tpuo
+}
+
+// ClearBase clears the "base" edge to the Coin entity.
+func (tpuo *TradingPairUpdateOne) ClearBase() *TradingPairUpdateOne {
+	tpuo.mutation.ClearBase()
+	return tpuo
+}
+
+// ClearCounter clears the "counter" edge to the Coin entity.
+func (tpuo *TradingPairUpdateOne) ClearCounter() *TradingPairUpdateOne {
+	tpuo.mutation.ClearCounter()
 	return tpuo
 }
 
@@ -441,6 +552,12 @@ func (tpuo *TradingPairUpdateOne) check() error {
 	if _, ok := tpuo.mutation.ExchangeID(); tpuo.mutation.ExchangeCleared() && !ok {
 		return errors.New(`entities: clearing a required unique edge "TradingPair.exchange"`)
 	}
+	if _, ok := tpuo.mutation.BaseID(); tpuo.mutation.BaseCleared() && !ok {
+		return errors.New(`entities: clearing a required unique edge "TradingPair.base"`)
+	}
+	if _, ok := tpuo.mutation.CounterID(); tpuo.mutation.CounterCleared() && !ok {
+		return errors.New(`entities: clearing a required unique edge "TradingPair.counter"`)
+	}
 	return nil
 }
 
@@ -492,13 +609,6 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 			Column: tradingpair.FieldSymbol,
 		})
 	}
-	if value, ok := tpuo.mutation.Base(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: tradingpair.FieldBase,
-		})
-	}
 	if value, ok := tpuo.mutation.BasePrecision(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
@@ -511,13 +621,6 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 			Type:   field.TypeInt,
 			Value:  value,
 			Column: tradingpair.FieldBasePrecision,
-		})
-	}
-	if value, ok := tpuo.mutation.Counter(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: tradingpair.FieldCounter,
 		})
 	}
 	if value, ok := tpuo.mutation.CounterPrecision(); ok {
@@ -562,6 +665,80 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: exchange.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpuo.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tpuo.mutation.BaseCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tradingpair.BaseTable,
+			Columns: []string{tradingpair.BaseColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: coin.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpuo.schemaConfig.TradingPair
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tpuo.mutation.BaseIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tradingpair.BaseTable,
+			Columns: []string{tradingpair.BaseColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: coin.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpuo.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tpuo.mutation.CounterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tradingpair.CounterTable,
+			Columns: []string{tradingpair.CounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: coin.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpuo.schemaConfig.TradingPair
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tpuo.mutation.CounterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tradingpair.CounterTable,
+			Columns: []string{tradingpair.CounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: coin.FieldID,
 				},
 			},
 		}

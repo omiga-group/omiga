@@ -39,15 +39,21 @@ const (
 // CoinMutation represents an operation that mutates the Coin nodes in the graph.
 type CoinMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	symbol        *string
-	name          *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Coin, error)
-	predicates    []predicate.Coin
+	op                  Op
+	typ                 string
+	id                  *int
+	symbol              *string
+	name                *string
+	clearedFields       map[string]struct{}
+	coin_base           map[int]struct{}
+	removedcoin_base    map[int]struct{}
+	clearedcoin_base    bool
+	coin_counter        map[int]struct{}
+	removedcoin_counter map[int]struct{}
+	clearedcoin_counter bool
+	done                bool
+	oldValue            func(context.Context) (*Coin, error)
+	predicates          []predicate.Coin
 }
 
 var _ ent.Mutation = (*CoinMutation)(nil)
@@ -233,6 +239,114 @@ func (m *CoinMutation) ResetName() {
 	delete(m.clearedFields, coin.FieldName)
 }
 
+// AddCoinBaseIDs adds the "coin_base" edge to the TradingPair entity by ids.
+func (m *CoinMutation) AddCoinBaseIDs(ids ...int) {
+	if m.coin_base == nil {
+		m.coin_base = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.coin_base[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCoinBase clears the "coin_base" edge to the TradingPair entity.
+func (m *CoinMutation) ClearCoinBase() {
+	m.clearedcoin_base = true
+}
+
+// CoinBaseCleared reports if the "coin_base" edge to the TradingPair entity was cleared.
+func (m *CoinMutation) CoinBaseCleared() bool {
+	return m.clearedcoin_base
+}
+
+// RemoveCoinBaseIDs removes the "coin_base" edge to the TradingPair entity by IDs.
+func (m *CoinMutation) RemoveCoinBaseIDs(ids ...int) {
+	if m.removedcoin_base == nil {
+		m.removedcoin_base = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.coin_base, ids[i])
+		m.removedcoin_base[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCoinBase returns the removed IDs of the "coin_base" edge to the TradingPair entity.
+func (m *CoinMutation) RemovedCoinBaseIDs() (ids []int) {
+	for id := range m.removedcoin_base {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CoinBaseIDs returns the "coin_base" edge IDs in the mutation.
+func (m *CoinMutation) CoinBaseIDs() (ids []int) {
+	for id := range m.coin_base {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCoinBase resets all changes to the "coin_base" edge.
+func (m *CoinMutation) ResetCoinBase() {
+	m.coin_base = nil
+	m.clearedcoin_base = false
+	m.removedcoin_base = nil
+}
+
+// AddCoinCounterIDs adds the "coin_counter" edge to the TradingPair entity by ids.
+func (m *CoinMutation) AddCoinCounterIDs(ids ...int) {
+	if m.coin_counter == nil {
+		m.coin_counter = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.coin_counter[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCoinCounter clears the "coin_counter" edge to the TradingPair entity.
+func (m *CoinMutation) ClearCoinCounter() {
+	m.clearedcoin_counter = true
+}
+
+// CoinCounterCleared reports if the "coin_counter" edge to the TradingPair entity was cleared.
+func (m *CoinMutation) CoinCounterCleared() bool {
+	return m.clearedcoin_counter
+}
+
+// RemoveCoinCounterIDs removes the "coin_counter" edge to the TradingPair entity by IDs.
+func (m *CoinMutation) RemoveCoinCounterIDs(ids ...int) {
+	if m.removedcoin_counter == nil {
+		m.removedcoin_counter = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.coin_counter, ids[i])
+		m.removedcoin_counter[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCoinCounter returns the removed IDs of the "coin_counter" edge to the TradingPair entity.
+func (m *CoinMutation) RemovedCoinCounterIDs() (ids []int) {
+	for id := range m.removedcoin_counter {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CoinCounterIDs returns the "coin_counter" edge IDs in the mutation.
+func (m *CoinMutation) CoinCounterIDs() (ids []int) {
+	for id := range m.coin_counter {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCoinCounter resets all changes to the "coin_counter" edge.
+func (m *CoinMutation) ResetCoinCounter() {
+	m.coin_counter = nil
+	m.clearedcoin_counter = false
+	m.removedcoin_counter = nil
+}
+
 // Where appends a list predicates to the CoinMutation builder.
 func (m *CoinMutation) Where(ps ...predicate.Coin) {
 	m.predicates = append(m.predicates, ps...)
@@ -377,49 +491,111 @@ func (m *CoinMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CoinMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 2)
+	if m.coin_base != nil {
+		edges = append(edges, coin.EdgeCoinBase)
+	}
+	if m.coin_counter != nil {
+		edges = append(edges, coin.EdgeCoinCounter)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *CoinMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case coin.EdgeCoinBase:
+		ids := make([]ent.Value, 0, len(m.coin_base))
+		for id := range m.coin_base {
+			ids = append(ids, id)
+		}
+		return ids
+	case coin.EdgeCoinCounter:
+		ids := make([]ent.Value, 0, len(m.coin_counter))
+		for id := range m.coin_counter {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *CoinMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 2)
+	if m.removedcoin_base != nil {
+		edges = append(edges, coin.EdgeCoinBase)
+	}
+	if m.removedcoin_counter != nil {
+		edges = append(edges, coin.EdgeCoinCounter)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *CoinMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case coin.EdgeCoinBase:
+		ids := make([]ent.Value, 0, len(m.removedcoin_base))
+		for id := range m.removedcoin_base {
+			ids = append(ids, id)
+		}
+		return ids
+	case coin.EdgeCoinCounter:
+		ids := make([]ent.Value, 0, len(m.removedcoin_counter))
+		for id := range m.removedcoin_counter {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CoinMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 2)
+	if m.clearedcoin_base {
+		edges = append(edges, coin.EdgeCoinBase)
+	}
+	if m.clearedcoin_counter {
+		edges = append(edges, coin.EdgeCoinCounter)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *CoinMutation) EdgeCleared(name string) bool {
+	switch name {
+	case coin.EdgeCoinBase:
+		return m.clearedcoin_base
+	case coin.EdgeCoinCounter:
+		return m.clearedcoin_counter
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *CoinMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Coin unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *CoinMutation) ResetEdge(name string) error {
+	switch name {
+	case coin.EdgeCoinBase:
+		m.ResetCoinBase()
+		return nil
+	case coin.EdgeCoinCounter:
+		m.ResetCoinCounter()
+		return nil
+	}
 	return fmt.Errorf("unknown Coin edge %s", name)
 }
 
@@ -458,9 +634,9 @@ type ExchangeMutation struct {
 	ticker                             map[int]struct{}
 	removedticker                      map[int]struct{}
 	clearedticker                      bool
-	trading_pairs                      map[int]struct{}
-	removedtrading_pairs               map[int]struct{}
-	clearedtrading_pairs               bool
+	trading_pair                       map[int]struct{}
+	removedtrading_pair                map[int]struct{}
+	clearedtrading_pair                bool
 	done                               bool
 	oldValue                           func(context.Context) (*Exchange, error)
 	predicates                         []predicate.Exchange
@@ -1634,58 +1810,58 @@ func (m *ExchangeMutation) ResetTicker() {
 	m.removedticker = nil
 }
 
-// AddTradingPairIDs adds the "trading_pairs" edge to the TradingPair entity by ids.
+// AddTradingPairIDs adds the "trading_pair" edge to the TradingPair entity by ids.
 func (m *ExchangeMutation) AddTradingPairIDs(ids ...int) {
-	if m.trading_pairs == nil {
-		m.trading_pairs = make(map[int]struct{})
+	if m.trading_pair == nil {
+		m.trading_pair = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.trading_pairs[ids[i]] = struct{}{}
+		m.trading_pair[ids[i]] = struct{}{}
 	}
 }
 
-// ClearTradingPairs clears the "trading_pairs" edge to the TradingPair entity.
-func (m *ExchangeMutation) ClearTradingPairs() {
-	m.clearedtrading_pairs = true
+// ClearTradingPair clears the "trading_pair" edge to the TradingPair entity.
+func (m *ExchangeMutation) ClearTradingPair() {
+	m.clearedtrading_pair = true
 }
 
-// TradingPairsCleared reports if the "trading_pairs" edge to the TradingPair entity was cleared.
-func (m *ExchangeMutation) TradingPairsCleared() bool {
-	return m.clearedtrading_pairs
+// TradingPairCleared reports if the "trading_pair" edge to the TradingPair entity was cleared.
+func (m *ExchangeMutation) TradingPairCleared() bool {
+	return m.clearedtrading_pair
 }
 
-// RemoveTradingPairIDs removes the "trading_pairs" edge to the TradingPair entity by IDs.
+// RemoveTradingPairIDs removes the "trading_pair" edge to the TradingPair entity by IDs.
 func (m *ExchangeMutation) RemoveTradingPairIDs(ids ...int) {
-	if m.removedtrading_pairs == nil {
-		m.removedtrading_pairs = make(map[int]struct{})
+	if m.removedtrading_pair == nil {
+		m.removedtrading_pair = make(map[int]struct{})
 	}
 	for i := range ids {
-		delete(m.trading_pairs, ids[i])
-		m.removedtrading_pairs[ids[i]] = struct{}{}
+		delete(m.trading_pair, ids[i])
+		m.removedtrading_pair[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedTradingPairs returns the removed IDs of the "trading_pairs" edge to the TradingPair entity.
-func (m *ExchangeMutation) RemovedTradingPairsIDs() (ids []int) {
-	for id := range m.removedtrading_pairs {
+// RemovedTradingPair returns the removed IDs of the "trading_pair" edge to the TradingPair entity.
+func (m *ExchangeMutation) RemovedTradingPairIDs() (ids []int) {
+	for id := range m.removedtrading_pair {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// TradingPairsIDs returns the "trading_pairs" edge IDs in the mutation.
-func (m *ExchangeMutation) TradingPairsIDs() (ids []int) {
-	for id := range m.trading_pairs {
+// TradingPairIDs returns the "trading_pair" edge IDs in the mutation.
+func (m *ExchangeMutation) TradingPairIDs() (ids []int) {
+	for id := range m.trading_pair {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetTradingPairs resets all changes to the "trading_pairs" edge.
-func (m *ExchangeMutation) ResetTradingPairs() {
-	m.trading_pairs = nil
-	m.clearedtrading_pairs = false
-	m.removedtrading_pairs = nil
+// ResetTradingPair resets all changes to the "trading_pair" edge.
+func (m *ExchangeMutation) ResetTradingPair() {
+	m.trading_pair = nil
+	m.clearedtrading_pair = false
+	m.removedtrading_pair = nil
 }
 
 // Where appends a list predicates to the ExchangeMutation builder.
@@ -2291,8 +2467,8 @@ func (m *ExchangeMutation) AddedEdges() []string {
 	if m.ticker != nil {
 		edges = append(edges, exchange.EdgeTicker)
 	}
-	if m.trading_pairs != nil {
-		edges = append(edges, exchange.EdgeTradingPairs)
+	if m.trading_pair != nil {
+		edges = append(edges, exchange.EdgeTradingPair)
 	}
 	return edges
 }
@@ -2307,9 +2483,9 @@ func (m *ExchangeMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case exchange.EdgeTradingPairs:
-		ids := make([]ent.Value, 0, len(m.trading_pairs))
-		for id := range m.trading_pairs {
+	case exchange.EdgeTradingPair:
+		ids := make([]ent.Value, 0, len(m.trading_pair))
+		for id := range m.trading_pair {
 			ids = append(ids, id)
 		}
 		return ids
@@ -2323,8 +2499,8 @@ func (m *ExchangeMutation) RemovedEdges() []string {
 	if m.removedticker != nil {
 		edges = append(edges, exchange.EdgeTicker)
 	}
-	if m.removedtrading_pairs != nil {
-		edges = append(edges, exchange.EdgeTradingPairs)
+	if m.removedtrading_pair != nil {
+		edges = append(edges, exchange.EdgeTradingPair)
 	}
 	return edges
 }
@@ -2339,9 +2515,9 @@ func (m *ExchangeMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case exchange.EdgeTradingPairs:
-		ids := make([]ent.Value, 0, len(m.removedtrading_pairs))
-		for id := range m.removedtrading_pairs {
+	case exchange.EdgeTradingPair:
+		ids := make([]ent.Value, 0, len(m.removedtrading_pair))
+		for id := range m.removedtrading_pair {
 			ids = append(ids, id)
 		}
 		return ids
@@ -2355,8 +2531,8 @@ func (m *ExchangeMutation) ClearedEdges() []string {
 	if m.clearedticker {
 		edges = append(edges, exchange.EdgeTicker)
 	}
-	if m.clearedtrading_pairs {
-		edges = append(edges, exchange.EdgeTradingPairs)
+	if m.clearedtrading_pair {
+		edges = append(edges, exchange.EdgeTradingPair)
 	}
 	return edges
 }
@@ -2367,8 +2543,8 @@ func (m *ExchangeMutation) EdgeCleared(name string) bool {
 	switch name {
 	case exchange.EdgeTicker:
 		return m.clearedticker
-	case exchange.EdgeTradingPairs:
-		return m.clearedtrading_pairs
+	case exchange.EdgeTradingPair:
+		return m.clearedtrading_pair
 	}
 	return false
 }
@@ -2388,8 +2564,8 @@ func (m *ExchangeMutation) ResetEdge(name string) error {
 	case exchange.EdgeTicker:
 		m.ResetTicker()
 		return nil
-	case exchange.EdgeTradingPairs:
-		m.ResetTradingPairs()
+	case exchange.EdgeTradingPair:
+		m.ResetTradingPair()
 		return nil
 	}
 	return fmt.Errorf("unknown Exchange edge %s", name)
@@ -4930,15 +5106,17 @@ type TradingPairMutation struct {
 	typ                  string
 	id                   *int
 	symbol               *string
-	base                 *string
 	base_precision       *int
 	addbase_precision    *int
-	counter              *string
 	counter_precision    *int
 	addcounter_precision *int
 	clearedFields        map[string]struct{}
 	exchange             *int
 	clearedexchange      bool
+	base                 *int
+	clearedbase          bool
+	counter              *int
+	clearedcounter       bool
 	done                 bool
 	oldValue             func(context.Context) (*TradingPair, error)
 	predicates           []predicate.TradingPair
@@ -5078,42 +5256,6 @@ func (m *TradingPairMutation) ResetSymbol() {
 	m.symbol = nil
 }
 
-// SetBase sets the "base" field.
-func (m *TradingPairMutation) SetBase(s string) {
-	m.base = &s
-}
-
-// Base returns the value of the "base" field in the mutation.
-func (m *TradingPairMutation) Base() (r string, exists bool) {
-	v := m.base
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldBase returns the old "base" field's value of the TradingPair entity.
-// If the TradingPair object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TradingPairMutation) OldBase(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldBase is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldBase requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldBase: %w", err)
-	}
-	return oldValue.Base, nil
-}
-
-// ResetBase resets all changes to the "base" field.
-func (m *TradingPairMutation) ResetBase() {
-	m.base = nil
-}
-
 // SetBasePrecision sets the "base_precision" field.
 func (m *TradingPairMutation) SetBasePrecision(i int) {
 	m.base_precision = &i
@@ -5168,42 +5310,6 @@ func (m *TradingPairMutation) AddedBasePrecision() (r int, exists bool) {
 func (m *TradingPairMutation) ResetBasePrecision() {
 	m.base_precision = nil
 	m.addbase_precision = nil
-}
-
-// SetCounter sets the "counter" field.
-func (m *TradingPairMutation) SetCounter(s string) {
-	m.counter = &s
-}
-
-// Counter returns the value of the "counter" field in the mutation.
-func (m *TradingPairMutation) Counter() (r string, exists bool) {
-	v := m.counter
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCounter returns the old "counter" field's value of the TradingPair entity.
-// If the TradingPair object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TradingPairMutation) OldCounter(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCounter is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCounter requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCounter: %w", err)
-	}
-	return oldValue.Counter, nil
-}
-
-// ResetCounter resets all changes to the "counter" field.
-func (m *TradingPairMutation) ResetCounter() {
-	m.counter = nil
 }
 
 // SetCounterPrecision sets the "counter_precision" field.
@@ -5301,6 +5407,84 @@ func (m *TradingPairMutation) ResetExchange() {
 	m.clearedexchange = false
 }
 
+// SetBaseID sets the "base" edge to the Coin entity by id.
+func (m *TradingPairMutation) SetBaseID(id int) {
+	m.base = &id
+}
+
+// ClearBase clears the "base" edge to the Coin entity.
+func (m *TradingPairMutation) ClearBase() {
+	m.clearedbase = true
+}
+
+// BaseCleared reports if the "base" edge to the Coin entity was cleared.
+func (m *TradingPairMutation) BaseCleared() bool {
+	return m.clearedbase
+}
+
+// BaseID returns the "base" edge ID in the mutation.
+func (m *TradingPairMutation) BaseID() (id int, exists bool) {
+	if m.base != nil {
+		return *m.base, true
+	}
+	return
+}
+
+// BaseIDs returns the "base" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// BaseID instead. It exists only for internal usage by the builders.
+func (m *TradingPairMutation) BaseIDs() (ids []int) {
+	if id := m.base; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetBase resets all changes to the "base" edge.
+func (m *TradingPairMutation) ResetBase() {
+	m.base = nil
+	m.clearedbase = false
+}
+
+// SetCounterID sets the "counter" edge to the Coin entity by id.
+func (m *TradingPairMutation) SetCounterID(id int) {
+	m.counter = &id
+}
+
+// ClearCounter clears the "counter" edge to the Coin entity.
+func (m *TradingPairMutation) ClearCounter() {
+	m.clearedcounter = true
+}
+
+// CounterCleared reports if the "counter" edge to the Coin entity was cleared.
+func (m *TradingPairMutation) CounterCleared() bool {
+	return m.clearedcounter
+}
+
+// CounterID returns the "counter" edge ID in the mutation.
+func (m *TradingPairMutation) CounterID() (id int, exists bool) {
+	if m.counter != nil {
+		return *m.counter, true
+	}
+	return
+}
+
+// CounterIDs returns the "counter" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// CounterID instead. It exists only for internal usage by the builders.
+func (m *TradingPairMutation) CounterIDs() (ids []int) {
+	if id := m.counter; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetCounter resets all changes to the "counter" edge.
+func (m *TradingPairMutation) ResetCounter() {
+	m.counter = nil
+	m.clearedcounter = false
+}
+
 // Where appends a list predicates to the TradingPairMutation builder.
 func (m *TradingPairMutation) Where(ps ...predicate.TradingPair) {
 	m.predicates = append(m.predicates, ps...)
@@ -5320,18 +5504,12 @@ func (m *TradingPairMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TradingPairMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 3)
 	if m.symbol != nil {
 		fields = append(fields, tradingpair.FieldSymbol)
 	}
-	if m.base != nil {
-		fields = append(fields, tradingpair.FieldBase)
-	}
 	if m.base_precision != nil {
 		fields = append(fields, tradingpair.FieldBasePrecision)
-	}
-	if m.counter != nil {
-		fields = append(fields, tradingpair.FieldCounter)
 	}
 	if m.counter_precision != nil {
 		fields = append(fields, tradingpair.FieldCounterPrecision)
@@ -5346,12 +5524,8 @@ func (m *TradingPairMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case tradingpair.FieldSymbol:
 		return m.Symbol()
-	case tradingpair.FieldBase:
-		return m.Base()
 	case tradingpair.FieldBasePrecision:
 		return m.BasePrecision()
-	case tradingpair.FieldCounter:
-		return m.Counter()
 	case tradingpair.FieldCounterPrecision:
 		return m.CounterPrecision()
 	}
@@ -5365,12 +5539,8 @@ func (m *TradingPairMutation) OldField(ctx context.Context, name string) (ent.Va
 	switch name {
 	case tradingpair.FieldSymbol:
 		return m.OldSymbol(ctx)
-	case tradingpair.FieldBase:
-		return m.OldBase(ctx)
 	case tradingpair.FieldBasePrecision:
 		return m.OldBasePrecision(ctx)
-	case tradingpair.FieldCounter:
-		return m.OldCounter(ctx)
 	case tradingpair.FieldCounterPrecision:
 		return m.OldCounterPrecision(ctx)
 	}
@@ -5389,26 +5559,12 @@ func (m *TradingPairMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSymbol(v)
 		return nil
-	case tradingpair.FieldBase:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetBase(v)
-		return nil
 	case tradingpair.FieldBasePrecision:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBasePrecision(v)
-		return nil
-	case tradingpair.FieldCounter:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCounter(v)
 		return nil
 	case tradingpair.FieldCounterPrecision:
 		v, ok := value.(int)
@@ -5496,14 +5652,8 @@ func (m *TradingPairMutation) ResetField(name string) error {
 	case tradingpair.FieldSymbol:
 		m.ResetSymbol()
 		return nil
-	case tradingpair.FieldBase:
-		m.ResetBase()
-		return nil
 	case tradingpair.FieldBasePrecision:
 		m.ResetBasePrecision()
-		return nil
-	case tradingpair.FieldCounter:
-		m.ResetCounter()
 		return nil
 	case tradingpair.FieldCounterPrecision:
 		m.ResetCounterPrecision()
@@ -5514,9 +5664,15 @@ func (m *TradingPairMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TradingPairMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 3)
 	if m.exchange != nil {
 		edges = append(edges, tradingpair.EdgeExchange)
+	}
+	if m.base != nil {
+		edges = append(edges, tradingpair.EdgeBase)
+	}
+	if m.counter != nil {
+		edges = append(edges, tradingpair.EdgeCounter)
 	}
 	return edges
 }
@@ -5529,13 +5685,21 @@ func (m *TradingPairMutation) AddedIDs(name string) []ent.Value {
 		if id := m.exchange; id != nil {
 			return []ent.Value{*id}
 		}
+	case tradingpair.EdgeBase:
+		if id := m.base; id != nil {
+			return []ent.Value{*id}
+		}
+	case tradingpair.EdgeCounter:
+		if id := m.counter; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TradingPairMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 3)
 	return edges
 }
 
@@ -5547,9 +5711,15 @@ func (m *TradingPairMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TradingPairMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 3)
 	if m.clearedexchange {
 		edges = append(edges, tradingpair.EdgeExchange)
+	}
+	if m.clearedbase {
+		edges = append(edges, tradingpair.EdgeBase)
+	}
+	if m.clearedcounter {
+		edges = append(edges, tradingpair.EdgeCounter)
 	}
 	return edges
 }
@@ -5560,6 +5730,10 @@ func (m *TradingPairMutation) EdgeCleared(name string) bool {
 	switch name {
 	case tradingpair.EdgeExchange:
 		return m.clearedexchange
+	case tradingpair.EdgeBase:
+		return m.clearedbase
+	case tradingpair.EdgeCounter:
+		return m.clearedcounter
 	}
 	return false
 }
@@ -5571,6 +5745,12 @@ func (m *TradingPairMutation) ClearEdge(name string) error {
 	case tradingpair.EdgeExchange:
 		m.ClearExchange()
 		return nil
+	case tradingpair.EdgeBase:
+		m.ClearBase()
+		return nil
+	case tradingpair.EdgeCounter:
+		m.ClearCounter()
+		return nil
 	}
 	return fmt.Errorf("unknown TradingPair unique edge %s", name)
 }
@@ -5581,6 +5761,12 @@ func (m *TradingPairMutation) ResetEdge(name string) error {
 	switch name {
 	case tradingpair.EdgeExchange:
 		m.ResetExchange()
+		return nil
+	case tradingpair.EdgeBase:
+		m.ResetBase()
+		return nil
+	case tradingpair.EdgeCounter:
+		m.ResetCounter()
 		return nil
 	}
 	return fmt.Errorf("unknown TradingPair edge %s", name)

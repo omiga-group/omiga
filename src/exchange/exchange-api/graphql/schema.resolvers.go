@@ -12,6 +12,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
 // Links is the resolver for the links field.
@@ -50,6 +51,14 @@ func (r *exchangeResolver) Tickers(ctx context.Context, obj *entities.Exchange) 
 	return r.client.Ticker.
 		Query().
 		Where(ticker.HasExchangeWith(exchange.IDEQ(obj.ID))).
+		All(ctx)
+}
+
+// TradingPairs is the resolver for the tradingPairs field.
+func (r *exchangeResolver) TradingPairs(ctx context.Context, obj *entities.Exchange) ([]*entities.TradingPair, error) {
+	return r.client.TradingPair.
+		Query().
+		Where(tradingpair.HasExchangeWith(exchange.IDEQ(obj.ID))).
 		All(ctx)
 }
 

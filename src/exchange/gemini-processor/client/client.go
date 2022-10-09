@@ -11,6 +11,10 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/gemini-processor/models"
 )
 
+type ApiClient interface {
+	GetMarkets() (models.MarketsMap, error)
+}
+
 func NewGeminiApiClient(cfg configuration.GeminiConfig) ApiClient {
 	httpClient := createDefaultHttpClient(cfg.Timeout)
 	return geminiApiClient{

@@ -11,8 +11,26 @@ const (
 	FieldSymbol = "symbol"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// EdgeCoinBase holds the string denoting the coin_base edge name in mutations.
+	EdgeCoinBase = "coin_base"
+	// EdgeCoinCounter holds the string denoting the coin_counter edge name in mutations.
+	EdgeCoinCounter = "coin_counter"
 	// Table holds the table name of the coin in the database.
 	Table = "coins"
+	// CoinBaseTable is the table that holds the coin_base relation/edge.
+	CoinBaseTable = "trading_pairs"
+	// CoinBaseInverseTable is the table name for the TradingPair entity.
+	// It exists in this package in order to avoid circular dependency with the "tradingpair" package.
+	CoinBaseInverseTable = "trading_pairs"
+	// CoinBaseColumn is the table column denoting the coin_base relation/edge.
+	CoinBaseColumn = "coin_coin_base"
+	// CoinCounterTable is the table that holds the coin_counter relation/edge.
+	CoinCounterTable = "trading_pairs"
+	// CoinCounterInverseTable is the table name for the TradingPair entity.
+	// It exists in this package in order to avoid circular dependency with the "tradingpair" package.
+	CoinCounterInverseTable = "trading_pairs"
+	// CoinCounterColumn is the table column denoting the coin_counter relation/edge.
+	CoinCounterColumn = "coin_coin_counter"
 )
 
 // Columns holds all SQL columns for coin fields.

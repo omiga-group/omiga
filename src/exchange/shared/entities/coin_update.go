@@ -13,6 +13,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
 // CoinUpdate is the builder for updating Coin entities.
@@ -55,9 +56,81 @@ func (cu *CoinUpdate) ClearName() *CoinUpdate {
 	return cu
 }
 
+// AddCoinBaseIDs adds the "coin_base" edge to the TradingPair entity by IDs.
+func (cu *CoinUpdate) AddCoinBaseIDs(ids ...int) *CoinUpdate {
+	cu.mutation.AddCoinBaseIDs(ids...)
+	return cu
+}
+
+// AddCoinBase adds the "coin_base" edges to the TradingPair entity.
+func (cu *CoinUpdate) AddCoinBase(t ...*TradingPair) *CoinUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cu.AddCoinBaseIDs(ids...)
+}
+
+// AddCoinCounterIDs adds the "coin_counter" edge to the TradingPair entity by IDs.
+func (cu *CoinUpdate) AddCoinCounterIDs(ids ...int) *CoinUpdate {
+	cu.mutation.AddCoinCounterIDs(ids...)
+	return cu
+}
+
+// AddCoinCounter adds the "coin_counter" edges to the TradingPair entity.
+func (cu *CoinUpdate) AddCoinCounter(t ...*TradingPair) *CoinUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cu.AddCoinCounterIDs(ids...)
+}
+
 // Mutation returns the CoinMutation object of the builder.
 func (cu *CoinUpdate) Mutation() *CoinMutation {
 	return cu.mutation
+}
+
+// ClearCoinBase clears all "coin_base" edges to the TradingPair entity.
+func (cu *CoinUpdate) ClearCoinBase() *CoinUpdate {
+	cu.mutation.ClearCoinBase()
+	return cu
+}
+
+// RemoveCoinBaseIDs removes the "coin_base" edge to TradingPair entities by IDs.
+func (cu *CoinUpdate) RemoveCoinBaseIDs(ids ...int) *CoinUpdate {
+	cu.mutation.RemoveCoinBaseIDs(ids...)
+	return cu
+}
+
+// RemoveCoinBase removes "coin_base" edges to TradingPair entities.
+func (cu *CoinUpdate) RemoveCoinBase(t ...*TradingPair) *CoinUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cu.RemoveCoinBaseIDs(ids...)
+}
+
+// ClearCoinCounter clears all "coin_counter" edges to the TradingPair entity.
+func (cu *CoinUpdate) ClearCoinCounter() *CoinUpdate {
+	cu.mutation.ClearCoinCounter()
+	return cu
+}
+
+// RemoveCoinCounterIDs removes the "coin_counter" edge to TradingPair entities by IDs.
+func (cu *CoinUpdate) RemoveCoinCounterIDs(ids ...int) *CoinUpdate {
+	cu.mutation.RemoveCoinCounterIDs(ids...)
+	return cu
+}
+
+// RemoveCoinCounter removes "coin_counter" edges to TradingPair entities.
+func (cu *CoinUpdate) RemoveCoinCounter(t ...*TradingPair) *CoinUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cu.RemoveCoinCounterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -158,6 +231,120 @@ func (cu *CoinUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: coin.FieldName,
 		})
 	}
+	if cu.mutation.CoinBaseCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinBaseTable,
+			Columns: []string{coin.CoinBaseColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cu.schemaConfig.TradingPair
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.RemovedCoinBaseIDs(); len(nodes) > 0 && !cu.mutation.CoinBaseCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinBaseTable,
+			Columns: []string{coin.CoinBaseColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cu.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.CoinBaseIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinBaseTable,
+			Columns: []string{coin.CoinBaseColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cu.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if cu.mutation.CoinCounterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinCounterTable,
+			Columns: []string{coin.CoinCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cu.schemaConfig.TradingPair
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.RemovedCoinCounterIDs(); len(nodes) > 0 && !cu.mutation.CoinCounterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinCounterTable,
+			Columns: []string{coin.CoinCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cu.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.CoinCounterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinCounterTable,
+			Columns: []string{coin.CoinCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cu.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.Node.Schema = cu.schemaConfig.Coin
 	ctx = internal.NewSchemaConfigContext(ctx, cu.schemaConfig)
 	_spec.Modifiers = cu.modifiers
@@ -207,9 +394,81 @@ func (cuo *CoinUpdateOne) ClearName() *CoinUpdateOne {
 	return cuo
 }
 
+// AddCoinBaseIDs adds the "coin_base" edge to the TradingPair entity by IDs.
+func (cuo *CoinUpdateOne) AddCoinBaseIDs(ids ...int) *CoinUpdateOne {
+	cuo.mutation.AddCoinBaseIDs(ids...)
+	return cuo
+}
+
+// AddCoinBase adds the "coin_base" edges to the TradingPair entity.
+func (cuo *CoinUpdateOne) AddCoinBase(t ...*TradingPair) *CoinUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cuo.AddCoinBaseIDs(ids...)
+}
+
+// AddCoinCounterIDs adds the "coin_counter" edge to the TradingPair entity by IDs.
+func (cuo *CoinUpdateOne) AddCoinCounterIDs(ids ...int) *CoinUpdateOne {
+	cuo.mutation.AddCoinCounterIDs(ids...)
+	return cuo
+}
+
+// AddCoinCounter adds the "coin_counter" edges to the TradingPair entity.
+func (cuo *CoinUpdateOne) AddCoinCounter(t ...*TradingPair) *CoinUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cuo.AddCoinCounterIDs(ids...)
+}
+
 // Mutation returns the CoinMutation object of the builder.
 func (cuo *CoinUpdateOne) Mutation() *CoinMutation {
 	return cuo.mutation
+}
+
+// ClearCoinBase clears all "coin_base" edges to the TradingPair entity.
+func (cuo *CoinUpdateOne) ClearCoinBase() *CoinUpdateOne {
+	cuo.mutation.ClearCoinBase()
+	return cuo
+}
+
+// RemoveCoinBaseIDs removes the "coin_base" edge to TradingPair entities by IDs.
+func (cuo *CoinUpdateOne) RemoveCoinBaseIDs(ids ...int) *CoinUpdateOne {
+	cuo.mutation.RemoveCoinBaseIDs(ids...)
+	return cuo
+}
+
+// RemoveCoinBase removes "coin_base" edges to TradingPair entities.
+func (cuo *CoinUpdateOne) RemoveCoinBase(t ...*TradingPair) *CoinUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cuo.RemoveCoinBaseIDs(ids...)
+}
+
+// ClearCoinCounter clears all "coin_counter" edges to the TradingPair entity.
+func (cuo *CoinUpdateOne) ClearCoinCounter() *CoinUpdateOne {
+	cuo.mutation.ClearCoinCounter()
+	return cuo
+}
+
+// RemoveCoinCounterIDs removes the "coin_counter" edge to TradingPair entities by IDs.
+func (cuo *CoinUpdateOne) RemoveCoinCounterIDs(ids ...int) *CoinUpdateOne {
+	cuo.mutation.RemoveCoinCounterIDs(ids...)
+	return cuo
+}
+
+// RemoveCoinCounter removes "coin_counter" edges to TradingPair entities.
+func (cuo *CoinUpdateOne) RemoveCoinCounter(t ...*TradingPair) *CoinUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return cuo.RemoveCoinCounterIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -339,6 +598,120 @@ func (cuo *CoinUpdateOne) sqlSave(ctx context.Context) (_node *Coin, err error) 
 			Type:   field.TypeString,
 			Column: coin.FieldName,
 		})
+	}
+	if cuo.mutation.CoinBaseCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinBaseTable,
+			Columns: []string{coin.CoinBaseColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cuo.schemaConfig.TradingPair
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.RemovedCoinBaseIDs(); len(nodes) > 0 && !cuo.mutation.CoinBaseCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinBaseTable,
+			Columns: []string{coin.CoinBaseColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cuo.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.CoinBaseIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinBaseTable,
+			Columns: []string{coin.CoinBaseColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cuo.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if cuo.mutation.CoinCounterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinCounterTable,
+			Columns: []string{coin.CoinCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cuo.schemaConfig.TradingPair
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.RemovedCoinCounterIDs(); len(nodes) > 0 && !cuo.mutation.CoinCounterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinCounterTable,
+			Columns: []string{coin.CoinCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cuo.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.CoinCounterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   coin.CoinCounterTable,
+			Columns: []string{coin.CoinCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cuo.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = cuo.schemaConfig.Coin
 	ctx = internal.NewSchemaConfigContext(ctx, cuo.schemaConfig)

@@ -9,16 +9,16 @@ const (
 	FieldID = "id"
 	// FieldSymbol holds the string denoting the symbol field in the database.
 	FieldSymbol = "symbol"
-	// FieldBase holds the string denoting the base field in the database.
-	FieldBase = "base"
 	// FieldBasePrecision holds the string denoting the base_precision field in the database.
 	FieldBasePrecision = "base_precision"
-	// FieldCounter holds the string denoting the counter field in the database.
-	FieldCounter = "counter"
 	// FieldCounterPrecision holds the string denoting the counter_precision field in the database.
 	FieldCounterPrecision = "counter_precision"
 	// EdgeExchange holds the string denoting the exchange edge name in mutations.
 	EdgeExchange = "exchange"
+	// EdgeBase holds the string denoting the base edge name in mutations.
+	EdgeBase = "base"
+	// EdgeCounter holds the string denoting the counter edge name in mutations.
+	EdgeCounter = "counter"
 	// Table holds the table name of the tradingpair in the database.
 	Table = "trading_pairs"
 	// ExchangeTable is the table that holds the exchange relation/edge.
@@ -27,23 +27,37 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "exchange" package.
 	ExchangeInverseTable = "exchanges"
 	// ExchangeColumn is the table column denoting the exchange relation/edge.
-	ExchangeColumn = "exchange_trading_pairs"
+	ExchangeColumn = "exchange_trading_pair"
+	// BaseTable is the table that holds the base relation/edge.
+	BaseTable = "trading_pairs"
+	// BaseInverseTable is the table name for the Coin entity.
+	// It exists in this package in order to avoid circular dependency with the "coin" package.
+	BaseInverseTable = "coins"
+	// BaseColumn is the table column denoting the base relation/edge.
+	BaseColumn = "coin_coin_base"
+	// CounterTable is the table that holds the counter relation/edge.
+	CounterTable = "trading_pairs"
+	// CounterInverseTable is the table name for the Coin entity.
+	// It exists in this package in order to avoid circular dependency with the "coin" package.
+	CounterInverseTable = "coins"
+	// CounterColumn is the table column denoting the counter relation/edge.
+	CounterColumn = "coin_coin_counter"
 )
 
 // Columns holds all SQL columns for tradingpair fields.
 var Columns = []string{
 	FieldID,
 	FieldSymbol,
-	FieldBase,
 	FieldBasePrecision,
-	FieldCounter,
 	FieldCounterPrecision,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "trading_pairs"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"exchange_trading_pairs",
+	"coin_coin_base",
+	"coin_coin_counter",
+	"exchange_trading_pair",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
