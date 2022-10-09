@@ -103,6 +103,7 @@ func NewBinanceTradingPairsSubscriber(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
 		repositories.NewCoinRepository,
+		repositories.NewExchangeRepository,
 		repositories.NewTradingPairRepository,
 		subscribers.NewBinanceTradingPairsSubscriber)
 
