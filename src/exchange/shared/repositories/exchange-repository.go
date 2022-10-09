@@ -15,11 +15,11 @@ import (
 type ExchangeRepository interface {
 	CreateExchanges(
 		ctx context.Context,
-		exchanges []models.Exchange) error
+		exchanges []models.Exchange) (map[string]int, error)
 
 	CreateExchange(
 		ctx context.Context,
-		exchange models.Exchange) error
+		exchange models.Exchange) (int, error)
 }
 
 type exchangeRepository struct {
@@ -38,19 +38,23 @@ func NewExchangeRepository(
 
 func (er *exchangeRepository) CreateExchanges(
 	ctx context.Context,
-	exchanges []models.Exchange) error {
+	exchanges []models.Exchange) (map[string]int, error) {
+	createdExchanges := make(map[string]int)
+
 	for _, exchange := range exchanges {
-		if err := er.CreateExchange(ctx, exchange); err != nil {
-			return err
+		if savedExchangeId, err := er.CreateExchange(ctx, exchange); err != nil {
+			return nil, err
+		} else {
+			createdExchanges[exchange.ExchangeId] = savedExchangeId
 		}
 	}
 
-	return nil
+	return createdExchanges, nil
 }
 
 func (er *exchangeRepository) CreateExchange(
 	ctx context.Context,
-	exchange models.Exchange) error {
+	exchange models.Exchange) (int, error) {
 	exchangeId := exchange.ExchangeId
 
 	client := er.entgoClient.GetClient()
@@ -79,11 +83,7 @@ func (er *exchangeRepository) CreateExchange(
 		Exec(ctx)
 	if err != nil {
 		er.logger.Errorf("Failed to save exchange. Error: %v", err)
-		return err
-	}
-
-	if len(exchange.Tickers) == 0 {
-		return nil
+		return -1, err
 	}
 
 	savedExchange, err := client.Exchange.
@@ -93,7 +93,11 @@ func (er *exchangeRepository) CreateExchange(
 	if err != nil {
 		er.logger.Errorf("Failed to fetch exchange with exchange Id: %s. Error: %v", exchangeId, err)
 
-		return err
+		return -1, err
+	}
+
+	if len(exchange.Tickers) == 0 {
+		return savedExchange.ID, nil
 	}
 
 	tickers, err := client.Ticker.
@@ -103,7 +107,7 @@ func (er *exchangeRepository) CreateExchange(
 	if err != nil {
 		er.logger.Errorf("Failed to fetch tickers for exchange Id: %s. Error: %v", exchangeId, err)
 
-		return err
+		return -1, err
 	}
 
 	tickersToCreate := slices.Map(
@@ -151,7 +155,7 @@ func (er *exchangeRepository) CreateExchange(
 		Exec(ctx); err != nil {
 		er.logger.Errorf("Failed to save tickers for exchange Id: %s. Error: %v", exchangeId, err)
 
-		return err
+		return -1, err
 	}
 
 	tickersToDelete := slices.Filter(
@@ -178,8 +182,8 @@ func (er *exchangeRepository) CreateExchange(
 		Exec(ctx); err != nil {
 		er.logger.Errorf("Failed to delete old tickers for exchange Id: %s. Error: %v", exchangeId, err)
 
-		return err
+		return -1, err
 	}
 
-	return nil
+	return savedExchange.ID, nil
 }

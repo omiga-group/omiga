@@ -36,11 +36,12 @@ func (m *MockExchangeRepository) EXPECT() *MockExchangeRepositoryMockRecorder {
 }
 
 // CreateExchange mocks base method.
-func (m *MockExchangeRepository) CreateExchange(ctx context.Context, exchange models.Exchange) error {
+func (m *MockExchangeRepository) CreateExchange(ctx context.Context, exchange models.Exchange) (int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateExchange", ctx, exchange)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CreateExchange indicates an expected call of CreateExchange.
@@ -50,11 +51,12 @@ func (mr *MockExchangeRepositoryMockRecorder) CreateExchange(ctx, exchange inter
 }
 
 // CreateExchanges mocks base method.
-func (m *MockExchangeRepository) CreateExchanges(ctx context.Context, exchanges []models.Exchange) error {
+func (m *MockExchangeRepository) CreateExchanges(ctx context.Context, exchanges []models.Exchange) (map[string]int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateExchanges", ctx, exchanges)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(map[string]int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CreateExchanges indicates an expected call of CreateExchanges.

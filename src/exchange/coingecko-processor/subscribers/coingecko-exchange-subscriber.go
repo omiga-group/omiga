@@ -63,7 +63,7 @@ func (ces *coingeckoExchangeSubscriber) Run() {
 	})
 	exchangesWithManualFeesOnly := maps.Values(exchangesWithManualFeesOnlyMap)
 
-	if err := ces.exchangeRepository.CreateExchanges(ces.ctx, exchangesWithManualFeesOnly); err != nil {
+	if _, err := ces.exchangeRepository.CreateExchanges(ces.ctx, exchangesWithManualFeesOnly); err != nil {
 		ces.logger.Errorf("Failed to create exchanges. Error: %v", err)
 
 		return
@@ -106,7 +106,7 @@ func (ces *coingeckoExchangeSubscriber) Run() {
 		exchanges = append(exchanges, *exchangesWithResponse.JSON200...)
 	}
 
-	if err := ces.exchangeRepository.CreateExchanges(
+	if _, err := ces.exchangeRepository.CreateExchanges(
 		ces.ctx,
 		slices.Map(exchanges, func(exchange coingeckov3.Exchange) models.Exchange {
 			if extraDetails, ok := ces.exchanges[exchange.Id]; ok {
@@ -161,7 +161,7 @@ func (ces *coingeckoExchangeSubscriber) Run() {
 				nil)
 		}
 
-		if err := ces.exchangeRepository.CreateExchange(
+		if _, err := ces.exchangeRepository.CreateExchange(
 			ces.ctx,
 			mappedExchange); err != nil {
 

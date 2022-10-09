@@ -119,7 +119,11 @@ func NewBinanceTradingPairsSubscriber(ctx context.Context, logger *zap.SugaredLo
 	if err != nil {
 		return nil, err
 	}
-	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, coinRepository)
+	exchangeRepository, err := repositories.NewExchangeRepository(logger, entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, coinRepository, exchangeRepository)
 	if err != nil {
 		return nil, err
 	}
