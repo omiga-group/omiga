@@ -11,10 +11,15 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/gemini-processor/client"
 	configuration2 "github.com/omiga-group/omiga/src/exchange/gemini-processor/configuration"
 	"github.com/omiga-group/omiga/src/exchange/gemini-processor/subscribers"
+	configuration3 "github.com/omiga-group/omiga/src/exchange/shared/configuration"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
@@ -76,4 +81,24 @@ func NewGeminiOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger
 		return nil, err
 	}
 	return geminiOrderBookSubscriber, nil
+}
+
+func NewGeminiTradingPairsSubscriber(ctx context.Context, logger *zap.SugaredLogger, geminiConfig configuration2.GeminiConfig, exchangeConfig configuration3.ExchangeConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.TradingPairsSubscriber, error) {
+	database, err := postgres.NewPostgres(logger, postgresConfig)
+	if err != nil {
+		return nil, err
+	}
+	entgoClient, err := entities.NewEntgoClient(logger, database)
+	if err != nil {
+		return nil, err
+	}
+	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	tradingPairsSubscriber, err := subscribers.NewGeminiTradingPairsSubscriber(ctx, logger, geminiConfig, exchangeConfig, cronService, tradingPairRepository)
+	if err != nil {
+		return nil, err
+	}
+	return tradingPairsSubscriber, nil
 }

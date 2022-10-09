@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/omiga-group/omiga/src/exchange/gemini-processor/appsetup"
 	"github.com/omiga-group/omiga/src/exchange/gemini-processor/configuration"
+	"github.com/omiga-group/omiga/src/exchange/kraken-processor/appsetup"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/spf13/cobra"
@@ -71,8 +71,23 @@ func startCommand() *cobra.Command {
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
-
 			defer feminiOrderBookSubscriber.Close()
+
+			cronService, err := appsetup.NewCronService(sugarLogger)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+			defer cronService.Close()
+
+			if _, err = appsetup.NewGeminiTradingPairsSubscriber(
+				ctx,
+				sugarLogger,
+				config.Gemini,
+				config.Exchange,
+				cronService,
+				config.Postgres); err != nil {
+				sugarLogger.Fatal(err)
+			}
 
 			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {
