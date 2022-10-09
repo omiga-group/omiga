@@ -15,8 +15,6 @@
 //go:build wireinject
 // +build wireinject
 
-// juses fucking christ, kiram dahanet mori!
-
 // The build tag makes sure the stub is not built in the final build.
 package appsetup
 
@@ -32,16 +30,25 @@ import (
 	exchangeConfiguration "github.com/omiga-group/omiga/src/exchange/shared/configuration"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/publishers"
+	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 )
+
+func NewCronService(
+	logger *zap.SugaredLogger) (cron.CronService, error) {
+	wire.Build(
+		time.NewTimeHelper,
+		cron.NewCronService)
+
+	return nil, nil
+}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	wire.Build(
@@ -93,6 +100,8 @@ func NewGeminiTradingPairsSubscriber(
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
+		repositories.NewCoinRepository,
+		repositories.NewExchangeRepository,
 		repositories.NewTradingPairRepository,
 		subscribers.NewGeminiTradingPairsSubscriber)
 

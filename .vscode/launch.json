@@ -72,6 +72,14 @@
       "mode": "debug",
       "program": "${workspaceFolder}/src/order/order-processor/main.go",
       "args": ["start"]
-    }
+    },
+    {
+      "name": "Gemini Processor",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/exchange/gemini-processor/main.go",
+      "args": ["start"]
+    },
   ]
 }

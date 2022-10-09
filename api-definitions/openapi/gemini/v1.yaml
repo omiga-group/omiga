@@ -42,7 +42,7 @@ paths:
           description: symbol name
       responses:
         200:
-          description: List prices
+          description: tradingPair details
           content:
             application/json:
               schema:
@@ -63,11 +63,9 @@ components:
         pair:
           type: string
         price:
-          type: number
-          format: double
+          type: string
         percentChange24h:
-          type: number
-          format: double
+          type: string
 
     tradingPair:
       type: object

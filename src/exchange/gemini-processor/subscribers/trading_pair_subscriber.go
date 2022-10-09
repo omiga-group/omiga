@@ -2,11 +2,14 @@ package subscribers
 
 import (
 	"context"
-	"encoding/json"
+	"fmt"
 
 	"go.uber.org/zap"
 
+	"github.com/life4/genesis/maps"
+	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/gemini-processor/configuration"
+	"github.com/omiga-group/omiga/src/exchange/gemini-processor/mappers"
 	exchangeConfiguration "github.com/omiga-group/omiga/src/exchange/shared/configuration"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	geminiClient "github.com/omiga-group/omiga/src/shared/clients/openapi/gemini/v1"
@@ -57,7 +60,7 @@ func (tps *tradingPairsSubscriber) Run() {
 		return
 	}
 
-	priceFeedRes, err := client.GetPricefeedWithResponse(tps.ctx)
+	priceFeedRes, err := client.GetSymbolsWithResponse(tps.ctx)
 	if err != nil {
 		tps.logger.Errorf("Failed to call assetPairs endpoint. Error: %v", err)
 		return
@@ -68,14 +71,36 @@ func (tps *tradingPairsSubscriber) Run() {
 		return
 	}
 
-	if priceFeedRes.JSON200 == nil || len(*priceFeedRes.JSON200) == 0 || priceFeedRes.Body == nil {
+	if priceFeedRes.JSON200 == nil {
 		return
 	}
 
-	priceFeeds := make([]geminiClient.PriceFeed, 0)
-	err = json.Unmarshal(priceFeedRes.Body, &priceFeeds)
+	all, err := slices.ReduceWhile(*priceFeedRes.JSON200,
+		make(map[string]geminiClient.TradingPair),
+		func(el string, acc map[string]geminiClient.TradingPair) (map[string]geminiClient.TradingPair, error) {
+			details, err := client.GetSymbolsDetailsSymbolWithResponse(tps.ctx, el)
+			if err != nil {
+				return acc, err
+			}
+
+			if details.HTTPResponse.StatusCode != 200 {
+				return acc, fmt.Errorf("failed to get exchanges list. Return status code is %d", priceFeedRes.HTTPResponse.StatusCode)
+			}
+
+			acc[el] = *details.JSON200
+			return acc, err
+		})
 	if err != nil {
-		tps.logger.Errorf("Failed to call assetPairs endpoint. Error: %v", err)
+		tps.logger.Errorf("Failed to get exchanges list. Return status code is %d", priceFeedRes.HTTPResponse.StatusCode)
+		return
+	}
+
+	if err = tps.tradingPairRepository.CreateTradingPairs(
+		tps.ctx,
+		tps.exchangeConfig.Id,
+		mappers.GeminiSymbolsToTradingPairs(maps.Values(all))); err != nil {
+		tps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
+
 		return
 	}
 }

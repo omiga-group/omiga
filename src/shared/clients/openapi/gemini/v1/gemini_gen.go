@@ -18,8 +18,8 @@ import (
 // PriceFeed defines model for priceFeed.
 type PriceFeed struct {
 	Pair                 string                 `json:"pair"`
-	PercentChange24h     float64                `json:"percentChange24h"`
-	Price                float64                `json:"price"`
+	PercentChange24h     string                 `json:"percentChange24h"`
+	Price                string                 `json:"price"`
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 

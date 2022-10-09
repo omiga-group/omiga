@@ -28,6 +28,18 @@ import (
 
 // Injectors from wire.go:
 
+func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	cronService, err := cron.NewCronService(logger, timeHelper)
+	if err != nil {
+		return nil, err
+	}
+	return cronService, nil
+}
+
 func NewTimeHelper() (time.TimeHelper, error) {
 	timeHelper, err := time.NewTimeHelper()
 	if err != nil {
@@ -92,7 +104,15 @@ func NewGeminiTradingPairsSubscriber(ctx context.Context, logger *zap.SugaredLog
 	if err != nil {
 		return nil, err
 	}
-	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient)
+	coinRepository, err := repositories.NewCoinRepository(logger, entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	exchangeRepository, err := repositories.NewExchangeRepository(logger, entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, coinRepository, exchangeRepository)
 	if err != nil {
 		return nil, err
 	}
