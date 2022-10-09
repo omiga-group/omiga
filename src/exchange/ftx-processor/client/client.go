@@ -12,6 +12,10 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/ftx-processor/models"
 )
 
+type ApiClient interface {
+	GetMarkets() (models.MarketsMap, error)
+}
+
 type apiResult[T any] struct {
 	Success bool `json:"success"`
 	Result  T    `json:"result"`

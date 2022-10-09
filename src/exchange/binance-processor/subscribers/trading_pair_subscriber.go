@@ -12,10 +12,10 @@ import (
 	"go.uber.org/zap"
 )
 
-type BinanceTradingPairsSubscriber interface {
+type BinanceTradingPairSubscriber interface {
 }
 
-type binanceTradingPairsSubscriber struct {
+type binanceTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
 	binanceConfig         configuration.BinanceConfig
@@ -29,9 +29,9 @@ func NewBinanceTradingPairsSubscriber(
 	binanceConfig configuration.BinanceConfig,
 	exchangeConfig exchangeConfiguration.ExchangeConfig,
 	cronService cron.CronService,
-	tradingPairRepository repositories.TradingPairRepository) (BinanceTradingPairsSubscriber, error) {
+	tradingPairRepository repositories.TradingPairRepository) (BinanceTradingPairSubscriber, error) {
 
-	instance := &binanceTradingPairsSubscriber{
+	instance := &binanceTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
 		binanceConfig:         binanceConfig,
@@ -49,7 +49,7 @@ func NewBinanceTradingPairsSubscriber(
 	return instance, nil
 }
 
-func (btps *binanceTradingPairsSubscriber) Run() {
+func (btps *binanceTradingPairSubscriber) Run() {
 	exchangeInfo, err := binance.
 		NewClient(btps.binanceConfig.ApiKey, btps.binanceConfig.SecretKey).
 		NewExchangeInfoService().

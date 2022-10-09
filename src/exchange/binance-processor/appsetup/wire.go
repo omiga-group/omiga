@@ -98,7 +98,7 @@ func NewBinanceTradingPairsSubscriber(
 	binanceConfig configuration.BinanceConfig,
 	exchangeConfig exchangeConfiguration.ExchangeConfig,
 	cronService cron.CronService,
-	postgresConfig postgres.PostgresConfig) (subscribers.BinanceTradingPairsSubscriber, error) {
+	postgresConfig postgres.PostgresConfig) (subscribers.BinanceTradingPairSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,

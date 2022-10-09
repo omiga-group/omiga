@@ -1,3 +1,3 @@
 package repositories
 
-//go:generate mockgen -source=order-repository.go -destination=mock/order-repository_gen.go
+//go:generate mockgen -source=order_repository.go -destination=mock/order_repository_gen.go
