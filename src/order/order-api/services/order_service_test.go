@@ -14,11 +14,11 @@ import (
 	"go.uber.org/zap"
 
 	mock_publishers "github.com/omiga-group/omiga/src/order/order-api/publishers/mock"
-	mock_orderrepositories "github.com/omiga-group/omiga/src/order/order-api/repositories/mock"
 	"github.com/omiga-group/omiga/src/order/order-api/services"
 	"github.com/omiga-group/omiga/src/order/shared/entities"
-	mock_repositories "github.com/omiga-group/omiga/src/order/shared/entities/mock"
+	mock_entities "github.com/omiga-group/omiga/src/order/shared/entities/mock"
 	"github.com/omiga-group/omiga/src/order/shared/models"
+	mock_repositories "github.com/omiga-group/omiga/src/order/shared/repositories/mock"
 )
 
 func TestOrderServiceSubmit(t *testing.T) {
@@ -31,8 +31,8 @@ func TestOrderServiceSubmit(t *testing.T) {
 var _ = Describe("Order Service Submit Tests", func() {
 	var (
 		mockCtrl            *gomock.Controller
-		fakeEntgoClient     *mock_repositories.MockEntgoClient
-		fakeOrderRepository *mock_orderrepositories.MockOrderRepository
+		fakeEntgoClient     *mock_entities.MockEntgoClient
+		fakeOrderRepository *mock_repositories.MockOrderRepository
 		fakeOrderPublisher  *mock_publishers.MockOrderPublisher
 		sut                 services.OrderService
 		ctx                 context.Context
@@ -49,8 +49,8 @@ var _ = Describe("Order Service Submit Tests", func() {
 
 		sugarLogger := logger.Sugar()
 
-		fakeEntgoClient = mock_repositories.NewMockEntgoClient(mockCtrl)
-		fakeOrderRepository = mock_orderrepositories.NewMockOrderRepository(mockCtrl)
+		fakeEntgoClient = mock_entities.NewMockEntgoClient(mockCtrl)
+		fakeOrderRepository = mock_repositories.NewMockOrderRepository(mockCtrl)
 		fakeOrderPublisher = mock_publishers.NewMockOrderPublisher(mockCtrl)
 
 		sut, err = services.NewOrderService(
