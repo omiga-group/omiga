@@ -44,9 +44,23 @@ func (tpu *TradingPairUpdate) SetBasePrecision(i int) *TradingPairUpdate {
 	return tpu
 }
 
+// SetNillableBasePrecision sets the "base_precision" field if the given value is not nil.
+func (tpu *TradingPairUpdate) SetNillableBasePrecision(i *int) *TradingPairUpdate {
+	if i != nil {
+		tpu.SetBasePrecision(*i)
+	}
+	return tpu
+}
+
 // AddBasePrecision adds i to the "base_precision" field.
 func (tpu *TradingPairUpdate) AddBasePrecision(i int) *TradingPairUpdate {
 	tpu.mutation.AddBasePrecision(i)
+	return tpu
+}
+
+// ClearBasePrecision clears the value of the "base_precision" field.
+func (tpu *TradingPairUpdate) ClearBasePrecision() *TradingPairUpdate {
+	tpu.mutation.ClearBasePrecision()
 	return tpu
 }
 
@@ -57,9 +71,23 @@ func (tpu *TradingPairUpdate) SetCounterPrecision(i int) *TradingPairUpdate {
 	return tpu
 }
 
+// SetNillableCounterPrecision sets the "counter_precision" field if the given value is not nil.
+func (tpu *TradingPairUpdate) SetNillableCounterPrecision(i *int) *TradingPairUpdate {
+	if i != nil {
+		tpu.SetCounterPrecision(*i)
+	}
+	return tpu
+}
+
 // AddCounterPrecision adds i to the "counter_precision" field.
 func (tpu *TradingPairUpdate) AddCounterPrecision(i int) *TradingPairUpdate {
 	tpu.mutation.AddCounterPrecision(i)
+	return tpu
+}
+
+// ClearCounterPrecision clears the value of the "counter_precision" field.
+func (tpu *TradingPairUpdate) ClearCounterPrecision() *TradingPairUpdate {
+	tpu.mutation.ClearCounterPrecision()
 	return tpu
 }
 
@@ -238,6 +266,12 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: tradingpair.FieldBasePrecision,
 		})
 	}
+	if tpu.mutation.BasePrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldBasePrecision,
+		})
+	}
 	if value, ok := tpu.mutation.CounterPrecision(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
@@ -249,6 +283,12 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
+			Column: tradingpair.FieldCounterPrecision,
+		})
+	}
+	if tpu.mutation.CounterPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
 			Column: tradingpair.FieldCounterPrecision,
 		})
 	}
@@ -399,9 +439,23 @@ func (tpuo *TradingPairUpdateOne) SetBasePrecision(i int) *TradingPairUpdateOne 
 	return tpuo
 }
 
+// SetNillableBasePrecision sets the "base_precision" field if the given value is not nil.
+func (tpuo *TradingPairUpdateOne) SetNillableBasePrecision(i *int) *TradingPairUpdateOne {
+	if i != nil {
+		tpuo.SetBasePrecision(*i)
+	}
+	return tpuo
+}
+
 // AddBasePrecision adds i to the "base_precision" field.
 func (tpuo *TradingPairUpdateOne) AddBasePrecision(i int) *TradingPairUpdateOne {
 	tpuo.mutation.AddBasePrecision(i)
+	return tpuo
+}
+
+// ClearBasePrecision clears the value of the "base_precision" field.
+func (tpuo *TradingPairUpdateOne) ClearBasePrecision() *TradingPairUpdateOne {
+	tpuo.mutation.ClearBasePrecision()
 	return tpuo
 }
 
@@ -412,9 +466,23 @@ func (tpuo *TradingPairUpdateOne) SetCounterPrecision(i int) *TradingPairUpdateO
 	return tpuo
 }
 
+// SetNillableCounterPrecision sets the "counter_precision" field if the given value is not nil.
+func (tpuo *TradingPairUpdateOne) SetNillableCounterPrecision(i *int) *TradingPairUpdateOne {
+	if i != nil {
+		tpuo.SetCounterPrecision(*i)
+	}
+	return tpuo
+}
+
 // AddCounterPrecision adds i to the "counter_precision" field.
 func (tpuo *TradingPairUpdateOne) AddCounterPrecision(i int) *TradingPairUpdateOne {
 	tpuo.mutation.AddCounterPrecision(i)
+	return tpuo
+}
+
+// ClearCounterPrecision clears the value of the "counter_precision" field.
+func (tpuo *TradingPairUpdateOne) ClearCounterPrecision() *TradingPairUpdateOne {
+	tpuo.mutation.ClearCounterPrecision()
 	return tpuo
 }
 
@@ -623,6 +691,12 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 			Column: tradingpair.FieldBasePrecision,
 		})
 	}
+	if tpuo.mutation.BasePrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldBasePrecision,
+		})
+	}
 	if value, ok := tpuo.mutation.CounterPrecision(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
@@ -634,6 +708,12 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
+			Column: tradingpair.FieldCounterPrecision,
+		})
+	}
+	if tpuo.mutation.CounterPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
 			Column: tradingpair.FieldCounterPrecision,
 		})
 	}

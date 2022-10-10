@@ -12,9 +12,9 @@ func KrakenAssetPairsToTradingPairs(assetPairs map[string]rest.AssetPair) []mode
 		return models.TradingPair{
 			Symbol:           assetPair.Altname,
 			Base:             assetPair.Base,
-			BasePrecision:    assetPair.PairDecimals,
+			BasePrecision:    &assetPair.PairDecimals,
 			Counter:          assetPair.Quote,
-			CounterPrecision: assetPair.PairDecimals,
+			CounterPrecision: &assetPair.PairDecimals,
 		}
 	})
 }

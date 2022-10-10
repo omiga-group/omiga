@@ -17,8 +17,8 @@ type TradingPair struct {
 func (TradingPair) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("symbol").Annotations(entgql.OrderField("symbol")),
-		field.Int("base_precision").Annotations(entgql.OrderField("basePrecision")),
-		field.Int("counter_precision").Annotations(entgql.OrderField("counterPrecision")),
+		field.Int("base_precision").Optional().Annotations(entgql.OrderField("basePrecision")),
+		field.Int("counter_precision").Optional().Annotations(entgql.OrderField("counterPrecision")),
 	}
 }
 

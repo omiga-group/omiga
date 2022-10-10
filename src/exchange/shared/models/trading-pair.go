@@ -3,7 +3,7 @@ package models
 type TradingPair struct {
 	Symbol           string
 	Base             string
-	BasePrecision    int
+	BasePrecision    *int
 	Counter          string
-	CounterPrecision int
+	CounterPrecision *int
 }

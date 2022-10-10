@@ -35,9 +35,25 @@ func (tpc *TradingPairCreate) SetBasePrecision(i int) *TradingPairCreate {
 	return tpc
 }
 
+// SetNillableBasePrecision sets the "base_precision" field if the given value is not nil.
+func (tpc *TradingPairCreate) SetNillableBasePrecision(i *int) *TradingPairCreate {
+	if i != nil {
+		tpc.SetBasePrecision(*i)
+	}
+	return tpc
+}
+
 // SetCounterPrecision sets the "counter_precision" field.
 func (tpc *TradingPairCreate) SetCounterPrecision(i int) *TradingPairCreate {
 	tpc.mutation.SetCounterPrecision(i)
+	return tpc
+}
+
+// SetNillableCounterPrecision sets the "counter_precision" field if the given value is not nil.
+func (tpc *TradingPairCreate) SetNillableCounterPrecision(i *int) *TradingPairCreate {
+	if i != nil {
+		tpc.SetCounterPrecision(*i)
+	}
 	return tpc
 }
 
@@ -152,12 +168,6 @@ func (tpc *TradingPairCreate) ExecX(ctx context.Context) {
 func (tpc *TradingPairCreate) check() error {
 	if _, ok := tpc.mutation.Symbol(); !ok {
 		return &ValidationError{Name: "symbol", err: errors.New(`entities: missing required field "TradingPair.symbol"`)}
-	}
-	if _, ok := tpc.mutation.BasePrecision(); !ok {
-		return &ValidationError{Name: "base_precision", err: errors.New(`entities: missing required field "TradingPair.base_precision"`)}
-	}
-	if _, ok := tpc.mutation.CounterPrecision(); !ok {
-		return &ValidationError{Name: "counter_precision", err: errors.New(`entities: missing required field "TradingPair.counter_precision"`)}
 	}
 	if _, ok := tpc.mutation.ExchangeID(); !ok {
 		return &ValidationError{Name: "exchange", err: errors.New(`entities: missing required edge "TradingPair.exchange"`)}
@@ -366,6 +376,12 @@ func (u *TradingPairUpsert) AddBasePrecision(v int) *TradingPairUpsert {
 	return u
 }
 
+// ClearBasePrecision clears the value of the "base_precision" field.
+func (u *TradingPairUpsert) ClearBasePrecision() *TradingPairUpsert {
+	u.SetNull(tradingpair.FieldBasePrecision)
+	return u
+}
+
 // SetCounterPrecision sets the "counter_precision" field.
 func (u *TradingPairUpsert) SetCounterPrecision(v int) *TradingPairUpsert {
 	u.Set(tradingpair.FieldCounterPrecision, v)
@@ -381,6 +397,12 @@ func (u *TradingPairUpsert) UpdateCounterPrecision() *TradingPairUpsert {
 // AddCounterPrecision adds v to the "counter_precision" field.
 func (u *TradingPairUpsert) AddCounterPrecision(v int) *TradingPairUpsert {
 	u.Add(tradingpair.FieldCounterPrecision, v)
+	return u
+}
+
+// ClearCounterPrecision clears the value of the "counter_precision" field.
+func (u *TradingPairUpsert) ClearCounterPrecision() *TradingPairUpsert {
+	u.SetNull(tradingpair.FieldCounterPrecision)
 	return u
 }
 
@@ -459,6 +481,13 @@ func (u *TradingPairUpsertOne) UpdateBasePrecision() *TradingPairUpsertOne {
 	})
 }
 
+// ClearBasePrecision clears the value of the "base_precision" field.
+func (u *TradingPairUpsertOne) ClearBasePrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearBasePrecision()
+	})
+}
+
 // SetCounterPrecision sets the "counter_precision" field.
 func (u *TradingPairUpsertOne) SetCounterPrecision(v int) *TradingPairUpsertOne {
 	return u.Update(func(s *TradingPairUpsert) {
@@ -477,6 +506,13 @@ func (u *TradingPairUpsertOne) AddCounterPrecision(v int) *TradingPairUpsertOne 
 func (u *TradingPairUpsertOne) UpdateCounterPrecision() *TradingPairUpsertOne {
 	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateCounterPrecision()
+	})
+}
+
+// ClearCounterPrecision clears the value of the "counter_precision" field.
+func (u *TradingPairUpsertOne) ClearCounterPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearCounterPrecision()
 	})
 }
 
@@ -714,6 +750,13 @@ func (u *TradingPairUpsertBulk) UpdateBasePrecision() *TradingPairUpsertBulk {
 	})
 }
 
+// ClearBasePrecision clears the value of the "base_precision" field.
+func (u *TradingPairUpsertBulk) ClearBasePrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearBasePrecision()
+	})
+}
+
 // SetCounterPrecision sets the "counter_precision" field.
 func (u *TradingPairUpsertBulk) SetCounterPrecision(v int) *TradingPairUpsertBulk {
 	return u.Update(func(s *TradingPairUpsert) {
@@ -732,6 +775,13 @@ func (u *TradingPairUpsertBulk) AddCounterPrecision(v int) *TradingPairUpsertBul
 func (u *TradingPairUpsertBulk) UpdateCounterPrecision() *TradingPairUpsertBulk {
 	return u.Update(func(s *TradingPairUpsert) {
 		s.UpdateCounterPrecision()
+	})
+}
+
+// ClearCounterPrecision clears the value of the "counter_precision" field.
+func (u *TradingPairUpsertBulk) ClearCounterPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearCounterPrecision()
 	})
 }
 

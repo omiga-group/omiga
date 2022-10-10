@@ -264,6 +264,20 @@ func BasePrecisionLTE(v int) predicate.TradingPair {
 	})
 }
 
+// BasePrecisionIsNil applies the IsNil predicate on the "base_precision" field.
+func BasePrecisionIsNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldBasePrecision)))
+	})
+}
+
+// BasePrecisionNotNil applies the NotNil predicate on the "base_precision" field.
+func BasePrecisionNotNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldBasePrecision)))
+	})
+}
+
 // CounterPrecisionEQ applies the EQ predicate on the "counter_precision" field.
 func CounterPrecisionEQ(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
@@ -325,6 +339,20 @@ func CounterPrecisionLT(v int) predicate.TradingPair {
 func CounterPrecisionLTE(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldCounterPrecision), v))
+	})
+}
+
+// CounterPrecisionIsNil applies the IsNil predicate on the "counter_precision" field.
+func CounterPrecisionIsNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCounterPrecision)))
+	})
+}
+
+// CounterPrecisionNotNil applies the NotNil predicate on the "counter_precision" field.
+func CounterPrecisionNotNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCounterPrecision)))
 	})
 }
 

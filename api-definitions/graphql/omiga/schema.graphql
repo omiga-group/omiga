@@ -892,6 +892,8 @@ input TradingPairWhereInput {
   basePrecisionGTE: Int
   basePrecisionLT: Int
   basePrecisionLTE: Int
+  basePrecisionIsNil: Boolean
+  basePrecisionNotNil: Boolean
   "counter_precision field predicates"
   counterPrecision: Int
   counterPrecisionNEQ: Int
@@ -901,6 +903,8 @@ input TradingPairWhereInput {
   counterPrecisionGTE: Int
   counterPrecisionLT: Int
   counterPrecisionLTE: Int
+  counterPrecisionIsNil: Boolean
+  counterPrecisionNotNil: Boolean
   "exchange edge predicates"
   hasExchange: Boolean
   hasExchangeWith: [ExchangeWhereInput!]
