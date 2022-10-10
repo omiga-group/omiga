@@ -1771,6 +1771,8 @@ input TradingPairWhereInput {
   basePrecisionGTE: Int
   basePrecisionLT: Int
   basePrecisionLTE: Int
+  basePrecisionIsNil: Boolean
+  basePrecisionNotNil: Boolean
   """counter_precision field predicates"""
   counterPrecision: Int
   counterPrecisionNEQ: Int
@@ -1780,6 +1782,8 @@ input TradingPairWhereInput {
   counterPrecisionGTE: Int
   counterPrecisionLT: Int
   counterPrecisionLTE: Int
+  counterPrecisionIsNil: Boolean
+  counterPrecisionNotNil: Boolean
   """exchange edge predicates"""
   hasExchange: Boolean
   hasExchangeWith: [ExchangeWhereInput!]
@@ -11654,7 +11658,7 @@ func (ec *executionContext) unmarshalInputTradingPairWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "symbol", "symbolNEQ", "symbolIn", "symbolNotIn", "symbolGT", "symbolGTE", "symbolLT", "symbolLTE", "symbolContains", "symbolHasPrefix", "symbolHasSuffix", "symbolEqualFold", "symbolContainsFold", "basePrecision", "basePrecisionNEQ", "basePrecisionIn", "basePrecisionNotIn", "basePrecisionGT", "basePrecisionGTE", "basePrecisionLT", "basePrecisionLTE", "counterPrecision", "counterPrecisionNEQ", "counterPrecisionIn", "counterPrecisionNotIn", "counterPrecisionGT", "counterPrecisionGTE", "counterPrecisionLT", "counterPrecisionLTE", "hasExchange", "hasExchangeWith", "hasBase", "hasBaseWith", "hasCounter", "hasCounterWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "symbol", "symbolNEQ", "symbolIn", "symbolNotIn", "symbolGT", "symbolGTE", "symbolLT", "symbolLTE", "symbolContains", "symbolHasPrefix", "symbolHasSuffix", "symbolEqualFold", "symbolContainsFold", "basePrecision", "basePrecisionNEQ", "basePrecisionIn", "basePrecisionNotIn", "basePrecisionGT", "basePrecisionGTE", "basePrecisionLT", "basePrecisionLTE", "basePrecisionIsNil", "basePrecisionNotNil", "counterPrecision", "counterPrecisionNEQ", "counterPrecisionIn", "counterPrecisionNotIn", "counterPrecisionGT", "counterPrecisionGTE", "counterPrecisionLT", "counterPrecisionLTE", "counterPrecisionIsNil", "counterPrecisionNotNil", "hasExchange", "hasExchangeWith", "hasBase", "hasBaseWith", "hasCounter", "hasCounterWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -11917,6 +11921,22 @@ func (ec *executionContext) unmarshalInputTradingPairWhereInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
+		case "basePrecisionIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePrecisionIsNil"))
+			it.BasePrecisionIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "basePrecisionNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePrecisionNotNil"))
+			it.BasePrecisionNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "counterPrecision":
 			var err error
 
@@ -11978,6 +11998,22 @@ func (ec *executionContext) unmarshalInputTradingPairWhereInput(ctx context.Cont
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecisionLTE"))
 			it.CounterPrecisionLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPrecisionIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecisionIsNil"))
+			it.CounterPrecisionIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPrecisionNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecisionNotNil"))
+			it.CounterPrecisionNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}

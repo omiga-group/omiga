@@ -11,9 +11,9 @@ func BinanceSymbolsToTradingPairs(symbols []binance.Symbol) []models.TradingPair
 		return models.TradingPair{
 			Symbol:           symbol.Symbol,
 			Base:             symbol.BaseAsset,
-			BasePrecision:    symbol.BaseAssetPrecision,
+			BasePrecision:    &symbol.BaseAssetPrecision,
 			Counter:          symbol.QuoteAsset,
-			CounterPrecision: symbol.QuoteAssetPrecision,
+			CounterPrecision: &symbol.QuoteAssetPrecision,
 		}
 	})
 }

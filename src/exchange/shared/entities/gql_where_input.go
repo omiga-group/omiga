@@ -2442,24 +2442,28 @@ type TradingPairWhereInput struct {
 	SymbolContainsFold *string  `json:"symbolContainsFold,omitempty"`
 
 	// "base_precision" field predicates.
-	BasePrecision      *int  `json:"basePrecision,omitempty"`
-	BasePrecisionNEQ   *int  `json:"basePrecisionNEQ,omitempty"`
-	BasePrecisionIn    []int `json:"basePrecisionIn,omitempty"`
-	BasePrecisionNotIn []int `json:"basePrecisionNotIn,omitempty"`
-	BasePrecisionGT    *int  `json:"basePrecisionGT,omitempty"`
-	BasePrecisionGTE   *int  `json:"basePrecisionGTE,omitempty"`
-	BasePrecisionLT    *int  `json:"basePrecisionLT,omitempty"`
-	BasePrecisionLTE   *int  `json:"basePrecisionLTE,omitempty"`
+	BasePrecision       *int  `json:"basePrecision,omitempty"`
+	BasePrecisionNEQ    *int  `json:"basePrecisionNEQ,omitempty"`
+	BasePrecisionIn     []int `json:"basePrecisionIn,omitempty"`
+	BasePrecisionNotIn  []int `json:"basePrecisionNotIn,omitempty"`
+	BasePrecisionGT     *int  `json:"basePrecisionGT,omitempty"`
+	BasePrecisionGTE    *int  `json:"basePrecisionGTE,omitempty"`
+	BasePrecisionLT     *int  `json:"basePrecisionLT,omitempty"`
+	BasePrecisionLTE    *int  `json:"basePrecisionLTE,omitempty"`
+	BasePrecisionIsNil  bool  `json:"basePrecisionIsNil,omitempty"`
+	BasePrecisionNotNil bool  `json:"basePrecisionNotNil,omitempty"`
 
 	// "counter_precision" field predicates.
-	CounterPrecision      *int  `json:"counterPrecision,omitempty"`
-	CounterPrecisionNEQ   *int  `json:"counterPrecisionNEQ,omitempty"`
-	CounterPrecisionIn    []int `json:"counterPrecisionIn,omitempty"`
-	CounterPrecisionNotIn []int `json:"counterPrecisionNotIn,omitempty"`
-	CounterPrecisionGT    *int  `json:"counterPrecisionGT,omitempty"`
-	CounterPrecisionGTE   *int  `json:"counterPrecisionGTE,omitempty"`
-	CounterPrecisionLT    *int  `json:"counterPrecisionLT,omitempty"`
-	CounterPrecisionLTE   *int  `json:"counterPrecisionLTE,omitempty"`
+	CounterPrecision       *int  `json:"counterPrecision,omitempty"`
+	CounterPrecisionNEQ    *int  `json:"counterPrecisionNEQ,omitempty"`
+	CounterPrecisionIn     []int `json:"counterPrecisionIn,omitempty"`
+	CounterPrecisionNotIn  []int `json:"counterPrecisionNotIn,omitempty"`
+	CounterPrecisionGT     *int  `json:"counterPrecisionGT,omitempty"`
+	CounterPrecisionGTE    *int  `json:"counterPrecisionGTE,omitempty"`
+	CounterPrecisionLT     *int  `json:"counterPrecisionLT,omitempty"`
+	CounterPrecisionLTE    *int  `json:"counterPrecisionLTE,omitempty"`
+	CounterPrecisionIsNil  bool  `json:"counterPrecisionIsNil,omitempty"`
+	CounterPrecisionNotNil bool  `json:"counterPrecisionNotNil,omitempty"`
 
 	// "exchange" edge predicates.
 	HasExchange     *bool                 `json:"hasExchange,omitempty"`
@@ -2632,6 +2636,12 @@ func (i *TradingPairWhereInput) P() (predicate.TradingPair, error) {
 	if i.BasePrecisionLTE != nil {
 		predicates = append(predicates, tradingpair.BasePrecisionLTE(*i.BasePrecisionLTE))
 	}
+	if i.BasePrecisionIsNil {
+		predicates = append(predicates, tradingpair.BasePrecisionIsNil())
+	}
+	if i.BasePrecisionNotNil {
+		predicates = append(predicates, tradingpair.BasePrecisionNotNil())
+	}
 	if i.CounterPrecision != nil {
 		predicates = append(predicates, tradingpair.CounterPrecisionEQ(*i.CounterPrecision))
 	}
@@ -2655,6 +2665,12 @@ func (i *TradingPairWhereInput) P() (predicate.TradingPair, error) {
 	}
 	if i.CounterPrecisionLTE != nil {
 		predicates = append(predicates, tradingpair.CounterPrecisionLTE(*i.CounterPrecisionLTE))
+	}
+	if i.CounterPrecisionIsNil {
+		predicates = append(predicates, tradingpair.CounterPrecisionIsNil())
+	}
+	if i.CounterPrecisionNotNil {
+		predicates = append(predicates, tradingpair.CounterPrecisionNotNil())
 	}
 
 	if i.HasExchange != nil {

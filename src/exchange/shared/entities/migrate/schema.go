@@ -296,8 +296,8 @@ var (
 	TradingPairsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "symbol", Type: field.TypeString},
-		{Name: "base_precision", Type: field.TypeInt},
-		{Name: "counter_precision", Type: field.TypeInt},
+		{Name: "base_precision", Type: field.TypeInt, Nullable: true},
+		{Name: "counter_precision", Type: field.TypeInt, Nullable: true},
 		{Name: "coin_coin_base", Type: field.TypeInt},
 		{Name: "coin_coin_counter", Type: field.TypeInt},
 		{Name: "exchange_trading_pair", Type: field.TypeInt},

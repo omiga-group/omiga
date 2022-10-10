@@ -5306,10 +5306,24 @@ func (m *TradingPairMutation) AddedBasePrecision() (r int, exists bool) {
 	return *v, true
 }
 
+// ClearBasePrecision clears the value of the "base_precision" field.
+func (m *TradingPairMutation) ClearBasePrecision() {
+	m.base_precision = nil
+	m.addbase_precision = nil
+	m.clearedFields[tradingpair.FieldBasePrecision] = struct{}{}
+}
+
+// BasePrecisionCleared returns if the "base_precision" field was cleared in this mutation.
+func (m *TradingPairMutation) BasePrecisionCleared() bool {
+	_, ok := m.clearedFields[tradingpair.FieldBasePrecision]
+	return ok
+}
+
 // ResetBasePrecision resets all changes to the "base_precision" field.
 func (m *TradingPairMutation) ResetBasePrecision() {
 	m.base_precision = nil
 	m.addbase_precision = nil
+	delete(m.clearedFields, tradingpair.FieldBasePrecision)
 }
 
 // SetCounterPrecision sets the "counter_precision" field.
@@ -5362,10 +5376,24 @@ func (m *TradingPairMutation) AddedCounterPrecision() (r int, exists bool) {
 	return *v, true
 }
 
+// ClearCounterPrecision clears the value of the "counter_precision" field.
+func (m *TradingPairMutation) ClearCounterPrecision() {
+	m.counter_precision = nil
+	m.addcounter_precision = nil
+	m.clearedFields[tradingpair.FieldCounterPrecision] = struct{}{}
+}
+
+// CounterPrecisionCleared returns if the "counter_precision" field was cleared in this mutation.
+func (m *TradingPairMutation) CounterPrecisionCleared() bool {
+	_, ok := m.clearedFields[tradingpair.FieldCounterPrecision]
+	return ok
+}
+
 // ResetCounterPrecision resets all changes to the "counter_precision" field.
 func (m *TradingPairMutation) ResetCounterPrecision() {
 	m.counter_precision = nil
 	m.addcounter_precision = nil
+	delete(m.clearedFields, tradingpair.FieldCounterPrecision)
 }
 
 // SetExchangeID sets the "exchange" edge to the Exchange entity by id.
@@ -5629,7 +5657,14 @@ func (m *TradingPairMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *TradingPairMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(tradingpair.FieldBasePrecision) {
+		fields = append(fields, tradingpair.FieldBasePrecision)
+	}
+	if m.FieldCleared(tradingpair.FieldCounterPrecision) {
+		fields = append(fields, tradingpair.FieldCounterPrecision)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -5642,6 +5677,14 @@ func (m *TradingPairMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *TradingPairMutation) ClearField(name string) error {
+	switch name {
+	case tradingpair.FieldBasePrecision:
+		m.ClearBasePrecision()
+		return nil
+	case tradingpair.FieldCounterPrecision:
+		m.ClearCounterPrecision()
+		return nil
+	}
 	return fmt.Errorf("unknown TradingPair nullable field %s", name)
 }
 
