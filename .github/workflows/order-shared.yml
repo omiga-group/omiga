@@ -68,12 +68,3 @@ jobs:
           flags: unittests,order-shared
           fail_ci_if_error: true
           verbose: true
-
-  success:
-    name: "Success - Order Shared"
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - name: Success
-        run: |
-          echo "Completed"

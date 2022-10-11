@@ -67,12 +67,3 @@ jobs:
           flags: unittests,omigactl
           fail_ci_if_error: true
           verbose: true
-
-  success:
-    name: "Success - omigactl"
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - name: Success
-        run: |
-          echo "Completed"
