@@ -100,12 +100,3 @@ jobs:
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
           timeout: "10m0s"
-
-  success:
-    name: "Success - Exchange Database Migration"
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - name: Success
-        run: |
-          echo "Completed"
