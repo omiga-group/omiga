@@ -81,7 +81,7 @@ func startCommand() *cobra.Command {
 
 			defer cronService.Close()
 
-			if _, err = appsetup.NewKrakenTradingPairsSubscriber(
+			if _, err = appsetup.NewKrakenTradingPairSubscriber(
 				ctx,
 				sugarLogger,
 				config.Kraken,

@@ -106,7 +106,7 @@ func NewKrakenOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	return krakenOrderBookSubscriber, nil
 }
 
-func NewKrakenTradingPairsSubscriber(ctx context.Context, logger *zap.SugaredLogger, krakenConfig configuration2.KrakenConfig, exchangeConfig configuration3.ExchangeConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairsSubscriber, error) {
+func NewKrakenTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, krakenConfig configuration2.KrakenConfig, exchangeConfig configuration3.ExchangeConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -127,9 +127,9 @@ func NewKrakenTradingPairsSubscriber(ctx context.Context, logger *zap.SugaredLog
 	if err != nil {
 		return nil, err
 	}
-	krakenTradingPairsSubscriber, err := subscribers.NewKrakenTradingPairsSubscriber(ctx, logger, krakenConfig, exchangeConfig, cronService, tradingPairRepository)
+	krakenTradingPairSubscriber, err := subscribers.NewKrakenTradingPairSubscriber(ctx, logger, krakenConfig, exchangeConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}
-	return krakenTradingPairsSubscriber, nil
+	return krakenTradingPairSubscriber, nil
 }

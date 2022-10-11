@@ -16,5 +16,8 @@ postgres:
   maxOpenConns: 5
 
 coinbase:
+  useSandbox: false
+  baseUrl: "https://api.pro.coinbase.com"
   apiKey: ""
+  passphrase: ""
   secretKey: ""

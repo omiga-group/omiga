@@ -12,10 +12,10 @@ import (
 	"go.uber.org/zap"
 )
 
-type KrakenTradingPairsSubscriber interface {
+type KrakenTradingPairSubscriber interface {
 }
 
-type krakenTradingPairsSubscriber struct {
+type krakenTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
 	krakenConfig          configuration.KrakenConfig
@@ -23,15 +23,15 @@ type krakenTradingPairsSubscriber struct {
 	tradingPairRepository repositories.TradingPairRepository
 }
 
-func NewKrakenTradingPairsSubscriber(
+func NewKrakenTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	krakenConfig configuration.KrakenConfig,
 	exchangeConfig exchangeConfiguration.ExchangeConfig,
 	cronService cron.CronService,
-	tradingPairRepository repositories.TradingPairRepository) (KrakenTradingPairsSubscriber, error) {
+	tradingPairRepository repositories.TradingPairRepository) (KrakenTradingPairSubscriber, error) {
 
-	instance := &krakenTradingPairsSubscriber{
+	instance := &krakenTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
 		krakenConfig:          krakenConfig,
@@ -49,7 +49,7 @@ func NewKrakenTradingPairsSubscriber(
 	return instance, nil
 }
 
-func (ktps *krakenTradingPairsSubscriber) Run() {
+func (ktps *krakenTradingPairSubscriber) Run() {
 	assetPairs, err := rest.
 		New(ktps.krakenConfig.ApiKey, ktps.krakenConfig.SecretKey).
 		AssetPairs()

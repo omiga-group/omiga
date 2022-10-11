@@ -65,7 +65,7 @@ func NewSyntheticOrderConsumer(
 	return nil, nil
 }
 
-func NewCoinbaseTradingPairsSubscriber(
+func NewCoinbaseTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	coinbaseConfig configuration.CoinbaseConfig,
@@ -78,7 +78,7 @@ func NewCoinbaseTradingPairsSubscriber(
 		repositories.NewCoinRepository,
 		repositories.NewExchangeRepository,
 		repositories.NewTradingPairRepository,
-		subscribers.NewCoinbaseTradingPairsSubscriber)
+		subscribers.NewCoinbaseTradingPairSubscriber)
 
 	return nil, nil
 }

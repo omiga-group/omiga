@@ -34,6 +34,8 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
+			binance.UseTestnet = config.Binance.UseTestnet
+
 			ctx, cancelFunc := context.WithCancel(context.Background())
 
 			sigc := make(chan os.Signal, 1)
@@ -61,8 +63,6 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			binance.UseTestnet = config.Binance.UseTestnet
-
 			for _, pairConfig := range config.Binance.OrderBook.Pairs {
 				binanceOrderBookSubscriber, err := appsetup.NewBinanceOrderBookSubscriber(
 					ctx,
@@ -87,7 +87,7 @@ func startCommand() *cobra.Command {
 
 			defer cronService.Close()
 
-			if _, err = appsetup.NewBinanceTradingPairsSubscriber(
+			if _, err = appsetup.NewBinanceTradingPairSubscriber(
 				ctx,
 				sugarLogger,
 				config.Binance,

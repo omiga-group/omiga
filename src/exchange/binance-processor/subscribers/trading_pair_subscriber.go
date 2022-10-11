@@ -23,7 +23,7 @@ type binanceTradingPairSubscriber struct {
 	tradingPairRepository repositories.TradingPairRepository
 }
 
-func NewBinanceTradingPairsSubscriber(
+func NewBinanceTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	binanceConfig configuration.BinanceConfig,
