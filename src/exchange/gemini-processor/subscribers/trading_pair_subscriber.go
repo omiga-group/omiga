@@ -98,7 +98,7 @@ func (tps *tradingPairSubscriber) Run() {
 	if err = tps.tradingPairRepository.CreateTradingPairs(
 		tps.ctx,
 		tps.exchangeConfig.Id,
-		mappers.GeminiSymbolsToTradingPairs(maps.Values(all))); err != nil {
+		mappers.GeminiTradingPairsToTradingPairs(maps.Values(all))); err != nil {
 		tps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
