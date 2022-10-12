@@ -16,6 +16,7 @@ type Config struct {
 }
 
 type KuCoinConfig struct {
-	ApiKey    string `yaml:"apiKey" env:"OMIGA_KUCOIN_APIKEY"`
-	SecretKey string `yaml:"secretKey" env:"OMIGA_KUCOIN_SECRETKEY"`
+	ApiKey     string `yaml:"apiKey" env:"OMIGA_KUCOIN_APIKEY"`
+	Passphrase string `yaml:"passphrase" env:"OMIGA_KUCOIN_PASSPHRASE"`
+	SecretKey  string `yaml:"secretKey" env:"OMIGA_KUCOIN_SECRETKEY"`
 }

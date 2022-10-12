@@ -17,4 +17,5 @@ postgres:
 
 kucoin:
   apiKey: ""
+  passphrase: ""
   secretKey: ""

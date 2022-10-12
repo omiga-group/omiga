@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"strings"
 
 	"github.com/life4/genesis/maps"
 	"github.com/life4/genesis/slices"
@@ -59,11 +60,11 @@ func (tpr *tradingPairRepository) CreateTradingPairs(
 		make(map[models.Coin]struct{}),
 		func(tradingPair models.TradingPair, reduction map[models.Coin]struct{}) map[models.Coin]struct{} {
 			reduction[models.Coin{
-				Symbol: tradingPair.Base,
+				Symbol: strings.ToUpper(tradingPair.Base),
 			}] = struct{}{}
 
 			reduction[models.Coin{
-				Symbol: tradingPair.Counter,
+				Symbol: strings.ToUpper(tradingPair.Counter),
 			}] = struct{}{}
 
 			return reduction

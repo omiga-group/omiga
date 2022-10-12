@@ -6,6 +6,7 @@ require (
 	entgo.io/contrib v0.3.2
 	entgo.io/ent v0.11.3-0.20220830071904-3b1b75b9d7a9
 	github.com/99designs/gqlgen v0.17.19
+	github.com/Kucoin/kucoin-go-sdk v1.2.12
 	github.com/adshao/go-binance/v2 v2.3.8
 	github.com/aopoltorzhicky/go_kraken/rest v0.0.3
 	github.com/aopoltorzhicky/go_kraken/websocket v0.1.10
