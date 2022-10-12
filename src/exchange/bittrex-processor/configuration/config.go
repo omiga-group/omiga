@@ -16,6 +16,6 @@ type Config struct {
 }
 
 type BittrexConfig struct {
-	ApiKey    string `yaml:"apiKey" env:"OMIGA_BITTREXT_APIKEY"`
-	SecretKey string `yaml:"secretKey" env:"OMIGA_BITTREXT_SECRETKEY"`
+	ApiKey    string `yaml:"apiKey" env:"OMIGA_BITTREX_APIKEY"`
+	SecretKey string `yaml:"secretKey" env:"OMIGA_BITTREX_SECRETKEY"`
 }

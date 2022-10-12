@@ -6,8 +6,8 @@ import (
 	"github.com/toorop/go-bittrex"
 )
 
-func BittrexMarketsToTradingPairs(symbols []bittrex.MarketV3) []models.TradingPair {
-	return slices.Map(symbols, func(market bittrex.MarketV3) models.TradingPair {
+func BittrexMarketsToTradingPairs(markets []bittrex.MarketV3) []models.TradingPair {
+	return slices.Map(markets, func(market bittrex.MarketV3) models.TradingPair {
 
 		precision := int(market.Precision)
 

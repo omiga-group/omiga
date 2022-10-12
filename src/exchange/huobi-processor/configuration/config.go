@@ -16,6 +16,7 @@ type Config struct {
 }
 
 type HuobiConfig struct {
-	ApiKey    string `yaml:"apiKey" env:"OMIGA_HUOBIT_APIKEY"`
-	SecretKey string `yaml:"secretKey" env:"OMIGA_HUOBIT_SECRETKEY"`
+	BaseUrl   string `yaml:"baseUrl" env:"OMIGA_HUOBI_BASEURL"`
+	ApiKey    string `yaml:"apiKey" env:"OMIGA_HUOBI_APIKEY"`
+	SecretKey string `yaml:"secretKey" env:"OMIGA_HUOBI_SECRETKEY"`
 }
