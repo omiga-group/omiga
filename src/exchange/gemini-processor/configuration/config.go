@@ -3,6 +3,7 @@ package configuration
 import (
 	exchangeConfiguration "github.com/omiga-group/omiga/src/exchange/shared/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 )
 
@@ -11,12 +12,13 @@ type Config struct {
 	Exchange exchangeConfiguration.ExchangeConfig `yaml:"exchange"`
 	Pulsar   pulsar.PulsarConfig                  `yaml:"pulsar"`
 	Gemini   GeminiConfig                         `yaml:"gemini"`
+	Postgres postgres.PostgresConfig              `yaml:"postgres"`
 }
 
 type GeminiConfig struct {
 	ApiUrl       string    `yaml:"apiUrl" env:"OMIGA_GEMINI_APIURL"`
 	WebsocketUrl string    `yaml:"websocketUrl" env:"OMIGA_GEMINI_WEBSOCKETURL"`
-	Timeout      int       `yaml:"timeout"`
+	Timeout      int       `yaml:"timeout" env:"OMIGA_GEMINI_TIMEOUT"`
 	OrderBook    OrderBook `yaml:"orderBook"`
 }
 
