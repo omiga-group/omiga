@@ -32,6 +32,10 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
+			if config.Coinbase.UseSandbox {
+				os.Setenv("COINBASE_PRO_SANDBOX", "1")
+			}
+
 			ctx, cancelFunc := context.WithCancel(context.Background())
 
 			sigc := make(chan os.Signal, 1)
@@ -66,7 +70,7 @@ func startCommand() *cobra.Command {
 
 			defer cronService.Close()
 
-			if _, err = appsetup.NewCoinbaseTradingPairsSubscriber(
+			if _, err = appsetup.NewCoinbaseTradingPairSubscriber(
 				ctx,
 				sugarLogger,
 				config.Coinbase,

@@ -91,20 +91,20 @@ func NewKrakenOrderBookSubscriber(
 	return nil, nil
 }
 
-func NewKrakenTradingPairsSubscriber(
+func NewKrakenTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	krakenConfig configuration.KrakenConfig,
 	exchangeConfig exchangeConfiguration.ExchangeConfig,
 	cronService cron.CronService,
-	postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairsSubscriber, error) {
+	postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
 		repositories.NewCoinRepository,
 		repositories.NewExchangeRepository,
 		repositories.NewTradingPairRepository,
-		subscribers.NewKrakenTradingPairsSubscriber)
+		subscribers.NewKrakenTradingPairSubscriber)
 
 	return nil, nil
 }

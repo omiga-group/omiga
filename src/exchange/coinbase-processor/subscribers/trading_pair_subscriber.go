@@ -4,9 +4,11 @@ import (
 	"context"
 
 	"github.com/omiga-group/omiga/src/exchange/coinbase-processor/configuration"
+	"github.com/omiga-group/omiga/src/exchange/coinbase-processor/mappers"
 	exchangeConfiguration "github.com/omiga-group/omiga/src/exchange/shared/configuration"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/preichenberger/go-coinbasepro/v2"
 	"go.uber.org/zap"
 )
 
@@ -21,7 +23,7 @@ type coinbaseTradingPairSubscriber struct {
 	tradingPairRepository repositories.TradingPairRepository
 }
 
-func NewCoinbaseTradingPairsSubscriber(
+func NewCoinbaseTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	coinbaseConfig configuration.CoinbaseConfig,
@@ -48,4 +50,28 @@ func NewCoinbaseTradingPairsSubscriber(
 }
 
 func (ctps *coinbaseTradingPairSubscriber) Run() {
+	client := coinbasepro.NewClient()
+
+	client.UpdateConfig(&coinbasepro.ClientConfig{
+		BaseURL:    ctps.coinbaseConfig.BaseUrl,
+		Key:        ctps.coinbaseConfig.ApiKey,
+		Passphrase: ctps.coinbaseConfig.Passphrase,
+		Secret:     ctps.coinbaseConfig.SecretKey,
+	})
+
+	products, err := client.GetProducts()
+	if err != nil {
+		ctps.logger.Errorf("Failed to call getProducts endpoint. Error: %v", err)
+
+		return
+	}
+
+	if err = ctps.tradingPairRepository.CreateTradingPairs(
+		ctps.ctx,
+		ctps.exchangeConfig.Id,
+		mappers.BinanceSymbolsToTradingPairs(products)); err != nil {
+		ctps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
+
+		return
+	}
 }

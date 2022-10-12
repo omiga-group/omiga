@@ -92,7 +92,7 @@ func NewBinanceOrderBookSubscriber(
 	return nil, nil
 }
 
-func NewBinanceTradingPairsSubscriber(
+func NewBinanceTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	binanceConfig configuration.BinanceConfig,
@@ -105,7 +105,7 @@ func NewBinanceTradingPairsSubscriber(
 		repositories.NewCoinRepository,
 		repositories.NewExchangeRepository,
 		repositories.NewTradingPairRepository,
-		subscribers.NewBinanceTradingPairsSubscriber)
+		subscribers.NewBinanceTradingPairSubscriber)
 
 	return nil, nil
 }

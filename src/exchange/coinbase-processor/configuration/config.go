@@ -16,6 +16,9 @@ type Config struct {
 }
 
 type CoinbaseConfig struct {
-	ApiKey    string `yaml:"apiKey" env:"OMIGA_COINBASE_APIKEY"`
-	SecretKey string `yaml:"secretKey" env:"OMIGA_COINBASE_SECRETKEY"`
+	UseSandbox bool   `yaml:"useSandbox" env:"OMIGA_COINBASE_USESANDBOX"`
+	BaseUrl    string `yaml:"baseUrl" env:"OMIGA_COINBASE_BASEURL"`
+	ApiKey     string `yaml:"apiKey" env:"OMIGA_COINBASE_APIKEY"`
+	Passphrase string `yaml:"passphrase" env:"OMIGA_COINBASE_PASSPHRASE"`
+	SecretKey  string `yaml:"secretKey" env:"OMIGA_COINBASE_SECRETKEY"`
 }
