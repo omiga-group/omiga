@@ -39,8 +39,8 @@ func NewKrakenTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at minute 0
-	if _, err := cronService.GetCron().AddJob("* 0 * * * *", instance); err != nil {
+	// Run at every minute from 0 through 59.
+	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
 		return nil, err
 	}
 
