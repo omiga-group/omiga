@@ -16,6 +16,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/hashicorp/go-multierror v1.1.1
+	github.com/huobirdcenter/huobi_golang v0.0.0-20210226095227-8a30a95b6d0d
 	github.com/jackc/pgx/v4 v4.17.2
 	github.com/life4/genesis v1.1.0
 	github.com/lucsky/cuid v1.2.1

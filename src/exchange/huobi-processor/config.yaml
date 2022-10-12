@@ -16,5 +16,6 @@ postgres:
   maxOpenConns: 5
 
 huobi:
+  baseUrl: "api.huobi.pro"
   apiKey: ""
   secretKey: ""
