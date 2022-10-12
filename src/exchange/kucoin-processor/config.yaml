@@ -1,0 +1,20 @@
+app:
+  source: "urn::omiga::kucoin-processor"
+
+exchange:
+  id: "kucoin"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "kucoin-processor"
+  producerName: "kucoin-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/exchange"
+  maxOpenConns: 5
+
+kucoin:
+  apiKey: ""
+  secretKey: ""
