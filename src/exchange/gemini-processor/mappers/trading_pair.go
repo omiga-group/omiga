@@ -6,12 +6,12 @@ import (
 	gemini "github.com/omiga-group/omiga/src/shared/clients/openapi/gemini/v1"
 )
 
-func GeminiSymbolsToTradingPairs(symbols []gemini.TradingPair) []models.TradingPair {
-	return slices.Map(symbols, func(tp gemini.TradingPair) models.TradingPair {
+func GeminiTradingPairsToTradingPairs(tradingPairs []gemini.TradingPair) []models.TradingPair {
+	return slices.Map(tradingPairs, func(tradingPair gemini.TradingPair) models.TradingPair {
 		return models.TradingPair{
-			Symbol:  tp.Symbol,
-			Base:    tp.BaseCurrency,
-			Counter: tp.QuoteCurrency,
+			Symbol:  tradingPair.Symbol,
+			Base:    tradingPair.BaseCurrency,
+			Counter: tradingPair.QuoteCurrency,
 		}
 	})
 }

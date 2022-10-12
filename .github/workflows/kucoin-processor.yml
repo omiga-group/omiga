@@ -27,12 +27,12 @@ jobs:
             relevant_directories_changed:
               - '.github/workflows/codeql-analysis.yml'
               - '.github/workflows/lint.yml'
-              - '.github/workflows/kuCoin-processor.yml'
+              - '.github/workflows/kucoin-processor.yml'
               - 'src/go.mod'
               - 'src/go.sum'
               - 'src/shared/**'
               - 'src/exchange/shared/**'
-              - 'src/exchange/kuCoin-processor/**'
+              - 'src/exchange/kucoin-processor/**'
 
       - name: Install GitVersion
         if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
@@ -53,7 +53,7 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
              --pull \
              --target build \
-            --file ./src/exchange/kuCoin-processor/Dockerfile \
+            --file ./src/exchange/kucoin-processor/Dockerfile \
             ./src
 
       - name: Unit Tests
@@ -62,11 +62,11 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
              --pull \
              --target test \
-            --tag omiga/kuCoin-processor-unittests:$GitVersion_SemVer \
-            --file ./src/exchange/kuCoin-processor/Dockerfile \
+            --tag omiga/kucoin-processor-unittests:$GitVersion_SemVer \
+            --file ./src/exchange/kucoin-processor/Dockerfile \
             ./src
           mkdir -p ./coverage/reports
-          docker create --name extract-container omiga/kuCoin-processor-unittests:$GitVersion_SemVer
+          docker create --name extract-container omiga/kucoin-processor-unittests:$GitVersion_SemVer
           docker cp extract-container:/coverage/reports/. "./coverage/reports/"
 
       - name: Upload coverage to Codecov
@@ -75,7 +75,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ./coverage/reports/
-          flags: unittests,kuCoin-processor
+          flags: unittests,kucoin-processor
           fail_ci_if_error: true
           verbose: true
 
@@ -85,17 +85,17 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
              --pull \
              --target final \
-            --tag omiga/kuCoin-processor:$GitVersion_SemVer \
-            --tag omiga/kuCoin-processor:${{ github.sha }} \
-            --file ./src/exchange/kuCoin-processor/Dockerfile \
+            --tag omiga/kucoin-processor:$GitVersion_SemVer \
+            --tag omiga/kucoin-processor:${{ github.sha }} \
+            --file ./src/exchange/kucoin-processor/Dockerfile \
             ./src
-          docker save -o image.tar omiga/kuCoin-processor:$GitVersion_SemVer
+          docker save -o image.tar omiga/kucoin-processor:$GitVersion_SemVer
 
       - name: Run Trivy vulnerability scanner
         if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: omiga/kuCoin-processor:${{ github.sha }}
+          image-ref: omiga/kucoin-processor:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true

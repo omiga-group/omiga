@@ -4,9 +4,11 @@ import (
 	"context"
 
 	"github.com/omiga-group/omiga/src/exchange/bittrex-processor/configuration"
+	"github.com/omiga-group/omiga/src/exchange/bittrex-processor/mappers"
 	exchangeConfiguration "github.com/omiga-group/omiga/src/exchange/shared/configuration"
 	"github.com/omiga-group/omiga/src/exchange/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/toorop/go-bittrex"
 	"go.uber.org/zap"
 )
 
@@ -47,5 +49,22 @@ func NewBittrexTradingPairSubscriber(
 	return instance, nil
 }
 
-func (ctps *bittrexTradingPairSubscriber) Run() {
+func (btps *bittrexTradingPairSubscriber) Run() {
+	client := bittrex.New(btps.bittrexConfig.ApiKey, btps.bittrexConfig.SecretKey)
+
+	markets, err := client.GetMarkets()
+	if err != nil {
+		btps.logger.Errorf("Failed to call markets endpoint. Error: %v", err)
+
+		return
+	}
+
+	if err = btps.tradingPairRepository.CreateTradingPairs(
+		btps.ctx,
+		btps.exchangeConfig.Id,
+		mappers.BittrexMarketsToTradingPairs(markets)); err != nil {
+		btps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
+
+		return
+	}
 }

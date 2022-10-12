@@ -6,12 +6,12 @@ import (
 	"github.com/preichenberger/go-coinbasepro/v2"
 )
 
-func BinanceSymbolsToTradingPairs(symbols []coinbasepro.Product) []models.TradingPair {
-	return slices.Map(symbols, func(symbol coinbasepro.Product) models.TradingPair {
+func CoinbaseProductsToTradingPairs(products []coinbasepro.Product) []models.TradingPair {
+	return slices.Map(products, func(product coinbasepro.Product) models.TradingPair {
 		return models.TradingPair{
-			Symbol:  symbol.DisplayName,
-			Base:    symbol.BaseCurrency,
-			Counter: symbol.QuoteCurrency,
+			Symbol:  product.DisplayName,
+			Base:    product.BaseCurrency,
+			Counter: product.QuoteCurrency,
 		}
 	})
 }

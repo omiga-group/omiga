@@ -69,7 +69,7 @@ func (ctps *coinbaseTradingPairSubscriber) Run() {
 	if err = ctps.tradingPairRepository.CreateTradingPairs(
 		ctps.ctx,
 		ctps.exchangeConfig.Id,
-		mappers.BinanceSymbolsToTradingPairs(products)); err != nil {
+		mappers.CoinbaseProductsToTradingPairs(products)); err != nil {
 		ctps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
