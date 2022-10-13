@@ -28,6 +28,7 @@ generate-via-docker: ## Generate code
 	@./exchange/binance-processor/scripts/generate.sh
 	@./exchange/bittrext-processor/scripts/generate.sh
 	@./exchange/coinbase-processor/scripts/generate.sh
+	@./exchange/crypto-processor/scripts/generate.sh
 	@./exchange/coingecko-processor/scripts/generate.sh
 	@./exchange/gemini-processor/scripts/generate.sh
 	@./exchange/huobi-processor/scripts/generate.sh
