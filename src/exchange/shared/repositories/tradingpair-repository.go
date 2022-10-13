@@ -86,9 +86,9 @@ func (tpr *tradingPairRepository) CreateTradingPairs(
 				Create().
 				SetExchangeID(savedExchangeId).
 				SetSymbol(tradingPair.Symbol).
-				SetBaseID(savedCoinsIds[tradingPair.Base]).
+				SetBaseID(savedCoinsIds[strings.ToUpper(tradingPair.Base)]).
 				SetNillableBasePrecision(tradingPair.BasePrecision).
-				SetCounterID(savedCoinsIds[tradingPair.Counter]).
+				SetCounterID(savedCoinsIds[strings.ToUpper(tradingPair.Counter)]).
 				SetNillableCounterPrecision(tradingPair.CounterPrecision)
 		})
 
