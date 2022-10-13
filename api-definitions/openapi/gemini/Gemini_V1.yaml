@@ -1,10 +1,12 @@
 openapi: 3.0.1
 info:
   title: Gemini API V1
-  description: "gemini rest api version 1"
+  description: "Gemini rest api version 1"
   version: 1.0.0
+
 servers:
   - url: https://api.gemini.com/v1
+
 paths:
   /symbols:
     get:
@@ -18,6 +20,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/symbol"
+
   /pricefeed:
     get:
       summary: fetches the price feeds along with trading pairs
@@ -30,6 +33,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/priceFeed"
+
   /symbols/details/{symbol}:
     get:
       summary: gets the details for a trading pair

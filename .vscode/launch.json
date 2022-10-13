@@ -50,6 +50,14 @@
       "args": ["start"]
     },
     {
+      "name": "Crypto Processor",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/exchange/crypto-processor/main.go",
+      "args": ["start"]
+    },
+    {
       "name": "FTX Processor",
       "type": "go",
       "request": "launch",
