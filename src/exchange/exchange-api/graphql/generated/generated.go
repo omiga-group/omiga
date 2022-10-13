@@ -40,8 +40,11 @@ type Config struct {
 
 type ResolverRoot interface {
 	Exchange() ExchangeResolver
+	Market() MarketResolver
 	Query() QueryResolver
 	Ticker() TickerResolver
+	TradingPair() TradingPairResolver
+	MarketWhereInput() MarketWhereInputResolver
 	OutboxWhereInput() OutboxWhereInputResolver
 }
 
@@ -82,6 +85,7 @@ type ComplexityRoot struct {
 		Image                       func(childComplexity int) int
 		Links                       func(childComplexity int) int
 		MakerFee                    func(childComplexity int) int
+		Markets                     func(childComplexity int) int
 		Name                        func(childComplexity int) int
 		PublicNotice                func(childComplexity int) int
 		SpreadFee                   func(childComplexity int) int
@@ -117,9 +121,9 @@ type ComplexityRoot struct {
 	}
 
 	Market struct {
-		HasTradingIncentive func(childComplexity int) int
-		Identifier          func(childComplexity int) int
-		Name                func(childComplexity int) int
+		ID   func(childComplexity int) int
+		Name func(childComplexity int) int
+		Type func(childComplexity int) int
 	}
 
 	PageInfo struct {
@@ -159,6 +163,12 @@ type ComplexityRoot struct {
 		Volume                 func(childComplexity int) int
 	}
 
+	TickerMarket struct {
+		HasTradingIncentive func(childComplexity int) int
+		Identifier          func(childComplexity int) int
+		Name                func(childComplexity int) int
+	}
+
 	TradingPair struct {
 		Base                        func(childComplexity int) int
 		BasePriceMaxPrecision       func(childComplexity int) int
@@ -171,6 +181,7 @@ type ComplexityRoot struct {
 		CounterQuantityMaxPrecision func(childComplexity int) int
 		CounterQuantityMinPrecision func(childComplexity int) int
 		ID                          func(childComplexity int) int
+		Markets                     func(childComplexity int) int
 		Symbol                      func(childComplexity int) int
 	}
 
@@ -184,6 +195,10 @@ type ExchangeResolver interface {
 
 	Tickers(ctx context.Context, obj *entities.Exchange) ([]*entities.Ticker, error)
 	TradingPairs(ctx context.Context, obj *entities.Exchange) ([]*entities.TradingPair, error)
+	Markets(ctx context.Context, obj *entities.Exchange) ([]*entities.Market, error)
+}
+type MarketResolver interface {
+	Type(ctx context.Context, obj *entities.Market) (models.MarketType, error)
 }
 type QueryResolver interface {
 	Coin(ctx context.Context, where *entities.CoinWhereInput) (*entities.Coin, error)
@@ -192,12 +207,21 @@ type QueryResolver interface {
 	Exchanges(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.ExchangeOrder, where *entities.ExchangeWhereInput) (*entities.ExchangeConnection, error)
 }
 type TickerResolver interface {
-	Market(ctx context.Context, obj *entities.Ticker) (*models.Market, error)
+	Market(ctx context.Context, obj *entities.Ticker) (*models.TickerMarket, error)
 
 	ConvertedLast(ctx context.Context, obj *entities.Ticker) (*models.ConvertedDetails, error)
 	ConvertedVolume(ctx context.Context, obj *entities.Ticker) (*models.ConvertedDetails, error)
 }
+type TradingPairResolver interface {
+	Markets(ctx context.Context, obj *entities.TradingPair) ([]*entities.Market, error)
+}
 
+type MarketWhereInputResolver interface {
+	Type(ctx context.Context, obj *entities.MarketWhereInput, data *models.MarketType) error
+	TypeNeq(ctx context.Context, obj *entities.MarketWhereInput, data *models.MarketType) error
+	TypeIn(ctx context.Context, obj *entities.MarketWhereInput, data []models.MarketType) error
+	TypeNotIn(ctx context.Context, obj *entities.MarketWhereInput, data []models.MarketType) error
+}
 type OutboxWhereInputResolver interface {
 	Status(ctx context.Context, obj *entities.OutboxWhereInput, data *models.OutboxStatus) error
 	StatusNeq(ctx context.Context, obj *entities.OutboxWhereInput, data *models.OutboxStatus) error
@@ -360,6 +384,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Exchange.MakerFee(childComplexity), true
 
+	case "Exchange.markets":
+		if e.complexity.Exchange.Markets == nil {
+			break
+		}
+
+		return e.complexity.Exchange.Markets(childComplexity), true
+
 	case "Exchange.name":
 		if e.complexity.Exchange.Name == nil {
 			break
@@ -521,19 +552,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Links.Website(childComplexity), true
 
-	case "Market.hasTradingIncentive":
-		if e.complexity.Market.HasTradingIncentive == nil {
+	case "Market.id":
+		if e.complexity.Market.ID == nil {
 			break
 		}
 
-		return e.complexity.Market.HasTradingIncentive(childComplexity), true
-
-	case "Market.identifier":
-		if e.complexity.Market.Identifier == nil {
-			break
-		}
-
-		return e.complexity.Market.Identifier(childComplexity), true
+		return e.complexity.Market.ID(childComplexity), true
 
 	case "Market.name":
 		if e.complexity.Market.Name == nil {
@@ -541,6 +565,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Market.Name(childComplexity), true
+
+	case "Market.type":
+		if e.complexity.Market.Type == nil {
+			break
+		}
+
+		return e.complexity.Market.Type(childComplexity), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -758,6 +789,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Ticker.Volume(childComplexity), true
 
+	case "TickerMarket.hasTradingIncentive":
+		if e.complexity.TickerMarket.HasTradingIncentive == nil {
+			break
+		}
+
+		return e.complexity.TickerMarket.HasTradingIncentive(childComplexity), true
+
+	case "TickerMarket.identifier":
+		if e.complexity.TickerMarket.Identifier == nil {
+			break
+		}
+
+		return e.complexity.TickerMarket.Identifier(childComplexity), true
+
+	case "TickerMarket.name":
+		if e.complexity.TickerMarket.Name == nil {
+			break
+		}
+
+		return e.complexity.TickerMarket.Name(childComplexity), true
+
 	case "TradingPair.base":
 		if e.complexity.TradingPair.Base == nil {
 			break
@@ -835,6 +887,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TradingPair.ID(childComplexity), true
 
+	case "TradingPair.markets":
+		if e.complexity.TradingPair.Markets == nil {
+			break
+		}
+
+		return e.complexity.TradingPair.Markets(childComplexity), true
+
 	case "TradingPair.symbol":
 		if e.complexity.TradingPair.Symbol == nil {
 			break
@@ -861,6 +920,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCoinWhereInput,
 		ec.unmarshalInputExchangeOrder,
 		ec.unmarshalInputExchangeWhereInput,
+		ec.unmarshalInputMarketWhereInput,
 		ec.unmarshalInputOutboxWhereInput,
 		ec.unmarshalInputTickerWhereInput,
 		ec.unmarshalInputTradingPairWhereInput,
@@ -1126,6 +1186,7 @@ type Exchange implements Node {
   tradeVolume24hBtcNormalized: Float
   tickers: [Ticker!]!
   tradingPairs: [TradingPair!]!
+  markets: [Market!]!
   makerFee: Float
   takerFee: Float
   spreadFee: Boolean
@@ -1147,7 +1208,7 @@ type Ticker implements Node {
   baseCoinId: String
   counter: String!
   counterCoinId: String
-  market: Market
+  market: TickerMarket
   last: Float
   volume: Float
   convertedLast: ConvertedDetails
@@ -1176,9 +1237,10 @@ type TradingPair implements Node {
   counterPriceMaxPrecision: Int
   counterQuantityMinPrecision: Int
   counterQuantityMaxPrecision: Int
+  markets: [Market!]!
 }
 
-type Market {
+type TickerMarket {
   hasTradingIncentive: Boolean!
   identifier: String!
   name: String
@@ -1229,6 +1291,31 @@ enum OutboxStatus {
   PENDING
   SUCCEEDED
   FAILED
+}
+
+type Market implements Node {
+  id: ID!
+  name: String!
+  type: MarketType!
+}
+
+enum MarketType {
+  SPORT_TRADING
+  MARGIN_TRADING
+  DERIVATIVES
+  EARN
+  PERPETUAL
+  FUTURES
+  WARRANT
+  OTC
+  YIELD
+  P2P
+  STRATEGY_TRADING
+  SWAP_FARMING
+  FAN_TOKEN
+  ETF
+  NFT
+  Swap
 }
 `, BuiltIn: false},
 	{Name: "../../../../../api-definitions/graphql/omiga/exchange/V1/ent.graphql", Input: `"""
@@ -1496,6 +1583,52 @@ input ExchangeWhereInput {
   """ticker edge predicates"""
   hasTicker: Boolean
   hasTickerWith: [TickerWhereInput!]
+  """trading_pair edge predicates"""
+  hasTradingPair: Boolean
+  hasTradingPairWith: [TradingPairWhereInput!]
+  """market edge predicates"""
+  hasMarket: Boolean
+  hasMarketWith: [MarketWhereInput!]
+}
+"""
+MarketWhereInput is used for filtering Market objects.
+Input was generated by ent.
+"""
+input MarketWhereInput {
+  not: MarketWhereInput
+  and: [MarketWhereInput!]
+  or: [MarketWhereInput!]
+  """id field predicates"""
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  """name field predicates"""
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameEqualFold: String
+  nameContainsFold: String
+  """type field predicates"""
+  type: MarketType
+  typeNEQ: MarketType
+  typeIn: [MarketType!]
+  typeNotIn: [MarketType!]
+  """exchange edge predicates"""
+  hasExchange: Boolean
+  hasExchangeWith: [ExchangeWhereInput!]
   """trading_pair edge predicates"""
   hasTradingPair: Boolean
   hasTradingPairWith: [TradingPairWhereInput!]
@@ -1913,6 +2046,9 @@ input TradingPairWhereInput {
   """counter edge predicates"""
   hasCounter: Boolean
   hasCounterWith: [CoinWhereInput!]
+  """market edge predicates"""
+  hasMarket: Boolean
+  hasMarketWith: [MarketWhereInput!]
 }
 `, BuiltIn: false},
 	{Name: "../../../shared/graphql/federation/directives.graphql", Input: `
@@ -3431,8 +3567,62 @@ func (ec *executionContext) fieldContext_Exchange_tradingPairs(ctx context.Conte
 				return ec.fieldContext_TradingPair_counterQuantityMinPrecision(ctx, field)
 			case "counterQuantityMaxPrecision":
 				return ec.fieldContext_TradingPair_counterQuantityMaxPrecision(ctx, field)
+			case "markets":
+				return ec.fieldContext_TradingPair_markets(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type TradingPair", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Exchange_markets(ctx context.Context, field graphql.CollectedField, obj *entities.Exchange) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Exchange_markets(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Exchange().Markets(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*entities.Market)
+	fc.Result = res
+	return ec.marshalNMarket2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarketᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Exchange_markets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Exchange",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Market_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Market_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Market_type(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Market", field.Name)
 		},
 	}
 	return fc, nil
@@ -3814,6 +4004,8 @@ func (ec *executionContext) fieldContext_ExchangeEdge_node(ctx context.Context, 
 				return ec.fieldContext_Exchange_tickers(ctx, field)
 			case "tradingPairs":
 				return ec.fieldContext_Exchange_tradingPairs(ctx, field)
+			case "markets":
+				return ec.fieldContext_Exchange_markets(ctx, field)
 			case "makerFee":
 				return ec.fieldContext_Exchange_makerFee(ctx, field)
 			case "takerFee":
@@ -4119,8 +4311,8 @@ func (ec *executionContext) fieldContext_Links_telegram(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Market_hasTradingIncentive(ctx context.Context, field graphql.CollectedField, obj *models.Market) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Market_hasTradingIncentive(ctx, field)
+func (ec *executionContext) _Market_id(ctx context.Context, field graphql.CollectedField, obj *entities.Market) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Market_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4133,7 +4325,7 @@ func (ec *executionContext) _Market_hasTradingIncentive(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.HasTradingIncentive, nil
+		return obj.ID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4145,69 +4337,25 @@ func (ec *executionContext) _Market_hasTradingIncentive(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Market_hasTradingIncentive(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Market_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Market",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Market_identifier(ctx context.Context, field graphql.CollectedField, obj *models.Market) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Market_identifier(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Identifier, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Market_identifier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Market",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Market_name(ctx context.Context, field graphql.CollectedField, obj *models.Market) (ret graphql.Marshaler) {
+func (ec *executionContext) _Market_name(ctx context.Context, field graphql.CollectedField, obj *entities.Market) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Market_name(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -4228,11 +4376,14 @@ func (ec *executionContext) _Market_name(ctx context.Context, field graphql.Coll
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Market_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4243,6 +4394,50 @@ func (ec *executionContext) fieldContext_Market_name(ctx context.Context, field 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Market_type(ctx context.Context, field graphql.CollectedField, obj *entities.Market) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Market_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Market().Type(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(models.MarketType)
+	fc.Result = res
+	return ec.marshalNMarketType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Market_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Market",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type MarketType does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4608,6 +4803,8 @@ func (ec *executionContext) fieldContext_Query_exchange(ctx context.Context, fie
 				return ec.fieldContext_Exchange_tickers(ctx, field)
 			case "tradingPairs":
 				return ec.fieldContext_Exchange_tradingPairs(ctx, field)
+			case "markets":
+				return ec.fieldContext_Exchange_markets(ctx, field)
 			case "makerFee":
 				return ec.fieldContext_Exchange_makerFee(ctx, field)
 			case "takerFee":
@@ -5108,9 +5305,9 @@ func (ec *executionContext) _Ticker_market(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*models.Market)
+	res := resTmp.(*models.TickerMarket)
 	fc.Result = res
-	return ec.marshalOMarket2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarket(ctx, field.Selections, res)
+	return ec.marshalOTickerMarket2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐTickerMarket(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Ticker_market(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5122,13 +5319,13 @@ func (ec *executionContext) fieldContext_Ticker_market(ctx context.Context, fiel
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "hasTradingIncentive":
-				return ec.fieldContext_Market_hasTradingIncentive(ctx, field)
+				return ec.fieldContext_TickerMarket_hasTradingIncentive(ctx, field)
 			case "identifier":
-				return ec.fieldContext_Market_identifier(ctx, field)
+				return ec.fieldContext_TickerMarket_identifier(ctx, field)
 			case "name":
-				return ec.fieldContext_Market_name(ctx, field)
+				return ec.fieldContext_TickerMarket_name(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Market", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type TickerMarket", field.Name)
 		},
 	}
 	return fc, nil
@@ -5683,6 +5880,135 @@ func (ec *executionContext) fieldContext_Ticker_tokenInfoUrl(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _TickerMarket_hasTradingIncentive(ctx context.Context, field graphql.CollectedField, obj *models.TickerMarket) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerMarket_hasTradingIncentive(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasTradingIncentive, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerMarket_hasTradingIncentive(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerMarket",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TickerMarket_identifier(ctx context.Context, field graphql.CollectedField, obj *models.TickerMarket) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerMarket_identifier(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Identifier, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerMarket_identifier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerMarket",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TickerMarket_name(ctx context.Context, field graphql.CollectedField, obj *models.TickerMarket) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TickerMarket_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TickerMarket_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TickerMarket",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TradingPair_id(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPair) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_TradingPair_id(ctx, field)
 	if err != nil {
@@ -6198,6 +6524,58 @@ func (ec *executionContext) fieldContext_TradingPair_counterQuantityMaxPrecision
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPair_markets(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPair) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPair_markets(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.TradingPair().Markets(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*entities.Market)
+	fc.Result = res
+	return ec.marshalNMarket2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarketᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPair_markets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPair",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Market_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Market_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Market_type(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Market", field.Name)
 		},
 	}
 	return fc, nil
@@ -8460,7 +8838,7 @@ func (ec *executionContext) unmarshalInputExchangeWhereInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "exchangeID", "exchangeIDNEQ", "exchangeIDIn", "exchangeIDNotIn", "exchangeIDGT", "exchangeIDGTE", "exchangeIDLT", "exchangeIDLTE", "exchangeIDContains", "exchangeIDHasPrefix", "exchangeIDHasSuffix", "exchangeIDEqualFold", "exchangeIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "yearEstablished", "yearEstablishedNEQ", "yearEstablishedIn", "yearEstablishedNotIn", "yearEstablishedGT", "yearEstablishedGTE", "yearEstablishedLT", "yearEstablishedLTE", "yearEstablishedIsNil", "yearEstablishedNotNil", "country", "countryNEQ", "countryIn", "countryNotIn", "countryGT", "countryGTE", "countryLT", "countryLTE", "countryContains", "countryHasPrefix", "countryHasSuffix", "countryIsNil", "countryNotNil", "countryEqualFold", "countryContainsFold", "image", "imageNEQ", "imageIn", "imageNotIn", "imageGT", "imageGTE", "imageLT", "imageLTE", "imageContains", "imageHasPrefix", "imageHasSuffix", "imageIsNil", "imageNotNil", "imageEqualFold", "imageContainsFold", "hasTradingIncentive", "hasTradingIncentiveNEQ", "hasTradingIncentiveIsNil", "hasTradingIncentiveNotNil", "centralized", "centralizedNEQ", "centralizedIsNil", "centralizedNotNil", "publicNotice", "publicNoticeNEQ", "publicNoticeIn", "publicNoticeNotIn", "publicNoticeGT", "publicNoticeGTE", "publicNoticeLT", "publicNoticeLTE", "publicNoticeContains", "publicNoticeHasPrefix", "publicNoticeHasSuffix", "publicNoticeIsNil", "publicNoticeNotNil", "publicNoticeEqualFold", "publicNoticeContainsFold", "alertNotice", "alertNoticeNEQ", "alertNoticeIn", "alertNoticeNotIn", "alertNoticeGT", "alertNoticeGTE", "alertNoticeLT", "alertNoticeLTE", "alertNoticeContains", "alertNoticeHasPrefix", "alertNoticeHasSuffix", "alertNoticeIsNil", "alertNoticeNotNil", "alertNoticeEqualFold", "alertNoticeContainsFold", "trustScore", "trustScoreNEQ", "trustScoreIn", "trustScoreNotIn", "trustScoreGT", "trustScoreGTE", "trustScoreLT", "trustScoreLTE", "trustScoreIsNil", "trustScoreNotNil", "trustScoreRank", "trustScoreRankNEQ", "trustScoreRankIn", "trustScoreRankNotIn", "trustScoreRankGT", "trustScoreRankGTE", "trustScoreRankLT", "trustScoreRankLTE", "trustScoreRankIsNil", "trustScoreRankNotNil", "tradeVolume24hBtc", "tradeVolume24hBtcNEQ", "tradeVolume24hBtcIn", "tradeVolume24hBtcNotIn", "tradeVolume24hBtcGT", "tradeVolume24hBtcGTE", "tradeVolume24hBtcLT", "tradeVolume24hBtcLTE", "tradeVolume24hBtcIsNil", "tradeVolume24hBtcNotNil", "tradeVolume24hBtcNormalized", "tradeVolume24hBtcNormalizedNEQ", "tradeVolume24hBtcNormalizedIn", "tradeVolume24hBtcNormalizedNotIn", "tradeVolume24hBtcNormalizedGT", "tradeVolume24hBtcNormalizedGTE", "tradeVolume24hBtcNormalizedLT", "tradeVolume24hBtcNormalizedLTE", "tradeVolume24hBtcNormalizedIsNil", "tradeVolume24hBtcNormalizedNotNil", "makerFee", "makerFeeNEQ", "makerFeeIn", "makerFeeNotIn", "makerFeeGT", "makerFeeGTE", "makerFeeLT", "makerFeeLTE", "makerFeeIsNil", "makerFeeNotNil", "takerFee", "takerFeeNEQ", "takerFeeIn", "takerFeeNotIn", "takerFeeGT", "takerFeeGTE", "takerFeeLT", "takerFeeLTE", "takerFeeIsNil", "takerFeeNotNil", "spreadFee", "spreadFeeNEQ", "spreadFeeIsNil", "spreadFeeNotNil", "supportAPI", "supportAPINEQ", "supportAPIIsNil", "supportAPINotNil", "hasTicker", "hasTickerWith", "hasTradingPair", "hasTradingPairWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "exchangeID", "exchangeIDNEQ", "exchangeIDIn", "exchangeIDNotIn", "exchangeIDGT", "exchangeIDGTE", "exchangeIDLT", "exchangeIDLTE", "exchangeIDContains", "exchangeIDHasPrefix", "exchangeIDHasSuffix", "exchangeIDEqualFold", "exchangeIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "yearEstablished", "yearEstablishedNEQ", "yearEstablishedIn", "yearEstablishedNotIn", "yearEstablishedGT", "yearEstablishedGTE", "yearEstablishedLT", "yearEstablishedLTE", "yearEstablishedIsNil", "yearEstablishedNotNil", "country", "countryNEQ", "countryIn", "countryNotIn", "countryGT", "countryGTE", "countryLT", "countryLTE", "countryContains", "countryHasPrefix", "countryHasSuffix", "countryIsNil", "countryNotNil", "countryEqualFold", "countryContainsFold", "image", "imageNEQ", "imageIn", "imageNotIn", "imageGT", "imageGTE", "imageLT", "imageLTE", "imageContains", "imageHasPrefix", "imageHasSuffix", "imageIsNil", "imageNotNil", "imageEqualFold", "imageContainsFold", "hasTradingIncentive", "hasTradingIncentiveNEQ", "hasTradingIncentiveIsNil", "hasTradingIncentiveNotNil", "centralized", "centralizedNEQ", "centralizedIsNil", "centralizedNotNil", "publicNotice", "publicNoticeNEQ", "publicNoticeIn", "publicNoticeNotIn", "publicNoticeGT", "publicNoticeGTE", "publicNoticeLT", "publicNoticeLTE", "publicNoticeContains", "publicNoticeHasPrefix", "publicNoticeHasSuffix", "publicNoticeIsNil", "publicNoticeNotNil", "publicNoticeEqualFold", "publicNoticeContainsFold", "alertNotice", "alertNoticeNEQ", "alertNoticeIn", "alertNoticeNotIn", "alertNoticeGT", "alertNoticeGTE", "alertNoticeLT", "alertNoticeLTE", "alertNoticeContains", "alertNoticeHasPrefix", "alertNoticeHasSuffix", "alertNoticeIsNil", "alertNoticeNotNil", "alertNoticeEqualFold", "alertNoticeContainsFold", "trustScore", "trustScoreNEQ", "trustScoreIn", "trustScoreNotIn", "trustScoreGT", "trustScoreGTE", "trustScoreLT", "trustScoreLTE", "trustScoreIsNil", "trustScoreNotNil", "trustScoreRank", "trustScoreRankNEQ", "trustScoreRankIn", "trustScoreRankNotIn", "trustScoreRankGT", "trustScoreRankGTE", "trustScoreRankLT", "trustScoreRankLTE", "trustScoreRankIsNil", "trustScoreRankNotNil", "tradeVolume24hBtc", "tradeVolume24hBtcNEQ", "tradeVolume24hBtcIn", "tradeVolume24hBtcNotIn", "tradeVolume24hBtcGT", "tradeVolume24hBtcGTE", "tradeVolume24hBtcLT", "tradeVolume24hBtcLTE", "tradeVolume24hBtcIsNil", "tradeVolume24hBtcNotNil", "tradeVolume24hBtcNormalized", "tradeVolume24hBtcNormalizedNEQ", "tradeVolume24hBtcNormalizedIn", "tradeVolume24hBtcNormalizedNotIn", "tradeVolume24hBtcNormalizedGT", "tradeVolume24hBtcNormalizedGTE", "tradeVolume24hBtcNormalizedLT", "tradeVolume24hBtcNormalizedLTE", "tradeVolume24hBtcNormalizedIsNil", "tradeVolume24hBtcNormalizedNotNil", "makerFee", "makerFeeNEQ", "makerFeeIn", "makerFeeNotIn", "makerFeeGT", "makerFeeGTE", "makerFeeLT", "makerFeeLTE", "makerFeeIsNil", "makerFeeNotNil", "takerFee", "takerFeeNEQ", "takerFeeIn", "takerFeeNotIn", "takerFeeGT", "takerFeeGTE", "takerFeeLT", "takerFeeLTE", "takerFeeIsNil", "takerFeeNotNil", "spreadFee", "spreadFeeNEQ", "spreadFeeIsNil", "spreadFeeNotNil", "supportAPI", "supportAPINEQ", "supportAPIIsNil", "supportAPINotNil", "hasTicker", "hasTickerWith", "hasTradingPair", "hasTradingPairWith", "hasMarket", "hasMarketWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -9960,6 +10338,310 @@ func (ec *executionContext) unmarshalInputExchangeWhereInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTickerWith"))
 			it.HasTickerWith, err = ec.unmarshalOTickerWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐTickerWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hasTradingPair":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTradingPair"))
+			it.HasTradingPair, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hasTradingPairWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTradingPairWith"))
+			it.HasTradingPairWith, err = ec.unmarshalOTradingPairWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐTradingPairWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hasMarket":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasMarket"))
+			it.HasMarket, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hasMarketWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasMarketWith"))
+			it.HasMarketWith, err = ec.unmarshalOMarketWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarketWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputMarketWhereInput(ctx context.Context, obj interface{}) (entities.MarketWhereInput, error) {
+	var it entities.MarketWhereInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "hasExchange", "hasExchangeWith", "hasTradingPair", "hasTradingPairWith"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "not":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
+			it.Not, err = ec.unmarshalOMarketWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarketWhereInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "and":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
+			it.And, err = ec.unmarshalOMarketWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarketWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "or":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
+			it.Or, err = ec.unmarshalOMarketWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarketWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNEQ"))
+			it.IDNEQ, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idIn"))
+			it.IDIn, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNotIn"))
+			it.IDNotIn, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGT"))
+			it.IDGT, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGTE"))
+			it.IDGTE, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLT"))
+			it.IDLT, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
+			it.IDLTE, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNEQ"))
+			it.NameNEQ, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameIn"))
+			it.NameIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNotIn"))
+			it.NameNotIn, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameGT"))
+			it.NameGT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameGTE"))
+			it.NameGTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameLT"))
+			it.NameLT, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameLTE"))
+			it.NameLTE, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameContains"))
+			it.NameContains, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameHasPrefix"))
+			it.NameHasPrefix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameHasSuffix"))
+			it.NameHasSuffix, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameEqualFold"))
+			it.NameEqualFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nameContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameContainsFold"))
+			it.NameContainsFold, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalOMarketType2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.MarketWhereInput().Type(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "typeNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeNEQ"))
+			data, err := ec.unmarshalOMarketType2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.MarketWhereInput().TypeNeq(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "typeIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeIn"))
+			data, err := ec.unmarshalOMarketType2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketTypeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.MarketWhereInput().TypeIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "typeNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeNotIn"))
+			data, err := ec.unmarshalOMarketType2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketTypeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.MarketWhereInput().TypeNotIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "hasExchange":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasExchange"))
+			it.HasExchange, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hasExchangeWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasExchangeWith"))
+			it.HasExchangeWith, err = ec.unmarshalOExchangeWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐExchangeWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12036,7 +12718,7 @@ func (ec *executionContext) unmarshalInputTradingPairWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "symbol", "symbolNEQ", "symbolIn", "symbolNotIn", "symbolGT", "symbolGTE", "symbolLT", "symbolLTE", "symbolContains", "symbolHasPrefix", "symbolHasSuffix", "symbolEqualFold", "symbolContainsFold", "basePriceMinPrecision", "basePriceMinPrecisionNEQ", "basePriceMinPrecisionIn", "basePriceMinPrecisionNotIn", "basePriceMinPrecisionGT", "basePriceMinPrecisionGTE", "basePriceMinPrecisionLT", "basePriceMinPrecisionLTE", "basePriceMinPrecisionIsNil", "basePriceMinPrecisionNotNil", "basePriceMaxPrecision", "basePriceMaxPrecisionNEQ", "basePriceMaxPrecisionIn", "basePriceMaxPrecisionNotIn", "basePriceMaxPrecisionGT", "basePriceMaxPrecisionGTE", "basePriceMaxPrecisionLT", "basePriceMaxPrecisionLTE", "basePriceMaxPrecisionIsNil", "basePriceMaxPrecisionNotNil", "baseQuantityMinPrecision", "baseQuantityMinPrecisionNEQ", "baseQuantityMinPrecisionIn", "baseQuantityMinPrecisionNotIn", "baseQuantityMinPrecisionGT", "baseQuantityMinPrecisionGTE", "baseQuantityMinPrecisionLT", "baseQuantityMinPrecisionLTE", "baseQuantityMinPrecisionIsNil", "baseQuantityMinPrecisionNotNil", "baseQuantityMaxPrecision", "baseQuantityMaxPrecisionNEQ", "baseQuantityMaxPrecisionIn", "baseQuantityMaxPrecisionNotIn", "baseQuantityMaxPrecisionGT", "baseQuantityMaxPrecisionGTE", "baseQuantityMaxPrecisionLT", "baseQuantityMaxPrecisionLTE", "baseQuantityMaxPrecisionIsNil", "baseQuantityMaxPrecisionNotNil", "counterPriceMinPrecision", "counterPriceMinPrecisionNEQ", "counterPriceMinPrecisionIn", "counterPriceMinPrecisionNotIn", "counterPriceMinPrecisionGT", "counterPriceMinPrecisionGTE", "counterPriceMinPrecisionLT", "counterPriceMinPrecisionLTE", "counterPriceMinPrecisionIsNil", "counterPriceMinPrecisionNotNil", "counterPriceMaxPrecision", "counterPriceMaxPrecisionNEQ", "counterPriceMaxPrecisionIn", "counterPriceMaxPrecisionNotIn", "counterPriceMaxPrecisionGT", "counterPriceMaxPrecisionGTE", "counterPriceMaxPrecisionLT", "counterPriceMaxPrecisionLTE", "counterPriceMaxPrecisionIsNil", "counterPriceMaxPrecisionNotNil", "counterQuantityMinPrecision", "counterQuantityMinPrecisionNEQ", "counterQuantityMinPrecisionIn", "counterQuantityMinPrecisionNotIn", "counterQuantityMinPrecisionGT", "counterQuantityMinPrecisionGTE", "counterQuantityMinPrecisionLT", "counterQuantityMinPrecisionLTE", "counterQuantityMinPrecisionIsNil", "counterQuantityMinPrecisionNotNil", "counterQuantityMaxPrecision", "counterQuantityMaxPrecisionNEQ", "counterQuantityMaxPrecisionIn", "counterQuantityMaxPrecisionNotIn", "counterQuantityMaxPrecisionGT", "counterQuantityMaxPrecisionGTE", "counterQuantityMaxPrecisionLT", "counterQuantityMaxPrecisionLTE", "counterQuantityMaxPrecisionIsNil", "counterQuantityMaxPrecisionNotNil", "hasExchange", "hasExchangeWith", "hasBase", "hasBaseWith", "hasCounter", "hasCounterWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "symbol", "symbolNEQ", "symbolIn", "symbolNotIn", "symbolGT", "symbolGTE", "symbolLT", "symbolLTE", "symbolContains", "symbolHasPrefix", "symbolHasSuffix", "symbolEqualFold", "symbolContainsFold", "basePriceMinPrecision", "basePriceMinPrecisionNEQ", "basePriceMinPrecisionIn", "basePriceMinPrecisionNotIn", "basePriceMinPrecisionGT", "basePriceMinPrecisionGTE", "basePriceMinPrecisionLT", "basePriceMinPrecisionLTE", "basePriceMinPrecisionIsNil", "basePriceMinPrecisionNotNil", "basePriceMaxPrecision", "basePriceMaxPrecisionNEQ", "basePriceMaxPrecisionIn", "basePriceMaxPrecisionNotIn", "basePriceMaxPrecisionGT", "basePriceMaxPrecisionGTE", "basePriceMaxPrecisionLT", "basePriceMaxPrecisionLTE", "basePriceMaxPrecisionIsNil", "basePriceMaxPrecisionNotNil", "baseQuantityMinPrecision", "baseQuantityMinPrecisionNEQ", "baseQuantityMinPrecisionIn", "baseQuantityMinPrecisionNotIn", "baseQuantityMinPrecisionGT", "baseQuantityMinPrecisionGTE", "baseQuantityMinPrecisionLT", "baseQuantityMinPrecisionLTE", "baseQuantityMinPrecisionIsNil", "baseQuantityMinPrecisionNotNil", "baseQuantityMaxPrecision", "baseQuantityMaxPrecisionNEQ", "baseQuantityMaxPrecisionIn", "baseQuantityMaxPrecisionNotIn", "baseQuantityMaxPrecisionGT", "baseQuantityMaxPrecisionGTE", "baseQuantityMaxPrecisionLT", "baseQuantityMaxPrecisionLTE", "baseQuantityMaxPrecisionIsNil", "baseQuantityMaxPrecisionNotNil", "counterPriceMinPrecision", "counterPriceMinPrecisionNEQ", "counterPriceMinPrecisionIn", "counterPriceMinPrecisionNotIn", "counterPriceMinPrecisionGT", "counterPriceMinPrecisionGTE", "counterPriceMinPrecisionLT", "counterPriceMinPrecisionLTE", "counterPriceMinPrecisionIsNil", "counterPriceMinPrecisionNotNil", "counterPriceMaxPrecision", "counterPriceMaxPrecisionNEQ", "counterPriceMaxPrecisionIn", "counterPriceMaxPrecisionNotIn", "counterPriceMaxPrecisionGT", "counterPriceMaxPrecisionGTE", "counterPriceMaxPrecisionLT", "counterPriceMaxPrecisionLTE", "counterPriceMaxPrecisionIsNil", "counterPriceMaxPrecisionNotNil", "counterQuantityMinPrecision", "counterQuantityMinPrecisionNEQ", "counterQuantityMinPrecisionIn", "counterQuantityMinPrecisionNotIn", "counterQuantityMinPrecisionGT", "counterQuantityMinPrecisionGTE", "counterQuantityMinPrecisionLT", "counterQuantityMinPrecisionLTE", "counterQuantityMinPrecisionIsNil", "counterQuantityMinPrecisionNotNil", "counterQuantityMaxPrecision", "counterQuantityMaxPrecisionNEQ", "counterQuantityMaxPrecisionIn", "counterQuantityMaxPrecisionNotIn", "counterQuantityMaxPrecisionGT", "counterQuantityMaxPrecisionGTE", "counterQuantityMaxPrecisionLT", "counterQuantityMaxPrecisionLTE", "counterQuantityMaxPrecisionIsNil", "counterQuantityMaxPrecisionNotNil", "hasExchange", "hasExchangeWith", "hasBase", "hasBaseWith", "hasCounter", "hasCounterWith", "hasMarket", "hasMarketWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -12923,6 +13605,22 @@ func (ec *executionContext) unmarshalInputTradingPairWhereInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
+		case "hasMarket":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasMarket"))
+			it.HasMarket, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hasMarketWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasMarketWith"))
+			it.HasMarketWith, err = ec.unmarshalOMarketWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarketWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -12957,6 +13655,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._TradingPair(ctx, sel, obj)
+	case *entities.Market:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Market(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -13247,6 +13950,26 @@ func (ec *executionContext) _Exchange(ctx context.Context, sel ast.SelectionSet,
 				return innerFunc(ctx)
 
 			})
+		case "markets":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Exchange_markets(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "makerFee":
 
 			out.Values[i] = ec._Exchange_makerFee(ctx, field, obj)
@@ -13387,9 +14110,9 @@ func (ec *executionContext) _Links(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
-var marketImplementors = []string{"Market"}
+var marketImplementors = []string{"Market", "Node"}
 
-func (ec *executionContext) _Market(ctx context.Context, sel ast.SelectionSet, obj *models.Market) graphql.Marshaler {
+func (ec *executionContext) _Market(ctx context.Context, sel ast.SelectionSet, obj *entities.Market) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, marketImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -13397,24 +14120,40 @@ func (ec *executionContext) _Market(ctx context.Context, sel ast.SelectionSet, o
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Market")
-		case "hasTradingIncentive":
+		case "id":
 
-			out.Values[i] = ec._Market_hasTradingIncentive(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "identifier":
-
-			out.Values[i] = ec._Market_identifier(ctx, field, obj)
+			out.Values[i] = ec._Market_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 
 			out.Values[i] = ec._Market_name(ctx, field, obj)
 
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "type":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Market_type(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -13759,6 +14498,45 @@ func (ec *executionContext) _Ticker(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
+var tickerMarketImplementors = []string{"TickerMarket"}
+
+func (ec *executionContext) _TickerMarket(ctx context.Context, sel ast.SelectionSet, obj *models.TickerMarket) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tickerMarketImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TickerMarket")
+		case "hasTradingIncentive":
+
+			out.Values[i] = ec._TickerMarket_hasTradingIncentive(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "identifier":
+
+			out.Values[i] = ec._TickerMarket_identifier(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+
+			out.Values[i] = ec._TickerMarket_name(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var tradingPairImplementors = []string{"TradingPair", "Node"}
 
 func (ec *executionContext) _TradingPair(ctx context.Context, sel ast.SelectionSet, obj *entities.TradingPair) graphql.Marshaler {
@@ -13855,6 +14633,26 @@ func (ec *executionContext) _TradingPair(ctx context.Context, sel ast.SelectionS
 
 			out.Values[i] = ec._TradingPair_counterQuantityMaxPrecision(ctx, field, obj)
 
+		case "markets":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._TradingPair_markets(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -14321,6 +15119,75 @@ func (ec *executionContext) marshalNLinks2ᚖgithubᚗcomᚋomigaᚑgroupᚋomig
 		return graphql.Null
 	}
 	return ec._Links(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNMarket2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarketᚄ(ctx context.Context, sel ast.SelectionSet, v []*entities.Market) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMarket2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarket(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNMarket2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarket(ctx context.Context, sel ast.SelectionSet, v *entities.Market) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Market(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNMarketType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketType(ctx context.Context, v interface{}) (models.MarketType, error) {
+	var res models.MarketType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNMarketType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketType(ctx context.Context, sel ast.SelectionSet, v models.MarketType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNMarketWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarketWhereInput(ctx context.Context, v interface{}) (*entities.MarketWhereInput, error) {
+	res, err := ec.unmarshalInputMarketWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNOrderDirection2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐOrderDirection(ctx context.Context, v interface{}) (entities.OrderDirection, error) {
@@ -15255,11 +16122,115 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
-func (ec *executionContext) marshalOMarket2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarket(ctx context.Context, sel ast.SelectionSet, v *models.Market) graphql.Marshaler {
+func (ec *executionContext) unmarshalOMarketType2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketTypeᚄ(ctx context.Context, v interface{}) ([]models.MarketType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]models.MarketType, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNMarketType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketType(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOMarketType2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketTypeᚄ(ctx context.Context, sel ast.SelectionSet, v []models.MarketType) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._Market(ctx, sel, v)
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMarketType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketType(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOMarketType2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketType(ctx context.Context, v interface{}) (*models.MarketType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(models.MarketType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOMarketType2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐMarketType(ctx context.Context, sel ast.SelectionSet, v *models.MarketType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOMarketWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarketWhereInputᚄ(ctx context.Context, v interface{}) ([]*entities.MarketWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*entities.MarketWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNMarketWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarketWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOMarketWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐMarketWhereInput(ctx context.Context, v interface{}) (*entities.MarketWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputMarketWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOOutboxStatus2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐOutboxStatusᚄ(ctx context.Context, v interface{}) ([]models.OutboxStatus, error) {
@@ -15435,6 +16406,13 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOTickerMarket2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐTickerMarket(ctx context.Context, sel ast.SelectionSet, v *models.TickerMarket) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._TickerMarket(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOTickerWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐTickerWhereInputᚄ(ctx context.Context, v interface{}) ([]*entities.TickerWhereInput, error) {

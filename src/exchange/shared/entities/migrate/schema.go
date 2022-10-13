@@ -147,6 +147,39 @@ var (
 			},
 		},
 	}
+	// MarketsColumns holds the columns for the "markets" table.
+	MarketsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"SPORT_TRADING", "MARGIN_TRADING", "DERIVATIVES", "EARN", "PERPETUAL", "FUTURES", "WARRANT", "OTC", "YIELD", "P2P", "STRATEGY_TRADING", "SWAP_FARMING", "FAN_TOKEN", "ETF", "NFT", "SWAP"}},
+		{Name: "exchange_market", Type: field.TypeInt},
+	}
+	// MarketsTable holds the schema information for the "markets" table.
+	MarketsTable = &schema.Table{
+		Name:       "markets",
+		Columns:    MarketsColumns,
+		PrimaryKey: []*schema.Column{MarketsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "markets_exchanges_market",
+				Columns:    []*schema.Column{MarketsColumns[3]},
+				RefColumns: []*schema.Column{ExchangesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "market_name",
+				Unique:  false,
+				Columns: []*schema.Column{MarketsColumns[1]},
+			},
+			{
+				Name:    "market_type",
+				Unique:  false,
+				Columns: []*schema.Column{MarketsColumns[2]},
+			},
+		},
+	}
 	// OutboxesColumns holds the columns for the "outboxes" table.
 	OutboxesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -381,19 +414,49 @@ var (
 			},
 		},
 	}
+	// MarketTradingPairColumns holds the columns for the "market_trading_pair" table.
+	MarketTradingPairColumns = []*schema.Column{
+		{Name: "market_id", Type: field.TypeInt},
+		{Name: "trading_pair_id", Type: field.TypeInt},
+	}
+	// MarketTradingPairTable holds the schema information for the "market_trading_pair" table.
+	MarketTradingPairTable = &schema.Table{
+		Name:       "market_trading_pair",
+		Columns:    MarketTradingPairColumns,
+		PrimaryKey: []*schema.Column{MarketTradingPairColumns[0], MarketTradingPairColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "market_trading_pair_market_id",
+				Columns:    []*schema.Column{MarketTradingPairColumns[0]},
+				RefColumns: []*schema.Column{MarketsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "market_trading_pair_trading_pair_id",
+				Columns:    []*schema.Column{MarketTradingPairColumns[1]},
+				RefColumns: []*schema.Column{TradingPairsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		CoinsTable,
 		ExchangesTable,
+		MarketsTable,
 		OutboxesTable,
 		TickersTable,
 		TradingPairsTable,
+		MarketTradingPairTable,
 	}
 )
 
 func init() {
+	MarketsTable.ForeignKeys[0].RefTable = ExchangesTable
 	TickersTable.ForeignKeys[0].RefTable = ExchangesTable
 	TradingPairsTable.ForeignKeys[0].RefTable = CoinsTable
 	TradingPairsTable.ForeignKeys[1].RefTable = CoinsTable
 	TradingPairsTable.ForeignKeys[2].RefTable = ExchangesTable
+	MarketTradingPairTable.ForeignKeys[0].RefTable = MarketsTable
+	MarketTradingPairTable.ForeignKeys[1].RefTable = TradingPairsTable
 }

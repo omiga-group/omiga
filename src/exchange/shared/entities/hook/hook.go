@@ -35,6 +35,19 @@ func (f ExchangeFunc) Mutate(ctx context.Context, m entities.Mutation) (entities
 	return f(ctx, mv)
 }
 
+// The MarketFunc type is an adapter to allow the use of ordinary
+// function as Market mutator.
+type MarketFunc func(context.Context, *entities.MarketMutation) (entities.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MarketFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
+	mv, ok := m.(*entities.MarketMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.MarketMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The OutboxFunc type is an adapter to allow the use of ordinary
 // function as Outbox mutator.
 type OutboxFunc func(context.Context, *entities.OutboxMutation) (entities.Value, error)

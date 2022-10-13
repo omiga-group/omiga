@@ -215,6 +215,7 @@ type Exchange implements Node {
   tradeVolume24hBtcNormalized: Float
   tickers: [Ticker!]!
   tradingPairs: [TradingPair!]!
+  markets: [Market!]!
   makerFee: Float
   takerFee: Float
   spreadFee: Boolean
@@ -236,7 +237,7 @@ type Ticker implements Node {
   baseCoinId: String
   counter: String!
   counterCoinId: String
-  market: Market
+  market: TickerMarket
   last: Float
   volume: Float
   convertedLast: ConvertedDetails
@@ -265,9 +266,10 @@ type TradingPair implements Node {
   counterPriceMaxPrecision: Int
   counterQuantityMinPrecision: Int
   counterQuantityMaxPrecision: Int
+  markets: [Market!]!
 }
 
-type Market {
+type TickerMarket {
   hasTradingIncentive: Boolean!
   identifier: String!
   name: String
@@ -318,4 +320,29 @@ enum OutboxStatus {
   PENDING
   SUCCEEDED
   FAILED
+}
+
+type Market implements Node {
+  id: ID!
+  name: String!
+  type: MarketType!
+}
+
+enum MarketType {
+  SPORT_TRADING
+  MARGIN_TRADING
+  DERIVATIVES
+  EARN
+  PERPETUAL
+  FUTURES
+  WARRANT
+  OTC
+  YIELD
+  P2P
+  STRATEGY_TRADING
+  SWAP_FARMING
+  FAN_TOKEN
+  ETF
+  NFT
+  Swap
 }

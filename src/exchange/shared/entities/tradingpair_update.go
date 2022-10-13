@@ -13,6 +13,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
@@ -286,6 +287,21 @@ func (tpu *TradingPairUpdate) SetCounter(c *Coin) *TradingPairUpdate {
 	return tpu.SetCounterID(c.ID)
 }
 
+// AddMarketIDs adds the "market" edge to the Market entity by IDs.
+func (tpu *TradingPairUpdate) AddMarketIDs(ids ...int) *TradingPairUpdate {
+	tpu.mutation.AddMarketIDs(ids...)
+	return tpu
+}
+
+// AddMarket adds the "market" edges to the Market entity.
+func (tpu *TradingPairUpdate) AddMarket(m ...*Market) *TradingPairUpdate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return tpu.AddMarketIDs(ids...)
+}
+
 // Mutation returns the TradingPairMutation object of the builder.
 func (tpu *TradingPairUpdate) Mutation() *TradingPairMutation {
 	return tpu.mutation
@@ -307,6 +323,27 @@ func (tpu *TradingPairUpdate) ClearBase() *TradingPairUpdate {
 func (tpu *TradingPairUpdate) ClearCounter() *TradingPairUpdate {
 	tpu.mutation.ClearCounter()
 	return tpu
+}
+
+// ClearMarket clears all "market" edges to the Market entity.
+func (tpu *TradingPairUpdate) ClearMarket() *TradingPairUpdate {
+	tpu.mutation.ClearMarket()
+	return tpu
+}
+
+// RemoveMarketIDs removes the "market" edge to Market entities by IDs.
+func (tpu *TradingPairUpdate) RemoveMarketIDs(ids ...int) *TradingPairUpdate {
+	tpu.mutation.RemoveMarketIDs(ids...)
+	return tpu
+}
+
+// RemoveMarket removes "market" edges to Market entities.
+func (tpu *TradingPairUpdate) RemoveMarket(m ...*Market) *TradingPairUpdate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return tpu.RemoveMarketIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -685,6 +722,63 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if tpu.mutation.MarketCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tradingpair.MarketTable,
+			Columns: tradingpair.MarketPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpu.schemaConfig.MarketTradingPair
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tpu.mutation.RemovedMarketIDs(); len(nodes) > 0 && !tpu.mutation.MarketCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tradingpair.MarketTable,
+			Columns: tradingpair.MarketPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpu.schemaConfig.MarketTradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tpu.mutation.MarketIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tradingpair.MarketTable,
+			Columns: tradingpair.MarketPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpu.schemaConfig.MarketTradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.Node.Schema = tpu.schemaConfig.TradingPair
 	ctx = internal.NewSchemaConfigContext(ctx, tpu.schemaConfig)
 	_spec.Modifiers = tpu.modifiers
@@ -963,6 +1057,21 @@ func (tpuo *TradingPairUpdateOne) SetCounter(c *Coin) *TradingPairUpdateOne {
 	return tpuo.SetCounterID(c.ID)
 }
 
+// AddMarketIDs adds the "market" edge to the Market entity by IDs.
+func (tpuo *TradingPairUpdateOne) AddMarketIDs(ids ...int) *TradingPairUpdateOne {
+	tpuo.mutation.AddMarketIDs(ids...)
+	return tpuo
+}
+
+// AddMarket adds the "market" edges to the Market entity.
+func (tpuo *TradingPairUpdateOne) AddMarket(m ...*Market) *TradingPairUpdateOne {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return tpuo.AddMarketIDs(ids...)
+}
+
 // Mutation returns the TradingPairMutation object of the builder.
 func (tpuo *TradingPairUpdateOne) Mutation() *TradingPairMutation {
 	return tpuo.mutation
@@ -984,6 +1093,27 @@ func (tpuo *TradingPairUpdateOne) ClearBase() *TradingPairUpdateOne {
 func (tpuo *TradingPairUpdateOne) ClearCounter() *TradingPairUpdateOne {
 	tpuo.mutation.ClearCounter()
 	return tpuo
+}
+
+// ClearMarket clears all "market" edges to the Market entity.
+func (tpuo *TradingPairUpdateOne) ClearMarket() *TradingPairUpdateOne {
+	tpuo.mutation.ClearMarket()
+	return tpuo
+}
+
+// RemoveMarketIDs removes the "market" edge to Market entities by IDs.
+func (tpuo *TradingPairUpdateOne) RemoveMarketIDs(ids ...int) *TradingPairUpdateOne {
+	tpuo.mutation.RemoveMarketIDs(ids...)
+	return tpuo
+}
+
+// RemoveMarket removes "market" edges to Market entities.
+func (tpuo *TradingPairUpdateOne) RemoveMarket(m ...*Market) *TradingPairUpdateOne {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return tpuo.RemoveMarketIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -1387,6 +1517,63 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 			},
 		}
 		edge.Schema = tpuo.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tpuo.mutation.MarketCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tradingpair.MarketTable,
+			Columns: tradingpair.MarketPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpuo.schemaConfig.MarketTradingPair
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tpuo.mutation.RemovedMarketIDs(); len(nodes) > 0 && !tpuo.mutation.MarketCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tradingpair.MarketTable,
+			Columns: tradingpair.MarketPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpuo.schemaConfig.MarketTradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tpuo.mutation.MarketIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tradingpair.MarketTable,
+			Columns: tradingpair.MarketPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpuo.schemaConfig.MarketTradingPair
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

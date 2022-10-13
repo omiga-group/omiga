@@ -23,10 +23,79 @@ type Links struct {
 	Telegram *string `json:"telegram"`
 }
 
-type Market struct {
+type TickerMarket struct {
 	HasTradingIncentive bool    `json:"hasTradingIncentive"`
 	Identifier          string  `json:"identifier"`
 	Name                *string `json:"name"`
+}
+
+type MarketType string
+
+const (
+	MarketTypeSportTrading    MarketType = "SPORT_TRADING"
+	MarketTypeMarginTrading   MarketType = "MARGIN_TRADING"
+	MarketTypeDerivatives     MarketType = "DERIVATIVES"
+	MarketTypeEarn            MarketType = "EARN"
+	MarketTypePerpetual       MarketType = "PERPETUAL"
+	MarketTypeFutures         MarketType = "FUTURES"
+	MarketTypeWarrant         MarketType = "WARRANT"
+	MarketTypeOtc             MarketType = "OTC"
+	MarketTypeYield           MarketType = "YIELD"
+	MarketTypeP2p             MarketType = "P2P"
+	MarketTypeStrategyTrading MarketType = "STRATEGY_TRADING"
+	MarketTypeSwapFarming     MarketType = "SWAP_FARMING"
+	MarketTypeFanToken        MarketType = "FAN_TOKEN"
+	MarketTypeEtf             MarketType = "ETF"
+	MarketTypeNft             MarketType = "NFT"
+	MarketTypeSwap            MarketType = "Swap"
+)
+
+var AllMarketType = []MarketType{
+	MarketTypeSportTrading,
+	MarketTypeMarginTrading,
+	MarketTypeDerivatives,
+	MarketTypeEarn,
+	MarketTypePerpetual,
+	MarketTypeFutures,
+	MarketTypeWarrant,
+	MarketTypeOtc,
+	MarketTypeYield,
+	MarketTypeP2p,
+	MarketTypeStrategyTrading,
+	MarketTypeSwapFarming,
+	MarketTypeFanToken,
+	MarketTypeEtf,
+	MarketTypeNft,
+	MarketTypeSwap,
+}
+
+func (e MarketType) IsValid() bool {
+	switch e {
+	case MarketTypeSportTrading, MarketTypeMarginTrading, MarketTypeDerivatives, MarketTypeEarn, MarketTypePerpetual, MarketTypeFutures, MarketTypeWarrant, MarketTypeOtc, MarketTypeYield, MarketTypeP2p, MarketTypeStrategyTrading, MarketTypeSwapFarming, MarketTypeFanToken, MarketTypeEtf, MarketTypeNft, MarketTypeSwap:
+		return true
+	}
+	return false
+}
+
+func (e MarketType) String() string {
+	return string(e)
+}
+
+func (e *MarketType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MarketType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MarketType", str)
+	}
+	return nil
+}
+
+func (e MarketType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type OutboxStatus string

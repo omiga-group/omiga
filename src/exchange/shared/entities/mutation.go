@@ -11,6 +11,7 @@ import (
 
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
@@ -31,6 +32,7 @@ const (
 	// Node types.
 	TypeCoin        = "Coin"
 	TypeExchange    = "Exchange"
+	TypeMarket      = "Market"
 	TypeOutbox      = "Outbox"
 	TypeTicker      = "Ticker"
 	TypeTradingPair = "TradingPair"
@@ -637,6 +639,9 @@ type ExchangeMutation struct {
 	trading_pair                       map[int]struct{}
 	removedtrading_pair                map[int]struct{}
 	clearedtrading_pair                bool
+	market                             map[int]struct{}
+	removedmarket                      map[int]struct{}
+	clearedmarket                      bool
 	done                               bool
 	oldValue                           func(context.Context) (*Exchange, error)
 	predicates                         []predicate.Exchange
@@ -1864,6 +1869,60 @@ func (m *ExchangeMutation) ResetTradingPair() {
 	m.removedtrading_pair = nil
 }
 
+// AddMarketIDs adds the "market" edge to the Market entity by ids.
+func (m *ExchangeMutation) AddMarketIDs(ids ...int) {
+	if m.market == nil {
+		m.market = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.market[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMarket clears the "market" edge to the Market entity.
+func (m *ExchangeMutation) ClearMarket() {
+	m.clearedmarket = true
+}
+
+// MarketCleared reports if the "market" edge to the Market entity was cleared.
+func (m *ExchangeMutation) MarketCleared() bool {
+	return m.clearedmarket
+}
+
+// RemoveMarketIDs removes the "market" edge to the Market entity by IDs.
+func (m *ExchangeMutation) RemoveMarketIDs(ids ...int) {
+	if m.removedmarket == nil {
+		m.removedmarket = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.market, ids[i])
+		m.removedmarket[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMarket returns the removed IDs of the "market" edge to the Market entity.
+func (m *ExchangeMutation) RemovedMarketIDs() (ids []int) {
+	for id := range m.removedmarket {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MarketIDs returns the "market" edge IDs in the mutation.
+func (m *ExchangeMutation) MarketIDs() (ids []int) {
+	for id := range m.market {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMarket resets all changes to the "market" edge.
+func (m *ExchangeMutation) ResetMarket() {
+	m.market = nil
+	m.clearedmarket = false
+	m.removedmarket = nil
+}
+
 // Where appends a list predicates to the ExchangeMutation builder.
 func (m *ExchangeMutation) Where(ps ...predicate.Exchange) {
 	m.predicates = append(m.predicates, ps...)
@@ -2463,12 +2522,15 @@ func (m *ExchangeMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ExchangeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.ticker != nil {
 		edges = append(edges, exchange.EdgeTicker)
 	}
 	if m.trading_pair != nil {
 		edges = append(edges, exchange.EdgeTradingPair)
+	}
+	if m.market != nil {
+		edges = append(edges, exchange.EdgeMarket)
 	}
 	return edges
 }
@@ -2489,18 +2551,27 @@ func (m *ExchangeMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case exchange.EdgeMarket:
+		ids := make([]ent.Value, 0, len(m.market))
+		for id := range m.market {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ExchangeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedticker != nil {
 		edges = append(edges, exchange.EdgeTicker)
 	}
 	if m.removedtrading_pair != nil {
 		edges = append(edges, exchange.EdgeTradingPair)
+	}
+	if m.removedmarket != nil {
+		edges = append(edges, exchange.EdgeMarket)
 	}
 	return edges
 }
@@ -2521,18 +2592,27 @@ func (m *ExchangeMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case exchange.EdgeMarket:
+		ids := make([]ent.Value, 0, len(m.removedmarket))
+		for id := range m.removedmarket {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ExchangeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedticker {
 		edges = append(edges, exchange.EdgeTicker)
 	}
 	if m.clearedtrading_pair {
 		edges = append(edges, exchange.EdgeTradingPair)
+	}
+	if m.clearedmarket {
+		edges = append(edges, exchange.EdgeMarket)
 	}
 	return edges
 }
@@ -2545,6 +2625,8 @@ func (m *ExchangeMutation) EdgeCleared(name string) bool {
 		return m.clearedticker
 	case exchange.EdgeTradingPair:
 		return m.clearedtrading_pair
+	case exchange.EdgeMarket:
+		return m.clearedmarket
 	}
 	return false
 }
@@ -2567,8 +2649,528 @@ func (m *ExchangeMutation) ResetEdge(name string) error {
 	case exchange.EdgeTradingPair:
 		m.ResetTradingPair()
 		return nil
+	case exchange.EdgeMarket:
+		m.ResetMarket()
+		return nil
 	}
 	return fmt.Errorf("unknown Exchange edge %s", name)
+}
+
+// MarketMutation represents an operation that mutates the Market nodes in the graph.
+type MarketMutation struct {
+	config
+	op                  Op
+	typ                 string
+	id                  *int
+	name                *string
+	_type               *market.Type
+	clearedFields       map[string]struct{}
+	exchange            *int
+	clearedexchange     bool
+	trading_pair        map[int]struct{}
+	removedtrading_pair map[int]struct{}
+	clearedtrading_pair bool
+	done                bool
+	oldValue            func(context.Context) (*Market, error)
+	predicates          []predicate.Market
+}
+
+var _ ent.Mutation = (*MarketMutation)(nil)
+
+// marketOption allows management of the mutation configuration using functional options.
+type marketOption func(*MarketMutation)
+
+// newMarketMutation creates new mutation for the Market entity.
+func newMarketMutation(c config, op Op, opts ...marketOption) *MarketMutation {
+	m := &MarketMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMarket,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMarketID sets the ID field of the mutation.
+func withMarketID(id int) marketOption {
+	return func(m *MarketMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Market
+		)
+		m.oldValue = func(ctx context.Context) (*Market, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Market.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMarket sets the old Market of the mutation.
+func withMarket(node *Market) marketOption {
+	return func(m *MarketMutation) {
+		m.oldValue = func(context.Context) (*Market, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MarketMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MarketMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("entities: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MarketMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MarketMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Market.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetName sets the "name" field.
+func (m *MarketMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *MarketMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Market entity.
+// If the Market object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MarketMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *MarketMutation) ResetName() {
+	m.name = nil
+}
+
+// SetType sets the "type" field.
+func (m *MarketMutation) SetType(value market.Type) {
+	m._type = &value
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *MarketMutation) GetType() (r market.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Market entity.
+// If the Market object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MarketMutation) OldType(ctx context.Context) (v market.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *MarketMutation) ResetType() {
+	m._type = nil
+}
+
+// SetExchangeID sets the "exchange" edge to the Exchange entity by id.
+func (m *MarketMutation) SetExchangeID(id int) {
+	m.exchange = &id
+}
+
+// ClearExchange clears the "exchange" edge to the Exchange entity.
+func (m *MarketMutation) ClearExchange() {
+	m.clearedexchange = true
+}
+
+// ExchangeCleared reports if the "exchange" edge to the Exchange entity was cleared.
+func (m *MarketMutation) ExchangeCleared() bool {
+	return m.clearedexchange
+}
+
+// ExchangeID returns the "exchange" edge ID in the mutation.
+func (m *MarketMutation) ExchangeID() (id int, exists bool) {
+	if m.exchange != nil {
+		return *m.exchange, true
+	}
+	return
+}
+
+// ExchangeIDs returns the "exchange" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ExchangeID instead. It exists only for internal usage by the builders.
+func (m *MarketMutation) ExchangeIDs() (ids []int) {
+	if id := m.exchange; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetExchange resets all changes to the "exchange" edge.
+func (m *MarketMutation) ResetExchange() {
+	m.exchange = nil
+	m.clearedexchange = false
+}
+
+// AddTradingPairIDs adds the "trading_pair" edge to the TradingPair entity by ids.
+func (m *MarketMutation) AddTradingPairIDs(ids ...int) {
+	if m.trading_pair == nil {
+		m.trading_pair = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.trading_pair[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTradingPair clears the "trading_pair" edge to the TradingPair entity.
+func (m *MarketMutation) ClearTradingPair() {
+	m.clearedtrading_pair = true
+}
+
+// TradingPairCleared reports if the "trading_pair" edge to the TradingPair entity was cleared.
+func (m *MarketMutation) TradingPairCleared() bool {
+	return m.clearedtrading_pair
+}
+
+// RemoveTradingPairIDs removes the "trading_pair" edge to the TradingPair entity by IDs.
+func (m *MarketMutation) RemoveTradingPairIDs(ids ...int) {
+	if m.removedtrading_pair == nil {
+		m.removedtrading_pair = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.trading_pair, ids[i])
+		m.removedtrading_pair[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTradingPair returns the removed IDs of the "trading_pair" edge to the TradingPair entity.
+func (m *MarketMutation) RemovedTradingPairIDs() (ids []int) {
+	for id := range m.removedtrading_pair {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TradingPairIDs returns the "trading_pair" edge IDs in the mutation.
+func (m *MarketMutation) TradingPairIDs() (ids []int) {
+	for id := range m.trading_pair {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTradingPair resets all changes to the "trading_pair" edge.
+func (m *MarketMutation) ResetTradingPair() {
+	m.trading_pair = nil
+	m.clearedtrading_pair = false
+	m.removedtrading_pair = nil
+}
+
+// Where appends a list predicates to the MarketMutation builder.
+func (m *MarketMutation) Where(ps ...predicate.Market) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *MarketMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Market).
+func (m *MarketMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MarketMutation) Fields() []string {
+	fields := make([]string, 0, 2)
+	if m.name != nil {
+		fields = append(fields, market.FieldName)
+	}
+	if m._type != nil {
+		fields = append(fields, market.FieldType)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MarketMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case market.FieldName:
+		return m.Name()
+	case market.FieldType:
+		return m.GetType()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MarketMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case market.FieldName:
+		return m.OldName(ctx)
+	case market.FieldType:
+		return m.OldType(ctx)
+	}
+	return nil, fmt.Errorf("unknown Market field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MarketMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case market.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case market.FieldType:
+		v, ok := value.(market.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Market field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MarketMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MarketMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MarketMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Market numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MarketMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MarketMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MarketMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Market nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MarketMutation) ResetField(name string) error {
+	switch name {
+	case market.FieldName:
+		m.ResetName()
+		return nil
+	case market.FieldType:
+		m.ResetType()
+		return nil
+	}
+	return fmt.Errorf("unknown Market field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MarketMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.exchange != nil {
+		edges = append(edges, market.EdgeExchange)
+	}
+	if m.trading_pair != nil {
+		edges = append(edges, market.EdgeTradingPair)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MarketMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case market.EdgeExchange:
+		if id := m.exchange; id != nil {
+			return []ent.Value{*id}
+		}
+	case market.EdgeTradingPair:
+		ids := make([]ent.Value, 0, len(m.trading_pair))
+		for id := range m.trading_pair {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MarketMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.removedtrading_pair != nil {
+		edges = append(edges, market.EdgeTradingPair)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MarketMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case market.EdgeTradingPair:
+		ids := make([]ent.Value, 0, len(m.removedtrading_pair))
+		for id := range m.removedtrading_pair {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MarketMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedexchange {
+		edges = append(edges, market.EdgeExchange)
+	}
+	if m.clearedtrading_pair {
+		edges = append(edges, market.EdgeTradingPair)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MarketMutation) EdgeCleared(name string) bool {
+	switch name {
+	case market.EdgeExchange:
+		return m.clearedexchange
+	case market.EdgeTradingPair:
+		return m.clearedtrading_pair
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MarketMutation) ClearEdge(name string) error {
+	switch name {
+	case market.EdgeExchange:
+		m.ClearExchange()
+		return nil
+	}
+	return fmt.Errorf("unknown Market unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MarketMutation) ResetEdge(name string) error {
+	switch name {
+	case market.EdgeExchange:
+		m.ResetExchange()
+		return nil
+	case market.EdgeTradingPair:
+		m.ResetTradingPair()
+		return nil
+	}
+	return fmt.Errorf("unknown Market edge %s", name)
 }
 
 // OutboxMutation represents an operation that mutates the Outbox nodes in the graph.
@@ -5129,6 +5731,9 @@ type TradingPairMutation struct {
 	clearedbase                       bool
 	counter                           *int
 	clearedcounter                    bool
+	market                            map[int]struct{}
+	removedmarket                     map[int]struct{}
+	clearedmarket                     bool
 	done                              bool
 	oldValue                          func(context.Context) (*TradingPair, error)
 	predicates                        []predicate.TradingPair
@@ -5945,6 +6550,60 @@ func (m *TradingPairMutation) ResetCounter() {
 	m.clearedcounter = false
 }
 
+// AddMarketIDs adds the "market" edge to the Market entity by ids.
+func (m *TradingPairMutation) AddMarketIDs(ids ...int) {
+	if m.market == nil {
+		m.market = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.market[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMarket clears the "market" edge to the Market entity.
+func (m *TradingPairMutation) ClearMarket() {
+	m.clearedmarket = true
+}
+
+// MarketCleared reports if the "market" edge to the Market entity was cleared.
+func (m *TradingPairMutation) MarketCleared() bool {
+	return m.clearedmarket
+}
+
+// RemoveMarketIDs removes the "market" edge to the Market entity by IDs.
+func (m *TradingPairMutation) RemoveMarketIDs(ids ...int) {
+	if m.removedmarket == nil {
+		m.removedmarket = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.market, ids[i])
+		m.removedmarket[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMarket returns the removed IDs of the "market" edge to the Market entity.
+func (m *TradingPairMutation) RemovedMarketIDs() (ids []int) {
+	for id := range m.removedmarket {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MarketIDs returns the "market" edge IDs in the mutation.
+func (m *TradingPairMutation) MarketIDs() (ids []int) {
+	for id := range m.market {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMarket resets all changes to the "market" edge.
+func (m *TradingPairMutation) ResetMarket() {
+	m.market = nil
+	m.clearedmarket = false
+	m.removedmarket = nil
+}
+
 // Where appends a list predicates to the TradingPairMutation builder.
 func (m *TradingPairMutation) Where(ps ...predicate.TradingPair) {
 	m.predicates = append(m.predicates, ps...)
@@ -6349,7 +7008,7 @@ func (m *TradingPairMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TradingPairMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.exchange != nil {
 		edges = append(edges, tradingpair.EdgeExchange)
 	}
@@ -6358,6 +7017,9 @@ func (m *TradingPairMutation) AddedEdges() []string {
 	}
 	if m.counter != nil {
 		edges = append(edges, tradingpair.EdgeCounter)
+	}
+	if m.market != nil {
+		edges = append(edges, tradingpair.EdgeMarket)
 	}
 	return edges
 }
@@ -6378,25 +7040,42 @@ func (m *TradingPairMutation) AddedIDs(name string) []ent.Value {
 		if id := m.counter; id != nil {
 			return []ent.Value{*id}
 		}
+	case tradingpair.EdgeMarket:
+		ids := make([]ent.Value, 0, len(m.market))
+		for id := range m.market {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TradingPairMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
+	if m.removedmarket != nil {
+		edges = append(edges, tradingpair.EdgeMarket)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *TradingPairMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case tradingpair.EdgeMarket:
+		ids := make([]ent.Value, 0, len(m.removedmarket))
+		for id := range m.removedmarket {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TradingPairMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedexchange {
 		edges = append(edges, tradingpair.EdgeExchange)
 	}
@@ -6405,6 +7084,9 @@ func (m *TradingPairMutation) ClearedEdges() []string {
 	}
 	if m.clearedcounter {
 		edges = append(edges, tradingpair.EdgeCounter)
+	}
+	if m.clearedmarket {
+		edges = append(edges, tradingpair.EdgeMarket)
 	}
 	return edges
 }
@@ -6419,6 +7101,8 @@ func (m *TradingPairMutation) EdgeCleared(name string) bool {
 		return m.clearedbase
 	case tradingpair.EdgeCounter:
 		return m.clearedcounter
+	case tradingpair.EdgeMarket:
+		return m.clearedmarket
 	}
 	return false
 }
@@ -6452,6 +7136,9 @@ func (m *TradingPairMutation) ResetEdge(name string) error {
 		return nil
 	case tradingpair.EdgeCounter:
 		m.ResetCounter()
+		return nil
+	case tradingpair.EdgeMarket:
+		m.ResetMarket()
 		return nil
 	}
 	return fmt.Errorf("unknown TradingPair edge %s", name)

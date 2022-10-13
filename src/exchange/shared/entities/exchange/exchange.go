@@ -47,6 +47,8 @@ const (
 	EdgeTicker = "ticker"
 	// EdgeTradingPair holds the string denoting the trading_pair edge name in mutations.
 	EdgeTradingPair = "trading_pair"
+	// EdgeMarket holds the string denoting the market edge name in mutations.
+	EdgeMarket = "market"
 	// Table holds the table name of the exchange in the database.
 	Table = "exchanges"
 	// TickerTable is the table that holds the ticker relation/edge.
@@ -63,6 +65,13 @@ const (
 	TradingPairInverseTable = "trading_pairs"
 	// TradingPairColumn is the table column denoting the trading_pair relation/edge.
 	TradingPairColumn = "exchange_trading_pair"
+	// MarketTable is the table that holds the market relation/edge.
+	MarketTable = "markets"
+	// MarketInverseTable is the table name for the Market entity.
+	// It exists in this package in order to avoid circular dependency with the "market" package.
+	MarketInverseTable = "markets"
+	// MarketColumn is the table column denoting the market relation/edge.
+	MarketColumn = "exchange_market"
 )
 
 // Columns holds all SQL columns for exchange fields.

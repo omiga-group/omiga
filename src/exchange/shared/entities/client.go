@@ -12,6 +12,7 @@ import (
 
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
@@ -30,6 +31,8 @@ type Client struct {
 	Coin *CoinClient
 	// Exchange is the client for interacting with the Exchange builders.
 	Exchange *ExchangeClient
+	// Market is the client for interacting with the Market builders.
+	Market *MarketClient
 	// Outbox is the client for interacting with the Outbox builders.
 	Outbox *OutboxClient
 	// Ticker is the client for interacting with the Ticker builders.
@@ -53,6 +56,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Coin = NewCoinClient(c.config)
 	c.Exchange = NewExchangeClient(c.config)
+	c.Market = NewMarketClient(c.config)
 	c.Outbox = NewOutboxClient(c.config)
 	c.Ticker = NewTickerClient(c.config)
 	c.TradingPair = NewTradingPairClient(c.config)
@@ -91,6 +95,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:      cfg,
 		Coin:        NewCoinClient(cfg),
 		Exchange:    NewExchangeClient(cfg),
+		Market:      NewMarketClient(cfg),
 		Outbox:      NewOutboxClient(cfg),
 		Ticker:      NewTickerClient(cfg),
 		TradingPair: NewTradingPairClient(cfg),
@@ -115,6 +120,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:      cfg,
 		Coin:        NewCoinClient(cfg),
 		Exchange:    NewExchangeClient(cfg),
+		Market:      NewMarketClient(cfg),
 		Outbox:      NewOutboxClient(cfg),
 		Ticker:      NewTickerClient(cfg),
 		TradingPair: NewTradingPairClient(cfg),
@@ -148,6 +154,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Coin.Use(hooks...)
 	c.Exchange.Use(hooks...)
+	c.Market.Use(hooks...)
 	c.Outbox.Use(hooks...)
 	c.Ticker.Use(hooks...)
 	c.TradingPair.Use(hooks...)
@@ -404,9 +411,156 @@ func (c *ExchangeClient) QueryTradingPair(e *Exchange) *TradingPairQuery {
 	return query
 }
 
+// QueryMarket queries the market edge of a Exchange.
+func (c *ExchangeClient) QueryMarket(e *Exchange) *MarketQuery {
+	query := &MarketQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(exchange.Table, exchange.FieldID, id),
+			sqlgraph.To(market.Table, market.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, exchange.MarketTable, exchange.MarketColumn),
+		)
+		schemaConfig := e.schemaConfig
+		step.To.Schema = schemaConfig.Market
+		step.Edge.Schema = schemaConfig.Market
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ExchangeClient) Hooks() []Hook {
 	return c.hooks.Exchange
+}
+
+// MarketClient is a client for the Market schema.
+type MarketClient struct {
+	config
+}
+
+// NewMarketClient returns a client for the Market from the given config.
+func NewMarketClient(c config) *MarketClient {
+	return &MarketClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `market.Hooks(f(g(h())))`.
+func (c *MarketClient) Use(hooks ...Hook) {
+	c.hooks.Market = append(c.hooks.Market, hooks...)
+}
+
+// Create returns a builder for creating a Market entity.
+func (c *MarketClient) Create() *MarketCreate {
+	mutation := newMarketMutation(c.config, OpCreate)
+	return &MarketCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Market entities.
+func (c *MarketClient) CreateBulk(builders ...*MarketCreate) *MarketCreateBulk {
+	return &MarketCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Market.
+func (c *MarketClient) Update() *MarketUpdate {
+	mutation := newMarketMutation(c.config, OpUpdate)
+	return &MarketUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MarketClient) UpdateOne(m *Market) *MarketUpdateOne {
+	mutation := newMarketMutation(c.config, OpUpdateOne, withMarket(m))
+	return &MarketUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MarketClient) UpdateOneID(id int) *MarketUpdateOne {
+	mutation := newMarketMutation(c.config, OpUpdateOne, withMarketID(id))
+	return &MarketUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Market.
+func (c *MarketClient) Delete() *MarketDelete {
+	mutation := newMarketMutation(c.config, OpDelete)
+	return &MarketDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MarketClient) DeleteOne(m *Market) *MarketDeleteOne {
+	return c.DeleteOneID(m.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *MarketClient) DeleteOneID(id int) *MarketDeleteOne {
+	builder := c.Delete().Where(market.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MarketDeleteOne{builder}
+}
+
+// Query returns a query builder for Market.
+func (c *MarketClient) Query() *MarketQuery {
+	return &MarketQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Market entity by its id.
+func (c *MarketClient) Get(ctx context.Context, id int) (*Market, error) {
+	return c.Query().Where(market.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MarketClient) GetX(ctx context.Context, id int) *Market {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryExchange queries the exchange edge of a Market.
+func (c *MarketClient) QueryExchange(m *Market) *ExchangeQuery {
+	query := &ExchangeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(market.Table, market.FieldID, id),
+			sqlgraph.To(exchange.Table, exchange.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, market.ExchangeTable, market.ExchangeColumn),
+		)
+		schemaConfig := m.schemaConfig
+		step.To.Schema = schemaConfig.Exchange
+		step.Edge.Schema = schemaConfig.Market
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTradingPair queries the trading_pair edge of a Market.
+func (c *MarketClient) QueryTradingPair(m *Market) *TradingPairQuery {
+	query := &TradingPairQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(market.Table, market.FieldID, id),
+			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, market.TradingPairTable, market.TradingPairPrimaryKey...),
+		)
+		schemaConfig := m.schemaConfig
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.MarketTradingPair
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MarketClient) Hooks() []Hook {
+	return c.hooks.Market
 }
 
 // OutboxClient is a client for the Outbox schema.
@@ -744,6 +898,25 @@ func (c *TradingPairClient) QueryCounter(tp *TradingPair) *CoinQuery {
 		schemaConfig := tp.schemaConfig
 		step.To.Schema = schemaConfig.Coin
 		step.Edge.Schema = schemaConfig.TradingPair
+		fromV = sqlgraph.Neighbors(tp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMarket queries the market edge of a TradingPair.
+func (c *TradingPairClient) QueryMarket(tp *TradingPair) *MarketQuery {
+	query := &MarketQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := tp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, id),
+			sqlgraph.To(market.Table, market.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, tradingpair.MarketTable, tradingpair.MarketPrimaryKey...),
+		)
+		schemaConfig := tp.schemaConfig
+		step.To.Schema = schemaConfig.Market
+		step.Edge.Schema = schemaConfig.MarketTradingPair
 		fromV = sqlgraph.Neighbors(tp.driver.Dialect(), step)
 		return fromV, nil
 	}

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
@@ -287,6 +288,21 @@ func (ec *ExchangeCreate) AddTradingPair(t ...*TradingPair) *ExchangeCreate {
 		ids[i] = t[i].ID
 	}
 	return ec.AddTradingPairIDs(ids...)
+}
+
+// AddMarketIDs adds the "market" edge to the Market entity by IDs.
+func (ec *ExchangeCreate) AddMarketIDs(ids ...int) *ExchangeCreate {
+	ec.mutation.AddMarketIDs(ids...)
+	return ec
+}
+
+// AddMarket adds the "market" edges to the Market entity.
+func (ec *ExchangeCreate) AddMarket(m ...*Market) *ExchangeCreate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return ec.AddMarketIDs(ids...)
 }
 
 // Mutation returns the ExchangeMutation object of the builder.
@@ -576,6 +592,26 @@ func (ec *ExchangeCreate) createSpec() (*Exchange, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = ec.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.MarketIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.MarketTable,
+			Columns: []string{exchange.MarketColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = ec.schemaConfig.Market
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

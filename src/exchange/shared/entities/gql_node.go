@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
@@ -102,7 +103,7 @@ func (e *Exchange) Node(ctx context.Context) (node *Node, err error) {
 		ID:     e.ID,
 		Type:   "Exchange",
 		Fields: make([]*Field, 18),
-		Edges:  make([]*Edge, 2),
+		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(e.ExchangeID); err != nil {
@@ -264,6 +265,63 @@ func (e *Exchange) Node(ctx context.Context) (node *Node, err error) {
 		Name: "trading_pair",
 	}
 	err = e.QueryTradingPair().
+		Select(tradingpair.FieldID).
+		Scan(ctx, &node.Edges[1].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "Market",
+		Name: "market",
+	}
+	err = e.QueryMarket().
+		Select(market.FieldID).
+		Scan(ctx, &node.Edges[2].IDs)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (m *Market) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     m.ID,
+		Type:   "Market",
+		Fields: make([]*Field, 2),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(m.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(m.Type); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "market.Type",
+		Name:  "type",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Exchange",
+		Name: "exchange",
+	}
+	err = m.QueryExchange().
+		Select(exchange.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "TradingPair",
+		Name: "trading_pair",
+	}
+	err = m.QueryTradingPair().
 		Select(tradingpair.FieldID).
 		Scan(ctx, &node.Edges[1].IDs)
 	if err != nil {
@@ -525,7 +583,7 @@ func (tp *TradingPair) Node(ctx context.Context) (node *Node, err error) {
 		ID:     tp.ID,
 		Type:   "TradingPair",
 		Fields: make([]*Field, 9),
-		Edges:  make([]*Edge, 3),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(tp.Symbol); err != nil {
@@ -630,6 +688,16 @@ func (tp *TradingPair) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
+	node.Edges[3] = &Edge{
+		Type: "Market",
+		Name: "market",
+	}
+	err = tp.QueryMarket().
+		Select(market.FieldID).
+		Scan(ctx, &node.Edges[3].IDs)
+	if err != nil {
+		return nil, err
+	}
 	return node, nil
 }
 
@@ -715,6 +783,18 @@ func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error)
 		query := c.Exchange.Query().
 			Where(exchange.ID(id))
 		query, err := query.CollectFields(ctx, "Exchange")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case market.Table:
+		query := c.Market.Query().
+			Where(market.ID(id))
+		query, err := query.CollectFields(ctx, "Market")
 		if err != nil {
 			return nil, err
 		}
@@ -852,6 +932,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 		query := c.Exchange.Query().
 			Where(exchange.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "Exchange")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case market.Table:
+		query := c.Market.Query().
+			Where(market.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Market")
 		if err != nil {
 			return nil, err
 		}

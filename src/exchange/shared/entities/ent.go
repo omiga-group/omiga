@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
@@ -37,6 +38,7 @@ func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		coin.Table:        coin.ValidColumn,
 		exchange.Table:    exchange.ValidColumn,
+		market.Table:      market.ValidColumn,
 		outbox.Table:      outbox.ValidColumn,
 		ticker.Table:      ticker.ValidColumn,
 		tradingpair.Table: tradingpair.ValidColumn,

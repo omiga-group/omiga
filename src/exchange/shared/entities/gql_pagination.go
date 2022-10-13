@@ -16,6 +16,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
@@ -1028,6 +1029,294 @@ func (e *Exchange) ToEdge(order *ExchangeOrder) *ExchangeEdge {
 	return &ExchangeEdge{
 		Node:   e,
 		Cursor: order.Field.toCursor(e),
+	}
+}
+
+// MarketEdge is the edge representation of Market.
+type MarketEdge struct {
+	Node   *Market `json:"node"`
+	Cursor Cursor  `json:"cursor"`
+}
+
+// MarketConnection is the connection containing edges to Market.
+type MarketConnection struct {
+	Edges      []*MarketEdge `json:"edges"`
+	PageInfo   PageInfo      `json:"pageInfo"`
+	TotalCount int           `json:"totalCount"`
+}
+
+func (c *MarketConnection) build(nodes []*Market, pager *marketPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Market
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Market {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Market {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*MarketEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &MarketEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// MarketPaginateOption enables pagination customization.
+type MarketPaginateOption func(*marketPager) error
+
+// WithMarketOrder configures pagination ordering.
+func WithMarketOrder(order *MarketOrder) MarketPaginateOption {
+	if order == nil {
+		order = DefaultMarketOrder
+	}
+	o := *order
+	return func(pager *marketPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultMarketOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithMarketFilter configures pagination filter.
+func WithMarketFilter(filter func(*MarketQuery) (*MarketQuery, error)) MarketPaginateOption {
+	return func(pager *marketPager) error {
+		if filter == nil {
+			return errors.New("MarketQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type marketPager struct {
+	order  *MarketOrder
+	filter func(*MarketQuery) (*MarketQuery, error)
+}
+
+func newMarketPager(opts []MarketPaginateOption) (*marketPager, error) {
+	pager := &marketPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultMarketOrder
+	}
+	return pager, nil
+}
+
+func (p *marketPager) applyFilter(query *MarketQuery) (*MarketQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *marketPager) toCursor(m *Market) Cursor {
+	return p.order.Field.toCursor(m)
+}
+
+func (p *marketPager) applyCursors(query *MarketQuery, after, before *Cursor) *MarketQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultMarketOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *marketPager) applyOrder(query *MarketQuery, reverse bool) *MarketQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultMarketOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultMarketOrder.Field.field))
+	}
+	return query
+}
+
+func (p *marketPager) orderExpr(reverse bool) sql.Querier {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultMarketOrder.Field {
+			b.Comma().Ident(DefaultMarketOrder.Field.field).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Market.
+func (m *MarketQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...MarketPaginateOption,
+) (*MarketConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newMarketPager(opts)
+	if err != nil {
+		return nil, err
+	}
+	if m, err = pager.applyFilter(m); err != nil {
+		return nil, err
+	}
+	conn := &MarketConnection{Edges: []*MarketEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = m.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+
+	m = pager.applyCursors(m, after, before)
+	m = pager.applyOrder(m, last != nil)
+	if limit := paginateLimit(first, last); limit != 0 {
+		m.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := m.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+
+	nodes, err := m.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// MarketOrderFieldName orders Market by name.
+	MarketOrderFieldName = &MarketOrderField{
+		field: market.FieldName,
+		toCursor: func(m *Market) Cursor {
+			return Cursor{
+				ID:    m.ID,
+				Value: m.Name,
+			}
+		},
+	}
+	// MarketOrderFieldType orders Market by type.
+	MarketOrderFieldType = &MarketOrderField{
+		field: market.FieldType,
+		toCursor: func(m *Market) Cursor {
+			return Cursor{
+				ID:    m.ID,
+				Value: m.Type,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f MarketOrderField) String() string {
+	var str string
+	switch f.field {
+	case market.FieldName:
+		str = "name"
+	case market.FieldType:
+		str = "type"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f MarketOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *MarketOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("MarketOrderField %T must be a string", v)
+	}
+	switch str {
+	case "name":
+		*f = *MarketOrderFieldName
+	case "type":
+		*f = *MarketOrderFieldType
+	default:
+		return fmt.Errorf("%s is not a valid MarketOrderField", str)
+	}
+	return nil
+}
+
+// MarketOrderField defines the ordering field of Market.
+type MarketOrderField struct {
+	field    string
+	toCursor func(*Market) Cursor
+}
+
+// MarketOrder defines the ordering of Market.
+type MarketOrder struct {
+	Direction OrderDirection    `json:"direction"`
+	Field     *MarketOrderField `json:"field"`
+}
+
+// DefaultMarketOrder is the default ordering of Market.
+var DefaultMarketOrder = &MarketOrder{
+	Direction: OrderDirectionAsc,
+	Field: &MarketOrderField{
+		field: market.FieldID,
+		toCursor: func(m *Market) Cursor {
+			return Cursor{ID: m.ID}
+		},
+	},
+}
+
+// ToEdge converts Market into MarketEdge.
+func (m *Market) ToEdge(order *MarketOrder) *MarketEdge {
+	if order == nil {
+		order = DefaultMarketOrder
+	}
+	return &MarketEdge{
+		Node:   m,
+		Cursor: order.Field.toCursor(m),
 	}
 }
 
