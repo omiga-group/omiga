@@ -33,6 +33,7 @@ type config struct {
 type hooks struct {
 	Coin        []ent.Hook
 	Exchange    []ent.Hook
+	Market      []ent.Hook
 	Outbox      []ent.Hook
 	Ticker      []ent.Hook
 	TradingPair []ent.Hook

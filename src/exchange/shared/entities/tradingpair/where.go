@@ -968,6 +968,40 @@ func HasCounterWith(preds ...predicate.Coin) predicate.TradingPair {
 	})
 }
 
+// HasMarket applies the HasEdge predicate on the "market" edge.
+func HasMarket() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(MarketTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, MarketTable, MarketPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Market
+		step.Edge.Schema = schemaConfig.MarketTradingPair
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMarketWith applies the HasEdge predicate on the "market" edge with a given conditions (other predicates).
+func HasMarketWith(preds ...predicate.Market) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(MarketInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, MarketTable, MarketPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Market
+		step.Edge.Schema = schemaConfig.MarketTradingPair
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.TradingPair) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {

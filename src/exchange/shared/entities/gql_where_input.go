@@ -9,6 +9,7 @@ import (
 
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
@@ -531,6 +532,10 @@ type ExchangeWhereInput struct {
 	// "trading_pair" edge predicates.
 	HasTradingPair     *bool                    `json:"hasTradingPair,omitempty"`
 	HasTradingPairWith []*TradingPairWhereInput `json:"hasTradingPairWith,omitempty"`
+
+	// "market" edge predicates.
+	HasMarket     *bool               `json:"hasMarket,omitempty"`
+	HasMarketWith []*MarketWhereInput `json:"hasMarketWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -1187,6 +1192,24 @@ func (i *ExchangeWhereInput) P() (predicate.Exchange, error) {
 		}
 		predicates = append(predicates, exchange.HasTradingPairWith(with...))
 	}
+	if i.HasMarket != nil {
+		p := exchange.HasMarket()
+		if !*i.HasMarket {
+			p = exchange.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasMarketWith) > 0 {
+		with := make([]predicate.Market, 0, len(i.HasMarketWith))
+		for _, w := range i.HasMarketWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasMarketWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, exchange.HasMarketWith(with...))
+	}
 	switch len(predicates) {
 	case 0:
 		return nil, ErrEmptyExchangeWhereInput
@@ -1194,6 +1217,246 @@ func (i *ExchangeWhereInput) P() (predicate.Exchange, error) {
 		return predicates[0], nil
 	default:
 		return exchange.And(predicates...), nil
+	}
+}
+
+// MarketWhereInput represents a where input for filtering Market queries.
+type MarketWhereInput struct {
+	Predicates []predicate.Market  `json:"-"`
+	Not        *MarketWhereInput   `json:"not,omitempty"`
+	Or         []*MarketWhereInput `json:"or,omitempty"`
+	And        []*MarketWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *int  `json:"id,omitempty"`
+	IDNEQ   *int  `json:"idNEQ,omitempty"`
+	IDIn    []int `json:"idIn,omitempty"`
+	IDNotIn []int `json:"idNotIn,omitempty"`
+	IDGT    *int  `json:"idGT,omitempty"`
+	IDGTE   *int  `json:"idGTE,omitempty"`
+	IDLT    *int  `json:"idLT,omitempty"`
+	IDLTE   *int  `json:"idLTE,omitempty"`
+
+	// "name" field predicates.
+	Name             *string  `json:"name,omitempty"`
+	NameNEQ          *string  `json:"nameNEQ,omitempty"`
+	NameIn           []string `json:"nameIn,omitempty"`
+	NameNotIn        []string `json:"nameNotIn,omitempty"`
+	NameGT           *string  `json:"nameGT,omitempty"`
+	NameGTE          *string  `json:"nameGTE,omitempty"`
+	NameLT           *string  `json:"nameLT,omitempty"`
+	NameLTE          *string  `json:"nameLTE,omitempty"`
+	NameContains     *string  `json:"nameContains,omitempty"`
+	NameHasPrefix    *string  `json:"nameHasPrefix,omitempty"`
+	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
+	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
+	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
+
+	// "type" field predicates.
+	Type      *market.Type  `json:"type,omitempty"`
+	TypeNEQ   *market.Type  `json:"typeNEQ,omitempty"`
+	TypeIn    []market.Type `json:"typeIn,omitempty"`
+	TypeNotIn []market.Type `json:"typeNotIn,omitempty"`
+
+	// "exchange" edge predicates.
+	HasExchange     *bool                 `json:"hasExchange,omitempty"`
+	HasExchangeWith []*ExchangeWhereInput `json:"hasExchangeWith,omitempty"`
+
+	// "trading_pair" edge predicates.
+	HasTradingPair     *bool                    `json:"hasTradingPair,omitempty"`
+	HasTradingPairWith []*TradingPairWhereInput `json:"hasTradingPairWith,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *MarketWhereInput) AddPredicates(predicates ...predicate.Market) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the MarketWhereInput filter on the MarketQuery builder.
+func (i *MarketWhereInput) Filter(q *MarketQuery) (*MarketQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyMarketWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyMarketWhereInput is returned in case the MarketWhereInput is empty.
+var ErrEmptyMarketWhereInput = errors.New("entities: empty predicate MarketWhereInput")
+
+// P returns a predicate for filtering markets.
+// An error is returned if the input is empty or invalid.
+func (i *MarketWhereInput) P() (predicate.Market, error) {
+	var predicates []predicate.Market
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, market.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.Market, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, market.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.Market, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, market.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, market.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, market.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, market.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, market.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, market.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, market.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, market.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, market.IDLTE(*i.IDLTE))
+	}
+	if i.Name != nil {
+		predicates = append(predicates, market.NameEQ(*i.Name))
+	}
+	if i.NameNEQ != nil {
+		predicates = append(predicates, market.NameNEQ(*i.NameNEQ))
+	}
+	if len(i.NameIn) > 0 {
+		predicates = append(predicates, market.NameIn(i.NameIn...))
+	}
+	if len(i.NameNotIn) > 0 {
+		predicates = append(predicates, market.NameNotIn(i.NameNotIn...))
+	}
+	if i.NameGT != nil {
+		predicates = append(predicates, market.NameGT(*i.NameGT))
+	}
+	if i.NameGTE != nil {
+		predicates = append(predicates, market.NameGTE(*i.NameGTE))
+	}
+	if i.NameLT != nil {
+		predicates = append(predicates, market.NameLT(*i.NameLT))
+	}
+	if i.NameLTE != nil {
+		predicates = append(predicates, market.NameLTE(*i.NameLTE))
+	}
+	if i.NameContains != nil {
+		predicates = append(predicates, market.NameContains(*i.NameContains))
+	}
+	if i.NameHasPrefix != nil {
+		predicates = append(predicates, market.NameHasPrefix(*i.NameHasPrefix))
+	}
+	if i.NameHasSuffix != nil {
+		predicates = append(predicates, market.NameHasSuffix(*i.NameHasSuffix))
+	}
+	if i.NameEqualFold != nil {
+		predicates = append(predicates, market.NameEqualFold(*i.NameEqualFold))
+	}
+	if i.NameContainsFold != nil {
+		predicates = append(predicates, market.NameContainsFold(*i.NameContainsFold))
+	}
+	if i.Type != nil {
+		predicates = append(predicates, market.TypeEQ(*i.Type))
+	}
+	if i.TypeNEQ != nil {
+		predicates = append(predicates, market.TypeNEQ(*i.TypeNEQ))
+	}
+	if len(i.TypeIn) > 0 {
+		predicates = append(predicates, market.TypeIn(i.TypeIn...))
+	}
+	if len(i.TypeNotIn) > 0 {
+		predicates = append(predicates, market.TypeNotIn(i.TypeNotIn...))
+	}
+
+	if i.HasExchange != nil {
+		p := market.HasExchange()
+		if !*i.HasExchange {
+			p = market.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasExchangeWith) > 0 {
+		with := make([]predicate.Exchange, 0, len(i.HasExchangeWith))
+		for _, w := range i.HasExchangeWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasExchangeWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, market.HasExchangeWith(with...))
+	}
+	if i.HasTradingPair != nil {
+		p := market.HasTradingPair()
+		if !*i.HasTradingPair {
+			p = market.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasTradingPairWith) > 0 {
+		with := make([]predicate.TradingPair, 0, len(i.HasTradingPairWith))
+		for _, w := range i.HasTradingPairWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasTradingPairWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, market.HasTradingPairWith(with...))
+	}
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyMarketWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return market.And(predicates...), nil
 	}
 }
 
@@ -2548,6 +2811,10 @@ type TradingPairWhereInput struct {
 	// "counter" edge predicates.
 	HasCounter     *bool             `json:"hasCounter,omitempty"`
 	HasCounterWith []*CoinWhereInput `json:"hasCounterWith,omitempty"`
+
+	// "market" edge predicates.
+	HasMarket     *bool               `json:"hasMarket,omitempty"`
+	HasMarketWith []*MarketWhereInput `json:"hasMarketWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -2978,6 +3245,24 @@ func (i *TradingPairWhereInput) P() (predicate.TradingPair, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, tradingpair.HasCounterWith(with...))
+	}
+	if i.HasMarket != nil {
+		p := tradingpair.HasMarket()
+		if !*i.HasMarket {
+			p = tradingpair.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasMarketWith) > 0 {
+		with := make([]predicate.Market, 0, len(i.HasMarketWith))
+		for _, w := range i.HasMarketWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasMarketWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, tradingpair.HasMarketWith(with...))
 	}
 	switch len(predicates) {
 	case 0:

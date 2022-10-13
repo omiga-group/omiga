@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
@@ -448,6 +449,21 @@ func (eu *ExchangeUpdate) AddTradingPair(t ...*TradingPair) *ExchangeUpdate {
 	return eu.AddTradingPairIDs(ids...)
 }
 
+// AddMarketIDs adds the "market" edge to the Market entity by IDs.
+func (eu *ExchangeUpdate) AddMarketIDs(ids ...int) *ExchangeUpdate {
+	eu.mutation.AddMarketIDs(ids...)
+	return eu
+}
+
+// AddMarket adds the "market" edges to the Market entity.
+func (eu *ExchangeUpdate) AddMarket(m ...*Market) *ExchangeUpdate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return eu.AddMarketIDs(ids...)
+}
+
 // Mutation returns the ExchangeMutation object of the builder.
 func (eu *ExchangeUpdate) Mutation() *ExchangeMutation {
 	return eu.mutation
@@ -493,6 +509,27 @@ func (eu *ExchangeUpdate) RemoveTradingPair(t ...*TradingPair) *ExchangeUpdate {
 		ids[i] = t[i].ID
 	}
 	return eu.RemoveTradingPairIDs(ids...)
+}
+
+// ClearMarket clears all "market" edges to the Market entity.
+func (eu *ExchangeUpdate) ClearMarket() *ExchangeUpdate {
+	eu.mutation.ClearMarket()
+	return eu
+}
+
+// RemoveMarketIDs removes the "market" edge to Market entities by IDs.
+func (eu *ExchangeUpdate) RemoveMarketIDs(ids ...int) *ExchangeUpdate {
+	eu.mutation.RemoveMarketIDs(ids...)
+	return eu
+}
+
+// RemoveMarket removes "market" edges to Market entities.
+func (eu *ExchangeUpdate) RemoveMarket(m ...*Market) *ExchangeUpdate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return eu.RemoveMarketIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -964,6 +1001,63 @@ func (eu *ExchangeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if eu.mutation.MarketCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.MarketTable,
+			Columns: []string{exchange.MarketColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = eu.schemaConfig.Market
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedMarketIDs(); len(nodes) > 0 && !eu.mutation.MarketCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.MarketTable,
+			Columns: []string{exchange.MarketColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = eu.schemaConfig.Market
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.MarketIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.MarketTable,
+			Columns: []string{exchange.MarketColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = eu.schemaConfig.Market
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.Node.Schema = eu.schemaConfig.Exchange
 	ctx = internal.NewSchemaConfigContext(ctx, eu.schemaConfig)
 	_spec.Modifiers = eu.modifiers
@@ -1404,6 +1498,21 @@ func (euo *ExchangeUpdateOne) AddTradingPair(t ...*TradingPair) *ExchangeUpdateO
 	return euo.AddTradingPairIDs(ids...)
 }
 
+// AddMarketIDs adds the "market" edge to the Market entity by IDs.
+func (euo *ExchangeUpdateOne) AddMarketIDs(ids ...int) *ExchangeUpdateOne {
+	euo.mutation.AddMarketIDs(ids...)
+	return euo
+}
+
+// AddMarket adds the "market" edges to the Market entity.
+func (euo *ExchangeUpdateOne) AddMarket(m ...*Market) *ExchangeUpdateOne {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return euo.AddMarketIDs(ids...)
+}
+
 // Mutation returns the ExchangeMutation object of the builder.
 func (euo *ExchangeUpdateOne) Mutation() *ExchangeMutation {
 	return euo.mutation
@@ -1449,6 +1558,27 @@ func (euo *ExchangeUpdateOne) RemoveTradingPair(t ...*TradingPair) *ExchangeUpda
 		ids[i] = t[i].ID
 	}
 	return euo.RemoveTradingPairIDs(ids...)
+}
+
+// ClearMarket clears all "market" edges to the Market entity.
+func (euo *ExchangeUpdateOne) ClearMarket() *ExchangeUpdateOne {
+	euo.mutation.ClearMarket()
+	return euo
+}
+
+// RemoveMarketIDs removes the "market" edge to Market entities by IDs.
+func (euo *ExchangeUpdateOne) RemoveMarketIDs(ids ...int) *ExchangeUpdateOne {
+	euo.mutation.RemoveMarketIDs(ids...)
+	return euo
+}
+
+// RemoveMarket removes "market" edges to Market entities.
+func (euo *ExchangeUpdateOne) RemoveMarket(m ...*Market) *ExchangeUpdateOne {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return euo.RemoveMarketIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -1945,6 +2075,63 @@ func (euo *ExchangeUpdateOne) sqlSave(ctx context.Context) (_node *Exchange, err
 			},
 		}
 		edge.Schema = euo.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.MarketCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.MarketTable,
+			Columns: []string{exchange.MarketColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = euo.schemaConfig.Market
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedMarketIDs(); len(nodes) > 0 && !euo.mutation.MarketCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.MarketTable,
+			Columns: []string{exchange.MarketColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = euo.schemaConfig.Market
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.MarketIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   exchange.MarketTable,
+			Columns: []string{exchange.MarketColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = euo.schemaConfig.Market
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

@@ -11,6 +11,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/exchange-api/graphql/models"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
@@ -60,6 +61,19 @@ func (r *exchangeResolver) TradingPairs(ctx context.Context, obj *entities.Excha
 		Query().
 		Where(tradingpair.HasExchangeWith(exchange.IDEQ(obj.ID))).
 		All(ctx)
+}
+
+// Markets is the resolver for the markets field.
+func (r *exchangeResolver) Markets(ctx context.Context, obj *entities.Exchange) ([]*entities.Market, error) {
+	return r.client.Market.
+		Query().
+		Where(market.HasExchangeWith(exchange.IDEQ(obj.ID))).
+		All(ctx)
+}
+
+// Type is the resolver for the type field.
+func (r *marketResolver) Type(ctx context.Context, obj *entities.Market) (models.MarketType, error) {
+	return models.MarketType(obj.Type), nil
 }
 
 // Coin is the resolver for the coin field.
@@ -139,8 +153,8 @@ func (r *queryResolver) Exchanges(ctx context.Context, after *entities.Cursor, f
 }
 
 // Market is the resolver for the market field.
-func (r *tickerResolver) Market(ctx context.Context, obj *entities.Ticker) (*models.Market, error) {
-	return &models.Market{
+func (r *tickerResolver) Market(ctx context.Context, obj *entities.Ticker) (*models.TickerMarket, error) {
+	return &models.TickerMarket{
 		HasTradingIncentive: obj.Market.HasTradingIncentive,
 		Identifier:          obj.Market.Identifier,
 		Name:                &obj.Market.Name,
@@ -165,8 +179,16 @@ func (r *tickerResolver) ConvertedVolume(ctx context.Context, obj *entities.Tick
 	}, nil
 }
 
+// Markets is the resolver for the markets field.
+func (r *tradingPairResolver) Markets(ctx context.Context, obj *entities.TradingPair) ([]*entities.Market, error) {
+	return obj.Market(ctx)
+}
+
 // Exchange returns generated.ExchangeResolver implementation.
 func (r *Resolver) Exchange() generated.ExchangeResolver { return &exchangeResolver{r} }
+
+// Market returns generated.MarketResolver implementation.
+func (r *Resolver) Market() generated.MarketResolver { return &marketResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
@@ -174,6 +196,11 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 // Ticker returns generated.TickerResolver implementation.
 func (r *Resolver) Ticker() generated.TickerResolver { return &tickerResolver{r} }
 
+// TradingPair returns generated.TradingPairResolver implementation.
+func (r *Resolver) TradingPair() generated.TradingPairResolver { return &tradingPairResolver{r} }
+
 type exchangeResolver struct{ *Resolver }
+type marketResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type tickerResolver struct{ *Resolver }
+type tradingPairResolver struct{ *Resolver }

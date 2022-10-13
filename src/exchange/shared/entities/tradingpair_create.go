@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
@@ -172,6 +173,21 @@ func (tpc *TradingPairCreate) SetCounterID(id int) *TradingPairCreate {
 // SetCounter sets the "counter" edge to the Coin entity.
 func (tpc *TradingPairCreate) SetCounter(c *Coin) *TradingPairCreate {
 	return tpc.SetCounterID(c.ID)
+}
+
+// AddMarketIDs adds the "market" edge to the Market entity by IDs.
+func (tpc *TradingPairCreate) AddMarketIDs(ids ...int) *TradingPairCreate {
+	tpc.mutation.AddMarketIDs(ids...)
+	return tpc
+}
+
+// AddMarket adds the "market" edges to the Market entity.
+func (tpc *TradingPairCreate) AddMarket(m ...*Market) *TradingPairCreate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return tpc.AddMarketIDs(ids...)
 }
 
 // Mutation returns the TradingPairMutation object of the builder.
@@ -424,6 +440,26 @@ func (tpc *TradingPairCreate) createSpec() (*TradingPair, *sqlgraph.CreateSpec) 
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.coin_coin_counter = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tpc.mutation.MarketIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tradingpair.MarketTable,
+			Columns: tradingpair.MarketPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: market.FieldID,
+				},
+			},
+		}
+		edge.Schema = tpc.schemaConfig.MarketTradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

@@ -51,11 +51,15 @@ type TradingPairEdges struct {
 	Base *Coin `json:"base,omitempty"`
 	// Counter holds the value of the counter edge.
 	Counter *Coin `json:"counter,omitempty"`
+	// Market holds the value of the market edge.
+	Market []*Market `json:"market,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
+
+	namedMarket map[string][]*Market
 }
 
 // ExchangeOrErr returns the Exchange value or an error if the edge
@@ -95,6 +99,15 @@ func (e TradingPairEdges) CounterOrErr() (*Coin, error) {
 		return e.Counter, nil
 	}
 	return nil, &NotLoadedError{edge: "counter"}
+}
+
+// MarketOrErr returns the Market value or an error if the edge
+// was not loaded in eager-loading.
+func (e TradingPairEdges) MarketOrErr() ([]*Market, error) {
+	if e.loadedTypes[3] {
+		return e.Market, nil
+	}
+	return nil, &NotLoadedError{edge: "market"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -228,6 +241,11 @@ func (tp *TradingPair) QueryCounter() *CoinQuery {
 	return (&TradingPairClient{config: tp.config}).QueryCounter(tp)
 }
 
+// QueryMarket queries the "market" edge of the TradingPair entity.
+func (tp *TradingPair) QueryMarket() *MarketQuery {
+	return (&TradingPairClient{config: tp.config}).QueryMarket(tp)
+}
+
 // Update returns a builder for updating this TradingPair.
 // Note that you need to call TradingPair.Unwrap() before calling this method if this TradingPair
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -279,6 +297,30 @@ func (tp *TradingPair) String() string {
 	builder.WriteString(fmt.Sprintf("%v", tp.CounterQuantityMaxPrecision))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedMarket returns the Market named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (tp *TradingPair) NamedMarket(name string) ([]*Market, error) {
+	if tp.Edges.namedMarket == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := tp.Edges.namedMarket[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (tp *TradingPair) appendNamedMarket(name string, edges ...*Market) {
+	if tp.Edges.namedMarket == nil {
+		tp.Edges.namedMarket = make(map[string][]*Market)
+	}
+	if len(edges) == 0 {
+		tp.Edges.namedMarket[name] = []*Market{}
+	} else {
+		tp.Edges.namedMarket[name] = append(tp.Edges.namedMarket[name], edges...)
+	}
 }
 
 // TradingPairs is a parsable slice of TradingPair.

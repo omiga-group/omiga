@@ -4,6 +4,7 @@ package entities
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
@@ -21,18 +23,20 @@ import (
 // TradingPairQuery is the builder for querying TradingPair entities.
 type TradingPairQuery struct {
 	config
-	limit        *int
-	offset       *int
-	unique       *bool
-	order        []OrderFunc
-	fields       []string
-	predicates   []predicate.TradingPair
-	withExchange *ExchangeQuery
-	withBase     *CoinQuery
-	withCounter  *CoinQuery
-	withFKs      bool
-	loadTotal    []func(context.Context, []*TradingPair) error
-	modifiers    []func(*sql.Selector)
+	limit           *int
+	offset          *int
+	unique          *bool
+	order           []OrderFunc
+	fields          []string
+	predicates      []predicate.TradingPair
+	withExchange    *ExchangeQuery
+	withBase        *CoinQuery
+	withCounter     *CoinQuery
+	withMarket      *MarketQuery
+	withFKs         bool
+	loadTotal       []func(context.Context, []*TradingPair) error
+	modifiers       []func(*sql.Selector)
+	withNamedMarket map[string]*MarketQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -138,6 +142,31 @@ func (tpq *TradingPairQuery) QueryCounter() *CoinQuery {
 		schemaConfig := tpq.schemaConfig
 		step.To.Schema = schemaConfig.Coin
 		step.Edge.Schema = schemaConfig.TradingPair
+		fromU = sqlgraph.SetNeighbors(tpq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMarket chains the current query on the "market" edge.
+func (tpq *TradingPairQuery) QueryMarket() *MarketQuery {
+	query := &MarketQuery{config: tpq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tpq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tpq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, selector),
+			sqlgraph.To(market.Table, market.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, tradingpair.MarketTable, tradingpair.MarketPrimaryKey...),
+		)
+		schemaConfig := tpq.schemaConfig
+		step.To.Schema = schemaConfig.Market
+		step.Edge.Schema = schemaConfig.MarketTradingPair
 		fromU = sqlgraph.SetNeighbors(tpq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -328,6 +357,7 @@ func (tpq *TradingPairQuery) Clone() *TradingPairQuery {
 		withExchange: tpq.withExchange.Clone(),
 		withBase:     tpq.withBase.Clone(),
 		withCounter:  tpq.withCounter.Clone(),
+		withMarket:   tpq.withMarket.Clone(),
 		// clone intermediate query.
 		sql:    tpq.sql.Clone(),
 		path:   tpq.path,
@@ -365,6 +395,17 @@ func (tpq *TradingPairQuery) WithCounter(opts ...func(*CoinQuery)) *TradingPairQ
 		opt(query)
 	}
 	tpq.withCounter = query
+	return tpq
+}
+
+// WithMarket tells the query-builder to eager-load the nodes that are connected to
+// the "market" edge. The optional arguments are used to configure the query builder of the edge.
+func (tpq *TradingPairQuery) WithMarket(opts ...func(*MarketQuery)) *TradingPairQuery {
+	query := &MarketQuery{config: tpq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	tpq.withMarket = query
 	return tpq
 }
 
@@ -437,10 +478,11 @@ func (tpq *TradingPairQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		nodes       = []*TradingPair{}
 		withFKs     = tpq.withFKs
 		_spec       = tpq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			tpq.withExchange != nil,
 			tpq.withBase != nil,
 			tpq.withCounter != nil,
+			tpq.withMarket != nil,
 		}
 	)
 	if tpq.withExchange != nil || tpq.withBase != nil || tpq.withCounter != nil {
@@ -487,6 +529,20 @@ func (tpq *TradingPairQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	if query := tpq.withCounter; query != nil {
 		if err := tpq.loadCounter(ctx, query, nodes, nil,
 			func(n *TradingPair, e *Coin) { n.Edges.Counter = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tpq.withMarket; query != nil {
+		if err := tpq.loadMarket(ctx, query, nodes,
+			func(n *TradingPair) { n.Edges.Market = []*Market{} },
+			func(n *TradingPair, e *Market) { n.Edges.Market = append(n.Edges.Market, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range tpq.withNamedMarket {
+		if err := tpq.loadMarket(ctx, query, nodes,
+			func(n *TradingPair) { n.appendNamedMarket(name) },
+			func(n *TradingPair, e *Market) { n.appendNamedMarket(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -581,6 +637,64 @@ func (tpq *TradingPairQuery) loadCounter(ctx context.Context, query *CoinQuery, 
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (tpq *TradingPairQuery) loadMarket(ctx context.Context, query *MarketQuery, nodes []*TradingPair, init func(*TradingPair), assign func(*TradingPair, *Market)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*TradingPair)
+	nids := make(map[int]map[*TradingPair]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(tradingpair.MarketTable)
+		s.Join(joinT).On(s.C(market.FieldID), joinT.C(tradingpair.MarketPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(tradingpair.MarketPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(tradingpair.MarketPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	neighbors, err := query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+		assign := spec.Assign
+		values := spec.ScanValues
+		spec.ScanValues = func(columns []string) ([]any, error) {
+			values, err := values(columns[1:])
+			if err != nil {
+				return nil, err
+			}
+			return append([]any{new(sql.NullInt64)}, values...), nil
+		}
+		spec.Assign = func(columns []string, values []any) error {
+			outValue := int(values[0].(*sql.NullInt64).Int64)
+			inValue := int(values[1].(*sql.NullInt64).Int64)
+			if nids[inValue] == nil {
+				nids[inValue] = map[*TradingPair]struct{}{byID[outValue]: struct{}{}}
+				return assign(columns[1:], values[1:])
+			}
+			nids[inValue][byID[outValue]] = struct{}{}
+			return nil
+		}
+	})
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "market" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
 		}
 	}
 	return nil
@@ -724,6 +838,20 @@ func (tpq *TradingPairQuery) ForShare(opts ...sql.LockOption) *TradingPairQuery 
 func (tpq *TradingPairQuery) Modify(modifiers ...func(s *sql.Selector)) *TradingPairSelect {
 	tpq.modifiers = append(tpq.modifiers, modifiers...)
 	return tpq.Select()
+}
+
+// WithNamedMarket tells the query-builder to eager-load the nodes that are connected to the "market"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (tpq *TradingPairQuery) WithNamedMarket(name string, opts ...func(*MarketQuery)) *TradingPairQuery {
+	query := &MarketQuery{config: tpq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	if tpq.withNamedMarket == nil {
+		tpq.withNamedMarket = make(map[string]*MarketQuery)
+	}
+	tpq.withNamedMarket[name] = query
+	return tpq
 }
 
 // TradingPairGroupBy is the group-by builder for TradingPair entities.

@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
@@ -30,10 +31,12 @@ type ExchangeQuery struct {
 	predicates           []predicate.Exchange
 	withTicker           *TickerQuery
 	withTradingPair      *TradingPairQuery
+	withMarket           *MarketQuery
 	loadTotal            []func(context.Context, []*Exchange) error
 	modifiers            []func(*sql.Selector)
 	withNamedTicker      map[string]*TickerQuery
 	withNamedTradingPair map[string]*TradingPairQuery
+	withNamedMarket      map[string]*MarketQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -114,6 +117,31 @@ func (eq *ExchangeQuery) QueryTradingPair() *TradingPairQuery {
 		schemaConfig := eq.schemaConfig
 		step.To.Schema = schemaConfig.TradingPair
 		step.Edge.Schema = schemaConfig.TradingPair
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMarket chains the current query on the "market" edge.
+func (eq *ExchangeQuery) QueryMarket() *MarketQuery {
+	query := &MarketQuery{config: eq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(exchange.Table, exchange.FieldID, selector),
+			sqlgraph.To(market.Table, market.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, exchange.MarketTable, exchange.MarketColumn),
+		)
+		schemaConfig := eq.schemaConfig
+		step.To.Schema = schemaConfig.Market
+		step.Edge.Schema = schemaConfig.Market
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -303,6 +331,7 @@ func (eq *ExchangeQuery) Clone() *ExchangeQuery {
 		predicates:      append([]predicate.Exchange{}, eq.predicates...),
 		withTicker:      eq.withTicker.Clone(),
 		withTradingPair: eq.withTradingPair.Clone(),
+		withMarket:      eq.withMarket.Clone(),
 		// clone intermediate query.
 		sql:    eq.sql.Clone(),
 		path:   eq.path,
@@ -329,6 +358,17 @@ func (eq *ExchangeQuery) WithTradingPair(opts ...func(*TradingPairQuery)) *Excha
 		opt(query)
 	}
 	eq.withTradingPair = query
+	return eq
+}
+
+// WithMarket tells the query-builder to eager-load the nodes that are connected to
+// the "market" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *ExchangeQuery) WithMarket(opts ...func(*MarketQuery)) *ExchangeQuery {
+	query := &MarketQuery{config: eq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withMarket = query
 	return eq
 }
 
@@ -400,9 +440,10 @@ func (eq *ExchangeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Exc
 	var (
 		nodes       = []*Exchange{}
 		_spec       = eq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			eq.withTicker != nil,
 			eq.withTradingPair != nil,
+			eq.withMarket != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -442,6 +483,13 @@ func (eq *ExchangeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Exc
 			return nil, err
 		}
 	}
+	if query := eq.withMarket; query != nil {
+		if err := eq.loadMarket(ctx, query, nodes,
+			func(n *Exchange) { n.Edges.Market = []*Market{} },
+			func(n *Exchange, e *Market) { n.Edges.Market = append(n.Edges.Market, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range eq.withNamedTicker {
 		if err := eq.loadTicker(ctx, query, nodes,
 			func(n *Exchange) { n.appendNamedTicker(name) },
@@ -453,6 +501,13 @@ func (eq *ExchangeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Exc
 		if err := eq.loadTradingPair(ctx, query, nodes,
 			func(n *Exchange) { n.appendNamedTradingPair(name) },
 			func(n *Exchange, e *TradingPair) { n.appendNamedTradingPair(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range eq.withNamedMarket {
+		if err := eq.loadMarket(ctx, query, nodes,
+			func(n *Exchange) { n.appendNamedMarket(name) },
+			func(n *Exchange, e *Market) { n.appendNamedMarket(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -521,6 +576,37 @@ func (eq *ExchangeQuery) loadTradingPair(ctx context.Context, query *TradingPair
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "exchange_trading_pair" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (eq *ExchangeQuery) loadMarket(ctx context.Context, query *MarketQuery, nodes []*Exchange, init func(*Exchange), assign func(*Exchange, *Market)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Exchange)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Market(func(s *sql.Selector) {
+		s.Where(sql.InValues(exchange.MarketColumn, fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.exchange_market
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "exchange_market" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "exchange_market" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -692,6 +778,20 @@ func (eq *ExchangeQuery) WithNamedTradingPair(name string, opts ...func(*Trading
 		eq.withNamedTradingPair = make(map[string]*TradingPairQuery)
 	}
 	eq.withNamedTradingPair[name] = query
+	return eq
+}
+
+// WithNamedMarket tells the query-builder to eager-load the nodes that are connected to the "market"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (eq *ExchangeQuery) WithNamedMarket(name string, opts ...func(*MarketQuery)) *ExchangeQuery {
+	query := &MarketQuery{config: eq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	if eq.withNamedMarket == nil {
+		eq.withNamedMarket = make(map[string]*MarketQuery)
+	}
+	eq.withNamedMarket[name] = query
 	return eq
 }
 

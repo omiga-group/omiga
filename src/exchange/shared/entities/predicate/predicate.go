@@ -12,6 +12,9 @@ type Coin func(*sql.Selector)
 // Exchange is the predicate function for exchange builders.
 type Exchange func(*sql.Selector)
 
+// Market is the predicate function for market builders.
+type Market func(*sql.Selector)
+
 // Outbox is the predicate function for outbox builders.
 type Outbox func(*sql.Selector)
 

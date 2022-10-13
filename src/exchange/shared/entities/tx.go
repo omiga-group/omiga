@@ -18,6 +18,8 @@ type Tx struct {
 	Coin *CoinClient
 	// Exchange is the client for interacting with the Exchange builders.
 	Exchange *ExchangeClient
+	// Market is the client for interacting with the Market builders.
+	Market *MarketClient
 	// Outbox is the client for interacting with the Outbox builders.
 	Outbox *OutboxClient
 	// Ticker is the client for interacting with the Ticker builders.
@@ -161,6 +163,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Coin = NewCoinClient(tx.config)
 	tx.Exchange = NewExchangeClient(tx.config)
+	tx.Market = NewMarketClient(tx.config)
 	tx.Outbox = NewOutboxClient(tx.config)
 	tx.Ticker = NewTickerClient(tx.config)
 	tx.TradingPair = NewTradingPairClient(tx.config)

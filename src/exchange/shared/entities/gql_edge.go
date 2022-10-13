@@ -40,6 +40,30 @@ func (e *Exchange) TradingPair(ctx context.Context) ([]*TradingPair, error) {
 	return result, err
 }
 
+func (e *Exchange) Market(ctx context.Context) ([]*Market, error) {
+	result, err := e.NamedMarket(graphql.GetFieldContext(ctx).Field.Alias)
+	if IsNotLoaded(err) {
+		result, err = e.QueryMarket().All(ctx)
+	}
+	return result, err
+}
+
+func (m *Market) Exchange(ctx context.Context) (*Exchange, error) {
+	result, err := m.Edges.ExchangeOrErr()
+	if IsNotLoaded(err) {
+		result, err = m.QueryExchange().Only(ctx)
+	}
+	return result, err
+}
+
+func (m *Market) TradingPair(ctx context.Context) ([]*TradingPair, error) {
+	result, err := m.NamedTradingPair(graphql.GetFieldContext(ctx).Field.Alias)
+	if IsNotLoaded(err) {
+		result, err = m.QueryTradingPair().All(ctx)
+	}
+	return result, err
+}
+
 func (t *Ticker) Exchange(ctx context.Context) (*Exchange, error) {
 	result, err := t.Edges.ExchangeOrErr()
 	if IsNotLoaded(err) {
@@ -68,6 +92,14 @@ func (tp *TradingPair) Counter(ctx context.Context) (*Coin, error) {
 	result, err := tp.Edges.CounterOrErr()
 	if IsNotLoaded(err) {
 		result, err = tp.QueryCounter().Only(ctx)
+	}
+	return result, err
+}
+
+func (tp *TradingPair) Market(ctx context.Context) ([]*Market, error) {
+	result, err := tp.NamedMarket(graphql.GetFieldContext(ctx).Field.Alias)
+	if IsNotLoaded(err) {
+		result, err = tp.QueryMarket().All(ctx)
 	}
 	return result, err
 }

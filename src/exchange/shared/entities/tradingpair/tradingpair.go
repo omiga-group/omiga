@@ -31,6 +31,8 @@ const (
 	EdgeBase = "base"
 	// EdgeCounter holds the string denoting the counter edge name in mutations.
 	EdgeCounter = "counter"
+	// EdgeMarket holds the string denoting the market edge name in mutations.
+	EdgeMarket = "market"
 	// Table holds the table name of the tradingpair in the database.
 	Table = "trading_pairs"
 	// ExchangeTable is the table that holds the exchange relation/edge.
@@ -54,6 +56,11 @@ const (
 	CounterInverseTable = "coins"
 	// CounterColumn is the table column denoting the counter relation/edge.
 	CounterColumn = "coin_coin_counter"
+	// MarketTable is the table that holds the market relation/edge. The primary key declared below.
+	MarketTable = "market_trading_pair"
+	// MarketInverseTable is the table name for the Market entity.
+	// It exists in this package in order to avoid circular dependency with the "market" package.
+	MarketInverseTable = "markets"
 )
 
 // Columns holds all SQL columns for tradingpair fields.
@@ -77,6 +84,12 @@ var ForeignKeys = []string{
 	"coin_coin_counter",
 	"exchange_trading_pair",
 }
+
+var (
+	// MarketPrimaryKey and MarketColumn2 are the table columns denoting the
+	// primary key for the market relation (M2M).
+	MarketPrimaryKey = []string{"market_id", "trading_pair_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

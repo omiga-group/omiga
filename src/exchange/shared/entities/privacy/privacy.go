@@ -198,6 +198,30 @@ func (f ExchangeMutationRuleFunc) EvalMutation(ctx context.Context, m entities.M
 	return Denyf("entities/privacy: unexpected mutation type %T, expect *entities.ExchangeMutation", m)
 }
 
+// The MarketQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type MarketQueryRuleFunc func(context.Context, *entities.MarketQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f MarketQueryRuleFunc) EvalQuery(ctx context.Context, q entities.Query) error {
+	if q, ok := q.(*entities.MarketQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("entities/privacy: unexpected query type %T, expect *entities.MarketQuery", q)
+}
+
+// The MarketMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type MarketMutationRuleFunc func(context.Context, *entities.MarketMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f MarketMutationRuleFunc) EvalMutation(ctx context.Context, m entities.Mutation) error {
+	if m, ok := m.(*entities.MarketMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("entities/privacy: unexpected mutation type %T, expect *entities.MarketMutation", m)
+}
+
 // The OutboxQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OutboxQueryRuleFunc func(context.Context, *entities.OutboxQuery) error
@@ -309,6 +333,8 @@ func queryFilter(q entities.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *entities.ExchangeQuery:
 		return q.Filter(), nil
+	case *entities.MarketQuery:
+		return q.Filter(), nil
 	case *entities.OutboxQuery:
 		return q.Filter(), nil
 	case *entities.TickerQuery:
@@ -325,6 +351,8 @@ func mutationFilter(m entities.Mutation) (Filter, error) {
 	case *entities.CoinMutation:
 		return m.Filter(), nil
 	case *entities.ExchangeMutation:
+		return m.Filter(), nil
+	case *entities.MarketMutation:
 		return m.Filter(), nil
 	case *entities.OutboxMutation:
 		return m.Filter(), nil

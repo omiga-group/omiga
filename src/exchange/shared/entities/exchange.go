@@ -63,14 +63,17 @@ type ExchangeEdges struct {
 	Ticker []*Ticker `json:"ticker,omitempty"`
 	// TradingPair holds the value of the trading_pair edge.
 	TradingPair []*TradingPair `json:"trading_pair,omitempty"`
+	// Market holds the value of the market edge.
+	Market []*Market `json:"market,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [2]map[string]int
+	totalCount [3]map[string]int
 
 	namedTicker      map[string][]*Ticker
 	namedTradingPair map[string][]*TradingPair
+	namedMarket      map[string][]*Market
 }
 
 // TickerOrErr returns the Ticker value or an error if the edge
@@ -89,6 +92,15 @@ func (e ExchangeEdges) TradingPairOrErr() ([]*TradingPair, error) {
 		return e.TradingPair, nil
 	}
 	return nil, &NotLoadedError{edge: "trading_pair"}
+}
+
+// MarketOrErr returns the Market value or an error if the edge
+// was not loaded in eager-loading.
+func (e ExchangeEdges) MarketOrErr() ([]*Market, error) {
+	if e.loadedTypes[2] {
+		return e.Market, nil
+	}
+	return nil, &NotLoadedError{edge: "market"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -252,6 +264,11 @@ func (e *Exchange) QueryTradingPair() *TradingPairQuery {
 	return (&ExchangeClient{config: e.config}).QueryTradingPair(e)
 }
 
+// QueryMarket queries the "market" edge of the Exchange entity.
+func (e *Exchange) QueryMarket() *MarketQuery {
+	return (&ExchangeClient{config: e.config}).QueryMarket(e)
+}
+
 // Update returns a builder for updating this Exchange.
 // Note that you need to call Exchange.Unwrap() before calling this method if this Exchange
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -377,6 +394,30 @@ func (e *Exchange) appendNamedTradingPair(name string, edges ...*TradingPair) {
 		e.Edges.namedTradingPair[name] = []*TradingPair{}
 	} else {
 		e.Edges.namedTradingPair[name] = append(e.Edges.namedTradingPair[name], edges...)
+	}
+}
+
+// NamedMarket returns the Market named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (e *Exchange) NamedMarket(name string) ([]*Market, error) {
+	if e.Edges.namedMarket == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := e.Edges.namedMarket[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (e *Exchange) appendNamedMarket(name string, edges ...*Market) {
+	if e.Edges.namedMarket == nil {
+		e.Edges.namedMarket = make(map[string][]*Market)
+	}
+	if len(edges) == 0 {
+		e.Edges.namedMarket[name] = []*Market{}
+	} else {
+		e.Edges.namedMarket[name] = append(e.Edges.namedMarket[name], edges...)
 	}
 }
 

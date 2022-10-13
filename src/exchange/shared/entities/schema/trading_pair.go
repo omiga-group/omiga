@@ -45,6 +45,8 @@ func (TradingPair) Edges() []ent.Edge {
 			Ref("coin_counter").
 			Unique().
 			Required(),
+		edge.From("market", Market.Type).
+			Ref("trading_pair"),
 	}
 }
 

@@ -1603,6 +1603,40 @@ func HasTradingPairWith(preds ...predicate.TradingPair) predicate.Exchange {
 	})
 }
 
+// HasMarket applies the HasEdge predicate on the "market" edge.
+func HasMarket() predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(MarketTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MarketTable, MarketColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Market
+		step.Edge.Schema = schemaConfig.Market
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMarketWith applies the HasEdge predicate on the "market" edge with a given conditions (other predicates).
+func HasMarketWith(preds ...predicate.Market) predicate.Exchange {
+	return predicate.Exchange(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(MarketInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MarketTable, MarketColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Market
+		step.Edge.Schema = schemaConfig.Market
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Exchange) predicate.Exchange {
 	return predicate.Exchange(func(s *sql.Selector) {
