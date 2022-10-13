@@ -194,9 +194,15 @@ type TradingPair implements Node {
   id: ID!
   symbol: String!
   base: Coin!
-  basePrecision: Int
+  basePriceMinPrecision: Int
+  basePriceMaxPrecision: Int
+  baseQuantityMinPrecision: Int
+  baseQuantityMaxPrecision: Int
   counter: Coin!
-  counterPrecision: Int
+  counterPriceMinPrecision: Int
+  counterPriceMaxPrecision: Int
+  counterQuantityMinPrecision: Int
+  counterQuantityMaxPrecision: Int
 }
 "An object with an ID"
 interface Node {
@@ -883,28 +889,94 @@ input TradingPairWhereInput {
   symbolHasSuffix: String
   symbolEqualFold: String
   symbolContainsFold: String
-  "base_precision field predicates"
-  basePrecision: Int
-  basePrecisionNEQ: Int
-  basePrecisionIn: [Int!]
-  basePrecisionNotIn: [Int!]
-  basePrecisionGT: Int
-  basePrecisionGTE: Int
-  basePrecisionLT: Int
-  basePrecisionLTE: Int
-  basePrecisionIsNil: Boolean
-  basePrecisionNotNil: Boolean
-  "counter_precision field predicates"
-  counterPrecision: Int
-  counterPrecisionNEQ: Int
-  counterPrecisionIn: [Int!]
-  counterPrecisionNotIn: [Int!]
-  counterPrecisionGT: Int
-  counterPrecisionGTE: Int
-  counterPrecisionLT: Int
-  counterPrecisionLTE: Int
-  counterPrecisionIsNil: Boolean
-  counterPrecisionNotNil: Boolean
+  "base_price_min_precision field predicates"
+  basePriceMinPrecision: Int
+  basePriceMinPrecisionNEQ: Int
+  basePriceMinPrecisionIn: [Int!]
+  basePriceMinPrecisionNotIn: [Int!]
+  basePriceMinPrecisionGT: Int
+  basePriceMinPrecisionGTE: Int
+  basePriceMinPrecisionLT: Int
+  basePriceMinPrecisionLTE: Int
+  basePriceMinPrecisionIsNil: Boolean
+  basePriceMinPrecisionNotNil: Boolean
+  "base_price_max_precision field predicates"
+  basePriceMaxPrecision: Int
+  basePriceMaxPrecisionNEQ: Int
+  basePriceMaxPrecisionIn: [Int!]
+  basePriceMaxPrecisionNotIn: [Int!]
+  basePriceMaxPrecisionGT: Int
+  basePriceMaxPrecisionGTE: Int
+  basePriceMaxPrecisionLT: Int
+  basePriceMaxPrecisionLTE: Int
+  basePriceMaxPrecisionIsNil: Boolean
+  basePriceMaxPrecisionNotNil: Boolean
+  "base_quantity_min_precision field predicates"
+  baseQuantityMinPrecision: Int
+  baseQuantityMinPrecisionNEQ: Int
+  baseQuantityMinPrecisionIn: [Int!]
+  baseQuantityMinPrecisionNotIn: [Int!]
+  baseQuantityMinPrecisionGT: Int
+  baseQuantityMinPrecisionGTE: Int
+  baseQuantityMinPrecisionLT: Int
+  baseQuantityMinPrecisionLTE: Int
+  baseQuantityMinPrecisionIsNil: Boolean
+  baseQuantityMinPrecisionNotNil: Boolean
+  "base_quantity_max_precision field predicates"
+  baseQuantityMaxPrecision: Int
+  baseQuantityMaxPrecisionNEQ: Int
+  baseQuantityMaxPrecisionIn: [Int!]
+  baseQuantityMaxPrecisionNotIn: [Int!]
+  baseQuantityMaxPrecisionGT: Int
+  baseQuantityMaxPrecisionGTE: Int
+  baseQuantityMaxPrecisionLT: Int
+  baseQuantityMaxPrecisionLTE: Int
+  baseQuantityMaxPrecisionIsNil: Boolean
+  baseQuantityMaxPrecisionNotNil: Boolean
+  "counter_price_min_precision field predicates"
+  counterPriceMinPrecision: Int
+  counterPriceMinPrecisionNEQ: Int
+  counterPriceMinPrecisionIn: [Int!]
+  counterPriceMinPrecisionNotIn: [Int!]
+  counterPriceMinPrecisionGT: Int
+  counterPriceMinPrecisionGTE: Int
+  counterPriceMinPrecisionLT: Int
+  counterPriceMinPrecisionLTE: Int
+  counterPriceMinPrecisionIsNil: Boolean
+  counterPriceMinPrecisionNotNil: Boolean
+  "counter_price_max_precision field predicates"
+  counterPriceMaxPrecision: Int
+  counterPriceMaxPrecisionNEQ: Int
+  counterPriceMaxPrecisionIn: [Int!]
+  counterPriceMaxPrecisionNotIn: [Int!]
+  counterPriceMaxPrecisionGT: Int
+  counterPriceMaxPrecisionGTE: Int
+  counterPriceMaxPrecisionLT: Int
+  counterPriceMaxPrecisionLTE: Int
+  counterPriceMaxPrecisionIsNil: Boolean
+  counterPriceMaxPrecisionNotNil: Boolean
+  "counter_quantity_min_precision field predicates"
+  counterQuantityMinPrecision: Int
+  counterQuantityMinPrecisionNEQ: Int
+  counterQuantityMinPrecisionIn: [Int!]
+  counterQuantityMinPrecisionNotIn: [Int!]
+  counterQuantityMinPrecisionGT: Int
+  counterQuantityMinPrecisionGTE: Int
+  counterQuantityMinPrecisionLT: Int
+  counterQuantityMinPrecisionLTE: Int
+  counterQuantityMinPrecisionIsNil: Boolean
+  counterQuantityMinPrecisionNotNil: Boolean
+  "counter_quantity_max_precision field predicates"
+  counterQuantityMaxPrecision: Int
+  counterQuantityMaxPrecisionNEQ: Int
+  counterQuantityMaxPrecisionIn: [Int!]
+  counterQuantityMaxPrecisionNotIn: [Int!]
+  counterQuantityMaxPrecisionGT: Int
+  counterQuantityMaxPrecisionGTE: Int
+  counterQuantityMaxPrecisionLT: Int
+  counterQuantityMaxPrecisionLTE: Int
+  counterQuantityMaxPrecisionIsNil: Boolean
+  counterQuantityMaxPrecisionNotNil: Boolean
   "exchange edge predicates"
   hasExchange: Boolean
   hasExchangeWith: [ExchangeWhereInput!]

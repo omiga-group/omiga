@@ -29,30 +29,114 @@ func (tpc *TradingPairCreate) SetSymbol(s string) *TradingPairCreate {
 	return tpc
 }
 
-// SetBasePrecision sets the "base_precision" field.
-func (tpc *TradingPairCreate) SetBasePrecision(i int) *TradingPairCreate {
-	tpc.mutation.SetBasePrecision(i)
+// SetBasePriceMinPrecision sets the "base_price_min_precision" field.
+func (tpc *TradingPairCreate) SetBasePriceMinPrecision(i int) *TradingPairCreate {
+	tpc.mutation.SetBasePriceMinPrecision(i)
 	return tpc
 }
 
-// SetNillableBasePrecision sets the "base_precision" field if the given value is not nil.
-func (tpc *TradingPairCreate) SetNillableBasePrecision(i *int) *TradingPairCreate {
+// SetNillableBasePriceMinPrecision sets the "base_price_min_precision" field if the given value is not nil.
+func (tpc *TradingPairCreate) SetNillableBasePriceMinPrecision(i *int) *TradingPairCreate {
 	if i != nil {
-		tpc.SetBasePrecision(*i)
+		tpc.SetBasePriceMinPrecision(*i)
 	}
 	return tpc
 }
 
-// SetCounterPrecision sets the "counter_precision" field.
-func (tpc *TradingPairCreate) SetCounterPrecision(i int) *TradingPairCreate {
-	tpc.mutation.SetCounterPrecision(i)
+// SetBasePriceMaxPrecision sets the "base_price_max_precision" field.
+func (tpc *TradingPairCreate) SetBasePriceMaxPrecision(i int) *TradingPairCreate {
+	tpc.mutation.SetBasePriceMaxPrecision(i)
 	return tpc
 }
 
-// SetNillableCounterPrecision sets the "counter_precision" field if the given value is not nil.
-func (tpc *TradingPairCreate) SetNillableCounterPrecision(i *int) *TradingPairCreate {
+// SetNillableBasePriceMaxPrecision sets the "base_price_max_precision" field if the given value is not nil.
+func (tpc *TradingPairCreate) SetNillableBasePriceMaxPrecision(i *int) *TradingPairCreate {
 	if i != nil {
-		tpc.SetCounterPrecision(*i)
+		tpc.SetBasePriceMaxPrecision(*i)
+	}
+	return tpc
+}
+
+// SetBaseQuantityMinPrecision sets the "base_quantity_min_precision" field.
+func (tpc *TradingPairCreate) SetBaseQuantityMinPrecision(i int) *TradingPairCreate {
+	tpc.mutation.SetBaseQuantityMinPrecision(i)
+	return tpc
+}
+
+// SetNillableBaseQuantityMinPrecision sets the "base_quantity_min_precision" field if the given value is not nil.
+func (tpc *TradingPairCreate) SetNillableBaseQuantityMinPrecision(i *int) *TradingPairCreate {
+	if i != nil {
+		tpc.SetBaseQuantityMinPrecision(*i)
+	}
+	return tpc
+}
+
+// SetBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field.
+func (tpc *TradingPairCreate) SetBaseQuantityMaxPrecision(i int) *TradingPairCreate {
+	tpc.mutation.SetBaseQuantityMaxPrecision(i)
+	return tpc
+}
+
+// SetNillableBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field if the given value is not nil.
+func (tpc *TradingPairCreate) SetNillableBaseQuantityMaxPrecision(i *int) *TradingPairCreate {
+	if i != nil {
+		tpc.SetBaseQuantityMaxPrecision(*i)
+	}
+	return tpc
+}
+
+// SetCounterPriceMinPrecision sets the "counter_price_min_precision" field.
+func (tpc *TradingPairCreate) SetCounterPriceMinPrecision(i int) *TradingPairCreate {
+	tpc.mutation.SetCounterPriceMinPrecision(i)
+	return tpc
+}
+
+// SetNillableCounterPriceMinPrecision sets the "counter_price_min_precision" field if the given value is not nil.
+func (tpc *TradingPairCreate) SetNillableCounterPriceMinPrecision(i *int) *TradingPairCreate {
+	if i != nil {
+		tpc.SetCounterPriceMinPrecision(*i)
+	}
+	return tpc
+}
+
+// SetCounterPriceMaxPrecision sets the "counter_price_max_precision" field.
+func (tpc *TradingPairCreate) SetCounterPriceMaxPrecision(i int) *TradingPairCreate {
+	tpc.mutation.SetCounterPriceMaxPrecision(i)
+	return tpc
+}
+
+// SetNillableCounterPriceMaxPrecision sets the "counter_price_max_precision" field if the given value is not nil.
+func (tpc *TradingPairCreate) SetNillableCounterPriceMaxPrecision(i *int) *TradingPairCreate {
+	if i != nil {
+		tpc.SetCounterPriceMaxPrecision(*i)
+	}
+	return tpc
+}
+
+// SetCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field.
+func (tpc *TradingPairCreate) SetCounterQuantityMinPrecision(i int) *TradingPairCreate {
+	tpc.mutation.SetCounterQuantityMinPrecision(i)
+	return tpc
+}
+
+// SetNillableCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field if the given value is not nil.
+func (tpc *TradingPairCreate) SetNillableCounterQuantityMinPrecision(i *int) *TradingPairCreate {
+	if i != nil {
+		tpc.SetCounterQuantityMinPrecision(*i)
+	}
+	return tpc
+}
+
+// SetCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field.
+func (tpc *TradingPairCreate) SetCounterQuantityMaxPrecision(i int) *TradingPairCreate {
+	tpc.mutation.SetCounterQuantityMaxPrecision(i)
+	return tpc
+}
+
+// SetNillableCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field if the given value is not nil.
+func (tpc *TradingPairCreate) SetNillableCounterQuantityMaxPrecision(i *int) *TradingPairCreate {
+	if i != nil {
+		tpc.SetCounterQuantityMaxPrecision(*i)
 	}
 	return tpc
 }
@@ -215,21 +299,69 @@ func (tpc *TradingPairCreate) createSpec() (*TradingPair, *sqlgraph.CreateSpec) 
 		})
 		_node.Symbol = value
 	}
-	if value, ok := tpc.mutation.BasePrecision(); ok {
+	if value, ok := tpc.mutation.BasePriceMinPrecision(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpair.FieldBasePrecision,
+			Column: tradingpair.FieldBasePriceMinPrecision,
 		})
-		_node.BasePrecision = value
+		_node.BasePriceMinPrecision = value
 	}
-	if value, ok := tpc.mutation.CounterPrecision(); ok {
+	if value, ok := tpc.mutation.BasePriceMaxPrecision(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpair.FieldCounterPrecision,
+			Column: tradingpair.FieldBasePriceMaxPrecision,
 		})
-		_node.CounterPrecision = value
+		_node.BasePriceMaxPrecision = value
+	}
+	if value, ok := tpc.mutation.BaseQuantityMinPrecision(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldBaseQuantityMinPrecision,
+		})
+		_node.BaseQuantityMinPrecision = value
+	}
+	if value, ok := tpc.mutation.BaseQuantityMaxPrecision(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldBaseQuantityMaxPrecision,
+		})
+		_node.BaseQuantityMaxPrecision = value
+	}
+	if value, ok := tpc.mutation.CounterPriceMinPrecision(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterPriceMinPrecision,
+		})
+		_node.CounterPriceMinPrecision = value
+	}
+	if value, ok := tpc.mutation.CounterPriceMaxPrecision(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterPriceMaxPrecision,
+		})
+		_node.CounterPriceMaxPrecision = value
+	}
+	if value, ok := tpc.mutation.CounterQuantityMinPrecision(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterQuantityMinPrecision,
+		})
+		_node.CounterQuantityMinPrecision = value
+	}
+	if value, ok := tpc.mutation.CounterQuantityMaxPrecision(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterQuantityMaxPrecision,
+		})
+		_node.CounterQuantityMaxPrecision = value
 	}
 	if nodes := tpc.mutation.ExchangeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -358,51 +490,195 @@ func (u *TradingPairUpsert) UpdateSymbol() *TradingPairUpsert {
 	return u
 }
 
-// SetBasePrecision sets the "base_precision" field.
-func (u *TradingPairUpsert) SetBasePrecision(v int) *TradingPairUpsert {
-	u.Set(tradingpair.FieldBasePrecision, v)
+// SetBasePriceMinPrecision sets the "base_price_min_precision" field.
+func (u *TradingPairUpsert) SetBasePriceMinPrecision(v int) *TradingPairUpsert {
+	u.Set(tradingpair.FieldBasePriceMinPrecision, v)
 	return u
 }
 
-// UpdateBasePrecision sets the "base_precision" field to the value that was provided on create.
-func (u *TradingPairUpsert) UpdateBasePrecision() *TradingPairUpsert {
-	u.SetExcluded(tradingpair.FieldBasePrecision)
+// UpdateBasePriceMinPrecision sets the "base_price_min_precision" field to the value that was provided on create.
+func (u *TradingPairUpsert) UpdateBasePriceMinPrecision() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldBasePriceMinPrecision)
 	return u
 }
 
-// AddBasePrecision adds v to the "base_precision" field.
-func (u *TradingPairUpsert) AddBasePrecision(v int) *TradingPairUpsert {
-	u.Add(tradingpair.FieldBasePrecision, v)
+// AddBasePriceMinPrecision adds v to the "base_price_min_precision" field.
+func (u *TradingPairUpsert) AddBasePriceMinPrecision(v int) *TradingPairUpsert {
+	u.Add(tradingpair.FieldBasePriceMinPrecision, v)
 	return u
 }
 
-// ClearBasePrecision clears the value of the "base_precision" field.
-func (u *TradingPairUpsert) ClearBasePrecision() *TradingPairUpsert {
-	u.SetNull(tradingpair.FieldBasePrecision)
+// ClearBasePriceMinPrecision clears the value of the "base_price_min_precision" field.
+func (u *TradingPairUpsert) ClearBasePriceMinPrecision() *TradingPairUpsert {
+	u.SetNull(tradingpair.FieldBasePriceMinPrecision)
 	return u
 }
 
-// SetCounterPrecision sets the "counter_precision" field.
-func (u *TradingPairUpsert) SetCounterPrecision(v int) *TradingPairUpsert {
-	u.Set(tradingpair.FieldCounterPrecision, v)
+// SetBasePriceMaxPrecision sets the "base_price_max_precision" field.
+func (u *TradingPairUpsert) SetBasePriceMaxPrecision(v int) *TradingPairUpsert {
+	u.Set(tradingpair.FieldBasePriceMaxPrecision, v)
 	return u
 }
 
-// UpdateCounterPrecision sets the "counter_precision" field to the value that was provided on create.
-func (u *TradingPairUpsert) UpdateCounterPrecision() *TradingPairUpsert {
-	u.SetExcluded(tradingpair.FieldCounterPrecision)
+// UpdateBasePriceMaxPrecision sets the "base_price_max_precision" field to the value that was provided on create.
+func (u *TradingPairUpsert) UpdateBasePriceMaxPrecision() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldBasePriceMaxPrecision)
 	return u
 }
 
-// AddCounterPrecision adds v to the "counter_precision" field.
-func (u *TradingPairUpsert) AddCounterPrecision(v int) *TradingPairUpsert {
-	u.Add(tradingpair.FieldCounterPrecision, v)
+// AddBasePriceMaxPrecision adds v to the "base_price_max_precision" field.
+func (u *TradingPairUpsert) AddBasePriceMaxPrecision(v int) *TradingPairUpsert {
+	u.Add(tradingpair.FieldBasePriceMaxPrecision, v)
 	return u
 }
 
-// ClearCounterPrecision clears the value of the "counter_precision" field.
-func (u *TradingPairUpsert) ClearCounterPrecision() *TradingPairUpsert {
-	u.SetNull(tradingpair.FieldCounterPrecision)
+// ClearBasePriceMaxPrecision clears the value of the "base_price_max_precision" field.
+func (u *TradingPairUpsert) ClearBasePriceMaxPrecision() *TradingPairUpsert {
+	u.SetNull(tradingpair.FieldBasePriceMaxPrecision)
+	return u
+}
+
+// SetBaseQuantityMinPrecision sets the "base_quantity_min_precision" field.
+func (u *TradingPairUpsert) SetBaseQuantityMinPrecision(v int) *TradingPairUpsert {
+	u.Set(tradingpair.FieldBaseQuantityMinPrecision, v)
+	return u
+}
+
+// UpdateBaseQuantityMinPrecision sets the "base_quantity_min_precision" field to the value that was provided on create.
+func (u *TradingPairUpsert) UpdateBaseQuantityMinPrecision() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldBaseQuantityMinPrecision)
+	return u
+}
+
+// AddBaseQuantityMinPrecision adds v to the "base_quantity_min_precision" field.
+func (u *TradingPairUpsert) AddBaseQuantityMinPrecision(v int) *TradingPairUpsert {
+	u.Add(tradingpair.FieldBaseQuantityMinPrecision, v)
+	return u
+}
+
+// ClearBaseQuantityMinPrecision clears the value of the "base_quantity_min_precision" field.
+func (u *TradingPairUpsert) ClearBaseQuantityMinPrecision() *TradingPairUpsert {
+	u.SetNull(tradingpair.FieldBaseQuantityMinPrecision)
+	return u
+}
+
+// SetBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field.
+func (u *TradingPairUpsert) SetBaseQuantityMaxPrecision(v int) *TradingPairUpsert {
+	u.Set(tradingpair.FieldBaseQuantityMaxPrecision, v)
+	return u
+}
+
+// UpdateBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field to the value that was provided on create.
+func (u *TradingPairUpsert) UpdateBaseQuantityMaxPrecision() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldBaseQuantityMaxPrecision)
+	return u
+}
+
+// AddBaseQuantityMaxPrecision adds v to the "base_quantity_max_precision" field.
+func (u *TradingPairUpsert) AddBaseQuantityMaxPrecision(v int) *TradingPairUpsert {
+	u.Add(tradingpair.FieldBaseQuantityMaxPrecision, v)
+	return u
+}
+
+// ClearBaseQuantityMaxPrecision clears the value of the "base_quantity_max_precision" field.
+func (u *TradingPairUpsert) ClearBaseQuantityMaxPrecision() *TradingPairUpsert {
+	u.SetNull(tradingpair.FieldBaseQuantityMaxPrecision)
+	return u
+}
+
+// SetCounterPriceMinPrecision sets the "counter_price_min_precision" field.
+func (u *TradingPairUpsert) SetCounterPriceMinPrecision(v int) *TradingPairUpsert {
+	u.Set(tradingpair.FieldCounterPriceMinPrecision, v)
+	return u
+}
+
+// UpdateCounterPriceMinPrecision sets the "counter_price_min_precision" field to the value that was provided on create.
+func (u *TradingPairUpsert) UpdateCounterPriceMinPrecision() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldCounterPriceMinPrecision)
+	return u
+}
+
+// AddCounterPriceMinPrecision adds v to the "counter_price_min_precision" field.
+func (u *TradingPairUpsert) AddCounterPriceMinPrecision(v int) *TradingPairUpsert {
+	u.Add(tradingpair.FieldCounterPriceMinPrecision, v)
+	return u
+}
+
+// ClearCounterPriceMinPrecision clears the value of the "counter_price_min_precision" field.
+func (u *TradingPairUpsert) ClearCounterPriceMinPrecision() *TradingPairUpsert {
+	u.SetNull(tradingpair.FieldCounterPriceMinPrecision)
+	return u
+}
+
+// SetCounterPriceMaxPrecision sets the "counter_price_max_precision" field.
+func (u *TradingPairUpsert) SetCounterPriceMaxPrecision(v int) *TradingPairUpsert {
+	u.Set(tradingpair.FieldCounterPriceMaxPrecision, v)
+	return u
+}
+
+// UpdateCounterPriceMaxPrecision sets the "counter_price_max_precision" field to the value that was provided on create.
+func (u *TradingPairUpsert) UpdateCounterPriceMaxPrecision() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldCounterPriceMaxPrecision)
+	return u
+}
+
+// AddCounterPriceMaxPrecision adds v to the "counter_price_max_precision" field.
+func (u *TradingPairUpsert) AddCounterPriceMaxPrecision(v int) *TradingPairUpsert {
+	u.Add(tradingpair.FieldCounterPriceMaxPrecision, v)
+	return u
+}
+
+// ClearCounterPriceMaxPrecision clears the value of the "counter_price_max_precision" field.
+func (u *TradingPairUpsert) ClearCounterPriceMaxPrecision() *TradingPairUpsert {
+	u.SetNull(tradingpair.FieldCounterPriceMaxPrecision)
+	return u
+}
+
+// SetCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field.
+func (u *TradingPairUpsert) SetCounterQuantityMinPrecision(v int) *TradingPairUpsert {
+	u.Set(tradingpair.FieldCounterQuantityMinPrecision, v)
+	return u
+}
+
+// UpdateCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field to the value that was provided on create.
+func (u *TradingPairUpsert) UpdateCounterQuantityMinPrecision() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldCounterQuantityMinPrecision)
+	return u
+}
+
+// AddCounterQuantityMinPrecision adds v to the "counter_quantity_min_precision" field.
+func (u *TradingPairUpsert) AddCounterQuantityMinPrecision(v int) *TradingPairUpsert {
+	u.Add(tradingpair.FieldCounterQuantityMinPrecision, v)
+	return u
+}
+
+// ClearCounterQuantityMinPrecision clears the value of the "counter_quantity_min_precision" field.
+func (u *TradingPairUpsert) ClearCounterQuantityMinPrecision() *TradingPairUpsert {
+	u.SetNull(tradingpair.FieldCounterQuantityMinPrecision)
+	return u
+}
+
+// SetCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field.
+func (u *TradingPairUpsert) SetCounterQuantityMaxPrecision(v int) *TradingPairUpsert {
+	u.Set(tradingpair.FieldCounterQuantityMaxPrecision, v)
+	return u
+}
+
+// UpdateCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field to the value that was provided on create.
+func (u *TradingPairUpsert) UpdateCounterQuantityMaxPrecision() *TradingPairUpsert {
+	u.SetExcluded(tradingpair.FieldCounterQuantityMaxPrecision)
+	return u
+}
+
+// AddCounterQuantityMaxPrecision adds v to the "counter_quantity_max_precision" field.
+func (u *TradingPairUpsert) AddCounterQuantityMaxPrecision(v int) *TradingPairUpsert {
+	u.Add(tradingpair.FieldCounterQuantityMaxPrecision, v)
+	return u
+}
+
+// ClearCounterQuantityMaxPrecision clears the value of the "counter_quantity_max_precision" field.
+func (u *TradingPairUpsert) ClearCounterQuantityMaxPrecision() *TradingPairUpsert {
+	u.SetNull(tradingpair.FieldCounterQuantityMaxPrecision)
 	return u
 }
 
@@ -460,59 +736,227 @@ func (u *TradingPairUpsertOne) UpdateSymbol() *TradingPairUpsertOne {
 	})
 }
 
-// SetBasePrecision sets the "base_precision" field.
-func (u *TradingPairUpsertOne) SetBasePrecision(v int) *TradingPairUpsertOne {
+// SetBasePriceMinPrecision sets the "base_price_min_precision" field.
+func (u *TradingPairUpsertOne) SetBasePriceMinPrecision(v int) *TradingPairUpsertOne {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.SetBasePrecision(v)
+		s.SetBasePriceMinPrecision(v)
 	})
 }
 
-// AddBasePrecision adds v to the "base_precision" field.
-func (u *TradingPairUpsertOne) AddBasePrecision(v int) *TradingPairUpsertOne {
+// AddBasePriceMinPrecision adds v to the "base_price_min_precision" field.
+func (u *TradingPairUpsertOne) AddBasePriceMinPrecision(v int) *TradingPairUpsertOne {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.AddBasePrecision(v)
+		s.AddBasePriceMinPrecision(v)
 	})
 }
 
-// UpdateBasePrecision sets the "base_precision" field to the value that was provided on create.
-func (u *TradingPairUpsertOne) UpdateBasePrecision() *TradingPairUpsertOne {
+// UpdateBasePriceMinPrecision sets the "base_price_min_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertOne) UpdateBasePriceMinPrecision() *TradingPairUpsertOne {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.UpdateBasePrecision()
+		s.UpdateBasePriceMinPrecision()
 	})
 }
 
-// ClearBasePrecision clears the value of the "base_precision" field.
-func (u *TradingPairUpsertOne) ClearBasePrecision() *TradingPairUpsertOne {
+// ClearBasePriceMinPrecision clears the value of the "base_price_min_precision" field.
+func (u *TradingPairUpsertOne) ClearBasePriceMinPrecision() *TradingPairUpsertOne {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.ClearBasePrecision()
+		s.ClearBasePriceMinPrecision()
 	})
 }
 
-// SetCounterPrecision sets the "counter_precision" field.
-func (u *TradingPairUpsertOne) SetCounterPrecision(v int) *TradingPairUpsertOne {
+// SetBasePriceMaxPrecision sets the "base_price_max_precision" field.
+func (u *TradingPairUpsertOne) SetBasePriceMaxPrecision(v int) *TradingPairUpsertOne {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.SetCounterPrecision(v)
+		s.SetBasePriceMaxPrecision(v)
 	})
 }
 
-// AddCounterPrecision adds v to the "counter_precision" field.
-func (u *TradingPairUpsertOne) AddCounterPrecision(v int) *TradingPairUpsertOne {
+// AddBasePriceMaxPrecision adds v to the "base_price_max_precision" field.
+func (u *TradingPairUpsertOne) AddBasePriceMaxPrecision(v int) *TradingPairUpsertOne {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.AddCounterPrecision(v)
+		s.AddBasePriceMaxPrecision(v)
 	})
 }
 
-// UpdateCounterPrecision sets the "counter_precision" field to the value that was provided on create.
-func (u *TradingPairUpsertOne) UpdateCounterPrecision() *TradingPairUpsertOne {
+// UpdateBasePriceMaxPrecision sets the "base_price_max_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertOne) UpdateBasePriceMaxPrecision() *TradingPairUpsertOne {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.UpdateCounterPrecision()
+		s.UpdateBasePriceMaxPrecision()
 	})
 }
 
-// ClearCounterPrecision clears the value of the "counter_precision" field.
-func (u *TradingPairUpsertOne) ClearCounterPrecision() *TradingPairUpsertOne {
+// ClearBasePriceMaxPrecision clears the value of the "base_price_max_precision" field.
+func (u *TradingPairUpsertOne) ClearBasePriceMaxPrecision() *TradingPairUpsertOne {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.ClearCounterPrecision()
+		s.ClearBasePriceMaxPrecision()
+	})
+}
+
+// SetBaseQuantityMinPrecision sets the "base_quantity_min_precision" field.
+func (u *TradingPairUpsertOne) SetBaseQuantityMinPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.SetBaseQuantityMinPrecision(v)
+	})
+}
+
+// AddBaseQuantityMinPrecision adds v to the "base_quantity_min_precision" field.
+func (u *TradingPairUpsertOne) AddBaseQuantityMinPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.AddBaseQuantityMinPrecision(v)
+	})
+}
+
+// UpdateBaseQuantityMinPrecision sets the "base_quantity_min_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertOne) UpdateBaseQuantityMinPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.UpdateBaseQuantityMinPrecision()
+	})
+}
+
+// ClearBaseQuantityMinPrecision clears the value of the "base_quantity_min_precision" field.
+func (u *TradingPairUpsertOne) ClearBaseQuantityMinPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearBaseQuantityMinPrecision()
+	})
+}
+
+// SetBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field.
+func (u *TradingPairUpsertOne) SetBaseQuantityMaxPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.SetBaseQuantityMaxPrecision(v)
+	})
+}
+
+// AddBaseQuantityMaxPrecision adds v to the "base_quantity_max_precision" field.
+func (u *TradingPairUpsertOne) AddBaseQuantityMaxPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.AddBaseQuantityMaxPrecision(v)
+	})
+}
+
+// UpdateBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertOne) UpdateBaseQuantityMaxPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.UpdateBaseQuantityMaxPrecision()
+	})
+}
+
+// ClearBaseQuantityMaxPrecision clears the value of the "base_quantity_max_precision" field.
+func (u *TradingPairUpsertOne) ClearBaseQuantityMaxPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearBaseQuantityMaxPrecision()
+	})
+}
+
+// SetCounterPriceMinPrecision sets the "counter_price_min_precision" field.
+func (u *TradingPairUpsertOne) SetCounterPriceMinPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.SetCounterPriceMinPrecision(v)
+	})
+}
+
+// AddCounterPriceMinPrecision adds v to the "counter_price_min_precision" field.
+func (u *TradingPairUpsertOne) AddCounterPriceMinPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.AddCounterPriceMinPrecision(v)
+	})
+}
+
+// UpdateCounterPriceMinPrecision sets the "counter_price_min_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertOne) UpdateCounterPriceMinPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.UpdateCounterPriceMinPrecision()
+	})
+}
+
+// ClearCounterPriceMinPrecision clears the value of the "counter_price_min_precision" field.
+func (u *TradingPairUpsertOne) ClearCounterPriceMinPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearCounterPriceMinPrecision()
+	})
+}
+
+// SetCounterPriceMaxPrecision sets the "counter_price_max_precision" field.
+func (u *TradingPairUpsertOne) SetCounterPriceMaxPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.SetCounterPriceMaxPrecision(v)
+	})
+}
+
+// AddCounterPriceMaxPrecision adds v to the "counter_price_max_precision" field.
+func (u *TradingPairUpsertOne) AddCounterPriceMaxPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.AddCounterPriceMaxPrecision(v)
+	})
+}
+
+// UpdateCounterPriceMaxPrecision sets the "counter_price_max_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertOne) UpdateCounterPriceMaxPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.UpdateCounterPriceMaxPrecision()
+	})
+}
+
+// ClearCounterPriceMaxPrecision clears the value of the "counter_price_max_precision" field.
+func (u *TradingPairUpsertOne) ClearCounterPriceMaxPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearCounterPriceMaxPrecision()
+	})
+}
+
+// SetCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field.
+func (u *TradingPairUpsertOne) SetCounterQuantityMinPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.SetCounterQuantityMinPrecision(v)
+	})
+}
+
+// AddCounterQuantityMinPrecision adds v to the "counter_quantity_min_precision" field.
+func (u *TradingPairUpsertOne) AddCounterQuantityMinPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.AddCounterQuantityMinPrecision(v)
+	})
+}
+
+// UpdateCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertOne) UpdateCounterQuantityMinPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.UpdateCounterQuantityMinPrecision()
+	})
+}
+
+// ClearCounterQuantityMinPrecision clears the value of the "counter_quantity_min_precision" field.
+func (u *TradingPairUpsertOne) ClearCounterQuantityMinPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearCounterQuantityMinPrecision()
+	})
+}
+
+// SetCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field.
+func (u *TradingPairUpsertOne) SetCounterQuantityMaxPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.SetCounterQuantityMaxPrecision(v)
+	})
+}
+
+// AddCounterQuantityMaxPrecision adds v to the "counter_quantity_max_precision" field.
+func (u *TradingPairUpsertOne) AddCounterQuantityMaxPrecision(v int) *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.AddCounterQuantityMaxPrecision(v)
+	})
+}
+
+// UpdateCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertOne) UpdateCounterQuantityMaxPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.UpdateCounterQuantityMaxPrecision()
+	})
+}
+
+// ClearCounterQuantityMaxPrecision clears the value of the "counter_quantity_max_precision" field.
+func (u *TradingPairUpsertOne) ClearCounterQuantityMaxPrecision() *TradingPairUpsertOne {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearCounterQuantityMaxPrecision()
 	})
 }
 
@@ -729,59 +1173,227 @@ func (u *TradingPairUpsertBulk) UpdateSymbol() *TradingPairUpsertBulk {
 	})
 }
 
-// SetBasePrecision sets the "base_precision" field.
-func (u *TradingPairUpsertBulk) SetBasePrecision(v int) *TradingPairUpsertBulk {
+// SetBasePriceMinPrecision sets the "base_price_min_precision" field.
+func (u *TradingPairUpsertBulk) SetBasePriceMinPrecision(v int) *TradingPairUpsertBulk {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.SetBasePrecision(v)
+		s.SetBasePriceMinPrecision(v)
 	})
 }
 
-// AddBasePrecision adds v to the "base_precision" field.
-func (u *TradingPairUpsertBulk) AddBasePrecision(v int) *TradingPairUpsertBulk {
+// AddBasePriceMinPrecision adds v to the "base_price_min_precision" field.
+func (u *TradingPairUpsertBulk) AddBasePriceMinPrecision(v int) *TradingPairUpsertBulk {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.AddBasePrecision(v)
+		s.AddBasePriceMinPrecision(v)
 	})
 }
 
-// UpdateBasePrecision sets the "base_precision" field to the value that was provided on create.
-func (u *TradingPairUpsertBulk) UpdateBasePrecision() *TradingPairUpsertBulk {
+// UpdateBasePriceMinPrecision sets the "base_price_min_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertBulk) UpdateBasePriceMinPrecision() *TradingPairUpsertBulk {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.UpdateBasePrecision()
+		s.UpdateBasePriceMinPrecision()
 	})
 }
 
-// ClearBasePrecision clears the value of the "base_precision" field.
-func (u *TradingPairUpsertBulk) ClearBasePrecision() *TradingPairUpsertBulk {
+// ClearBasePriceMinPrecision clears the value of the "base_price_min_precision" field.
+func (u *TradingPairUpsertBulk) ClearBasePriceMinPrecision() *TradingPairUpsertBulk {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.ClearBasePrecision()
+		s.ClearBasePriceMinPrecision()
 	})
 }
 
-// SetCounterPrecision sets the "counter_precision" field.
-func (u *TradingPairUpsertBulk) SetCounterPrecision(v int) *TradingPairUpsertBulk {
+// SetBasePriceMaxPrecision sets the "base_price_max_precision" field.
+func (u *TradingPairUpsertBulk) SetBasePriceMaxPrecision(v int) *TradingPairUpsertBulk {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.SetCounterPrecision(v)
+		s.SetBasePriceMaxPrecision(v)
 	})
 }
 
-// AddCounterPrecision adds v to the "counter_precision" field.
-func (u *TradingPairUpsertBulk) AddCounterPrecision(v int) *TradingPairUpsertBulk {
+// AddBasePriceMaxPrecision adds v to the "base_price_max_precision" field.
+func (u *TradingPairUpsertBulk) AddBasePriceMaxPrecision(v int) *TradingPairUpsertBulk {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.AddCounterPrecision(v)
+		s.AddBasePriceMaxPrecision(v)
 	})
 }
 
-// UpdateCounterPrecision sets the "counter_precision" field to the value that was provided on create.
-func (u *TradingPairUpsertBulk) UpdateCounterPrecision() *TradingPairUpsertBulk {
+// UpdateBasePriceMaxPrecision sets the "base_price_max_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertBulk) UpdateBasePriceMaxPrecision() *TradingPairUpsertBulk {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.UpdateCounterPrecision()
+		s.UpdateBasePriceMaxPrecision()
 	})
 }
 
-// ClearCounterPrecision clears the value of the "counter_precision" field.
-func (u *TradingPairUpsertBulk) ClearCounterPrecision() *TradingPairUpsertBulk {
+// ClearBasePriceMaxPrecision clears the value of the "base_price_max_precision" field.
+func (u *TradingPairUpsertBulk) ClearBasePriceMaxPrecision() *TradingPairUpsertBulk {
 	return u.Update(func(s *TradingPairUpsert) {
-		s.ClearCounterPrecision()
+		s.ClearBasePriceMaxPrecision()
+	})
+}
+
+// SetBaseQuantityMinPrecision sets the "base_quantity_min_precision" field.
+func (u *TradingPairUpsertBulk) SetBaseQuantityMinPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.SetBaseQuantityMinPrecision(v)
+	})
+}
+
+// AddBaseQuantityMinPrecision adds v to the "base_quantity_min_precision" field.
+func (u *TradingPairUpsertBulk) AddBaseQuantityMinPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.AddBaseQuantityMinPrecision(v)
+	})
+}
+
+// UpdateBaseQuantityMinPrecision sets the "base_quantity_min_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertBulk) UpdateBaseQuantityMinPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.UpdateBaseQuantityMinPrecision()
+	})
+}
+
+// ClearBaseQuantityMinPrecision clears the value of the "base_quantity_min_precision" field.
+func (u *TradingPairUpsertBulk) ClearBaseQuantityMinPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearBaseQuantityMinPrecision()
+	})
+}
+
+// SetBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field.
+func (u *TradingPairUpsertBulk) SetBaseQuantityMaxPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.SetBaseQuantityMaxPrecision(v)
+	})
+}
+
+// AddBaseQuantityMaxPrecision adds v to the "base_quantity_max_precision" field.
+func (u *TradingPairUpsertBulk) AddBaseQuantityMaxPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.AddBaseQuantityMaxPrecision(v)
+	})
+}
+
+// UpdateBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertBulk) UpdateBaseQuantityMaxPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.UpdateBaseQuantityMaxPrecision()
+	})
+}
+
+// ClearBaseQuantityMaxPrecision clears the value of the "base_quantity_max_precision" field.
+func (u *TradingPairUpsertBulk) ClearBaseQuantityMaxPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearBaseQuantityMaxPrecision()
+	})
+}
+
+// SetCounterPriceMinPrecision sets the "counter_price_min_precision" field.
+func (u *TradingPairUpsertBulk) SetCounterPriceMinPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.SetCounterPriceMinPrecision(v)
+	})
+}
+
+// AddCounterPriceMinPrecision adds v to the "counter_price_min_precision" field.
+func (u *TradingPairUpsertBulk) AddCounterPriceMinPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.AddCounterPriceMinPrecision(v)
+	})
+}
+
+// UpdateCounterPriceMinPrecision sets the "counter_price_min_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertBulk) UpdateCounterPriceMinPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.UpdateCounterPriceMinPrecision()
+	})
+}
+
+// ClearCounterPriceMinPrecision clears the value of the "counter_price_min_precision" field.
+func (u *TradingPairUpsertBulk) ClearCounterPriceMinPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearCounterPriceMinPrecision()
+	})
+}
+
+// SetCounterPriceMaxPrecision sets the "counter_price_max_precision" field.
+func (u *TradingPairUpsertBulk) SetCounterPriceMaxPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.SetCounterPriceMaxPrecision(v)
+	})
+}
+
+// AddCounterPriceMaxPrecision adds v to the "counter_price_max_precision" field.
+func (u *TradingPairUpsertBulk) AddCounterPriceMaxPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.AddCounterPriceMaxPrecision(v)
+	})
+}
+
+// UpdateCounterPriceMaxPrecision sets the "counter_price_max_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertBulk) UpdateCounterPriceMaxPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.UpdateCounterPriceMaxPrecision()
+	})
+}
+
+// ClearCounterPriceMaxPrecision clears the value of the "counter_price_max_precision" field.
+func (u *TradingPairUpsertBulk) ClearCounterPriceMaxPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearCounterPriceMaxPrecision()
+	})
+}
+
+// SetCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field.
+func (u *TradingPairUpsertBulk) SetCounterQuantityMinPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.SetCounterQuantityMinPrecision(v)
+	})
+}
+
+// AddCounterQuantityMinPrecision adds v to the "counter_quantity_min_precision" field.
+func (u *TradingPairUpsertBulk) AddCounterQuantityMinPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.AddCounterQuantityMinPrecision(v)
+	})
+}
+
+// UpdateCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertBulk) UpdateCounterQuantityMinPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.UpdateCounterQuantityMinPrecision()
+	})
+}
+
+// ClearCounterQuantityMinPrecision clears the value of the "counter_quantity_min_precision" field.
+func (u *TradingPairUpsertBulk) ClearCounterQuantityMinPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearCounterQuantityMinPrecision()
+	})
+}
+
+// SetCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field.
+func (u *TradingPairUpsertBulk) SetCounterQuantityMaxPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.SetCounterQuantityMaxPrecision(v)
+	})
+}
+
+// AddCounterQuantityMaxPrecision adds v to the "counter_quantity_max_precision" field.
+func (u *TradingPairUpsertBulk) AddCounterQuantityMaxPrecision(v int) *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.AddCounterQuantityMaxPrecision(v)
+	})
+}
+
+// UpdateCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field to the value that was provided on create.
+func (u *TradingPairUpsertBulk) UpdateCounterQuantityMaxPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.UpdateCounterQuantityMaxPrecision()
+	})
+}
+
+// ClearCounterQuantityMaxPrecision clears the value of the "counter_quantity_max_precision" field.
+func (u *TradingPairUpsertBulk) ClearCounterQuantityMaxPrecision() *TradingPairUpsertBulk {
+	return u.Update(func(s *TradingPairUpsert) {
+		s.ClearCounterQuantityMaxPrecision()
 	})
 }
 

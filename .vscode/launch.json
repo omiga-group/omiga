@@ -34,6 +34,14 @@
       "args": ["start"]
     },
     {
+      "name": "BitMart Processor",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/exchange/bitmart-processor/main.go",
+      "args": ["start"]
+    },
+    {
       "name": "Bittrex Processor",
       "type": "go",
       "request": "launch",

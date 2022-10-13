@@ -160,12 +160,18 @@ type ComplexityRoot struct {
 	}
 
 	TradingPair struct {
-		Base             func(childComplexity int) int
-		BasePrecision    func(childComplexity int) int
-		Counter          func(childComplexity int) int
-		CounterPrecision func(childComplexity int) int
-		ID               func(childComplexity int) int
-		Symbol           func(childComplexity int) int
+		Base                        func(childComplexity int) int
+		BasePriceMaxPrecision       func(childComplexity int) int
+		BasePriceMinPrecision       func(childComplexity int) int
+		BaseQuantityMaxPrecision    func(childComplexity int) int
+		BaseQuantityMinPrecision    func(childComplexity int) int
+		Counter                     func(childComplexity int) int
+		CounterPriceMaxPrecision    func(childComplexity int) int
+		CounterPriceMinPrecision    func(childComplexity int) int
+		CounterQuantityMaxPrecision func(childComplexity int) int
+		CounterQuantityMinPrecision func(childComplexity int) int
+		ID                          func(childComplexity int) int
+		Symbol                      func(childComplexity int) int
 	}
 
 	_Service struct {
@@ -759,12 +765,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TradingPair.Base(childComplexity), true
 
-	case "TradingPair.basePrecision":
-		if e.complexity.TradingPair.BasePrecision == nil {
+	case "TradingPair.basePriceMaxPrecision":
+		if e.complexity.TradingPair.BasePriceMaxPrecision == nil {
 			break
 		}
 
-		return e.complexity.TradingPair.BasePrecision(childComplexity), true
+		return e.complexity.TradingPair.BasePriceMaxPrecision(childComplexity), true
+
+	case "TradingPair.basePriceMinPrecision":
+		if e.complexity.TradingPair.BasePriceMinPrecision == nil {
+			break
+		}
+
+		return e.complexity.TradingPair.BasePriceMinPrecision(childComplexity), true
+
+	case "TradingPair.baseQuantityMaxPrecision":
+		if e.complexity.TradingPair.BaseQuantityMaxPrecision == nil {
+			break
+		}
+
+		return e.complexity.TradingPair.BaseQuantityMaxPrecision(childComplexity), true
+
+	case "TradingPair.baseQuantityMinPrecision":
+		if e.complexity.TradingPair.BaseQuantityMinPrecision == nil {
+			break
+		}
+
+		return e.complexity.TradingPair.BaseQuantityMinPrecision(childComplexity), true
 
 	case "TradingPair.counter":
 		if e.complexity.TradingPair.Counter == nil {
@@ -773,12 +800,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TradingPair.Counter(childComplexity), true
 
-	case "TradingPair.counterPrecision":
-		if e.complexity.TradingPair.CounterPrecision == nil {
+	case "TradingPair.counterPriceMaxPrecision":
+		if e.complexity.TradingPair.CounterPriceMaxPrecision == nil {
 			break
 		}
 
-		return e.complexity.TradingPair.CounterPrecision(childComplexity), true
+		return e.complexity.TradingPair.CounterPriceMaxPrecision(childComplexity), true
+
+	case "TradingPair.counterPriceMinPrecision":
+		if e.complexity.TradingPair.CounterPriceMinPrecision == nil {
+			break
+		}
+
+		return e.complexity.TradingPair.CounterPriceMinPrecision(childComplexity), true
+
+	case "TradingPair.counterQuantityMaxPrecision":
+		if e.complexity.TradingPair.CounterQuantityMaxPrecision == nil {
+			break
+		}
+
+		return e.complexity.TradingPair.CounterQuantityMaxPrecision(childComplexity), true
+
+	case "TradingPair.counterQuantityMinPrecision":
+		if e.complexity.TradingPair.CounterQuantityMinPrecision == nil {
+			break
+		}
+
+		return e.complexity.TradingPair.CounterQuantityMinPrecision(childComplexity), true
 
 	case "TradingPair.id":
 		if e.complexity.TradingPair.ID == nil {
@@ -1119,9 +1167,15 @@ type TradingPair implements Node {
   id: ID!
   symbol: String!
   base: Coin!
-  basePrecision: Int
+  basePriceMinPrecision: Int
+  basePriceMaxPrecision: Int
+  baseQuantityMinPrecision: Int
+  baseQuantityMaxPrecision: Int
   counter: Coin!
-  counterPrecision: Int
+  counterPriceMinPrecision: Int
+  counterPriceMaxPrecision: Int
+  counterQuantityMinPrecision: Int
+  counterQuantityMaxPrecision: Int
 }
 
 type Market {
@@ -1762,28 +1816,94 @@ input TradingPairWhereInput {
   symbolHasSuffix: String
   symbolEqualFold: String
   symbolContainsFold: String
-  """base_precision field predicates"""
-  basePrecision: Int
-  basePrecisionNEQ: Int
-  basePrecisionIn: [Int!]
-  basePrecisionNotIn: [Int!]
-  basePrecisionGT: Int
-  basePrecisionGTE: Int
-  basePrecisionLT: Int
-  basePrecisionLTE: Int
-  basePrecisionIsNil: Boolean
-  basePrecisionNotNil: Boolean
-  """counter_precision field predicates"""
-  counterPrecision: Int
-  counterPrecisionNEQ: Int
-  counterPrecisionIn: [Int!]
-  counterPrecisionNotIn: [Int!]
-  counterPrecisionGT: Int
-  counterPrecisionGTE: Int
-  counterPrecisionLT: Int
-  counterPrecisionLTE: Int
-  counterPrecisionIsNil: Boolean
-  counterPrecisionNotNil: Boolean
+  """base_price_min_precision field predicates"""
+  basePriceMinPrecision: Int
+  basePriceMinPrecisionNEQ: Int
+  basePriceMinPrecisionIn: [Int!]
+  basePriceMinPrecisionNotIn: [Int!]
+  basePriceMinPrecisionGT: Int
+  basePriceMinPrecisionGTE: Int
+  basePriceMinPrecisionLT: Int
+  basePriceMinPrecisionLTE: Int
+  basePriceMinPrecisionIsNil: Boolean
+  basePriceMinPrecisionNotNil: Boolean
+  """base_price_max_precision field predicates"""
+  basePriceMaxPrecision: Int
+  basePriceMaxPrecisionNEQ: Int
+  basePriceMaxPrecisionIn: [Int!]
+  basePriceMaxPrecisionNotIn: [Int!]
+  basePriceMaxPrecisionGT: Int
+  basePriceMaxPrecisionGTE: Int
+  basePriceMaxPrecisionLT: Int
+  basePriceMaxPrecisionLTE: Int
+  basePriceMaxPrecisionIsNil: Boolean
+  basePriceMaxPrecisionNotNil: Boolean
+  """base_quantity_min_precision field predicates"""
+  baseQuantityMinPrecision: Int
+  baseQuantityMinPrecisionNEQ: Int
+  baseQuantityMinPrecisionIn: [Int!]
+  baseQuantityMinPrecisionNotIn: [Int!]
+  baseQuantityMinPrecisionGT: Int
+  baseQuantityMinPrecisionGTE: Int
+  baseQuantityMinPrecisionLT: Int
+  baseQuantityMinPrecisionLTE: Int
+  baseQuantityMinPrecisionIsNil: Boolean
+  baseQuantityMinPrecisionNotNil: Boolean
+  """base_quantity_max_precision field predicates"""
+  baseQuantityMaxPrecision: Int
+  baseQuantityMaxPrecisionNEQ: Int
+  baseQuantityMaxPrecisionIn: [Int!]
+  baseQuantityMaxPrecisionNotIn: [Int!]
+  baseQuantityMaxPrecisionGT: Int
+  baseQuantityMaxPrecisionGTE: Int
+  baseQuantityMaxPrecisionLT: Int
+  baseQuantityMaxPrecisionLTE: Int
+  baseQuantityMaxPrecisionIsNil: Boolean
+  baseQuantityMaxPrecisionNotNil: Boolean
+  """counter_price_min_precision field predicates"""
+  counterPriceMinPrecision: Int
+  counterPriceMinPrecisionNEQ: Int
+  counterPriceMinPrecisionIn: [Int!]
+  counterPriceMinPrecisionNotIn: [Int!]
+  counterPriceMinPrecisionGT: Int
+  counterPriceMinPrecisionGTE: Int
+  counterPriceMinPrecisionLT: Int
+  counterPriceMinPrecisionLTE: Int
+  counterPriceMinPrecisionIsNil: Boolean
+  counterPriceMinPrecisionNotNil: Boolean
+  """counter_price_max_precision field predicates"""
+  counterPriceMaxPrecision: Int
+  counterPriceMaxPrecisionNEQ: Int
+  counterPriceMaxPrecisionIn: [Int!]
+  counterPriceMaxPrecisionNotIn: [Int!]
+  counterPriceMaxPrecisionGT: Int
+  counterPriceMaxPrecisionGTE: Int
+  counterPriceMaxPrecisionLT: Int
+  counterPriceMaxPrecisionLTE: Int
+  counterPriceMaxPrecisionIsNil: Boolean
+  counterPriceMaxPrecisionNotNil: Boolean
+  """counter_quantity_min_precision field predicates"""
+  counterQuantityMinPrecision: Int
+  counterQuantityMinPrecisionNEQ: Int
+  counterQuantityMinPrecisionIn: [Int!]
+  counterQuantityMinPrecisionNotIn: [Int!]
+  counterQuantityMinPrecisionGT: Int
+  counterQuantityMinPrecisionGTE: Int
+  counterQuantityMinPrecisionLT: Int
+  counterQuantityMinPrecisionLTE: Int
+  counterQuantityMinPrecisionIsNil: Boolean
+  counterQuantityMinPrecisionNotNil: Boolean
+  """counter_quantity_max_precision field predicates"""
+  counterQuantityMaxPrecision: Int
+  counterQuantityMaxPrecisionNEQ: Int
+  counterQuantityMaxPrecisionIn: [Int!]
+  counterQuantityMaxPrecisionNotIn: [Int!]
+  counterQuantityMaxPrecisionGT: Int
+  counterQuantityMaxPrecisionGTE: Int
+  counterQuantityMaxPrecisionLT: Int
+  counterQuantityMaxPrecisionLTE: Int
+  counterQuantityMaxPrecisionIsNil: Boolean
+  counterQuantityMaxPrecisionNotNil: Boolean
   """exchange edge predicates"""
   hasExchange: Boolean
   hasExchangeWith: [ExchangeWhereInput!]
@@ -3293,12 +3413,24 @@ func (ec *executionContext) fieldContext_Exchange_tradingPairs(ctx context.Conte
 				return ec.fieldContext_TradingPair_symbol(ctx, field)
 			case "base":
 				return ec.fieldContext_TradingPair_base(ctx, field)
-			case "basePrecision":
-				return ec.fieldContext_TradingPair_basePrecision(ctx, field)
+			case "basePriceMinPrecision":
+				return ec.fieldContext_TradingPair_basePriceMinPrecision(ctx, field)
+			case "basePriceMaxPrecision":
+				return ec.fieldContext_TradingPair_basePriceMaxPrecision(ctx, field)
+			case "baseQuantityMinPrecision":
+				return ec.fieldContext_TradingPair_baseQuantityMinPrecision(ctx, field)
+			case "baseQuantityMaxPrecision":
+				return ec.fieldContext_TradingPair_baseQuantityMaxPrecision(ctx, field)
 			case "counter":
 				return ec.fieldContext_TradingPair_counter(ctx, field)
-			case "counterPrecision":
-				return ec.fieldContext_TradingPair_counterPrecision(ctx, field)
+			case "counterPriceMinPrecision":
+				return ec.fieldContext_TradingPair_counterPriceMinPrecision(ctx, field)
+			case "counterPriceMaxPrecision":
+				return ec.fieldContext_TradingPair_counterPriceMaxPrecision(ctx, field)
+			case "counterQuantityMinPrecision":
+				return ec.fieldContext_TradingPair_counterQuantityMinPrecision(ctx, field)
+			case "counterQuantityMaxPrecision":
+				return ec.fieldContext_TradingPair_counterQuantityMaxPrecision(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type TradingPair", field.Name)
 		},
@@ -5691,8 +5823,8 @@ func (ec *executionContext) fieldContext_TradingPair_base(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _TradingPair_basePrecision(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPair) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TradingPair_basePrecision(ctx, field)
+func (ec *executionContext) _TradingPair_basePriceMinPrecision(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPair) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPair_basePriceMinPrecision(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5705,7 +5837,7 @@ func (ec *executionContext) _TradingPair_basePrecision(ctx context.Context, fiel
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.BasePrecision, nil
+		return obj.BasePriceMinPrecision, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5719,7 +5851,130 @@ func (ec *executionContext) _TradingPair_basePrecision(ctx context.Context, fiel
 	return ec.marshalOInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TradingPair_basePrecision(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TradingPair_basePriceMinPrecision(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPair",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPair_basePriceMaxPrecision(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPair) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPair_basePriceMaxPrecision(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BasePriceMaxPrecision, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPair_basePriceMaxPrecision(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPair",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPair_baseQuantityMinPrecision(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPair) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPair_baseQuantityMinPrecision(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BaseQuantityMinPrecision, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPair_baseQuantityMinPrecision(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPair",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPair_baseQuantityMaxPrecision(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPair) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPair_baseQuantityMaxPrecision(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BaseQuantityMaxPrecision, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPair_baseQuantityMaxPrecision(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "TradingPair",
 		Field:      field,
@@ -5784,8 +6039,8 @@ func (ec *executionContext) fieldContext_TradingPair_counter(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _TradingPair_counterPrecision(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPair) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TradingPair_counterPrecision(ctx, field)
+func (ec *executionContext) _TradingPair_counterPriceMinPrecision(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPair) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPair_counterPriceMinPrecision(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5798,7 +6053,7 @@ func (ec *executionContext) _TradingPair_counterPrecision(ctx context.Context, f
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.CounterPrecision, nil
+		return obj.CounterPriceMinPrecision, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5812,7 +6067,130 @@ func (ec *executionContext) _TradingPair_counterPrecision(ctx context.Context, f
 	return ec.marshalOInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TradingPair_counterPrecision(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TradingPair_counterPriceMinPrecision(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPair",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPair_counterPriceMaxPrecision(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPair) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPair_counterPriceMaxPrecision(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CounterPriceMaxPrecision, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPair_counterPriceMaxPrecision(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPair",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPair_counterQuantityMinPrecision(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPair) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPair_counterQuantityMinPrecision(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CounterQuantityMinPrecision, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPair_counterQuantityMinPrecision(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingPair",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TradingPair_counterQuantityMaxPrecision(ctx context.Context, field graphql.CollectedField, obj *entities.TradingPair) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingPair_counterQuantityMaxPrecision(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CounterQuantityMaxPrecision, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingPair_counterQuantityMaxPrecision(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "TradingPair",
 		Field:      field,
@@ -11658,7 +12036,7 @@ func (ec *executionContext) unmarshalInputTradingPairWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "symbol", "symbolNEQ", "symbolIn", "symbolNotIn", "symbolGT", "symbolGTE", "symbolLT", "symbolLTE", "symbolContains", "symbolHasPrefix", "symbolHasSuffix", "symbolEqualFold", "symbolContainsFold", "basePrecision", "basePrecisionNEQ", "basePrecisionIn", "basePrecisionNotIn", "basePrecisionGT", "basePrecisionGTE", "basePrecisionLT", "basePrecisionLTE", "basePrecisionIsNil", "basePrecisionNotNil", "counterPrecision", "counterPrecisionNEQ", "counterPrecisionIn", "counterPrecisionNotIn", "counterPrecisionGT", "counterPrecisionGTE", "counterPrecisionLT", "counterPrecisionLTE", "counterPrecisionIsNil", "counterPrecisionNotNil", "hasExchange", "hasExchangeWith", "hasBase", "hasBaseWith", "hasCounter", "hasCounterWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "symbol", "symbolNEQ", "symbolIn", "symbolNotIn", "symbolGT", "symbolGTE", "symbolLT", "symbolLTE", "symbolContains", "symbolHasPrefix", "symbolHasSuffix", "symbolEqualFold", "symbolContainsFold", "basePriceMinPrecision", "basePriceMinPrecisionNEQ", "basePriceMinPrecisionIn", "basePriceMinPrecisionNotIn", "basePriceMinPrecisionGT", "basePriceMinPrecisionGTE", "basePriceMinPrecisionLT", "basePriceMinPrecisionLTE", "basePriceMinPrecisionIsNil", "basePriceMinPrecisionNotNil", "basePriceMaxPrecision", "basePriceMaxPrecisionNEQ", "basePriceMaxPrecisionIn", "basePriceMaxPrecisionNotIn", "basePriceMaxPrecisionGT", "basePriceMaxPrecisionGTE", "basePriceMaxPrecisionLT", "basePriceMaxPrecisionLTE", "basePriceMaxPrecisionIsNil", "basePriceMaxPrecisionNotNil", "baseQuantityMinPrecision", "baseQuantityMinPrecisionNEQ", "baseQuantityMinPrecisionIn", "baseQuantityMinPrecisionNotIn", "baseQuantityMinPrecisionGT", "baseQuantityMinPrecisionGTE", "baseQuantityMinPrecisionLT", "baseQuantityMinPrecisionLTE", "baseQuantityMinPrecisionIsNil", "baseQuantityMinPrecisionNotNil", "baseQuantityMaxPrecision", "baseQuantityMaxPrecisionNEQ", "baseQuantityMaxPrecisionIn", "baseQuantityMaxPrecisionNotIn", "baseQuantityMaxPrecisionGT", "baseQuantityMaxPrecisionGTE", "baseQuantityMaxPrecisionLT", "baseQuantityMaxPrecisionLTE", "baseQuantityMaxPrecisionIsNil", "baseQuantityMaxPrecisionNotNil", "counterPriceMinPrecision", "counterPriceMinPrecisionNEQ", "counterPriceMinPrecisionIn", "counterPriceMinPrecisionNotIn", "counterPriceMinPrecisionGT", "counterPriceMinPrecisionGTE", "counterPriceMinPrecisionLT", "counterPriceMinPrecisionLTE", "counterPriceMinPrecisionIsNil", "counterPriceMinPrecisionNotNil", "counterPriceMaxPrecision", "counterPriceMaxPrecisionNEQ", "counterPriceMaxPrecisionIn", "counterPriceMaxPrecisionNotIn", "counterPriceMaxPrecisionGT", "counterPriceMaxPrecisionGTE", "counterPriceMaxPrecisionLT", "counterPriceMaxPrecisionLTE", "counterPriceMaxPrecisionIsNil", "counterPriceMaxPrecisionNotNil", "counterQuantityMinPrecision", "counterQuantityMinPrecisionNEQ", "counterQuantityMinPrecisionIn", "counterQuantityMinPrecisionNotIn", "counterQuantityMinPrecisionGT", "counterQuantityMinPrecisionGTE", "counterQuantityMinPrecisionLT", "counterQuantityMinPrecisionLTE", "counterQuantityMinPrecisionIsNil", "counterQuantityMinPrecisionNotNil", "counterQuantityMaxPrecision", "counterQuantityMaxPrecisionNEQ", "counterQuantityMaxPrecisionIn", "counterQuantityMaxPrecisionNotIn", "counterQuantityMaxPrecisionGT", "counterQuantityMaxPrecisionGTE", "counterQuantityMaxPrecisionLT", "counterQuantityMaxPrecisionLTE", "counterQuantityMaxPrecisionIsNil", "counterQuantityMaxPrecisionNotNil", "hasExchange", "hasExchangeWith", "hasBase", "hasBaseWith", "hasCounter", "hasCounterWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -11857,163 +12235,643 @@ func (ec *executionContext) unmarshalInputTradingPairWhereInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
-		case "basePrecision":
+		case "basePriceMinPrecision":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePrecision"))
-			it.BasePrecision, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMinPrecision"))
+			it.BasePriceMinPrecision, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "basePrecisionNEQ":
+		case "basePriceMinPrecisionNEQ":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePrecisionNEQ"))
-			it.BasePrecisionNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMinPrecisionNEQ"))
+			it.BasePriceMinPrecisionNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "basePrecisionIn":
+		case "basePriceMinPrecisionIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePrecisionIn"))
-			it.BasePrecisionIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMinPrecisionIn"))
+			it.BasePriceMinPrecisionIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "basePrecisionNotIn":
+		case "basePriceMinPrecisionNotIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePrecisionNotIn"))
-			it.BasePrecisionNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMinPrecisionNotIn"))
+			it.BasePriceMinPrecisionNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "basePrecisionGT":
+		case "basePriceMinPrecisionGT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePrecisionGT"))
-			it.BasePrecisionGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMinPrecisionGT"))
+			it.BasePriceMinPrecisionGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "basePrecisionGTE":
+		case "basePriceMinPrecisionGTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePrecisionGTE"))
-			it.BasePrecisionGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMinPrecisionGTE"))
+			it.BasePriceMinPrecisionGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "basePrecisionLT":
+		case "basePriceMinPrecisionLT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePrecisionLT"))
-			it.BasePrecisionLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMinPrecisionLT"))
+			it.BasePriceMinPrecisionLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "basePrecisionLTE":
+		case "basePriceMinPrecisionLTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePrecisionLTE"))
-			it.BasePrecisionLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMinPrecisionLTE"))
+			it.BasePriceMinPrecisionLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "basePrecisionIsNil":
+		case "basePriceMinPrecisionIsNil":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePrecisionIsNil"))
-			it.BasePrecisionIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMinPrecisionIsNil"))
+			it.BasePriceMinPrecisionIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "basePrecisionNotNil":
+		case "basePriceMinPrecisionNotNil":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePrecisionNotNil"))
-			it.BasePrecisionNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMinPrecisionNotNil"))
+			it.BasePriceMinPrecisionNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "counterPrecision":
+		case "basePriceMaxPrecision":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecision"))
-			it.CounterPrecision, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMaxPrecision"))
+			it.BasePriceMaxPrecision, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "counterPrecisionNEQ":
+		case "basePriceMaxPrecisionNEQ":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecisionNEQ"))
-			it.CounterPrecisionNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMaxPrecisionNEQ"))
+			it.BasePriceMaxPrecisionNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "counterPrecisionIn":
+		case "basePriceMaxPrecisionIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecisionIn"))
-			it.CounterPrecisionIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMaxPrecisionIn"))
+			it.BasePriceMaxPrecisionIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "counterPrecisionNotIn":
+		case "basePriceMaxPrecisionNotIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecisionNotIn"))
-			it.CounterPrecisionNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMaxPrecisionNotIn"))
+			it.BasePriceMaxPrecisionNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "counterPrecisionGT":
+		case "basePriceMaxPrecisionGT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecisionGT"))
-			it.CounterPrecisionGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMaxPrecisionGT"))
+			it.BasePriceMaxPrecisionGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "counterPrecisionGTE":
+		case "basePriceMaxPrecisionGTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecisionGTE"))
-			it.CounterPrecisionGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMaxPrecisionGTE"))
+			it.BasePriceMaxPrecisionGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "counterPrecisionLT":
+		case "basePriceMaxPrecisionLT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecisionLT"))
-			it.CounterPrecisionLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMaxPrecisionLT"))
+			it.BasePriceMaxPrecisionLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "counterPrecisionLTE":
+		case "basePriceMaxPrecisionLTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecisionLTE"))
-			it.CounterPrecisionLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMaxPrecisionLTE"))
+			it.BasePriceMaxPrecisionLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "counterPrecisionIsNil":
+		case "basePriceMaxPrecisionIsNil":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecisionIsNil"))
-			it.CounterPrecisionIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMaxPrecisionIsNil"))
+			it.BasePriceMaxPrecisionIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "counterPrecisionNotNil":
+		case "basePriceMaxPrecisionNotNil":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPrecisionNotNil"))
-			it.CounterPrecisionNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basePriceMaxPrecisionNotNil"))
+			it.BasePriceMaxPrecisionNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMinPrecision":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMinPrecision"))
+			it.BaseQuantityMinPrecision, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMinPrecisionNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMinPrecisionNEQ"))
+			it.BaseQuantityMinPrecisionNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMinPrecisionIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMinPrecisionIn"))
+			it.BaseQuantityMinPrecisionIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMinPrecisionNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMinPrecisionNotIn"))
+			it.BaseQuantityMinPrecisionNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMinPrecisionGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMinPrecisionGT"))
+			it.BaseQuantityMinPrecisionGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMinPrecisionGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMinPrecisionGTE"))
+			it.BaseQuantityMinPrecisionGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMinPrecisionLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMinPrecisionLT"))
+			it.BaseQuantityMinPrecisionLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMinPrecisionLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMinPrecisionLTE"))
+			it.BaseQuantityMinPrecisionLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMinPrecisionIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMinPrecisionIsNil"))
+			it.BaseQuantityMinPrecisionIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMinPrecisionNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMinPrecisionNotNil"))
+			it.BaseQuantityMinPrecisionNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMaxPrecision":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMaxPrecision"))
+			it.BaseQuantityMaxPrecision, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMaxPrecisionNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMaxPrecisionNEQ"))
+			it.BaseQuantityMaxPrecisionNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMaxPrecisionIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMaxPrecisionIn"))
+			it.BaseQuantityMaxPrecisionIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMaxPrecisionNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMaxPrecisionNotIn"))
+			it.BaseQuantityMaxPrecisionNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMaxPrecisionGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMaxPrecisionGT"))
+			it.BaseQuantityMaxPrecisionGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMaxPrecisionGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMaxPrecisionGTE"))
+			it.BaseQuantityMaxPrecisionGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMaxPrecisionLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMaxPrecisionLT"))
+			it.BaseQuantityMaxPrecisionLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMaxPrecisionLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMaxPrecisionLTE"))
+			it.BaseQuantityMaxPrecisionLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMaxPrecisionIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMaxPrecisionIsNil"))
+			it.BaseQuantityMaxPrecisionIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseQuantityMaxPrecisionNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseQuantityMaxPrecisionNotNil"))
+			it.BaseQuantityMaxPrecisionNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMinPrecision":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMinPrecision"))
+			it.CounterPriceMinPrecision, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMinPrecisionNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMinPrecisionNEQ"))
+			it.CounterPriceMinPrecisionNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMinPrecisionIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMinPrecisionIn"))
+			it.CounterPriceMinPrecisionIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMinPrecisionNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMinPrecisionNotIn"))
+			it.CounterPriceMinPrecisionNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMinPrecisionGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMinPrecisionGT"))
+			it.CounterPriceMinPrecisionGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMinPrecisionGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMinPrecisionGTE"))
+			it.CounterPriceMinPrecisionGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMinPrecisionLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMinPrecisionLT"))
+			it.CounterPriceMinPrecisionLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMinPrecisionLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMinPrecisionLTE"))
+			it.CounterPriceMinPrecisionLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMinPrecisionIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMinPrecisionIsNil"))
+			it.CounterPriceMinPrecisionIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMinPrecisionNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMinPrecisionNotNil"))
+			it.CounterPriceMinPrecisionNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMaxPrecision":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMaxPrecision"))
+			it.CounterPriceMaxPrecision, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMaxPrecisionNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMaxPrecisionNEQ"))
+			it.CounterPriceMaxPrecisionNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMaxPrecisionIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMaxPrecisionIn"))
+			it.CounterPriceMaxPrecisionIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMaxPrecisionNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMaxPrecisionNotIn"))
+			it.CounterPriceMaxPrecisionNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMaxPrecisionGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMaxPrecisionGT"))
+			it.CounterPriceMaxPrecisionGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMaxPrecisionGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMaxPrecisionGTE"))
+			it.CounterPriceMaxPrecisionGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMaxPrecisionLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMaxPrecisionLT"))
+			it.CounterPriceMaxPrecisionLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMaxPrecisionLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMaxPrecisionLTE"))
+			it.CounterPriceMaxPrecisionLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMaxPrecisionIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMaxPrecisionIsNil"))
+			it.CounterPriceMaxPrecisionIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterPriceMaxPrecisionNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterPriceMaxPrecisionNotNil"))
+			it.CounterPriceMaxPrecisionNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMinPrecision":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMinPrecision"))
+			it.CounterQuantityMinPrecision, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMinPrecisionNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMinPrecisionNEQ"))
+			it.CounterQuantityMinPrecisionNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMinPrecisionIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMinPrecisionIn"))
+			it.CounterQuantityMinPrecisionIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMinPrecisionNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMinPrecisionNotIn"))
+			it.CounterQuantityMinPrecisionNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMinPrecisionGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMinPrecisionGT"))
+			it.CounterQuantityMinPrecisionGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMinPrecisionGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMinPrecisionGTE"))
+			it.CounterQuantityMinPrecisionGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMinPrecisionLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMinPrecisionLT"))
+			it.CounterQuantityMinPrecisionLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMinPrecisionLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMinPrecisionLTE"))
+			it.CounterQuantityMinPrecisionLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMinPrecisionIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMinPrecisionIsNil"))
+			it.CounterQuantityMinPrecisionIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMinPrecisionNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMinPrecisionNotNil"))
+			it.CounterQuantityMinPrecisionNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMaxPrecision":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMaxPrecision"))
+			it.CounterQuantityMaxPrecision, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMaxPrecisionNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMaxPrecisionNEQ"))
+			it.CounterQuantityMaxPrecisionNEQ, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMaxPrecisionIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMaxPrecisionIn"))
+			it.CounterQuantityMaxPrecisionIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMaxPrecisionNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMaxPrecisionNotIn"))
+			it.CounterQuantityMaxPrecisionNotIn, err = ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMaxPrecisionGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMaxPrecisionGT"))
+			it.CounterQuantityMaxPrecisionGT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMaxPrecisionGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMaxPrecisionGTE"))
+			it.CounterQuantityMaxPrecisionGTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMaxPrecisionLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMaxPrecisionLT"))
+			it.CounterQuantityMaxPrecisionLT, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMaxPrecisionLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMaxPrecisionLTE"))
+			it.CounterQuantityMaxPrecisionLTE, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMaxPrecisionIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMaxPrecisionIsNil"))
+			it.CounterQuantityMaxPrecisionIsNil, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterQuantityMaxPrecisionNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterQuantityMaxPrecisionNotNil"))
+			it.CounterQuantityMaxPrecisionNotNil, err = ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12945,9 +13803,21 @@ func (ec *executionContext) _TradingPair(ctx context.Context, sel ast.SelectionS
 				return innerFunc(ctx)
 
 			})
-		case "basePrecision":
+		case "basePriceMinPrecision":
 
-			out.Values[i] = ec._TradingPair_basePrecision(ctx, field, obj)
+			out.Values[i] = ec._TradingPair_basePriceMinPrecision(ctx, field, obj)
+
+		case "basePriceMaxPrecision":
+
+			out.Values[i] = ec._TradingPair_basePriceMaxPrecision(ctx, field, obj)
+
+		case "baseQuantityMinPrecision":
+
+			out.Values[i] = ec._TradingPair_baseQuantityMinPrecision(ctx, field, obj)
+
+		case "baseQuantityMaxPrecision":
+
+			out.Values[i] = ec._TradingPair_baseQuantityMaxPrecision(ctx, field, obj)
 
 		case "counter":
 			field := field
@@ -12969,9 +13839,21 @@ func (ec *executionContext) _TradingPair(ctx context.Context, sel ast.SelectionS
 				return innerFunc(ctx)
 
 			})
-		case "counterPrecision":
+		case "counterPriceMinPrecision":
 
-			out.Values[i] = ec._TradingPair_counterPrecision(ctx, field, obj)
+			out.Values[i] = ec._TradingPair_counterPriceMinPrecision(ctx, field, obj)
+
+		case "counterPriceMaxPrecision":
+
+			out.Values[i] = ec._TradingPair_counterPriceMaxPrecision(ctx, field, obj)
+
+		case "counterQuantityMinPrecision":
+
+			out.Values[i] = ec._TradingPair_counterQuantityMinPrecision(ctx, field, obj)
+
+		case "counterQuantityMaxPrecision":
+
+			out.Values[i] = ec._TradingPair_counterQuantityMaxPrecision(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))

@@ -12,11 +12,13 @@ func BittrexMarketsToTradingPairs(markets []bittrex.MarketV3) []models.TradingPa
 		precision := int(market.Precision)
 
 		return models.TradingPair{
-			Symbol:           market.Symbol,
-			Base:             market.BaseCurrencySymbol,
-			BasePrecision:    &precision,
-			Counter:          market.QuoteCurrencySymbol,
-			CounterPrecision: &precision,
+			Symbol:                   market.Symbol,
+			Base:                     market.BaseCurrencySymbol,
+			BasePriceMinPrecision:    &precision,
+			BasePriceMaxPrecision:    &precision,
+			Counter:                  market.QuoteCurrencySymbol,
+			CounterPriceMinPrecision: &precision,
+			CounterPriceMaxPrecision: &precision,
 		}
 	})
 }

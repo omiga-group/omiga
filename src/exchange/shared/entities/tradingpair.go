@@ -19,10 +19,22 @@ type TradingPair struct {
 	ID int `json:"id,omitempty"`
 	// Symbol holds the value of the "symbol" field.
 	Symbol string `json:"symbol,omitempty"`
-	// BasePrecision holds the value of the "base_precision" field.
-	BasePrecision int `json:"base_precision,omitempty"`
-	// CounterPrecision holds the value of the "counter_precision" field.
-	CounterPrecision int `json:"counter_precision,omitempty"`
+	// BasePriceMinPrecision holds the value of the "base_price_min_precision" field.
+	BasePriceMinPrecision int `json:"base_price_min_precision,omitempty"`
+	// BasePriceMaxPrecision holds the value of the "base_price_max_precision" field.
+	BasePriceMaxPrecision int `json:"base_price_max_precision,omitempty"`
+	// BaseQuantityMinPrecision holds the value of the "base_quantity_min_precision" field.
+	BaseQuantityMinPrecision int `json:"base_quantity_min_precision,omitempty"`
+	// BaseQuantityMaxPrecision holds the value of the "base_quantity_max_precision" field.
+	BaseQuantityMaxPrecision int `json:"base_quantity_max_precision,omitempty"`
+	// CounterPriceMinPrecision holds the value of the "counter_price_min_precision" field.
+	CounterPriceMinPrecision int `json:"counter_price_min_precision,omitempty"`
+	// CounterPriceMaxPrecision holds the value of the "counter_price_max_precision" field.
+	CounterPriceMaxPrecision int `json:"counter_price_max_precision,omitempty"`
+	// CounterQuantityMinPrecision holds the value of the "counter_quantity_min_precision" field.
+	CounterQuantityMinPrecision int `json:"counter_quantity_min_precision,omitempty"`
+	// CounterQuantityMaxPrecision holds the value of the "counter_quantity_max_precision" field.
+	CounterQuantityMaxPrecision int `json:"counter_quantity_max_precision,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TradingPairQuery when eager-loading is set.
 	Edges                 TradingPairEdges `json:"edges"`
@@ -90,7 +102,7 @@ func (*TradingPair) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case tradingpair.FieldID, tradingpair.FieldBasePrecision, tradingpair.FieldCounterPrecision:
+		case tradingpair.FieldID, tradingpair.FieldBasePriceMinPrecision, tradingpair.FieldBasePriceMaxPrecision, tradingpair.FieldBaseQuantityMinPrecision, tradingpair.FieldBaseQuantityMaxPrecision, tradingpair.FieldCounterPriceMinPrecision, tradingpair.FieldCounterPriceMaxPrecision, tradingpair.FieldCounterQuantityMinPrecision, tradingpair.FieldCounterQuantityMaxPrecision:
 			values[i] = new(sql.NullInt64)
 		case tradingpair.FieldSymbol:
 			values[i] = new(sql.NullString)
@@ -127,17 +139,53 @@ func (tp *TradingPair) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				tp.Symbol = value.String
 			}
-		case tradingpair.FieldBasePrecision:
+		case tradingpair.FieldBasePriceMinPrecision:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field base_precision", values[i])
+				return fmt.Errorf("unexpected type %T for field base_price_min_precision", values[i])
 			} else if value.Valid {
-				tp.BasePrecision = int(value.Int64)
+				tp.BasePriceMinPrecision = int(value.Int64)
 			}
-		case tradingpair.FieldCounterPrecision:
+		case tradingpair.FieldBasePriceMaxPrecision:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field counter_precision", values[i])
+				return fmt.Errorf("unexpected type %T for field base_price_max_precision", values[i])
 			} else if value.Valid {
-				tp.CounterPrecision = int(value.Int64)
+				tp.BasePriceMaxPrecision = int(value.Int64)
+			}
+		case tradingpair.FieldBaseQuantityMinPrecision:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field base_quantity_min_precision", values[i])
+			} else if value.Valid {
+				tp.BaseQuantityMinPrecision = int(value.Int64)
+			}
+		case tradingpair.FieldBaseQuantityMaxPrecision:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field base_quantity_max_precision", values[i])
+			} else if value.Valid {
+				tp.BaseQuantityMaxPrecision = int(value.Int64)
+			}
+		case tradingpair.FieldCounterPriceMinPrecision:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field counter_price_min_precision", values[i])
+			} else if value.Valid {
+				tp.CounterPriceMinPrecision = int(value.Int64)
+			}
+		case tradingpair.FieldCounterPriceMaxPrecision:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field counter_price_max_precision", values[i])
+			} else if value.Valid {
+				tp.CounterPriceMaxPrecision = int(value.Int64)
+			}
+		case tradingpair.FieldCounterQuantityMinPrecision:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field counter_quantity_min_precision", values[i])
+			} else if value.Valid {
+				tp.CounterQuantityMinPrecision = int(value.Int64)
+			}
+		case tradingpair.FieldCounterQuantityMaxPrecision:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field counter_quantity_max_precision", values[i])
+			} else if value.Valid {
+				tp.CounterQuantityMaxPrecision = int(value.Int64)
 			}
 		case tradingpair.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -206,11 +254,29 @@ func (tp *TradingPair) String() string {
 	builder.WriteString("symbol=")
 	builder.WriteString(tp.Symbol)
 	builder.WriteString(", ")
-	builder.WriteString("base_precision=")
-	builder.WriteString(fmt.Sprintf("%v", tp.BasePrecision))
+	builder.WriteString("base_price_min_precision=")
+	builder.WriteString(fmt.Sprintf("%v", tp.BasePriceMinPrecision))
 	builder.WriteString(", ")
-	builder.WriteString("counter_precision=")
-	builder.WriteString(fmt.Sprintf("%v", tp.CounterPrecision))
+	builder.WriteString("base_price_max_precision=")
+	builder.WriteString(fmt.Sprintf("%v", tp.BasePriceMaxPrecision))
+	builder.WriteString(", ")
+	builder.WriteString("base_quantity_min_precision=")
+	builder.WriteString(fmt.Sprintf("%v", tp.BaseQuantityMinPrecision))
+	builder.WriteString(", ")
+	builder.WriteString("base_quantity_max_precision=")
+	builder.WriteString(fmt.Sprintf("%v", tp.BaseQuantityMaxPrecision))
+	builder.WriteString(", ")
+	builder.WriteString("counter_price_min_precision=")
+	builder.WriteString(fmt.Sprintf("%v", tp.CounterPriceMinPrecision))
+	builder.WriteString(", ")
+	builder.WriteString("counter_price_max_precision=")
+	builder.WriteString(fmt.Sprintf("%v", tp.CounterPriceMaxPrecision))
+	builder.WriteString(", ")
+	builder.WriteString("counter_quantity_min_precision=")
+	builder.WriteString(fmt.Sprintf("%v", tp.CounterQuantityMinPrecision))
+	builder.WriteString(", ")
+	builder.WriteString("counter_quantity_max_precision=")
+	builder.WriteString(fmt.Sprintf("%v", tp.CounterQuantityMaxPrecision))
 	builder.WriteByte(')')
 	return builder.String()
 }

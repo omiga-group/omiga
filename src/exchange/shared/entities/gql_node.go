@@ -524,7 +524,7 @@ func (tp *TradingPair) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     tp.ID,
 		Type:   "TradingPair",
-		Fields: make([]*Field, 3),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
@@ -536,20 +536,68 @@ func (tp *TradingPair) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "symbol",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(tp.BasePrecision); err != nil {
+	if buf, err = json.Marshal(tp.BasePriceMinPrecision); err != nil {
 		return nil, err
 	}
 	node.Fields[1] = &Field{
 		Type:  "int",
-		Name:  "base_precision",
+		Name:  "base_price_min_precision",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(tp.CounterPrecision); err != nil {
+	if buf, err = json.Marshal(tp.BasePriceMaxPrecision); err != nil {
 		return nil, err
 	}
 	node.Fields[2] = &Field{
 		Type:  "int",
-		Name:  "counter_precision",
+		Name:  "base_price_max_precision",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(tp.BaseQuantityMinPrecision); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "int",
+		Name:  "base_quantity_min_precision",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(tp.BaseQuantityMaxPrecision); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "int",
+		Name:  "base_quantity_max_precision",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(tp.CounterPriceMinPrecision); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "int",
+		Name:  "counter_price_min_precision",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(tp.CounterPriceMaxPrecision); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "int",
+		Name:  "counter_price_max_precision",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(tp.CounterQuantityMinPrecision); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "int",
+		Name:  "counter_quantity_min_precision",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(tp.CounterQuantityMaxPrecision); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "int",
+		Name:  "counter_quantity_max_precision",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

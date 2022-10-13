@@ -15,8 +15,8 @@ import (
 
 // GetInstrumentsResponse defines model for getInstrumentsResponse.
 type GetInstrumentsResponse struct {
-	Code                 float32                `json:"code"`
-	Id                   float32                `json:"id"`
+	Code                 int                    `json:"code"`
+	Id                   int                    `json:"id"`
 	Method               string                 `json:"method"`
 	Result               GetInstrumentsResult   `json:"result"`
 	AdditionalProperties map[string]interface{} `json:"-"`

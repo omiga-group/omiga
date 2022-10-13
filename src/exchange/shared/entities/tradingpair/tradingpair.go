@@ -9,10 +9,22 @@ const (
 	FieldID = "id"
 	// FieldSymbol holds the string denoting the symbol field in the database.
 	FieldSymbol = "symbol"
-	// FieldBasePrecision holds the string denoting the base_precision field in the database.
-	FieldBasePrecision = "base_precision"
-	// FieldCounterPrecision holds the string denoting the counter_precision field in the database.
-	FieldCounterPrecision = "counter_precision"
+	// FieldBasePriceMinPrecision holds the string denoting the base_price_min_precision field in the database.
+	FieldBasePriceMinPrecision = "base_price_min_precision"
+	// FieldBasePriceMaxPrecision holds the string denoting the base_price_max_precision field in the database.
+	FieldBasePriceMaxPrecision = "base_price_max_precision"
+	// FieldBaseQuantityMinPrecision holds the string denoting the base_quantity_min_precision field in the database.
+	FieldBaseQuantityMinPrecision = "base_quantity_min_precision"
+	// FieldBaseQuantityMaxPrecision holds the string denoting the base_quantity_max_precision field in the database.
+	FieldBaseQuantityMaxPrecision = "base_quantity_max_precision"
+	// FieldCounterPriceMinPrecision holds the string denoting the counter_price_min_precision field in the database.
+	FieldCounterPriceMinPrecision = "counter_price_min_precision"
+	// FieldCounterPriceMaxPrecision holds the string denoting the counter_price_max_precision field in the database.
+	FieldCounterPriceMaxPrecision = "counter_price_max_precision"
+	// FieldCounterQuantityMinPrecision holds the string denoting the counter_quantity_min_precision field in the database.
+	FieldCounterQuantityMinPrecision = "counter_quantity_min_precision"
+	// FieldCounterQuantityMaxPrecision holds the string denoting the counter_quantity_max_precision field in the database.
+	FieldCounterQuantityMaxPrecision = "counter_quantity_max_precision"
 	// EdgeExchange holds the string denoting the exchange edge name in mutations.
 	EdgeExchange = "exchange"
 	// EdgeBase holds the string denoting the base edge name in mutations.
@@ -48,8 +60,14 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldSymbol,
-	FieldBasePrecision,
-	FieldCounterPrecision,
+	FieldBasePriceMinPrecision,
+	FieldBasePriceMaxPrecision,
+	FieldBaseQuantityMinPrecision,
+	FieldBaseQuantityMaxPrecision,
+	FieldCounterPriceMinPrecision,
+	FieldCounterPriceMaxPrecision,
+	FieldCounterQuantityMinPrecision,
+	FieldCounterQuantityMaxPrecision,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "trading_pairs"

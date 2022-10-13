@@ -37,57 +37,219 @@ func (tpu *TradingPairUpdate) SetSymbol(s string) *TradingPairUpdate {
 	return tpu
 }
 
-// SetBasePrecision sets the "base_precision" field.
-func (tpu *TradingPairUpdate) SetBasePrecision(i int) *TradingPairUpdate {
-	tpu.mutation.ResetBasePrecision()
-	tpu.mutation.SetBasePrecision(i)
+// SetBasePriceMinPrecision sets the "base_price_min_precision" field.
+func (tpu *TradingPairUpdate) SetBasePriceMinPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.ResetBasePriceMinPrecision()
+	tpu.mutation.SetBasePriceMinPrecision(i)
 	return tpu
 }
 
-// SetNillableBasePrecision sets the "base_precision" field if the given value is not nil.
-func (tpu *TradingPairUpdate) SetNillableBasePrecision(i *int) *TradingPairUpdate {
+// SetNillableBasePriceMinPrecision sets the "base_price_min_precision" field if the given value is not nil.
+func (tpu *TradingPairUpdate) SetNillableBasePriceMinPrecision(i *int) *TradingPairUpdate {
 	if i != nil {
-		tpu.SetBasePrecision(*i)
+		tpu.SetBasePriceMinPrecision(*i)
 	}
 	return tpu
 }
 
-// AddBasePrecision adds i to the "base_precision" field.
-func (tpu *TradingPairUpdate) AddBasePrecision(i int) *TradingPairUpdate {
-	tpu.mutation.AddBasePrecision(i)
+// AddBasePriceMinPrecision adds i to the "base_price_min_precision" field.
+func (tpu *TradingPairUpdate) AddBasePriceMinPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.AddBasePriceMinPrecision(i)
 	return tpu
 }
 
-// ClearBasePrecision clears the value of the "base_precision" field.
-func (tpu *TradingPairUpdate) ClearBasePrecision() *TradingPairUpdate {
-	tpu.mutation.ClearBasePrecision()
+// ClearBasePriceMinPrecision clears the value of the "base_price_min_precision" field.
+func (tpu *TradingPairUpdate) ClearBasePriceMinPrecision() *TradingPairUpdate {
+	tpu.mutation.ClearBasePriceMinPrecision()
 	return tpu
 }
 
-// SetCounterPrecision sets the "counter_precision" field.
-func (tpu *TradingPairUpdate) SetCounterPrecision(i int) *TradingPairUpdate {
-	tpu.mutation.ResetCounterPrecision()
-	tpu.mutation.SetCounterPrecision(i)
+// SetBasePriceMaxPrecision sets the "base_price_max_precision" field.
+func (tpu *TradingPairUpdate) SetBasePriceMaxPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.ResetBasePriceMaxPrecision()
+	tpu.mutation.SetBasePriceMaxPrecision(i)
 	return tpu
 }
 
-// SetNillableCounterPrecision sets the "counter_precision" field if the given value is not nil.
-func (tpu *TradingPairUpdate) SetNillableCounterPrecision(i *int) *TradingPairUpdate {
+// SetNillableBasePriceMaxPrecision sets the "base_price_max_precision" field if the given value is not nil.
+func (tpu *TradingPairUpdate) SetNillableBasePriceMaxPrecision(i *int) *TradingPairUpdate {
 	if i != nil {
-		tpu.SetCounterPrecision(*i)
+		tpu.SetBasePriceMaxPrecision(*i)
 	}
 	return tpu
 }
 
-// AddCounterPrecision adds i to the "counter_precision" field.
-func (tpu *TradingPairUpdate) AddCounterPrecision(i int) *TradingPairUpdate {
-	tpu.mutation.AddCounterPrecision(i)
+// AddBasePriceMaxPrecision adds i to the "base_price_max_precision" field.
+func (tpu *TradingPairUpdate) AddBasePriceMaxPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.AddBasePriceMaxPrecision(i)
 	return tpu
 }
 
-// ClearCounterPrecision clears the value of the "counter_precision" field.
-func (tpu *TradingPairUpdate) ClearCounterPrecision() *TradingPairUpdate {
-	tpu.mutation.ClearCounterPrecision()
+// ClearBasePriceMaxPrecision clears the value of the "base_price_max_precision" field.
+func (tpu *TradingPairUpdate) ClearBasePriceMaxPrecision() *TradingPairUpdate {
+	tpu.mutation.ClearBasePriceMaxPrecision()
+	return tpu
+}
+
+// SetBaseQuantityMinPrecision sets the "base_quantity_min_precision" field.
+func (tpu *TradingPairUpdate) SetBaseQuantityMinPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.ResetBaseQuantityMinPrecision()
+	tpu.mutation.SetBaseQuantityMinPrecision(i)
+	return tpu
+}
+
+// SetNillableBaseQuantityMinPrecision sets the "base_quantity_min_precision" field if the given value is not nil.
+func (tpu *TradingPairUpdate) SetNillableBaseQuantityMinPrecision(i *int) *TradingPairUpdate {
+	if i != nil {
+		tpu.SetBaseQuantityMinPrecision(*i)
+	}
+	return tpu
+}
+
+// AddBaseQuantityMinPrecision adds i to the "base_quantity_min_precision" field.
+func (tpu *TradingPairUpdate) AddBaseQuantityMinPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.AddBaseQuantityMinPrecision(i)
+	return tpu
+}
+
+// ClearBaseQuantityMinPrecision clears the value of the "base_quantity_min_precision" field.
+func (tpu *TradingPairUpdate) ClearBaseQuantityMinPrecision() *TradingPairUpdate {
+	tpu.mutation.ClearBaseQuantityMinPrecision()
+	return tpu
+}
+
+// SetBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field.
+func (tpu *TradingPairUpdate) SetBaseQuantityMaxPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.ResetBaseQuantityMaxPrecision()
+	tpu.mutation.SetBaseQuantityMaxPrecision(i)
+	return tpu
+}
+
+// SetNillableBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field if the given value is not nil.
+func (tpu *TradingPairUpdate) SetNillableBaseQuantityMaxPrecision(i *int) *TradingPairUpdate {
+	if i != nil {
+		tpu.SetBaseQuantityMaxPrecision(*i)
+	}
+	return tpu
+}
+
+// AddBaseQuantityMaxPrecision adds i to the "base_quantity_max_precision" field.
+func (tpu *TradingPairUpdate) AddBaseQuantityMaxPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.AddBaseQuantityMaxPrecision(i)
+	return tpu
+}
+
+// ClearBaseQuantityMaxPrecision clears the value of the "base_quantity_max_precision" field.
+func (tpu *TradingPairUpdate) ClearBaseQuantityMaxPrecision() *TradingPairUpdate {
+	tpu.mutation.ClearBaseQuantityMaxPrecision()
+	return tpu
+}
+
+// SetCounterPriceMinPrecision sets the "counter_price_min_precision" field.
+func (tpu *TradingPairUpdate) SetCounterPriceMinPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.ResetCounterPriceMinPrecision()
+	tpu.mutation.SetCounterPriceMinPrecision(i)
+	return tpu
+}
+
+// SetNillableCounterPriceMinPrecision sets the "counter_price_min_precision" field if the given value is not nil.
+func (tpu *TradingPairUpdate) SetNillableCounterPriceMinPrecision(i *int) *TradingPairUpdate {
+	if i != nil {
+		tpu.SetCounterPriceMinPrecision(*i)
+	}
+	return tpu
+}
+
+// AddCounterPriceMinPrecision adds i to the "counter_price_min_precision" field.
+func (tpu *TradingPairUpdate) AddCounterPriceMinPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.AddCounterPriceMinPrecision(i)
+	return tpu
+}
+
+// ClearCounterPriceMinPrecision clears the value of the "counter_price_min_precision" field.
+func (tpu *TradingPairUpdate) ClearCounterPriceMinPrecision() *TradingPairUpdate {
+	tpu.mutation.ClearCounterPriceMinPrecision()
+	return tpu
+}
+
+// SetCounterPriceMaxPrecision sets the "counter_price_max_precision" field.
+func (tpu *TradingPairUpdate) SetCounterPriceMaxPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.ResetCounterPriceMaxPrecision()
+	tpu.mutation.SetCounterPriceMaxPrecision(i)
+	return tpu
+}
+
+// SetNillableCounterPriceMaxPrecision sets the "counter_price_max_precision" field if the given value is not nil.
+func (tpu *TradingPairUpdate) SetNillableCounterPriceMaxPrecision(i *int) *TradingPairUpdate {
+	if i != nil {
+		tpu.SetCounterPriceMaxPrecision(*i)
+	}
+	return tpu
+}
+
+// AddCounterPriceMaxPrecision adds i to the "counter_price_max_precision" field.
+func (tpu *TradingPairUpdate) AddCounterPriceMaxPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.AddCounterPriceMaxPrecision(i)
+	return tpu
+}
+
+// ClearCounterPriceMaxPrecision clears the value of the "counter_price_max_precision" field.
+func (tpu *TradingPairUpdate) ClearCounterPriceMaxPrecision() *TradingPairUpdate {
+	tpu.mutation.ClearCounterPriceMaxPrecision()
+	return tpu
+}
+
+// SetCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field.
+func (tpu *TradingPairUpdate) SetCounterQuantityMinPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.ResetCounterQuantityMinPrecision()
+	tpu.mutation.SetCounterQuantityMinPrecision(i)
+	return tpu
+}
+
+// SetNillableCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field if the given value is not nil.
+func (tpu *TradingPairUpdate) SetNillableCounterQuantityMinPrecision(i *int) *TradingPairUpdate {
+	if i != nil {
+		tpu.SetCounterQuantityMinPrecision(*i)
+	}
+	return tpu
+}
+
+// AddCounterQuantityMinPrecision adds i to the "counter_quantity_min_precision" field.
+func (tpu *TradingPairUpdate) AddCounterQuantityMinPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.AddCounterQuantityMinPrecision(i)
+	return tpu
+}
+
+// ClearCounterQuantityMinPrecision clears the value of the "counter_quantity_min_precision" field.
+func (tpu *TradingPairUpdate) ClearCounterQuantityMinPrecision() *TradingPairUpdate {
+	tpu.mutation.ClearCounterQuantityMinPrecision()
+	return tpu
+}
+
+// SetCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field.
+func (tpu *TradingPairUpdate) SetCounterQuantityMaxPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.ResetCounterQuantityMaxPrecision()
+	tpu.mutation.SetCounterQuantityMaxPrecision(i)
+	return tpu
+}
+
+// SetNillableCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field if the given value is not nil.
+func (tpu *TradingPairUpdate) SetNillableCounterQuantityMaxPrecision(i *int) *TradingPairUpdate {
+	if i != nil {
+		tpu.SetCounterQuantityMaxPrecision(*i)
+	}
+	return tpu
+}
+
+// AddCounterQuantityMaxPrecision adds i to the "counter_quantity_max_precision" field.
+func (tpu *TradingPairUpdate) AddCounterQuantityMaxPrecision(i int) *TradingPairUpdate {
+	tpu.mutation.AddCounterQuantityMaxPrecision(i)
+	return tpu
+}
+
+// ClearCounterQuantityMaxPrecision clears the value of the "counter_quantity_max_precision" field.
+func (tpu *TradingPairUpdate) ClearCounterQuantityMaxPrecision() *TradingPairUpdate {
+	tpu.mutation.ClearCounterQuantityMaxPrecision()
 	return tpu
 }
 
@@ -252,44 +414,164 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: tradingpair.FieldSymbol,
 		})
 	}
-	if value, ok := tpu.mutation.BasePrecision(); ok {
+	if value, ok := tpu.mutation.BasePriceMinPrecision(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpair.FieldBasePrecision,
+			Column: tradingpair.FieldBasePriceMinPrecision,
 		})
 	}
-	if value, ok := tpu.mutation.AddedBasePrecision(); ok {
+	if value, ok := tpu.mutation.AddedBasePriceMinPrecision(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpair.FieldBasePrecision,
+			Column: tradingpair.FieldBasePriceMinPrecision,
 		})
 	}
-	if tpu.mutation.BasePrecisionCleared() {
+	if tpu.mutation.BasePriceMinPrecisionCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
-			Column: tradingpair.FieldBasePrecision,
+			Column: tradingpair.FieldBasePriceMinPrecision,
 		})
 	}
-	if value, ok := tpu.mutation.CounterPrecision(); ok {
+	if value, ok := tpu.mutation.BasePriceMaxPrecision(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpair.FieldCounterPrecision,
+			Column: tradingpair.FieldBasePriceMaxPrecision,
 		})
 	}
-	if value, ok := tpu.mutation.AddedCounterPrecision(); ok {
+	if value, ok := tpu.mutation.AddedBasePriceMaxPrecision(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpair.FieldCounterPrecision,
+			Column: tradingpair.FieldBasePriceMaxPrecision,
 		})
 	}
-	if tpu.mutation.CounterPrecisionCleared() {
+	if tpu.mutation.BasePriceMaxPrecisionCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
-			Column: tradingpair.FieldCounterPrecision,
+			Column: tradingpair.FieldBasePriceMaxPrecision,
+		})
+	}
+	if value, ok := tpu.mutation.BaseQuantityMinPrecision(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldBaseQuantityMinPrecision,
+		})
+	}
+	if value, ok := tpu.mutation.AddedBaseQuantityMinPrecision(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldBaseQuantityMinPrecision,
+		})
+	}
+	if tpu.mutation.BaseQuantityMinPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldBaseQuantityMinPrecision,
+		})
+	}
+	if value, ok := tpu.mutation.BaseQuantityMaxPrecision(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldBaseQuantityMaxPrecision,
+		})
+	}
+	if value, ok := tpu.mutation.AddedBaseQuantityMaxPrecision(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldBaseQuantityMaxPrecision,
+		})
+	}
+	if tpu.mutation.BaseQuantityMaxPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldBaseQuantityMaxPrecision,
+		})
+	}
+	if value, ok := tpu.mutation.CounterPriceMinPrecision(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterPriceMinPrecision,
+		})
+	}
+	if value, ok := tpu.mutation.AddedCounterPriceMinPrecision(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterPriceMinPrecision,
+		})
+	}
+	if tpu.mutation.CounterPriceMinPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldCounterPriceMinPrecision,
+		})
+	}
+	if value, ok := tpu.mutation.CounterPriceMaxPrecision(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterPriceMaxPrecision,
+		})
+	}
+	if value, ok := tpu.mutation.AddedCounterPriceMaxPrecision(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterPriceMaxPrecision,
+		})
+	}
+	if tpu.mutation.CounterPriceMaxPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldCounterPriceMaxPrecision,
+		})
+	}
+	if value, ok := tpu.mutation.CounterQuantityMinPrecision(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterQuantityMinPrecision,
+		})
+	}
+	if value, ok := tpu.mutation.AddedCounterQuantityMinPrecision(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterQuantityMinPrecision,
+		})
+	}
+	if tpu.mutation.CounterQuantityMinPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldCounterQuantityMinPrecision,
+		})
+	}
+	if value, ok := tpu.mutation.CounterQuantityMaxPrecision(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterQuantityMaxPrecision,
+		})
+	}
+	if value, ok := tpu.mutation.AddedCounterQuantityMaxPrecision(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterQuantityMaxPrecision,
+		})
+	}
+	if tpu.mutation.CounterQuantityMaxPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldCounterQuantityMaxPrecision,
 		})
 	}
 	if tpu.mutation.ExchangeCleared() {
@@ -432,57 +714,219 @@ func (tpuo *TradingPairUpdateOne) SetSymbol(s string) *TradingPairUpdateOne {
 	return tpuo
 }
 
-// SetBasePrecision sets the "base_precision" field.
-func (tpuo *TradingPairUpdateOne) SetBasePrecision(i int) *TradingPairUpdateOne {
-	tpuo.mutation.ResetBasePrecision()
-	tpuo.mutation.SetBasePrecision(i)
+// SetBasePriceMinPrecision sets the "base_price_min_precision" field.
+func (tpuo *TradingPairUpdateOne) SetBasePriceMinPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.ResetBasePriceMinPrecision()
+	tpuo.mutation.SetBasePriceMinPrecision(i)
 	return tpuo
 }
 
-// SetNillableBasePrecision sets the "base_precision" field if the given value is not nil.
-func (tpuo *TradingPairUpdateOne) SetNillableBasePrecision(i *int) *TradingPairUpdateOne {
+// SetNillableBasePriceMinPrecision sets the "base_price_min_precision" field if the given value is not nil.
+func (tpuo *TradingPairUpdateOne) SetNillableBasePriceMinPrecision(i *int) *TradingPairUpdateOne {
 	if i != nil {
-		tpuo.SetBasePrecision(*i)
+		tpuo.SetBasePriceMinPrecision(*i)
 	}
 	return tpuo
 }
 
-// AddBasePrecision adds i to the "base_precision" field.
-func (tpuo *TradingPairUpdateOne) AddBasePrecision(i int) *TradingPairUpdateOne {
-	tpuo.mutation.AddBasePrecision(i)
+// AddBasePriceMinPrecision adds i to the "base_price_min_precision" field.
+func (tpuo *TradingPairUpdateOne) AddBasePriceMinPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.AddBasePriceMinPrecision(i)
 	return tpuo
 }
 
-// ClearBasePrecision clears the value of the "base_precision" field.
-func (tpuo *TradingPairUpdateOne) ClearBasePrecision() *TradingPairUpdateOne {
-	tpuo.mutation.ClearBasePrecision()
+// ClearBasePriceMinPrecision clears the value of the "base_price_min_precision" field.
+func (tpuo *TradingPairUpdateOne) ClearBasePriceMinPrecision() *TradingPairUpdateOne {
+	tpuo.mutation.ClearBasePriceMinPrecision()
 	return tpuo
 }
 
-// SetCounterPrecision sets the "counter_precision" field.
-func (tpuo *TradingPairUpdateOne) SetCounterPrecision(i int) *TradingPairUpdateOne {
-	tpuo.mutation.ResetCounterPrecision()
-	tpuo.mutation.SetCounterPrecision(i)
+// SetBasePriceMaxPrecision sets the "base_price_max_precision" field.
+func (tpuo *TradingPairUpdateOne) SetBasePriceMaxPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.ResetBasePriceMaxPrecision()
+	tpuo.mutation.SetBasePriceMaxPrecision(i)
 	return tpuo
 }
 
-// SetNillableCounterPrecision sets the "counter_precision" field if the given value is not nil.
-func (tpuo *TradingPairUpdateOne) SetNillableCounterPrecision(i *int) *TradingPairUpdateOne {
+// SetNillableBasePriceMaxPrecision sets the "base_price_max_precision" field if the given value is not nil.
+func (tpuo *TradingPairUpdateOne) SetNillableBasePriceMaxPrecision(i *int) *TradingPairUpdateOne {
 	if i != nil {
-		tpuo.SetCounterPrecision(*i)
+		tpuo.SetBasePriceMaxPrecision(*i)
 	}
 	return tpuo
 }
 
-// AddCounterPrecision adds i to the "counter_precision" field.
-func (tpuo *TradingPairUpdateOne) AddCounterPrecision(i int) *TradingPairUpdateOne {
-	tpuo.mutation.AddCounterPrecision(i)
+// AddBasePriceMaxPrecision adds i to the "base_price_max_precision" field.
+func (tpuo *TradingPairUpdateOne) AddBasePriceMaxPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.AddBasePriceMaxPrecision(i)
 	return tpuo
 }
 
-// ClearCounterPrecision clears the value of the "counter_precision" field.
-func (tpuo *TradingPairUpdateOne) ClearCounterPrecision() *TradingPairUpdateOne {
-	tpuo.mutation.ClearCounterPrecision()
+// ClearBasePriceMaxPrecision clears the value of the "base_price_max_precision" field.
+func (tpuo *TradingPairUpdateOne) ClearBasePriceMaxPrecision() *TradingPairUpdateOne {
+	tpuo.mutation.ClearBasePriceMaxPrecision()
+	return tpuo
+}
+
+// SetBaseQuantityMinPrecision sets the "base_quantity_min_precision" field.
+func (tpuo *TradingPairUpdateOne) SetBaseQuantityMinPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.ResetBaseQuantityMinPrecision()
+	tpuo.mutation.SetBaseQuantityMinPrecision(i)
+	return tpuo
+}
+
+// SetNillableBaseQuantityMinPrecision sets the "base_quantity_min_precision" field if the given value is not nil.
+func (tpuo *TradingPairUpdateOne) SetNillableBaseQuantityMinPrecision(i *int) *TradingPairUpdateOne {
+	if i != nil {
+		tpuo.SetBaseQuantityMinPrecision(*i)
+	}
+	return tpuo
+}
+
+// AddBaseQuantityMinPrecision adds i to the "base_quantity_min_precision" field.
+func (tpuo *TradingPairUpdateOne) AddBaseQuantityMinPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.AddBaseQuantityMinPrecision(i)
+	return tpuo
+}
+
+// ClearBaseQuantityMinPrecision clears the value of the "base_quantity_min_precision" field.
+func (tpuo *TradingPairUpdateOne) ClearBaseQuantityMinPrecision() *TradingPairUpdateOne {
+	tpuo.mutation.ClearBaseQuantityMinPrecision()
+	return tpuo
+}
+
+// SetBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field.
+func (tpuo *TradingPairUpdateOne) SetBaseQuantityMaxPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.ResetBaseQuantityMaxPrecision()
+	tpuo.mutation.SetBaseQuantityMaxPrecision(i)
+	return tpuo
+}
+
+// SetNillableBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field if the given value is not nil.
+func (tpuo *TradingPairUpdateOne) SetNillableBaseQuantityMaxPrecision(i *int) *TradingPairUpdateOne {
+	if i != nil {
+		tpuo.SetBaseQuantityMaxPrecision(*i)
+	}
+	return tpuo
+}
+
+// AddBaseQuantityMaxPrecision adds i to the "base_quantity_max_precision" field.
+func (tpuo *TradingPairUpdateOne) AddBaseQuantityMaxPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.AddBaseQuantityMaxPrecision(i)
+	return tpuo
+}
+
+// ClearBaseQuantityMaxPrecision clears the value of the "base_quantity_max_precision" field.
+func (tpuo *TradingPairUpdateOne) ClearBaseQuantityMaxPrecision() *TradingPairUpdateOne {
+	tpuo.mutation.ClearBaseQuantityMaxPrecision()
+	return tpuo
+}
+
+// SetCounterPriceMinPrecision sets the "counter_price_min_precision" field.
+func (tpuo *TradingPairUpdateOne) SetCounterPriceMinPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.ResetCounterPriceMinPrecision()
+	tpuo.mutation.SetCounterPriceMinPrecision(i)
+	return tpuo
+}
+
+// SetNillableCounterPriceMinPrecision sets the "counter_price_min_precision" field if the given value is not nil.
+func (tpuo *TradingPairUpdateOne) SetNillableCounterPriceMinPrecision(i *int) *TradingPairUpdateOne {
+	if i != nil {
+		tpuo.SetCounterPriceMinPrecision(*i)
+	}
+	return tpuo
+}
+
+// AddCounterPriceMinPrecision adds i to the "counter_price_min_precision" field.
+func (tpuo *TradingPairUpdateOne) AddCounterPriceMinPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.AddCounterPriceMinPrecision(i)
+	return tpuo
+}
+
+// ClearCounterPriceMinPrecision clears the value of the "counter_price_min_precision" field.
+func (tpuo *TradingPairUpdateOne) ClearCounterPriceMinPrecision() *TradingPairUpdateOne {
+	tpuo.mutation.ClearCounterPriceMinPrecision()
+	return tpuo
+}
+
+// SetCounterPriceMaxPrecision sets the "counter_price_max_precision" field.
+func (tpuo *TradingPairUpdateOne) SetCounterPriceMaxPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.ResetCounterPriceMaxPrecision()
+	tpuo.mutation.SetCounterPriceMaxPrecision(i)
+	return tpuo
+}
+
+// SetNillableCounterPriceMaxPrecision sets the "counter_price_max_precision" field if the given value is not nil.
+func (tpuo *TradingPairUpdateOne) SetNillableCounterPriceMaxPrecision(i *int) *TradingPairUpdateOne {
+	if i != nil {
+		tpuo.SetCounterPriceMaxPrecision(*i)
+	}
+	return tpuo
+}
+
+// AddCounterPriceMaxPrecision adds i to the "counter_price_max_precision" field.
+func (tpuo *TradingPairUpdateOne) AddCounterPriceMaxPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.AddCounterPriceMaxPrecision(i)
+	return tpuo
+}
+
+// ClearCounterPriceMaxPrecision clears the value of the "counter_price_max_precision" field.
+func (tpuo *TradingPairUpdateOne) ClearCounterPriceMaxPrecision() *TradingPairUpdateOne {
+	tpuo.mutation.ClearCounterPriceMaxPrecision()
+	return tpuo
+}
+
+// SetCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field.
+func (tpuo *TradingPairUpdateOne) SetCounterQuantityMinPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.ResetCounterQuantityMinPrecision()
+	tpuo.mutation.SetCounterQuantityMinPrecision(i)
+	return tpuo
+}
+
+// SetNillableCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field if the given value is not nil.
+func (tpuo *TradingPairUpdateOne) SetNillableCounterQuantityMinPrecision(i *int) *TradingPairUpdateOne {
+	if i != nil {
+		tpuo.SetCounterQuantityMinPrecision(*i)
+	}
+	return tpuo
+}
+
+// AddCounterQuantityMinPrecision adds i to the "counter_quantity_min_precision" field.
+func (tpuo *TradingPairUpdateOne) AddCounterQuantityMinPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.AddCounterQuantityMinPrecision(i)
+	return tpuo
+}
+
+// ClearCounterQuantityMinPrecision clears the value of the "counter_quantity_min_precision" field.
+func (tpuo *TradingPairUpdateOne) ClearCounterQuantityMinPrecision() *TradingPairUpdateOne {
+	tpuo.mutation.ClearCounterQuantityMinPrecision()
+	return tpuo
+}
+
+// SetCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field.
+func (tpuo *TradingPairUpdateOne) SetCounterQuantityMaxPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.ResetCounterQuantityMaxPrecision()
+	tpuo.mutation.SetCounterQuantityMaxPrecision(i)
+	return tpuo
+}
+
+// SetNillableCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field if the given value is not nil.
+func (tpuo *TradingPairUpdateOne) SetNillableCounterQuantityMaxPrecision(i *int) *TradingPairUpdateOne {
+	if i != nil {
+		tpuo.SetCounterQuantityMaxPrecision(*i)
+	}
+	return tpuo
+}
+
+// AddCounterQuantityMaxPrecision adds i to the "counter_quantity_max_precision" field.
+func (tpuo *TradingPairUpdateOne) AddCounterQuantityMaxPrecision(i int) *TradingPairUpdateOne {
+	tpuo.mutation.AddCounterQuantityMaxPrecision(i)
+	return tpuo
+}
+
+// ClearCounterQuantityMaxPrecision clears the value of the "counter_quantity_max_precision" field.
+func (tpuo *TradingPairUpdateOne) ClearCounterQuantityMaxPrecision() *TradingPairUpdateOne {
+	tpuo.mutation.ClearCounterQuantityMaxPrecision()
 	return tpuo
 }
 
@@ -677,44 +1121,164 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 			Column: tradingpair.FieldSymbol,
 		})
 	}
-	if value, ok := tpuo.mutation.BasePrecision(); ok {
+	if value, ok := tpuo.mutation.BasePriceMinPrecision(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpair.FieldBasePrecision,
+			Column: tradingpair.FieldBasePriceMinPrecision,
 		})
 	}
-	if value, ok := tpuo.mutation.AddedBasePrecision(); ok {
+	if value, ok := tpuo.mutation.AddedBasePriceMinPrecision(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpair.FieldBasePrecision,
+			Column: tradingpair.FieldBasePriceMinPrecision,
 		})
 	}
-	if tpuo.mutation.BasePrecisionCleared() {
+	if tpuo.mutation.BasePriceMinPrecisionCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
-			Column: tradingpair.FieldBasePrecision,
+			Column: tradingpair.FieldBasePriceMinPrecision,
 		})
 	}
-	if value, ok := tpuo.mutation.CounterPrecision(); ok {
+	if value, ok := tpuo.mutation.BasePriceMaxPrecision(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpair.FieldCounterPrecision,
+			Column: tradingpair.FieldBasePriceMaxPrecision,
 		})
 	}
-	if value, ok := tpuo.mutation.AddedCounterPrecision(); ok {
+	if value, ok := tpuo.mutation.AddedBasePriceMaxPrecision(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Value:  value,
-			Column: tradingpair.FieldCounterPrecision,
+			Column: tradingpair.FieldBasePriceMaxPrecision,
 		})
 	}
-	if tpuo.mutation.CounterPrecisionCleared() {
+	if tpuo.mutation.BasePriceMaxPrecisionCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
-			Column: tradingpair.FieldCounterPrecision,
+			Column: tradingpair.FieldBasePriceMaxPrecision,
+		})
+	}
+	if value, ok := tpuo.mutation.BaseQuantityMinPrecision(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldBaseQuantityMinPrecision,
+		})
+	}
+	if value, ok := tpuo.mutation.AddedBaseQuantityMinPrecision(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldBaseQuantityMinPrecision,
+		})
+	}
+	if tpuo.mutation.BaseQuantityMinPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldBaseQuantityMinPrecision,
+		})
+	}
+	if value, ok := tpuo.mutation.BaseQuantityMaxPrecision(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldBaseQuantityMaxPrecision,
+		})
+	}
+	if value, ok := tpuo.mutation.AddedBaseQuantityMaxPrecision(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldBaseQuantityMaxPrecision,
+		})
+	}
+	if tpuo.mutation.BaseQuantityMaxPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldBaseQuantityMaxPrecision,
+		})
+	}
+	if value, ok := tpuo.mutation.CounterPriceMinPrecision(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterPriceMinPrecision,
+		})
+	}
+	if value, ok := tpuo.mutation.AddedCounterPriceMinPrecision(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterPriceMinPrecision,
+		})
+	}
+	if tpuo.mutation.CounterPriceMinPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldCounterPriceMinPrecision,
+		})
+	}
+	if value, ok := tpuo.mutation.CounterPriceMaxPrecision(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterPriceMaxPrecision,
+		})
+	}
+	if value, ok := tpuo.mutation.AddedCounterPriceMaxPrecision(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterPriceMaxPrecision,
+		})
+	}
+	if tpuo.mutation.CounterPriceMaxPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldCounterPriceMaxPrecision,
+		})
+	}
+	if value, ok := tpuo.mutation.CounterQuantityMinPrecision(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterQuantityMinPrecision,
+		})
+	}
+	if value, ok := tpuo.mutation.AddedCounterQuantityMinPrecision(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterQuantityMinPrecision,
+		})
+	}
+	if tpuo.mutation.CounterQuantityMinPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldCounterQuantityMinPrecision,
+		})
+	}
+	if value, ok := tpuo.mutation.CounterQuantityMaxPrecision(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterQuantityMaxPrecision,
+		})
+	}
+	if value, ok := tpuo.mutation.AddedCounterQuantityMaxPrecision(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: tradingpair.FieldCounterQuantityMaxPrecision,
+		})
+	}
+	if tpuo.mutation.CounterQuantityMaxPrecisionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: tradingpair.FieldCounterQuantityMaxPrecision,
 		})
 	}
 	if tpuo.mutation.ExchangeCleared() {

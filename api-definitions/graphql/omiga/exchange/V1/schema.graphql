@@ -256,9 +256,15 @@ type TradingPair implements Node {
   id: ID!
   symbol: String!
   base: Coin!
-  basePrecision: Int
+  basePriceMinPrecision: Int
+  basePriceMaxPrecision: Int
+  baseQuantityMinPrecision: Int
+  baseQuantityMaxPrecision: Int
   counter: Coin!
-  counterPrecision: Int
+  counterPriceMinPrecision: Int
+  counterPriceMaxPrecision: Int
+  counterQuantityMinPrecision: Int
+  counterQuantityMaxPrecision: Int
 }
 
 type Market {

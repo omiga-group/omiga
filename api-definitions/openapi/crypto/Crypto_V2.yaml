@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Crypto API V2
-  description: "Crypto rest api version 2"
+  description: "Crypto REST API"
   version: 2.0.0
 
 servers:
@@ -34,11 +34,11 @@ components:
         - result
       properties:
         id:
-          type: number
+          type: integer
         method:
           type: string
         code:
-          type: number
+          type: integer
         result:
           $ref: "#/components/schemas/getInstrumentsResult"
 
