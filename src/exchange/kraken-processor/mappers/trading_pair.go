@@ -10,11 +10,17 @@ import (
 func KrakenAssetPairsToTradingPairs(assetPairs map[string]rest.AssetPair) []models.TradingPair {
 	return slices.Map(maps.Values(assetPairs), func(assetPair rest.AssetPair) models.TradingPair {
 		return models.TradingPair{
-			Symbol:           assetPair.Altname,
-			Base:             assetPair.Base,
-			BasePrecision:    &assetPair.PairDecimals,
-			Counter:          assetPair.Quote,
-			CounterPrecision: &assetPair.PairDecimals,
+			Symbol:                      assetPair.Altname,
+			Base:                        assetPair.Base,
+			BasePriceMinPrecision:       &assetPair.PairDecimals,
+			BasePriceMaxPrecision:       &assetPair.PairDecimals,
+			BaseQuantityMinPrecision:    &assetPair.LotDecimals,
+			BaseQuantityMaxPrecision:    &assetPair.LotDecimals,
+			Counter:                     assetPair.Quote,
+			CounterPriceMinPrecision:    &assetPair.PairDecimals,
+			CounterPriceMaxPrecision:    &assetPair.PairDecimals,
+			CounterQuantityMinPrecision: &assetPair.LotDecimals,
+			CounterQuantityMaxPrecision: &assetPair.LotDecimals,
 		}
 	})
 }

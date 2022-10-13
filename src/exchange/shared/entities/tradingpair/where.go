@@ -87,17 +87,59 @@ func Symbol(v string) predicate.TradingPair {
 	})
 }
 
-// BasePrecision applies equality check predicate on the "base_precision" field. It's identical to BasePrecisionEQ.
-func BasePrecision(v int) predicate.TradingPair {
+// BasePriceMinPrecision applies equality check predicate on the "base_price_min_precision" field. It's identical to BasePriceMinPrecisionEQ.
+func BasePriceMinPrecision(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldBasePrecision), v))
+		s.Where(sql.EQ(s.C(FieldBasePriceMinPrecision), v))
 	})
 }
 
-// CounterPrecision applies equality check predicate on the "counter_precision" field. It's identical to CounterPrecisionEQ.
-func CounterPrecision(v int) predicate.TradingPair {
+// BasePriceMaxPrecision applies equality check predicate on the "base_price_max_precision" field. It's identical to BasePriceMaxPrecisionEQ.
+func BasePriceMaxPrecision(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCounterPrecision), v))
+		s.Where(sql.EQ(s.C(FieldBasePriceMaxPrecision), v))
+	})
+}
+
+// BaseQuantityMinPrecision applies equality check predicate on the "base_quantity_min_precision" field. It's identical to BaseQuantityMinPrecisionEQ.
+func BaseQuantityMinPrecision(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBaseQuantityMinPrecision), v))
+	})
+}
+
+// BaseQuantityMaxPrecision applies equality check predicate on the "base_quantity_max_precision" field. It's identical to BaseQuantityMaxPrecisionEQ.
+func BaseQuantityMaxPrecision(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBaseQuantityMaxPrecision), v))
+	})
+}
+
+// CounterPriceMinPrecision applies equality check predicate on the "counter_price_min_precision" field. It's identical to CounterPriceMinPrecisionEQ.
+func CounterPriceMinPrecision(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCounterPriceMinPrecision), v))
+	})
+}
+
+// CounterPriceMaxPrecision applies equality check predicate on the "counter_price_max_precision" field. It's identical to CounterPriceMaxPrecisionEQ.
+func CounterPriceMaxPrecision(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCounterPriceMaxPrecision), v))
+	})
+}
+
+// CounterQuantityMinPrecision applies equality check predicate on the "counter_quantity_min_precision" field. It's identical to CounterQuantityMinPrecisionEQ.
+func CounterQuantityMinPrecision(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCounterQuantityMinPrecision), v))
+	})
+}
+
+// CounterQuantityMaxPrecision applies equality check predicate on the "counter_quantity_max_precision" field. It's identical to CounterQuantityMaxPrecisionEQ.
+func CounterQuantityMaxPrecision(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCounterQuantityMaxPrecision), v))
 	})
 }
 
@@ -200,159 +242,627 @@ func SymbolContainsFold(v string) predicate.TradingPair {
 	})
 }
 
-// BasePrecisionEQ applies the EQ predicate on the "base_precision" field.
-func BasePrecisionEQ(v int) predicate.TradingPair {
+// BasePriceMinPrecisionEQ applies the EQ predicate on the "base_price_min_precision" field.
+func BasePriceMinPrecisionEQ(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldBasePrecision), v))
+		s.Where(sql.EQ(s.C(FieldBasePriceMinPrecision), v))
 	})
 }
 
-// BasePrecisionNEQ applies the NEQ predicate on the "base_precision" field.
-func BasePrecisionNEQ(v int) predicate.TradingPair {
+// BasePriceMinPrecisionNEQ applies the NEQ predicate on the "base_price_min_precision" field.
+func BasePriceMinPrecisionNEQ(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldBasePrecision), v))
+		s.Where(sql.NEQ(s.C(FieldBasePriceMinPrecision), v))
 	})
 }
 
-// BasePrecisionIn applies the In predicate on the "base_precision" field.
-func BasePrecisionIn(vs ...int) predicate.TradingPair {
+// BasePriceMinPrecisionIn applies the In predicate on the "base_price_min_precision" field.
+func BasePriceMinPrecisionIn(vs ...int) predicate.TradingPair {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldBasePrecision), v...))
+		s.Where(sql.In(s.C(FieldBasePriceMinPrecision), v...))
 	})
 }
 
-// BasePrecisionNotIn applies the NotIn predicate on the "base_precision" field.
-func BasePrecisionNotIn(vs ...int) predicate.TradingPair {
+// BasePriceMinPrecisionNotIn applies the NotIn predicate on the "base_price_min_precision" field.
+func BasePriceMinPrecisionNotIn(vs ...int) predicate.TradingPair {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldBasePrecision), v...))
+		s.Where(sql.NotIn(s.C(FieldBasePriceMinPrecision), v...))
 	})
 }
 
-// BasePrecisionGT applies the GT predicate on the "base_precision" field.
-func BasePrecisionGT(v int) predicate.TradingPair {
+// BasePriceMinPrecisionGT applies the GT predicate on the "base_price_min_precision" field.
+func BasePriceMinPrecisionGT(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldBasePrecision), v))
+		s.Where(sql.GT(s.C(FieldBasePriceMinPrecision), v))
 	})
 }
 
-// BasePrecisionGTE applies the GTE predicate on the "base_precision" field.
-func BasePrecisionGTE(v int) predicate.TradingPair {
+// BasePriceMinPrecisionGTE applies the GTE predicate on the "base_price_min_precision" field.
+func BasePriceMinPrecisionGTE(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldBasePrecision), v))
+		s.Where(sql.GTE(s.C(FieldBasePriceMinPrecision), v))
 	})
 }
 
-// BasePrecisionLT applies the LT predicate on the "base_precision" field.
-func BasePrecisionLT(v int) predicate.TradingPair {
+// BasePriceMinPrecisionLT applies the LT predicate on the "base_price_min_precision" field.
+func BasePriceMinPrecisionLT(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldBasePrecision), v))
+		s.Where(sql.LT(s.C(FieldBasePriceMinPrecision), v))
 	})
 }
 
-// BasePrecisionLTE applies the LTE predicate on the "base_precision" field.
-func BasePrecisionLTE(v int) predicate.TradingPair {
+// BasePriceMinPrecisionLTE applies the LTE predicate on the "base_price_min_precision" field.
+func BasePriceMinPrecisionLTE(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldBasePrecision), v))
+		s.Where(sql.LTE(s.C(FieldBasePriceMinPrecision), v))
 	})
 }
 
-// BasePrecisionIsNil applies the IsNil predicate on the "base_precision" field.
-func BasePrecisionIsNil() predicate.TradingPair {
+// BasePriceMinPrecisionIsNil applies the IsNil predicate on the "base_price_min_precision" field.
+func BasePriceMinPrecisionIsNil() predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldBasePrecision)))
+		s.Where(sql.IsNull(s.C(FieldBasePriceMinPrecision)))
 	})
 }
 
-// BasePrecisionNotNil applies the NotNil predicate on the "base_precision" field.
-func BasePrecisionNotNil() predicate.TradingPair {
+// BasePriceMinPrecisionNotNil applies the NotNil predicate on the "base_price_min_precision" field.
+func BasePriceMinPrecisionNotNil() predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldBasePrecision)))
+		s.Where(sql.NotNull(s.C(FieldBasePriceMinPrecision)))
 	})
 }
 
-// CounterPrecisionEQ applies the EQ predicate on the "counter_precision" field.
-func CounterPrecisionEQ(v int) predicate.TradingPair {
+// BasePriceMaxPrecisionEQ applies the EQ predicate on the "base_price_max_precision" field.
+func BasePriceMaxPrecisionEQ(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCounterPrecision), v))
+		s.Where(sql.EQ(s.C(FieldBasePriceMaxPrecision), v))
 	})
 }
 
-// CounterPrecisionNEQ applies the NEQ predicate on the "counter_precision" field.
-func CounterPrecisionNEQ(v int) predicate.TradingPair {
+// BasePriceMaxPrecisionNEQ applies the NEQ predicate on the "base_price_max_precision" field.
+func BasePriceMaxPrecisionNEQ(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCounterPrecision), v))
+		s.Where(sql.NEQ(s.C(FieldBasePriceMaxPrecision), v))
 	})
 }
 
-// CounterPrecisionIn applies the In predicate on the "counter_precision" field.
-func CounterPrecisionIn(vs ...int) predicate.TradingPair {
+// BasePriceMaxPrecisionIn applies the In predicate on the "base_price_max_precision" field.
+func BasePriceMaxPrecisionIn(vs ...int) predicate.TradingPair {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldCounterPrecision), v...))
+		s.Where(sql.In(s.C(FieldBasePriceMaxPrecision), v...))
 	})
 }
 
-// CounterPrecisionNotIn applies the NotIn predicate on the "counter_precision" field.
-func CounterPrecisionNotIn(vs ...int) predicate.TradingPair {
+// BasePriceMaxPrecisionNotIn applies the NotIn predicate on the "base_price_max_precision" field.
+func BasePriceMaxPrecisionNotIn(vs ...int) predicate.TradingPair {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldCounterPrecision), v...))
+		s.Where(sql.NotIn(s.C(FieldBasePriceMaxPrecision), v...))
 	})
 }
 
-// CounterPrecisionGT applies the GT predicate on the "counter_precision" field.
-func CounterPrecisionGT(v int) predicate.TradingPair {
+// BasePriceMaxPrecisionGT applies the GT predicate on the "base_price_max_precision" field.
+func BasePriceMaxPrecisionGT(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCounterPrecision), v))
+		s.Where(sql.GT(s.C(FieldBasePriceMaxPrecision), v))
 	})
 }
 
-// CounterPrecisionGTE applies the GTE predicate on the "counter_precision" field.
-func CounterPrecisionGTE(v int) predicate.TradingPair {
+// BasePriceMaxPrecisionGTE applies the GTE predicate on the "base_price_max_precision" field.
+func BasePriceMaxPrecisionGTE(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCounterPrecision), v))
+		s.Where(sql.GTE(s.C(FieldBasePriceMaxPrecision), v))
 	})
 }
 
-// CounterPrecisionLT applies the LT predicate on the "counter_precision" field.
-func CounterPrecisionLT(v int) predicate.TradingPair {
+// BasePriceMaxPrecisionLT applies the LT predicate on the "base_price_max_precision" field.
+func BasePriceMaxPrecisionLT(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCounterPrecision), v))
+		s.Where(sql.LT(s.C(FieldBasePriceMaxPrecision), v))
 	})
 }
 
-// CounterPrecisionLTE applies the LTE predicate on the "counter_precision" field.
-func CounterPrecisionLTE(v int) predicate.TradingPair {
+// BasePriceMaxPrecisionLTE applies the LTE predicate on the "base_price_max_precision" field.
+func BasePriceMaxPrecisionLTE(v int) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCounterPrecision), v))
+		s.Where(sql.LTE(s.C(FieldBasePriceMaxPrecision), v))
 	})
 }
 
-// CounterPrecisionIsNil applies the IsNil predicate on the "counter_precision" field.
-func CounterPrecisionIsNil() predicate.TradingPair {
+// BasePriceMaxPrecisionIsNil applies the IsNil predicate on the "base_price_max_precision" field.
+func BasePriceMaxPrecisionIsNil() predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldCounterPrecision)))
+		s.Where(sql.IsNull(s.C(FieldBasePriceMaxPrecision)))
 	})
 }
 
-// CounterPrecisionNotNil applies the NotNil predicate on the "counter_precision" field.
-func CounterPrecisionNotNil() predicate.TradingPair {
+// BasePriceMaxPrecisionNotNil applies the NotNil predicate on the "base_price_max_precision" field.
+func BasePriceMaxPrecisionNotNil() predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldCounterPrecision)))
+		s.Where(sql.NotNull(s.C(FieldBasePriceMaxPrecision)))
+	})
+}
+
+// BaseQuantityMinPrecisionEQ applies the EQ predicate on the "base_quantity_min_precision" field.
+func BaseQuantityMinPrecisionEQ(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBaseQuantityMinPrecision), v))
+	})
+}
+
+// BaseQuantityMinPrecisionNEQ applies the NEQ predicate on the "base_quantity_min_precision" field.
+func BaseQuantityMinPrecisionNEQ(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldBaseQuantityMinPrecision), v))
+	})
+}
+
+// BaseQuantityMinPrecisionIn applies the In predicate on the "base_quantity_min_precision" field.
+func BaseQuantityMinPrecisionIn(vs ...int) predicate.TradingPair {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldBaseQuantityMinPrecision), v...))
+	})
+}
+
+// BaseQuantityMinPrecisionNotIn applies the NotIn predicate on the "base_quantity_min_precision" field.
+func BaseQuantityMinPrecisionNotIn(vs ...int) predicate.TradingPair {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldBaseQuantityMinPrecision), v...))
+	})
+}
+
+// BaseQuantityMinPrecisionGT applies the GT predicate on the "base_quantity_min_precision" field.
+func BaseQuantityMinPrecisionGT(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldBaseQuantityMinPrecision), v))
+	})
+}
+
+// BaseQuantityMinPrecisionGTE applies the GTE predicate on the "base_quantity_min_precision" field.
+func BaseQuantityMinPrecisionGTE(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldBaseQuantityMinPrecision), v))
+	})
+}
+
+// BaseQuantityMinPrecisionLT applies the LT predicate on the "base_quantity_min_precision" field.
+func BaseQuantityMinPrecisionLT(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldBaseQuantityMinPrecision), v))
+	})
+}
+
+// BaseQuantityMinPrecisionLTE applies the LTE predicate on the "base_quantity_min_precision" field.
+func BaseQuantityMinPrecisionLTE(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldBaseQuantityMinPrecision), v))
+	})
+}
+
+// BaseQuantityMinPrecisionIsNil applies the IsNil predicate on the "base_quantity_min_precision" field.
+func BaseQuantityMinPrecisionIsNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldBaseQuantityMinPrecision)))
+	})
+}
+
+// BaseQuantityMinPrecisionNotNil applies the NotNil predicate on the "base_quantity_min_precision" field.
+func BaseQuantityMinPrecisionNotNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldBaseQuantityMinPrecision)))
+	})
+}
+
+// BaseQuantityMaxPrecisionEQ applies the EQ predicate on the "base_quantity_max_precision" field.
+func BaseQuantityMaxPrecisionEQ(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBaseQuantityMaxPrecision), v))
+	})
+}
+
+// BaseQuantityMaxPrecisionNEQ applies the NEQ predicate on the "base_quantity_max_precision" field.
+func BaseQuantityMaxPrecisionNEQ(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldBaseQuantityMaxPrecision), v))
+	})
+}
+
+// BaseQuantityMaxPrecisionIn applies the In predicate on the "base_quantity_max_precision" field.
+func BaseQuantityMaxPrecisionIn(vs ...int) predicate.TradingPair {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldBaseQuantityMaxPrecision), v...))
+	})
+}
+
+// BaseQuantityMaxPrecisionNotIn applies the NotIn predicate on the "base_quantity_max_precision" field.
+func BaseQuantityMaxPrecisionNotIn(vs ...int) predicate.TradingPair {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldBaseQuantityMaxPrecision), v...))
+	})
+}
+
+// BaseQuantityMaxPrecisionGT applies the GT predicate on the "base_quantity_max_precision" field.
+func BaseQuantityMaxPrecisionGT(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldBaseQuantityMaxPrecision), v))
+	})
+}
+
+// BaseQuantityMaxPrecisionGTE applies the GTE predicate on the "base_quantity_max_precision" field.
+func BaseQuantityMaxPrecisionGTE(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldBaseQuantityMaxPrecision), v))
+	})
+}
+
+// BaseQuantityMaxPrecisionLT applies the LT predicate on the "base_quantity_max_precision" field.
+func BaseQuantityMaxPrecisionLT(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldBaseQuantityMaxPrecision), v))
+	})
+}
+
+// BaseQuantityMaxPrecisionLTE applies the LTE predicate on the "base_quantity_max_precision" field.
+func BaseQuantityMaxPrecisionLTE(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldBaseQuantityMaxPrecision), v))
+	})
+}
+
+// BaseQuantityMaxPrecisionIsNil applies the IsNil predicate on the "base_quantity_max_precision" field.
+func BaseQuantityMaxPrecisionIsNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldBaseQuantityMaxPrecision)))
+	})
+}
+
+// BaseQuantityMaxPrecisionNotNil applies the NotNil predicate on the "base_quantity_max_precision" field.
+func BaseQuantityMaxPrecisionNotNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldBaseQuantityMaxPrecision)))
+	})
+}
+
+// CounterPriceMinPrecisionEQ applies the EQ predicate on the "counter_price_min_precision" field.
+func CounterPriceMinPrecisionEQ(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCounterPriceMinPrecision), v))
+	})
+}
+
+// CounterPriceMinPrecisionNEQ applies the NEQ predicate on the "counter_price_min_precision" field.
+func CounterPriceMinPrecisionNEQ(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCounterPriceMinPrecision), v))
+	})
+}
+
+// CounterPriceMinPrecisionIn applies the In predicate on the "counter_price_min_precision" field.
+func CounterPriceMinPrecisionIn(vs ...int) predicate.TradingPair {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCounterPriceMinPrecision), v...))
+	})
+}
+
+// CounterPriceMinPrecisionNotIn applies the NotIn predicate on the "counter_price_min_precision" field.
+func CounterPriceMinPrecisionNotIn(vs ...int) predicate.TradingPair {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCounterPriceMinPrecision), v...))
+	})
+}
+
+// CounterPriceMinPrecisionGT applies the GT predicate on the "counter_price_min_precision" field.
+func CounterPriceMinPrecisionGT(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCounterPriceMinPrecision), v))
+	})
+}
+
+// CounterPriceMinPrecisionGTE applies the GTE predicate on the "counter_price_min_precision" field.
+func CounterPriceMinPrecisionGTE(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCounterPriceMinPrecision), v))
+	})
+}
+
+// CounterPriceMinPrecisionLT applies the LT predicate on the "counter_price_min_precision" field.
+func CounterPriceMinPrecisionLT(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCounterPriceMinPrecision), v))
+	})
+}
+
+// CounterPriceMinPrecisionLTE applies the LTE predicate on the "counter_price_min_precision" field.
+func CounterPriceMinPrecisionLTE(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCounterPriceMinPrecision), v))
+	})
+}
+
+// CounterPriceMinPrecisionIsNil applies the IsNil predicate on the "counter_price_min_precision" field.
+func CounterPriceMinPrecisionIsNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCounterPriceMinPrecision)))
+	})
+}
+
+// CounterPriceMinPrecisionNotNil applies the NotNil predicate on the "counter_price_min_precision" field.
+func CounterPriceMinPrecisionNotNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCounterPriceMinPrecision)))
+	})
+}
+
+// CounterPriceMaxPrecisionEQ applies the EQ predicate on the "counter_price_max_precision" field.
+func CounterPriceMaxPrecisionEQ(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCounterPriceMaxPrecision), v))
+	})
+}
+
+// CounterPriceMaxPrecisionNEQ applies the NEQ predicate on the "counter_price_max_precision" field.
+func CounterPriceMaxPrecisionNEQ(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCounterPriceMaxPrecision), v))
+	})
+}
+
+// CounterPriceMaxPrecisionIn applies the In predicate on the "counter_price_max_precision" field.
+func CounterPriceMaxPrecisionIn(vs ...int) predicate.TradingPair {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCounterPriceMaxPrecision), v...))
+	})
+}
+
+// CounterPriceMaxPrecisionNotIn applies the NotIn predicate on the "counter_price_max_precision" field.
+func CounterPriceMaxPrecisionNotIn(vs ...int) predicate.TradingPair {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCounterPriceMaxPrecision), v...))
+	})
+}
+
+// CounterPriceMaxPrecisionGT applies the GT predicate on the "counter_price_max_precision" field.
+func CounterPriceMaxPrecisionGT(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCounterPriceMaxPrecision), v))
+	})
+}
+
+// CounterPriceMaxPrecisionGTE applies the GTE predicate on the "counter_price_max_precision" field.
+func CounterPriceMaxPrecisionGTE(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCounterPriceMaxPrecision), v))
+	})
+}
+
+// CounterPriceMaxPrecisionLT applies the LT predicate on the "counter_price_max_precision" field.
+func CounterPriceMaxPrecisionLT(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCounterPriceMaxPrecision), v))
+	})
+}
+
+// CounterPriceMaxPrecisionLTE applies the LTE predicate on the "counter_price_max_precision" field.
+func CounterPriceMaxPrecisionLTE(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCounterPriceMaxPrecision), v))
+	})
+}
+
+// CounterPriceMaxPrecisionIsNil applies the IsNil predicate on the "counter_price_max_precision" field.
+func CounterPriceMaxPrecisionIsNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCounterPriceMaxPrecision)))
+	})
+}
+
+// CounterPriceMaxPrecisionNotNil applies the NotNil predicate on the "counter_price_max_precision" field.
+func CounterPriceMaxPrecisionNotNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCounterPriceMaxPrecision)))
+	})
+}
+
+// CounterQuantityMinPrecisionEQ applies the EQ predicate on the "counter_quantity_min_precision" field.
+func CounterQuantityMinPrecisionEQ(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCounterQuantityMinPrecision), v))
+	})
+}
+
+// CounterQuantityMinPrecisionNEQ applies the NEQ predicate on the "counter_quantity_min_precision" field.
+func CounterQuantityMinPrecisionNEQ(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCounterQuantityMinPrecision), v))
+	})
+}
+
+// CounterQuantityMinPrecisionIn applies the In predicate on the "counter_quantity_min_precision" field.
+func CounterQuantityMinPrecisionIn(vs ...int) predicate.TradingPair {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCounterQuantityMinPrecision), v...))
+	})
+}
+
+// CounterQuantityMinPrecisionNotIn applies the NotIn predicate on the "counter_quantity_min_precision" field.
+func CounterQuantityMinPrecisionNotIn(vs ...int) predicate.TradingPair {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCounterQuantityMinPrecision), v...))
+	})
+}
+
+// CounterQuantityMinPrecisionGT applies the GT predicate on the "counter_quantity_min_precision" field.
+func CounterQuantityMinPrecisionGT(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCounterQuantityMinPrecision), v))
+	})
+}
+
+// CounterQuantityMinPrecisionGTE applies the GTE predicate on the "counter_quantity_min_precision" field.
+func CounterQuantityMinPrecisionGTE(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCounterQuantityMinPrecision), v))
+	})
+}
+
+// CounterQuantityMinPrecisionLT applies the LT predicate on the "counter_quantity_min_precision" field.
+func CounterQuantityMinPrecisionLT(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCounterQuantityMinPrecision), v))
+	})
+}
+
+// CounterQuantityMinPrecisionLTE applies the LTE predicate on the "counter_quantity_min_precision" field.
+func CounterQuantityMinPrecisionLTE(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCounterQuantityMinPrecision), v))
+	})
+}
+
+// CounterQuantityMinPrecisionIsNil applies the IsNil predicate on the "counter_quantity_min_precision" field.
+func CounterQuantityMinPrecisionIsNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCounterQuantityMinPrecision)))
+	})
+}
+
+// CounterQuantityMinPrecisionNotNil applies the NotNil predicate on the "counter_quantity_min_precision" field.
+func CounterQuantityMinPrecisionNotNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCounterQuantityMinPrecision)))
+	})
+}
+
+// CounterQuantityMaxPrecisionEQ applies the EQ predicate on the "counter_quantity_max_precision" field.
+func CounterQuantityMaxPrecisionEQ(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCounterQuantityMaxPrecision), v))
+	})
+}
+
+// CounterQuantityMaxPrecisionNEQ applies the NEQ predicate on the "counter_quantity_max_precision" field.
+func CounterQuantityMaxPrecisionNEQ(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCounterQuantityMaxPrecision), v))
+	})
+}
+
+// CounterQuantityMaxPrecisionIn applies the In predicate on the "counter_quantity_max_precision" field.
+func CounterQuantityMaxPrecisionIn(vs ...int) predicate.TradingPair {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCounterQuantityMaxPrecision), v...))
+	})
+}
+
+// CounterQuantityMaxPrecisionNotIn applies the NotIn predicate on the "counter_quantity_max_precision" field.
+func CounterQuantityMaxPrecisionNotIn(vs ...int) predicate.TradingPair {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCounterQuantityMaxPrecision), v...))
+	})
+}
+
+// CounterQuantityMaxPrecisionGT applies the GT predicate on the "counter_quantity_max_precision" field.
+func CounterQuantityMaxPrecisionGT(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCounterQuantityMaxPrecision), v))
+	})
+}
+
+// CounterQuantityMaxPrecisionGTE applies the GTE predicate on the "counter_quantity_max_precision" field.
+func CounterQuantityMaxPrecisionGTE(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCounterQuantityMaxPrecision), v))
+	})
+}
+
+// CounterQuantityMaxPrecisionLT applies the LT predicate on the "counter_quantity_max_precision" field.
+func CounterQuantityMaxPrecisionLT(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCounterQuantityMaxPrecision), v))
+	})
+}
+
+// CounterQuantityMaxPrecisionLTE applies the LTE predicate on the "counter_quantity_max_precision" field.
+func CounterQuantityMaxPrecisionLTE(v int) predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCounterQuantityMaxPrecision), v))
+	})
+}
+
+// CounterQuantityMaxPrecisionIsNil applies the IsNil predicate on the "counter_quantity_max_precision" field.
+func CounterQuantityMaxPrecisionIsNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCounterQuantityMaxPrecision)))
+	})
+}
+
+// CounterQuantityMaxPrecisionNotNil applies the NotNil predicate on the "counter_quantity_max_precision" field.
+func CounterQuantityMaxPrecisionNotNil() predicate.TradingPair {
+	return predicate.TradingPair(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCounterQuantityMaxPrecision)))
 	})
 }
 

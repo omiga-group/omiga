@@ -87,9 +87,15 @@ func (tpr *tradingPairRepository) CreateTradingPairs(
 				SetExchangeID(savedExchangeId).
 				SetSymbol(tradingPair.Symbol).
 				SetBaseID(savedCoinsIds[strings.ToUpper(tradingPair.Base)]).
-				SetNillableBasePrecision(tradingPair.BasePrecision).
+				SetNillableBasePriceMinPrecision(tradingPair.BasePriceMinPrecision).
+				SetNillableBasePriceMaxPrecision(tradingPair.BasePriceMaxPrecision).
+				SetNillableBaseQuantityMinPrecision(tradingPair.BaseQuantityMinPrecision).
+				SetNillableBaseQuantityMaxPrecision(tradingPair.BaseQuantityMaxPrecision).
 				SetCounterID(savedCoinsIds[strings.ToUpper(tradingPair.Counter)]).
-				SetNillableCounterPrecision(tradingPair.CounterPrecision)
+				SetNillableCounterPriceMinPrecision(tradingPair.CounterPriceMinPrecision).
+				SetNillableCounterPriceMaxPrecision(tradingPair.CounterPriceMaxPrecision).
+				SetNillableCounterQuantityMinPrecision(tradingPair.CounterQuantityMinPrecision).
+				SetNillableCounterQuantityMaxPrecision(tradingPair.CounterQuantityMaxPrecision)
 		})
 
 	if err = client.TradingPair.

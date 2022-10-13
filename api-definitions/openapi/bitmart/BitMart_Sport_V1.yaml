@@ -1,0 +1,96 @@
+openapi: 3.0.1
+info:
+  title: BitMart API V1
+  description: "BitMart REST API"
+  version: 1.0.0
+
+servers:
+  - url: https://api-cloud.bitmart.com/spot/v1
+
+paths:
+  /symbols/details:
+    get:
+      tags:
+      - spot
+      summary: fetches the supported symbol details
+      operationId: getAllSymbolDetails
+      responses:
+        200:
+          description: list of symbol details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getSymbolDetailsResponse"
+
+components:
+  schemas:
+    getSymbolDetailsResponse:
+      type: object
+      additionalProperties: true
+      required:
+        - message
+        - code
+        - trace
+        - data
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
+        trace:
+          type: string
+        data:
+          $ref: "#/components/schemas/getSymbolDetailsData"
+
+    getSymbolDetailsData:
+      type: object
+      additionalProperties: true
+      required:
+        - symbols
+      properties:
+        symbols:
+          type: array
+          items:
+            $ref: "#/components/schemas/symbol"
+
+    symbol:
+      type: object
+      additionalProperties: true
+      required:
+        - symbol
+        - symbol_id
+        - base_currency
+        - quote_currency
+        - quote_increment
+        - base_min_size
+        - price_min_precision
+        - price_max_precision
+        - expiration
+        - min_buy_amount
+        - min_sell_amount
+        - trade_status
+      properties:
+        symbol:
+          type: string
+        symbol_id:
+          type: integer
+        base_currency:
+          type: string
+        quote_currency:
+          type: string
+        quote_increment:
+          type: string
+        base_min_size:
+          type: string
+        price_min_precision:
+          type: integer
+        price_max_precision:
+          type: integer
+        expiration:
+          type: string
+        min_buy_amount:
+          type: string
+        min_sell_amount:
+          type: string
+        trade_status:
+          type: string

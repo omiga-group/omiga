@@ -15,10 +15,10 @@ import (
 type KuCoinTradingPairSubscriber interface {
 }
 
-type kucoinTradingPairSubscriber struct {
+type kuCoinTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	kucoinConfig          configuration.KuCoinConfig
+	kuCoinConfig          configuration.KuCoinConfig
 	exchangeConfig        exchangeConfiguration.ExchangeConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
@@ -26,15 +26,15 @@ type kucoinTradingPairSubscriber struct {
 func NewKuCoinTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	kucoinConfig configuration.KuCoinConfig,
+	kuCoinConfig configuration.KuCoinConfig,
 	exchangeConfig exchangeConfiguration.ExchangeConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (KuCoinTradingPairSubscriber, error) {
 
-	instance := &kucoinTradingPairSubscriber{
+	instance := &kuCoinTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		kucoinConfig:          kucoinConfig,
+		kuCoinConfig:          kuCoinConfig,
 		exchangeConfig:        exchangeConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
@@ -49,11 +49,11 @@ func NewKuCoinTradingPairSubscriber(
 	return instance, nil
 }
 
-func (ktps *kucoinTradingPairSubscriber) Run() {
+func (ktps *kuCoinTradingPairSubscriber) Run() {
 	apiService := kucoin.NewApiService(
-		kucoin.ApiKeyOption(ktps.kucoinConfig.ApiKey),
-		kucoin.ApiPassPhraseOption(ktps.kucoinConfig.Passphrase),
-		kucoin.ApiSecretOption(ktps.kucoinConfig.SecretKey),
+		kucoin.ApiKeyOption(ktps.kuCoinConfig.ApiKey),
+		kucoin.ApiPassPhraseOption(ktps.kuCoinConfig.Passphrase),
+		kucoin.ApiSecretOption(ktps.kuCoinConfig.SecretKey),
 	)
 
 	apiResponse, err := apiService.Symbols("")

@@ -17,8 +17,16 @@ type TradingPair struct {
 func (TradingPair) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("symbol").Annotations(entgql.OrderField("symbol")),
-		field.Int("base_precision").Optional().Annotations(entgql.OrderField("basePrecision")),
-		field.Int("counter_precision").Optional().Annotations(entgql.OrderField("counterPrecision")),
+
+		field.Int("base_price_min_precision").Optional().Annotations(entgql.OrderField("basePriceMinPrecision")),
+		field.Int("base_price_max_precision").Optional().Annotations(entgql.OrderField("basePriceMaxPrecision")),
+		field.Int("base_quantity_min_precision").Optional().Annotations(entgql.OrderField("baseQuantityMinPrecision")),
+		field.Int("base_quantity_max_precision").Optional().Annotations(entgql.OrderField("baseQuantityMaxPrecision")),
+
+		field.Int("counter_price_min_precision").Optional().Annotations(entgql.OrderField("counterPriceMinPrecision")),
+		field.Int("counter_price_max_precision").Optional().Annotations(entgql.OrderField("counterPriceMaxPrecision")),
+		field.Int("counter_quantity_min_precision").Optional().Annotations(entgql.OrderField("counterQuantityMinPrecision")),
+		field.Int("counter_quantity_max_precision").Optional().Annotations(entgql.OrderField("counterQuantityMaxPrecision")),
 	}
 }
 
@@ -43,7 +51,15 @@ func (TradingPair) Edges() []ent.Edge {
 func (TradingPair) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("symbol"),
-		index.Fields("base_precision"),
-		index.Fields("counter_precision"),
+
+		index.Fields("base_price_min_precision"),
+		index.Fields("base_price_max_precision"),
+		index.Fields("base_quantity_min_precision"),
+		index.Fields("base_quantity_max_precision"),
+
+		index.Fields("counter_price_min_precision"),
+		index.Fields("counter_price_max_precision"),
+		index.Fields("counter_quantity_min_precision"),
+		index.Fields("counter_quantity_max_precision"),
 	}
 }

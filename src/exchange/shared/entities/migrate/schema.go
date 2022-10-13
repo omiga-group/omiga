@@ -296,8 +296,14 @@ var (
 	TradingPairsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "symbol", Type: field.TypeString},
-		{Name: "base_precision", Type: field.TypeInt, Nullable: true},
-		{Name: "counter_precision", Type: field.TypeInt, Nullable: true},
+		{Name: "base_price_min_precision", Type: field.TypeInt, Nullable: true},
+		{Name: "base_price_max_precision", Type: field.TypeInt, Nullable: true},
+		{Name: "base_quantity_min_precision", Type: field.TypeInt, Nullable: true},
+		{Name: "base_quantity_max_precision", Type: field.TypeInt, Nullable: true},
+		{Name: "counter_price_min_precision", Type: field.TypeInt, Nullable: true},
+		{Name: "counter_price_max_precision", Type: field.TypeInt, Nullable: true},
+		{Name: "counter_quantity_min_precision", Type: field.TypeInt, Nullable: true},
+		{Name: "counter_quantity_max_precision", Type: field.TypeInt, Nullable: true},
 		{Name: "coin_coin_base", Type: field.TypeInt},
 		{Name: "coin_coin_counter", Type: field.TypeInt},
 		{Name: "exchange_trading_pair", Type: field.TypeInt},
@@ -310,19 +316,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "trading_pairs_coins_coin_base",
-				Columns:    []*schema.Column{TradingPairsColumns[4]},
+				Columns:    []*schema.Column{TradingPairsColumns[10]},
 				RefColumns: []*schema.Column{CoinsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "trading_pairs_coins_coin_counter",
-				Columns:    []*schema.Column{TradingPairsColumns[5]},
+				Columns:    []*schema.Column{TradingPairsColumns[11]},
 				RefColumns: []*schema.Column{CoinsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "trading_pairs_exchanges_trading_pair",
-				Columns:    []*schema.Column{TradingPairsColumns[6]},
+				Columns:    []*schema.Column{TradingPairsColumns[12]},
 				RefColumns: []*schema.Column{ExchangesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -334,14 +340,44 @@ var (
 				Columns: []*schema.Column{TradingPairsColumns[1]},
 			},
 			{
-				Name:    "tradingpair_base_precision",
+				Name:    "tradingpair_base_price_min_precision",
 				Unique:  false,
 				Columns: []*schema.Column{TradingPairsColumns[2]},
 			},
 			{
-				Name:    "tradingpair_counter_precision",
+				Name:    "tradingpair_base_price_max_precision",
 				Unique:  false,
 				Columns: []*schema.Column{TradingPairsColumns[3]},
+			},
+			{
+				Name:    "tradingpair_base_quantity_min_precision",
+				Unique:  false,
+				Columns: []*schema.Column{TradingPairsColumns[4]},
+			},
+			{
+				Name:    "tradingpair_base_quantity_max_precision",
+				Unique:  false,
+				Columns: []*schema.Column{TradingPairsColumns[5]},
+			},
+			{
+				Name:    "tradingpair_counter_price_min_precision",
+				Unique:  false,
+				Columns: []*schema.Column{TradingPairsColumns[6]},
+			},
+			{
+				Name:    "tradingpair_counter_price_max_precision",
+				Unique:  false,
+				Columns: []*schema.Column{TradingPairsColumns[7]},
+			},
+			{
+				Name:    "tradingpair_counter_quantity_min_precision",
+				Unique:  false,
+				Columns: []*schema.Column{TradingPairsColumns[8]},
+			},
+			{
+				Name:    "tradingpair_counter_quantity_max_precision",
+				Unique:  false,
+				Columns: []*schema.Column{TradingPairsColumns[9]},
 			},
 		},
 	}

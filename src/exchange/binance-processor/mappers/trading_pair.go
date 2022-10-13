@@ -9,11 +9,13 @@ import (
 func BinanceSymbolsToTradingPairs(symbols []binance.Symbol) []models.TradingPair {
 	return slices.Map(symbols, func(symbol binance.Symbol) models.TradingPair {
 		return models.TradingPair{
-			Symbol:           symbol.Symbol,
-			Base:             symbol.BaseAsset,
-			BasePrecision:    &symbol.BaseAssetPrecision,
-			Counter:          symbol.QuoteAsset,
-			CounterPrecision: &symbol.QuoteAssetPrecision,
+			Symbol:                   symbol.Symbol,
+			Base:                     symbol.BaseAsset,
+			BasePriceMinPrecision:    &symbol.BaseAssetPrecision,
+			BasePriceMaxPrecision:    &symbol.BaseAssetPrecision,
+			Counter:                  symbol.QuoteAsset,
+			CounterPriceMinPrecision: &symbol.QuoteAssetPrecision,
+			CounterPriceMaxPrecision: &symbol.QuoteAssetPrecision,
 		}
 	})
 }

@@ -1940,23 +1940,83 @@ var (
 			}
 		},
 	}
-	// TradingPairOrderFieldBasePrecision orders TradingPair by base_precision.
-	TradingPairOrderFieldBasePrecision = &TradingPairOrderField{
-		field: tradingpair.FieldBasePrecision,
+	// TradingPairOrderFieldBasePriceMinPrecision orders TradingPair by base_price_min_precision.
+	TradingPairOrderFieldBasePriceMinPrecision = &TradingPairOrderField{
+		field: tradingpair.FieldBasePriceMinPrecision,
 		toCursor: func(tp *TradingPair) Cursor {
 			return Cursor{
 				ID:    tp.ID,
-				Value: tp.BasePrecision,
+				Value: tp.BasePriceMinPrecision,
 			}
 		},
 	}
-	// TradingPairOrderFieldCounterPrecision orders TradingPair by counter_precision.
-	TradingPairOrderFieldCounterPrecision = &TradingPairOrderField{
-		field: tradingpair.FieldCounterPrecision,
+	// TradingPairOrderFieldBasePriceMaxPrecision orders TradingPair by base_price_max_precision.
+	TradingPairOrderFieldBasePriceMaxPrecision = &TradingPairOrderField{
+		field: tradingpair.FieldBasePriceMaxPrecision,
 		toCursor: func(tp *TradingPair) Cursor {
 			return Cursor{
 				ID:    tp.ID,
-				Value: tp.CounterPrecision,
+				Value: tp.BasePriceMaxPrecision,
+			}
+		},
+	}
+	// TradingPairOrderFieldBaseQuantityMinPrecision orders TradingPair by base_quantity_min_precision.
+	TradingPairOrderFieldBaseQuantityMinPrecision = &TradingPairOrderField{
+		field: tradingpair.FieldBaseQuantityMinPrecision,
+		toCursor: func(tp *TradingPair) Cursor {
+			return Cursor{
+				ID:    tp.ID,
+				Value: tp.BaseQuantityMinPrecision,
+			}
+		},
+	}
+	// TradingPairOrderFieldBaseQuantityMaxPrecision orders TradingPair by base_quantity_max_precision.
+	TradingPairOrderFieldBaseQuantityMaxPrecision = &TradingPairOrderField{
+		field: tradingpair.FieldBaseQuantityMaxPrecision,
+		toCursor: func(tp *TradingPair) Cursor {
+			return Cursor{
+				ID:    tp.ID,
+				Value: tp.BaseQuantityMaxPrecision,
+			}
+		},
+	}
+	// TradingPairOrderFieldCounterPriceMinPrecision orders TradingPair by counter_price_min_precision.
+	TradingPairOrderFieldCounterPriceMinPrecision = &TradingPairOrderField{
+		field: tradingpair.FieldCounterPriceMinPrecision,
+		toCursor: func(tp *TradingPair) Cursor {
+			return Cursor{
+				ID:    tp.ID,
+				Value: tp.CounterPriceMinPrecision,
+			}
+		},
+	}
+	// TradingPairOrderFieldCounterPriceMaxPrecision orders TradingPair by counter_price_max_precision.
+	TradingPairOrderFieldCounterPriceMaxPrecision = &TradingPairOrderField{
+		field: tradingpair.FieldCounterPriceMaxPrecision,
+		toCursor: func(tp *TradingPair) Cursor {
+			return Cursor{
+				ID:    tp.ID,
+				Value: tp.CounterPriceMaxPrecision,
+			}
+		},
+	}
+	// TradingPairOrderFieldCounterQuantityMinPrecision orders TradingPair by counter_quantity_min_precision.
+	TradingPairOrderFieldCounterQuantityMinPrecision = &TradingPairOrderField{
+		field: tradingpair.FieldCounterQuantityMinPrecision,
+		toCursor: func(tp *TradingPair) Cursor {
+			return Cursor{
+				ID:    tp.ID,
+				Value: tp.CounterQuantityMinPrecision,
+			}
+		},
+	}
+	// TradingPairOrderFieldCounterQuantityMaxPrecision orders TradingPair by counter_quantity_max_precision.
+	TradingPairOrderFieldCounterQuantityMaxPrecision = &TradingPairOrderField{
+		field: tradingpair.FieldCounterQuantityMaxPrecision,
+		toCursor: func(tp *TradingPair) Cursor {
+			return Cursor{
+				ID:    tp.ID,
+				Value: tp.CounterQuantityMaxPrecision,
 			}
 		},
 	}
@@ -1968,10 +2028,22 @@ func (f TradingPairOrderField) String() string {
 	switch f.field {
 	case tradingpair.FieldSymbol:
 		str = "symbol"
-	case tradingpair.FieldBasePrecision:
-		str = "basePrecision"
-	case tradingpair.FieldCounterPrecision:
-		str = "counterPrecision"
+	case tradingpair.FieldBasePriceMinPrecision:
+		str = "basePriceMinPrecision"
+	case tradingpair.FieldBasePriceMaxPrecision:
+		str = "basePriceMaxPrecision"
+	case tradingpair.FieldBaseQuantityMinPrecision:
+		str = "baseQuantityMinPrecision"
+	case tradingpair.FieldBaseQuantityMaxPrecision:
+		str = "baseQuantityMaxPrecision"
+	case tradingpair.FieldCounterPriceMinPrecision:
+		str = "counterPriceMinPrecision"
+	case tradingpair.FieldCounterPriceMaxPrecision:
+		str = "counterPriceMaxPrecision"
+	case tradingpair.FieldCounterQuantityMinPrecision:
+		str = "counterQuantityMinPrecision"
+	case tradingpair.FieldCounterQuantityMaxPrecision:
+		str = "counterQuantityMaxPrecision"
 	}
 	return str
 }
@@ -1990,10 +2062,22 @@ func (f *TradingPairOrderField) UnmarshalGQL(v interface{}) error {
 	switch str {
 	case "symbol":
 		*f = *TradingPairOrderFieldSymbol
-	case "basePrecision":
-		*f = *TradingPairOrderFieldBasePrecision
-	case "counterPrecision":
-		*f = *TradingPairOrderFieldCounterPrecision
+	case "basePriceMinPrecision":
+		*f = *TradingPairOrderFieldBasePriceMinPrecision
+	case "basePriceMaxPrecision":
+		*f = *TradingPairOrderFieldBasePriceMaxPrecision
+	case "baseQuantityMinPrecision":
+		*f = *TradingPairOrderFieldBaseQuantityMinPrecision
+	case "baseQuantityMaxPrecision":
+		*f = *TradingPairOrderFieldBaseQuantityMaxPrecision
+	case "counterPriceMinPrecision":
+		*f = *TradingPairOrderFieldCounterPriceMinPrecision
+	case "counterPriceMaxPrecision":
+		*f = *TradingPairOrderFieldCounterPriceMaxPrecision
+	case "counterQuantityMinPrecision":
+		*f = *TradingPairOrderFieldCounterQuantityMinPrecision
+	case "counterQuantityMaxPrecision":
+		*f = *TradingPairOrderFieldCounterQuantityMaxPrecision
 	default:
 		return fmt.Errorf("%s is not a valid TradingPairOrderField", str)
 	}

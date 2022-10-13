@@ -9,11 +9,17 @@ import (
 func CryptoInstrumentsToTradingPairs(instruments []cryptov2.Instrument) []models.TradingPair {
 	return slices.Map(instruments, func(instrument cryptov2.Instrument) models.TradingPair {
 		return models.TradingPair{
-			Symbol:           instrument.InstrumentName,
-			Base:             instrument.BaseCurrency,
-			BasePrecision:    &instrument.PriceDecimals,
-			Counter:          instrument.QuoteCurrency,
-			CounterPrecision: &instrument.PriceDecimals,
+			Symbol:                      instrument.InstrumentName,
+			Base:                        instrument.BaseCurrency,
+			BasePriceMinPrecision:       &instrument.PriceDecimals,
+			BasePriceMaxPrecision:       &instrument.PriceDecimals,
+			BaseQuantityMinPrecision:    &instrument.QuantityDecimals,
+			BaseQuantityMaxPrecision:    &instrument.QuantityDecimals,
+			Counter:                     instrument.QuoteCurrency,
+			CounterPriceMinPrecision:    &instrument.PriceDecimals,
+			CounterPriceMaxPrecision:    &instrument.PriceDecimals,
+			CounterQuantityMinPrecision: &instrument.QuantityDecimals,
+			CounterQuantityMaxPrecision: &instrument.QuantityDecimals,
 		}
 	})
 }

@@ -5102,24 +5102,36 @@ func (m *TickerMutation) ResetEdge(name string) error {
 // TradingPairMutation represents an operation that mutates the TradingPair nodes in the graph.
 type TradingPairMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *int
-	symbol               *string
-	base_precision       *int
-	addbase_precision    *int
-	counter_precision    *int
-	addcounter_precision *int
-	clearedFields        map[string]struct{}
-	exchange             *int
-	clearedexchange      bool
-	base                 *int
-	clearedbase          bool
-	counter              *int
-	clearedcounter       bool
-	done                 bool
-	oldValue             func(context.Context) (*TradingPair, error)
-	predicates           []predicate.TradingPair
+	op                                Op
+	typ                               string
+	id                                *int
+	symbol                            *string
+	base_price_min_precision          *int
+	addbase_price_min_precision       *int
+	base_price_max_precision          *int
+	addbase_price_max_precision       *int
+	base_quantity_min_precision       *int
+	addbase_quantity_min_precision    *int
+	base_quantity_max_precision       *int
+	addbase_quantity_max_precision    *int
+	counter_price_min_precision       *int
+	addcounter_price_min_precision    *int
+	counter_price_max_precision       *int
+	addcounter_price_max_precision    *int
+	counter_quantity_min_precision    *int
+	addcounter_quantity_min_precision *int
+	counter_quantity_max_precision    *int
+	addcounter_quantity_max_precision *int
+	clearedFields                     map[string]struct{}
+	exchange                          *int
+	clearedexchange                   bool
+	base                              *int
+	clearedbase                       bool
+	counter                           *int
+	clearedcounter                    bool
+	done                              bool
+	oldValue                          func(context.Context) (*TradingPair, error)
+	predicates                        []predicate.TradingPair
 }
 
 var _ ent.Mutation = (*TradingPairMutation)(nil)
@@ -5256,144 +5268,564 @@ func (m *TradingPairMutation) ResetSymbol() {
 	m.symbol = nil
 }
 
-// SetBasePrecision sets the "base_precision" field.
-func (m *TradingPairMutation) SetBasePrecision(i int) {
-	m.base_precision = &i
-	m.addbase_precision = nil
+// SetBasePriceMinPrecision sets the "base_price_min_precision" field.
+func (m *TradingPairMutation) SetBasePriceMinPrecision(i int) {
+	m.base_price_min_precision = &i
+	m.addbase_price_min_precision = nil
 }
 
-// BasePrecision returns the value of the "base_precision" field in the mutation.
-func (m *TradingPairMutation) BasePrecision() (r int, exists bool) {
-	v := m.base_precision
+// BasePriceMinPrecision returns the value of the "base_price_min_precision" field in the mutation.
+func (m *TradingPairMutation) BasePriceMinPrecision() (r int, exists bool) {
+	v := m.base_price_min_precision
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldBasePrecision returns the old "base_precision" field's value of the TradingPair entity.
+// OldBasePriceMinPrecision returns the old "base_price_min_precision" field's value of the TradingPair entity.
 // If the TradingPair object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TradingPairMutation) OldBasePrecision(ctx context.Context) (v int, err error) {
+func (m *TradingPairMutation) OldBasePriceMinPrecision(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldBasePrecision is only allowed on UpdateOne operations")
+		return v, errors.New("OldBasePriceMinPrecision is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldBasePrecision requires an ID field in the mutation")
+		return v, errors.New("OldBasePriceMinPrecision requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldBasePrecision: %w", err)
+		return v, fmt.Errorf("querying old value for OldBasePriceMinPrecision: %w", err)
 	}
-	return oldValue.BasePrecision, nil
+	return oldValue.BasePriceMinPrecision, nil
 }
 
-// AddBasePrecision adds i to the "base_precision" field.
-func (m *TradingPairMutation) AddBasePrecision(i int) {
-	if m.addbase_precision != nil {
-		*m.addbase_precision += i
+// AddBasePriceMinPrecision adds i to the "base_price_min_precision" field.
+func (m *TradingPairMutation) AddBasePriceMinPrecision(i int) {
+	if m.addbase_price_min_precision != nil {
+		*m.addbase_price_min_precision += i
 	} else {
-		m.addbase_precision = &i
+		m.addbase_price_min_precision = &i
 	}
 }
 
-// AddedBasePrecision returns the value that was added to the "base_precision" field in this mutation.
-func (m *TradingPairMutation) AddedBasePrecision() (r int, exists bool) {
-	v := m.addbase_precision
+// AddedBasePriceMinPrecision returns the value that was added to the "base_price_min_precision" field in this mutation.
+func (m *TradingPairMutation) AddedBasePriceMinPrecision() (r int, exists bool) {
+	v := m.addbase_price_min_precision
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearBasePrecision clears the value of the "base_precision" field.
-func (m *TradingPairMutation) ClearBasePrecision() {
-	m.base_precision = nil
-	m.addbase_precision = nil
-	m.clearedFields[tradingpair.FieldBasePrecision] = struct{}{}
+// ClearBasePriceMinPrecision clears the value of the "base_price_min_precision" field.
+func (m *TradingPairMutation) ClearBasePriceMinPrecision() {
+	m.base_price_min_precision = nil
+	m.addbase_price_min_precision = nil
+	m.clearedFields[tradingpair.FieldBasePriceMinPrecision] = struct{}{}
 }
 
-// BasePrecisionCleared returns if the "base_precision" field was cleared in this mutation.
-func (m *TradingPairMutation) BasePrecisionCleared() bool {
-	_, ok := m.clearedFields[tradingpair.FieldBasePrecision]
+// BasePriceMinPrecisionCleared returns if the "base_price_min_precision" field was cleared in this mutation.
+func (m *TradingPairMutation) BasePriceMinPrecisionCleared() bool {
+	_, ok := m.clearedFields[tradingpair.FieldBasePriceMinPrecision]
 	return ok
 }
 
-// ResetBasePrecision resets all changes to the "base_precision" field.
-func (m *TradingPairMutation) ResetBasePrecision() {
-	m.base_precision = nil
-	m.addbase_precision = nil
-	delete(m.clearedFields, tradingpair.FieldBasePrecision)
+// ResetBasePriceMinPrecision resets all changes to the "base_price_min_precision" field.
+func (m *TradingPairMutation) ResetBasePriceMinPrecision() {
+	m.base_price_min_precision = nil
+	m.addbase_price_min_precision = nil
+	delete(m.clearedFields, tradingpair.FieldBasePriceMinPrecision)
 }
 
-// SetCounterPrecision sets the "counter_precision" field.
-func (m *TradingPairMutation) SetCounterPrecision(i int) {
-	m.counter_precision = &i
-	m.addcounter_precision = nil
+// SetBasePriceMaxPrecision sets the "base_price_max_precision" field.
+func (m *TradingPairMutation) SetBasePriceMaxPrecision(i int) {
+	m.base_price_max_precision = &i
+	m.addbase_price_max_precision = nil
 }
 
-// CounterPrecision returns the value of the "counter_precision" field in the mutation.
-func (m *TradingPairMutation) CounterPrecision() (r int, exists bool) {
-	v := m.counter_precision
+// BasePriceMaxPrecision returns the value of the "base_price_max_precision" field in the mutation.
+func (m *TradingPairMutation) BasePriceMaxPrecision() (r int, exists bool) {
+	v := m.base_price_max_precision
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCounterPrecision returns the old "counter_precision" field's value of the TradingPair entity.
+// OldBasePriceMaxPrecision returns the old "base_price_max_precision" field's value of the TradingPair entity.
 // If the TradingPair object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TradingPairMutation) OldCounterPrecision(ctx context.Context) (v int, err error) {
+func (m *TradingPairMutation) OldBasePriceMaxPrecision(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCounterPrecision is only allowed on UpdateOne operations")
+		return v, errors.New("OldBasePriceMaxPrecision is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCounterPrecision requires an ID field in the mutation")
+		return v, errors.New("OldBasePriceMaxPrecision requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCounterPrecision: %w", err)
+		return v, fmt.Errorf("querying old value for OldBasePriceMaxPrecision: %w", err)
 	}
-	return oldValue.CounterPrecision, nil
+	return oldValue.BasePriceMaxPrecision, nil
 }
 
-// AddCounterPrecision adds i to the "counter_precision" field.
-func (m *TradingPairMutation) AddCounterPrecision(i int) {
-	if m.addcounter_precision != nil {
-		*m.addcounter_precision += i
+// AddBasePriceMaxPrecision adds i to the "base_price_max_precision" field.
+func (m *TradingPairMutation) AddBasePriceMaxPrecision(i int) {
+	if m.addbase_price_max_precision != nil {
+		*m.addbase_price_max_precision += i
 	} else {
-		m.addcounter_precision = &i
+		m.addbase_price_max_precision = &i
 	}
 }
 
-// AddedCounterPrecision returns the value that was added to the "counter_precision" field in this mutation.
-func (m *TradingPairMutation) AddedCounterPrecision() (r int, exists bool) {
-	v := m.addcounter_precision
+// AddedBasePriceMaxPrecision returns the value that was added to the "base_price_max_precision" field in this mutation.
+func (m *TradingPairMutation) AddedBasePriceMaxPrecision() (r int, exists bool) {
+	v := m.addbase_price_max_precision
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearCounterPrecision clears the value of the "counter_precision" field.
-func (m *TradingPairMutation) ClearCounterPrecision() {
-	m.counter_precision = nil
-	m.addcounter_precision = nil
-	m.clearedFields[tradingpair.FieldCounterPrecision] = struct{}{}
+// ClearBasePriceMaxPrecision clears the value of the "base_price_max_precision" field.
+func (m *TradingPairMutation) ClearBasePriceMaxPrecision() {
+	m.base_price_max_precision = nil
+	m.addbase_price_max_precision = nil
+	m.clearedFields[tradingpair.FieldBasePriceMaxPrecision] = struct{}{}
 }
 
-// CounterPrecisionCleared returns if the "counter_precision" field was cleared in this mutation.
-func (m *TradingPairMutation) CounterPrecisionCleared() bool {
-	_, ok := m.clearedFields[tradingpair.FieldCounterPrecision]
+// BasePriceMaxPrecisionCleared returns if the "base_price_max_precision" field was cleared in this mutation.
+func (m *TradingPairMutation) BasePriceMaxPrecisionCleared() bool {
+	_, ok := m.clearedFields[tradingpair.FieldBasePriceMaxPrecision]
 	return ok
 }
 
-// ResetCounterPrecision resets all changes to the "counter_precision" field.
-func (m *TradingPairMutation) ResetCounterPrecision() {
-	m.counter_precision = nil
-	m.addcounter_precision = nil
-	delete(m.clearedFields, tradingpair.FieldCounterPrecision)
+// ResetBasePriceMaxPrecision resets all changes to the "base_price_max_precision" field.
+func (m *TradingPairMutation) ResetBasePriceMaxPrecision() {
+	m.base_price_max_precision = nil
+	m.addbase_price_max_precision = nil
+	delete(m.clearedFields, tradingpair.FieldBasePriceMaxPrecision)
+}
+
+// SetBaseQuantityMinPrecision sets the "base_quantity_min_precision" field.
+func (m *TradingPairMutation) SetBaseQuantityMinPrecision(i int) {
+	m.base_quantity_min_precision = &i
+	m.addbase_quantity_min_precision = nil
+}
+
+// BaseQuantityMinPrecision returns the value of the "base_quantity_min_precision" field in the mutation.
+func (m *TradingPairMutation) BaseQuantityMinPrecision() (r int, exists bool) {
+	v := m.base_quantity_min_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBaseQuantityMinPrecision returns the old "base_quantity_min_precision" field's value of the TradingPair entity.
+// If the TradingPair object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TradingPairMutation) OldBaseQuantityMinPrecision(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBaseQuantityMinPrecision is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBaseQuantityMinPrecision requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBaseQuantityMinPrecision: %w", err)
+	}
+	return oldValue.BaseQuantityMinPrecision, nil
+}
+
+// AddBaseQuantityMinPrecision adds i to the "base_quantity_min_precision" field.
+func (m *TradingPairMutation) AddBaseQuantityMinPrecision(i int) {
+	if m.addbase_quantity_min_precision != nil {
+		*m.addbase_quantity_min_precision += i
+	} else {
+		m.addbase_quantity_min_precision = &i
+	}
+}
+
+// AddedBaseQuantityMinPrecision returns the value that was added to the "base_quantity_min_precision" field in this mutation.
+func (m *TradingPairMutation) AddedBaseQuantityMinPrecision() (r int, exists bool) {
+	v := m.addbase_quantity_min_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearBaseQuantityMinPrecision clears the value of the "base_quantity_min_precision" field.
+func (m *TradingPairMutation) ClearBaseQuantityMinPrecision() {
+	m.base_quantity_min_precision = nil
+	m.addbase_quantity_min_precision = nil
+	m.clearedFields[tradingpair.FieldBaseQuantityMinPrecision] = struct{}{}
+}
+
+// BaseQuantityMinPrecisionCleared returns if the "base_quantity_min_precision" field was cleared in this mutation.
+func (m *TradingPairMutation) BaseQuantityMinPrecisionCleared() bool {
+	_, ok := m.clearedFields[tradingpair.FieldBaseQuantityMinPrecision]
+	return ok
+}
+
+// ResetBaseQuantityMinPrecision resets all changes to the "base_quantity_min_precision" field.
+func (m *TradingPairMutation) ResetBaseQuantityMinPrecision() {
+	m.base_quantity_min_precision = nil
+	m.addbase_quantity_min_precision = nil
+	delete(m.clearedFields, tradingpair.FieldBaseQuantityMinPrecision)
+}
+
+// SetBaseQuantityMaxPrecision sets the "base_quantity_max_precision" field.
+func (m *TradingPairMutation) SetBaseQuantityMaxPrecision(i int) {
+	m.base_quantity_max_precision = &i
+	m.addbase_quantity_max_precision = nil
+}
+
+// BaseQuantityMaxPrecision returns the value of the "base_quantity_max_precision" field in the mutation.
+func (m *TradingPairMutation) BaseQuantityMaxPrecision() (r int, exists bool) {
+	v := m.base_quantity_max_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBaseQuantityMaxPrecision returns the old "base_quantity_max_precision" field's value of the TradingPair entity.
+// If the TradingPair object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TradingPairMutation) OldBaseQuantityMaxPrecision(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBaseQuantityMaxPrecision is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBaseQuantityMaxPrecision requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBaseQuantityMaxPrecision: %w", err)
+	}
+	return oldValue.BaseQuantityMaxPrecision, nil
+}
+
+// AddBaseQuantityMaxPrecision adds i to the "base_quantity_max_precision" field.
+func (m *TradingPairMutation) AddBaseQuantityMaxPrecision(i int) {
+	if m.addbase_quantity_max_precision != nil {
+		*m.addbase_quantity_max_precision += i
+	} else {
+		m.addbase_quantity_max_precision = &i
+	}
+}
+
+// AddedBaseQuantityMaxPrecision returns the value that was added to the "base_quantity_max_precision" field in this mutation.
+func (m *TradingPairMutation) AddedBaseQuantityMaxPrecision() (r int, exists bool) {
+	v := m.addbase_quantity_max_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearBaseQuantityMaxPrecision clears the value of the "base_quantity_max_precision" field.
+func (m *TradingPairMutation) ClearBaseQuantityMaxPrecision() {
+	m.base_quantity_max_precision = nil
+	m.addbase_quantity_max_precision = nil
+	m.clearedFields[tradingpair.FieldBaseQuantityMaxPrecision] = struct{}{}
+}
+
+// BaseQuantityMaxPrecisionCleared returns if the "base_quantity_max_precision" field was cleared in this mutation.
+func (m *TradingPairMutation) BaseQuantityMaxPrecisionCleared() bool {
+	_, ok := m.clearedFields[tradingpair.FieldBaseQuantityMaxPrecision]
+	return ok
+}
+
+// ResetBaseQuantityMaxPrecision resets all changes to the "base_quantity_max_precision" field.
+func (m *TradingPairMutation) ResetBaseQuantityMaxPrecision() {
+	m.base_quantity_max_precision = nil
+	m.addbase_quantity_max_precision = nil
+	delete(m.clearedFields, tradingpair.FieldBaseQuantityMaxPrecision)
+}
+
+// SetCounterPriceMinPrecision sets the "counter_price_min_precision" field.
+func (m *TradingPairMutation) SetCounterPriceMinPrecision(i int) {
+	m.counter_price_min_precision = &i
+	m.addcounter_price_min_precision = nil
+}
+
+// CounterPriceMinPrecision returns the value of the "counter_price_min_precision" field in the mutation.
+func (m *TradingPairMutation) CounterPriceMinPrecision() (r int, exists bool) {
+	v := m.counter_price_min_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCounterPriceMinPrecision returns the old "counter_price_min_precision" field's value of the TradingPair entity.
+// If the TradingPair object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TradingPairMutation) OldCounterPriceMinPrecision(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCounterPriceMinPrecision is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCounterPriceMinPrecision requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCounterPriceMinPrecision: %w", err)
+	}
+	return oldValue.CounterPriceMinPrecision, nil
+}
+
+// AddCounterPriceMinPrecision adds i to the "counter_price_min_precision" field.
+func (m *TradingPairMutation) AddCounterPriceMinPrecision(i int) {
+	if m.addcounter_price_min_precision != nil {
+		*m.addcounter_price_min_precision += i
+	} else {
+		m.addcounter_price_min_precision = &i
+	}
+}
+
+// AddedCounterPriceMinPrecision returns the value that was added to the "counter_price_min_precision" field in this mutation.
+func (m *TradingPairMutation) AddedCounterPriceMinPrecision() (r int, exists bool) {
+	v := m.addcounter_price_min_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCounterPriceMinPrecision clears the value of the "counter_price_min_precision" field.
+func (m *TradingPairMutation) ClearCounterPriceMinPrecision() {
+	m.counter_price_min_precision = nil
+	m.addcounter_price_min_precision = nil
+	m.clearedFields[tradingpair.FieldCounterPriceMinPrecision] = struct{}{}
+}
+
+// CounterPriceMinPrecisionCleared returns if the "counter_price_min_precision" field was cleared in this mutation.
+func (m *TradingPairMutation) CounterPriceMinPrecisionCleared() bool {
+	_, ok := m.clearedFields[tradingpair.FieldCounterPriceMinPrecision]
+	return ok
+}
+
+// ResetCounterPriceMinPrecision resets all changes to the "counter_price_min_precision" field.
+func (m *TradingPairMutation) ResetCounterPriceMinPrecision() {
+	m.counter_price_min_precision = nil
+	m.addcounter_price_min_precision = nil
+	delete(m.clearedFields, tradingpair.FieldCounterPriceMinPrecision)
+}
+
+// SetCounterPriceMaxPrecision sets the "counter_price_max_precision" field.
+func (m *TradingPairMutation) SetCounterPriceMaxPrecision(i int) {
+	m.counter_price_max_precision = &i
+	m.addcounter_price_max_precision = nil
+}
+
+// CounterPriceMaxPrecision returns the value of the "counter_price_max_precision" field in the mutation.
+func (m *TradingPairMutation) CounterPriceMaxPrecision() (r int, exists bool) {
+	v := m.counter_price_max_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCounterPriceMaxPrecision returns the old "counter_price_max_precision" field's value of the TradingPair entity.
+// If the TradingPair object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TradingPairMutation) OldCounterPriceMaxPrecision(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCounterPriceMaxPrecision is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCounterPriceMaxPrecision requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCounterPriceMaxPrecision: %w", err)
+	}
+	return oldValue.CounterPriceMaxPrecision, nil
+}
+
+// AddCounterPriceMaxPrecision adds i to the "counter_price_max_precision" field.
+func (m *TradingPairMutation) AddCounterPriceMaxPrecision(i int) {
+	if m.addcounter_price_max_precision != nil {
+		*m.addcounter_price_max_precision += i
+	} else {
+		m.addcounter_price_max_precision = &i
+	}
+}
+
+// AddedCounterPriceMaxPrecision returns the value that was added to the "counter_price_max_precision" field in this mutation.
+func (m *TradingPairMutation) AddedCounterPriceMaxPrecision() (r int, exists bool) {
+	v := m.addcounter_price_max_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCounterPriceMaxPrecision clears the value of the "counter_price_max_precision" field.
+func (m *TradingPairMutation) ClearCounterPriceMaxPrecision() {
+	m.counter_price_max_precision = nil
+	m.addcounter_price_max_precision = nil
+	m.clearedFields[tradingpair.FieldCounterPriceMaxPrecision] = struct{}{}
+}
+
+// CounterPriceMaxPrecisionCleared returns if the "counter_price_max_precision" field was cleared in this mutation.
+func (m *TradingPairMutation) CounterPriceMaxPrecisionCleared() bool {
+	_, ok := m.clearedFields[tradingpair.FieldCounterPriceMaxPrecision]
+	return ok
+}
+
+// ResetCounterPriceMaxPrecision resets all changes to the "counter_price_max_precision" field.
+func (m *TradingPairMutation) ResetCounterPriceMaxPrecision() {
+	m.counter_price_max_precision = nil
+	m.addcounter_price_max_precision = nil
+	delete(m.clearedFields, tradingpair.FieldCounterPriceMaxPrecision)
+}
+
+// SetCounterQuantityMinPrecision sets the "counter_quantity_min_precision" field.
+func (m *TradingPairMutation) SetCounterQuantityMinPrecision(i int) {
+	m.counter_quantity_min_precision = &i
+	m.addcounter_quantity_min_precision = nil
+}
+
+// CounterQuantityMinPrecision returns the value of the "counter_quantity_min_precision" field in the mutation.
+func (m *TradingPairMutation) CounterQuantityMinPrecision() (r int, exists bool) {
+	v := m.counter_quantity_min_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCounterQuantityMinPrecision returns the old "counter_quantity_min_precision" field's value of the TradingPair entity.
+// If the TradingPair object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TradingPairMutation) OldCounterQuantityMinPrecision(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCounterQuantityMinPrecision is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCounterQuantityMinPrecision requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCounterQuantityMinPrecision: %w", err)
+	}
+	return oldValue.CounterQuantityMinPrecision, nil
+}
+
+// AddCounterQuantityMinPrecision adds i to the "counter_quantity_min_precision" field.
+func (m *TradingPairMutation) AddCounterQuantityMinPrecision(i int) {
+	if m.addcounter_quantity_min_precision != nil {
+		*m.addcounter_quantity_min_precision += i
+	} else {
+		m.addcounter_quantity_min_precision = &i
+	}
+}
+
+// AddedCounterQuantityMinPrecision returns the value that was added to the "counter_quantity_min_precision" field in this mutation.
+func (m *TradingPairMutation) AddedCounterQuantityMinPrecision() (r int, exists bool) {
+	v := m.addcounter_quantity_min_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCounterQuantityMinPrecision clears the value of the "counter_quantity_min_precision" field.
+func (m *TradingPairMutation) ClearCounterQuantityMinPrecision() {
+	m.counter_quantity_min_precision = nil
+	m.addcounter_quantity_min_precision = nil
+	m.clearedFields[tradingpair.FieldCounterQuantityMinPrecision] = struct{}{}
+}
+
+// CounterQuantityMinPrecisionCleared returns if the "counter_quantity_min_precision" field was cleared in this mutation.
+func (m *TradingPairMutation) CounterQuantityMinPrecisionCleared() bool {
+	_, ok := m.clearedFields[tradingpair.FieldCounterQuantityMinPrecision]
+	return ok
+}
+
+// ResetCounterQuantityMinPrecision resets all changes to the "counter_quantity_min_precision" field.
+func (m *TradingPairMutation) ResetCounterQuantityMinPrecision() {
+	m.counter_quantity_min_precision = nil
+	m.addcounter_quantity_min_precision = nil
+	delete(m.clearedFields, tradingpair.FieldCounterQuantityMinPrecision)
+}
+
+// SetCounterQuantityMaxPrecision sets the "counter_quantity_max_precision" field.
+func (m *TradingPairMutation) SetCounterQuantityMaxPrecision(i int) {
+	m.counter_quantity_max_precision = &i
+	m.addcounter_quantity_max_precision = nil
+}
+
+// CounterQuantityMaxPrecision returns the value of the "counter_quantity_max_precision" field in the mutation.
+func (m *TradingPairMutation) CounterQuantityMaxPrecision() (r int, exists bool) {
+	v := m.counter_quantity_max_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCounterQuantityMaxPrecision returns the old "counter_quantity_max_precision" field's value of the TradingPair entity.
+// If the TradingPair object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TradingPairMutation) OldCounterQuantityMaxPrecision(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCounterQuantityMaxPrecision is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCounterQuantityMaxPrecision requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCounterQuantityMaxPrecision: %w", err)
+	}
+	return oldValue.CounterQuantityMaxPrecision, nil
+}
+
+// AddCounterQuantityMaxPrecision adds i to the "counter_quantity_max_precision" field.
+func (m *TradingPairMutation) AddCounterQuantityMaxPrecision(i int) {
+	if m.addcounter_quantity_max_precision != nil {
+		*m.addcounter_quantity_max_precision += i
+	} else {
+		m.addcounter_quantity_max_precision = &i
+	}
+}
+
+// AddedCounterQuantityMaxPrecision returns the value that was added to the "counter_quantity_max_precision" field in this mutation.
+func (m *TradingPairMutation) AddedCounterQuantityMaxPrecision() (r int, exists bool) {
+	v := m.addcounter_quantity_max_precision
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCounterQuantityMaxPrecision clears the value of the "counter_quantity_max_precision" field.
+func (m *TradingPairMutation) ClearCounterQuantityMaxPrecision() {
+	m.counter_quantity_max_precision = nil
+	m.addcounter_quantity_max_precision = nil
+	m.clearedFields[tradingpair.FieldCounterQuantityMaxPrecision] = struct{}{}
+}
+
+// CounterQuantityMaxPrecisionCleared returns if the "counter_quantity_max_precision" field was cleared in this mutation.
+func (m *TradingPairMutation) CounterQuantityMaxPrecisionCleared() bool {
+	_, ok := m.clearedFields[tradingpair.FieldCounterQuantityMaxPrecision]
+	return ok
+}
+
+// ResetCounterQuantityMaxPrecision resets all changes to the "counter_quantity_max_precision" field.
+func (m *TradingPairMutation) ResetCounterQuantityMaxPrecision() {
+	m.counter_quantity_max_precision = nil
+	m.addcounter_quantity_max_precision = nil
+	delete(m.clearedFields, tradingpair.FieldCounterQuantityMaxPrecision)
 }
 
 // SetExchangeID sets the "exchange" edge to the Exchange entity by id.
@@ -5532,15 +5964,33 @@ func (m *TradingPairMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TradingPairMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 9)
 	if m.symbol != nil {
 		fields = append(fields, tradingpair.FieldSymbol)
 	}
-	if m.base_precision != nil {
-		fields = append(fields, tradingpair.FieldBasePrecision)
+	if m.base_price_min_precision != nil {
+		fields = append(fields, tradingpair.FieldBasePriceMinPrecision)
 	}
-	if m.counter_precision != nil {
-		fields = append(fields, tradingpair.FieldCounterPrecision)
+	if m.base_price_max_precision != nil {
+		fields = append(fields, tradingpair.FieldBasePriceMaxPrecision)
+	}
+	if m.base_quantity_min_precision != nil {
+		fields = append(fields, tradingpair.FieldBaseQuantityMinPrecision)
+	}
+	if m.base_quantity_max_precision != nil {
+		fields = append(fields, tradingpair.FieldBaseQuantityMaxPrecision)
+	}
+	if m.counter_price_min_precision != nil {
+		fields = append(fields, tradingpair.FieldCounterPriceMinPrecision)
+	}
+	if m.counter_price_max_precision != nil {
+		fields = append(fields, tradingpair.FieldCounterPriceMaxPrecision)
+	}
+	if m.counter_quantity_min_precision != nil {
+		fields = append(fields, tradingpair.FieldCounterQuantityMinPrecision)
+	}
+	if m.counter_quantity_max_precision != nil {
+		fields = append(fields, tradingpair.FieldCounterQuantityMaxPrecision)
 	}
 	return fields
 }
@@ -5552,10 +6002,22 @@ func (m *TradingPairMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case tradingpair.FieldSymbol:
 		return m.Symbol()
-	case tradingpair.FieldBasePrecision:
-		return m.BasePrecision()
-	case tradingpair.FieldCounterPrecision:
-		return m.CounterPrecision()
+	case tradingpair.FieldBasePriceMinPrecision:
+		return m.BasePriceMinPrecision()
+	case tradingpair.FieldBasePriceMaxPrecision:
+		return m.BasePriceMaxPrecision()
+	case tradingpair.FieldBaseQuantityMinPrecision:
+		return m.BaseQuantityMinPrecision()
+	case tradingpair.FieldBaseQuantityMaxPrecision:
+		return m.BaseQuantityMaxPrecision()
+	case tradingpair.FieldCounterPriceMinPrecision:
+		return m.CounterPriceMinPrecision()
+	case tradingpair.FieldCounterPriceMaxPrecision:
+		return m.CounterPriceMaxPrecision()
+	case tradingpair.FieldCounterQuantityMinPrecision:
+		return m.CounterQuantityMinPrecision()
+	case tradingpair.FieldCounterQuantityMaxPrecision:
+		return m.CounterQuantityMaxPrecision()
 	}
 	return nil, false
 }
@@ -5567,10 +6029,22 @@ func (m *TradingPairMutation) OldField(ctx context.Context, name string) (ent.Va
 	switch name {
 	case tradingpair.FieldSymbol:
 		return m.OldSymbol(ctx)
-	case tradingpair.FieldBasePrecision:
-		return m.OldBasePrecision(ctx)
-	case tradingpair.FieldCounterPrecision:
-		return m.OldCounterPrecision(ctx)
+	case tradingpair.FieldBasePriceMinPrecision:
+		return m.OldBasePriceMinPrecision(ctx)
+	case tradingpair.FieldBasePriceMaxPrecision:
+		return m.OldBasePriceMaxPrecision(ctx)
+	case tradingpair.FieldBaseQuantityMinPrecision:
+		return m.OldBaseQuantityMinPrecision(ctx)
+	case tradingpair.FieldBaseQuantityMaxPrecision:
+		return m.OldBaseQuantityMaxPrecision(ctx)
+	case tradingpair.FieldCounterPriceMinPrecision:
+		return m.OldCounterPriceMinPrecision(ctx)
+	case tradingpair.FieldCounterPriceMaxPrecision:
+		return m.OldCounterPriceMaxPrecision(ctx)
+	case tradingpair.FieldCounterQuantityMinPrecision:
+		return m.OldCounterQuantityMinPrecision(ctx)
+	case tradingpair.FieldCounterQuantityMaxPrecision:
+		return m.OldCounterQuantityMaxPrecision(ctx)
 	}
 	return nil, fmt.Errorf("unknown TradingPair field %s", name)
 }
@@ -5587,19 +6061,61 @@ func (m *TradingPairMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSymbol(v)
 		return nil
-	case tradingpair.FieldBasePrecision:
+	case tradingpair.FieldBasePriceMinPrecision:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetBasePrecision(v)
+		m.SetBasePriceMinPrecision(v)
 		return nil
-	case tradingpair.FieldCounterPrecision:
+	case tradingpair.FieldBasePriceMaxPrecision:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCounterPrecision(v)
+		m.SetBasePriceMaxPrecision(v)
+		return nil
+	case tradingpair.FieldBaseQuantityMinPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBaseQuantityMinPrecision(v)
+		return nil
+	case tradingpair.FieldBaseQuantityMaxPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBaseQuantityMaxPrecision(v)
+		return nil
+	case tradingpair.FieldCounterPriceMinPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCounterPriceMinPrecision(v)
+		return nil
+	case tradingpair.FieldCounterPriceMaxPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCounterPriceMaxPrecision(v)
+		return nil
+	case tradingpair.FieldCounterQuantityMinPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCounterQuantityMinPrecision(v)
+		return nil
+	case tradingpair.FieldCounterQuantityMaxPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCounterQuantityMaxPrecision(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TradingPair field %s", name)
@@ -5609,11 +6125,29 @@ func (m *TradingPairMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *TradingPairMutation) AddedFields() []string {
 	var fields []string
-	if m.addbase_precision != nil {
-		fields = append(fields, tradingpair.FieldBasePrecision)
+	if m.addbase_price_min_precision != nil {
+		fields = append(fields, tradingpair.FieldBasePriceMinPrecision)
 	}
-	if m.addcounter_precision != nil {
-		fields = append(fields, tradingpair.FieldCounterPrecision)
+	if m.addbase_price_max_precision != nil {
+		fields = append(fields, tradingpair.FieldBasePriceMaxPrecision)
+	}
+	if m.addbase_quantity_min_precision != nil {
+		fields = append(fields, tradingpair.FieldBaseQuantityMinPrecision)
+	}
+	if m.addbase_quantity_max_precision != nil {
+		fields = append(fields, tradingpair.FieldBaseQuantityMaxPrecision)
+	}
+	if m.addcounter_price_min_precision != nil {
+		fields = append(fields, tradingpair.FieldCounterPriceMinPrecision)
+	}
+	if m.addcounter_price_max_precision != nil {
+		fields = append(fields, tradingpair.FieldCounterPriceMaxPrecision)
+	}
+	if m.addcounter_quantity_min_precision != nil {
+		fields = append(fields, tradingpair.FieldCounterQuantityMinPrecision)
+	}
+	if m.addcounter_quantity_max_precision != nil {
+		fields = append(fields, tradingpair.FieldCounterQuantityMaxPrecision)
 	}
 	return fields
 }
@@ -5623,10 +6157,22 @@ func (m *TradingPairMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *TradingPairMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case tradingpair.FieldBasePrecision:
-		return m.AddedBasePrecision()
-	case tradingpair.FieldCounterPrecision:
-		return m.AddedCounterPrecision()
+	case tradingpair.FieldBasePriceMinPrecision:
+		return m.AddedBasePriceMinPrecision()
+	case tradingpair.FieldBasePriceMaxPrecision:
+		return m.AddedBasePriceMaxPrecision()
+	case tradingpair.FieldBaseQuantityMinPrecision:
+		return m.AddedBaseQuantityMinPrecision()
+	case tradingpair.FieldBaseQuantityMaxPrecision:
+		return m.AddedBaseQuantityMaxPrecision()
+	case tradingpair.FieldCounterPriceMinPrecision:
+		return m.AddedCounterPriceMinPrecision()
+	case tradingpair.FieldCounterPriceMaxPrecision:
+		return m.AddedCounterPriceMaxPrecision()
+	case tradingpair.FieldCounterQuantityMinPrecision:
+		return m.AddedCounterQuantityMinPrecision()
+	case tradingpair.FieldCounterQuantityMaxPrecision:
+		return m.AddedCounterQuantityMaxPrecision()
 	}
 	return nil, false
 }
@@ -5636,19 +6182,61 @@ func (m *TradingPairMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *TradingPairMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case tradingpair.FieldBasePrecision:
+	case tradingpair.FieldBasePriceMinPrecision:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddBasePrecision(v)
+		m.AddBasePriceMinPrecision(v)
 		return nil
-	case tradingpair.FieldCounterPrecision:
+	case tradingpair.FieldBasePriceMaxPrecision:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddCounterPrecision(v)
+		m.AddBasePriceMaxPrecision(v)
+		return nil
+	case tradingpair.FieldBaseQuantityMinPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBaseQuantityMinPrecision(v)
+		return nil
+	case tradingpair.FieldBaseQuantityMaxPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBaseQuantityMaxPrecision(v)
+		return nil
+	case tradingpair.FieldCounterPriceMinPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCounterPriceMinPrecision(v)
+		return nil
+	case tradingpair.FieldCounterPriceMaxPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCounterPriceMaxPrecision(v)
+		return nil
+	case tradingpair.FieldCounterQuantityMinPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCounterQuantityMinPrecision(v)
+		return nil
+	case tradingpair.FieldCounterQuantityMaxPrecision:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCounterQuantityMaxPrecision(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TradingPair numeric field %s", name)
@@ -5658,11 +6246,29 @@ func (m *TradingPairMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *TradingPairMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(tradingpair.FieldBasePrecision) {
-		fields = append(fields, tradingpair.FieldBasePrecision)
+	if m.FieldCleared(tradingpair.FieldBasePriceMinPrecision) {
+		fields = append(fields, tradingpair.FieldBasePriceMinPrecision)
 	}
-	if m.FieldCleared(tradingpair.FieldCounterPrecision) {
-		fields = append(fields, tradingpair.FieldCounterPrecision)
+	if m.FieldCleared(tradingpair.FieldBasePriceMaxPrecision) {
+		fields = append(fields, tradingpair.FieldBasePriceMaxPrecision)
+	}
+	if m.FieldCleared(tradingpair.FieldBaseQuantityMinPrecision) {
+		fields = append(fields, tradingpair.FieldBaseQuantityMinPrecision)
+	}
+	if m.FieldCleared(tradingpair.FieldBaseQuantityMaxPrecision) {
+		fields = append(fields, tradingpair.FieldBaseQuantityMaxPrecision)
+	}
+	if m.FieldCleared(tradingpair.FieldCounterPriceMinPrecision) {
+		fields = append(fields, tradingpair.FieldCounterPriceMinPrecision)
+	}
+	if m.FieldCleared(tradingpair.FieldCounterPriceMaxPrecision) {
+		fields = append(fields, tradingpair.FieldCounterPriceMaxPrecision)
+	}
+	if m.FieldCleared(tradingpair.FieldCounterQuantityMinPrecision) {
+		fields = append(fields, tradingpair.FieldCounterQuantityMinPrecision)
+	}
+	if m.FieldCleared(tradingpair.FieldCounterQuantityMaxPrecision) {
+		fields = append(fields, tradingpair.FieldCounterQuantityMaxPrecision)
 	}
 	return fields
 }
@@ -5678,11 +6284,29 @@ func (m *TradingPairMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *TradingPairMutation) ClearField(name string) error {
 	switch name {
-	case tradingpair.FieldBasePrecision:
-		m.ClearBasePrecision()
+	case tradingpair.FieldBasePriceMinPrecision:
+		m.ClearBasePriceMinPrecision()
 		return nil
-	case tradingpair.FieldCounterPrecision:
-		m.ClearCounterPrecision()
+	case tradingpair.FieldBasePriceMaxPrecision:
+		m.ClearBasePriceMaxPrecision()
+		return nil
+	case tradingpair.FieldBaseQuantityMinPrecision:
+		m.ClearBaseQuantityMinPrecision()
+		return nil
+	case tradingpair.FieldBaseQuantityMaxPrecision:
+		m.ClearBaseQuantityMaxPrecision()
+		return nil
+	case tradingpair.FieldCounterPriceMinPrecision:
+		m.ClearCounterPriceMinPrecision()
+		return nil
+	case tradingpair.FieldCounterPriceMaxPrecision:
+		m.ClearCounterPriceMaxPrecision()
+		return nil
+	case tradingpair.FieldCounterQuantityMinPrecision:
+		m.ClearCounterQuantityMinPrecision()
+		return nil
+	case tradingpair.FieldCounterQuantityMaxPrecision:
+		m.ClearCounterQuantityMaxPrecision()
 		return nil
 	}
 	return fmt.Errorf("unknown TradingPair nullable field %s", name)
@@ -5695,11 +6319,29 @@ func (m *TradingPairMutation) ResetField(name string) error {
 	case tradingpair.FieldSymbol:
 		m.ResetSymbol()
 		return nil
-	case tradingpair.FieldBasePrecision:
-		m.ResetBasePrecision()
+	case tradingpair.FieldBasePriceMinPrecision:
+		m.ResetBasePriceMinPrecision()
 		return nil
-	case tradingpair.FieldCounterPrecision:
-		m.ResetCounterPrecision()
+	case tradingpair.FieldBasePriceMaxPrecision:
+		m.ResetBasePriceMaxPrecision()
+		return nil
+	case tradingpair.FieldBaseQuantityMinPrecision:
+		m.ResetBaseQuantityMinPrecision()
+		return nil
+	case tradingpair.FieldBaseQuantityMaxPrecision:
+		m.ResetBaseQuantityMaxPrecision()
+		return nil
+	case tradingpair.FieldCounterPriceMinPrecision:
+		m.ResetCounterPriceMinPrecision()
+		return nil
+	case tradingpair.FieldCounterPriceMaxPrecision:
+		m.ResetCounterPriceMaxPrecision()
+		return nil
+	case tradingpair.FieldCounterQuantityMinPrecision:
+		m.ResetCounterQuantityMinPrecision()
+		return nil
+	case tradingpair.FieldCounterQuantityMaxPrecision:
+		m.ResetCounterQuantityMaxPrecision()
 		return nil
 	}
 	return fmt.Errorf("unknown TradingPair field %s", name)

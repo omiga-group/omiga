@@ -129,9 +129,15 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "TradingPair",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			tradingpair.FieldSymbol:           {Type: field.TypeString, Column: tradingpair.FieldSymbol},
-			tradingpair.FieldBasePrecision:    {Type: field.TypeInt, Column: tradingpair.FieldBasePrecision},
-			tradingpair.FieldCounterPrecision: {Type: field.TypeInt, Column: tradingpair.FieldCounterPrecision},
+			tradingpair.FieldSymbol:                      {Type: field.TypeString, Column: tradingpair.FieldSymbol},
+			tradingpair.FieldBasePriceMinPrecision:       {Type: field.TypeInt, Column: tradingpair.FieldBasePriceMinPrecision},
+			tradingpair.FieldBasePriceMaxPrecision:       {Type: field.TypeInt, Column: tradingpair.FieldBasePriceMaxPrecision},
+			tradingpair.FieldBaseQuantityMinPrecision:    {Type: field.TypeInt, Column: tradingpair.FieldBaseQuantityMinPrecision},
+			tradingpair.FieldBaseQuantityMaxPrecision:    {Type: field.TypeInt, Column: tradingpair.FieldBaseQuantityMaxPrecision},
+			tradingpair.FieldCounterPriceMinPrecision:    {Type: field.TypeInt, Column: tradingpair.FieldCounterPriceMinPrecision},
+			tradingpair.FieldCounterPriceMaxPrecision:    {Type: field.TypeInt, Column: tradingpair.FieldCounterPriceMaxPrecision},
+			tradingpair.FieldCounterQuantityMinPrecision: {Type: field.TypeInt, Column: tradingpair.FieldCounterQuantityMinPrecision},
+			tradingpair.FieldCounterQuantityMaxPrecision: {Type: field.TypeInt, Column: tradingpair.FieldCounterQuantityMaxPrecision},
 		},
 	}
 	graph.MustAddE(
@@ -749,14 +755,44 @@ func (f *TradingPairFilter) WhereSymbol(p entql.StringP) {
 	f.Where(p.Field(tradingpair.FieldSymbol))
 }
 
-// WhereBasePrecision applies the entql int predicate on the base_precision field.
-func (f *TradingPairFilter) WhereBasePrecision(p entql.IntP) {
-	f.Where(p.Field(tradingpair.FieldBasePrecision))
+// WhereBasePriceMinPrecision applies the entql int predicate on the base_price_min_precision field.
+func (f *TradingPairFilter) WhereBasePriceMinPrecision(p entql.IntP) {
+	f.Where(p.Field(tradingpair.FieldBasePriceMinPrecision))
 }
 
-// WhereCounterPrecision applies the entql int predicate on the counter_precision field.
-func (f *TradingPairFilter) WhereCounterPrecision(p entql.IntP) {
-	f.Where(p.Field(tradingpair.FieldCounterPrecision))
+// WhereBasePriceMaxPrecision applies the entql int predicate on the base_price_max_precision field.
+func (f *TradingPairFilter) WhereBasePriceMaxPrecision(p entql.IntP) {
+	f.Where(p.Field(tradingpair.FieldBasePriceMaxPrecision))
+}
+
+// WhereBaseQuantityMinPrecision applies the entql int predicate on the base_quantity_min_precision field.
+func (f *TradingPairFilter) WhereBaseQuantityMinPrecision(p entql.IntP) {
+	f.Where(p.Field(tradingpair.FieldBaseQuantityMinPrecision))
+}
+
+// WhereBaseQuantityMaxPrecision applies the entql int predicate on the base_quantity_max_precision field.
+func (f *TradingPairFilter) WhereBaseQuantityMaxPrecision(p entql.IntP) {
+	f.Where(p.Field(tradingpair.FieldBaseQuantityMaxPrecision))
+}
+
+// WhereCounterPriceMinPrecision applies the entql int predicate on the counter_price_min_precision field.
+func (f *TradingPairFilter) WhereCounterPriceMinPrecision(p entql.IntP) {
+	f.Where(p.Field(tradingpair.FieldCounterPriceMinPrecision))
+}
+
+// WhereCounterPriceMaxPrecision applies the entql int predicate on the counter_price_max_precision field.
+func (f *TradingPairFilter) WhereCounterPriceMaxPrecision(p entql.IntP) {
+	f.Where(p.Field(tradingpair.FieldCounterPriceMaxPrecision))
+}
+
+// WhereCounterQuantityMinPrecision applies the entql int predicate on the counter_quantity_min_precision field.
+func (f *TradingPairFilter) WhereCounterQuantityMinPrecision(p entql.IntP) {
+	f.Where(p.Field(tradingpair.FieldCounterQuantityMinPrecision))
+}
+
+// WhereCounterQuantityMaxPrecision applies the entql int predicate on the counter_quantity_max_precision field.
+func (f *TradingPairFilter) WhereCounterQuantityMaxPrecision(p entql.IntP) {
+	f.Where(p.Field(tradingpair.FieldCounterQuantityMaxPrecision))
 }
 
 // WhereHasExchange applies a predicate to check if query has an edge exchange.

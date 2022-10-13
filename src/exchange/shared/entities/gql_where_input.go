@@ -2441,29 +2441,101 @@ type TradingPairWhereInput struct {
 	SymbolEqualFold    *string  `json:"symbolEqualFold,omitempty"`
 	SymbolContainsFold *string  `json:"symbolContainsFold,omitempty"`
 
-	// "base_precision" field predicates.
-	BasePrecision       *int  `json:"basePrecision,omitempty"`
-	BasePrecisionNEQ    *int  `json:"basePrecisionNEQ,omitempty"`
-	BasePrecisionIn     []int `json:"basePrecisionIn,omitempty"`
-	BasePrecisionNotIn  []int `json:"basePrecisionNotIn,omitempty"`
-	BasePrecisionGT     *int  `json:"basePrecisionGT,omitempty"`
-	BasePrecisionGTE    *int  `json:"basePrecisionGTE,omitempty"`
-	BasePrecisionLT     *int  `json:"basePrecisionLT,omitempty"`
-	BasePrecisionLTE    *int  `json:"basePrecisionLTE,omitempty"`
-	BasePrecisionIsNil  bool  `json:"basePrecisionIsNil,omitempty"`
-	BasePrecisionNotNil bool  `json:"basePrecisionNotNil,omitempty"`
+	// "base_price_min_precision" field predicates.
+	BasePriceMinPrecision       *int  `json:"basePriceMinPrecision,omitempty"`
+	BasePriceMinPrecisionNEQ    *int  `json:"basePriceMinPrecisionNEQ,omitempty"`
+	BasePriceMinPrecisionIn     []int `json:"basePriceMinPrecisionIn,omitempty"`
+	BasePriceMinPrecisionNotIn  []int `json:"basePriceMinPrecisionNotIn,omitempty"`
+	BasePriceMinPrecisionGT     *int  `json:"basePriceMinPrecisionGT,omitempty"`
+	BasePriceMinPrecisionGTE    *int  `json:"basePriceMinPrecisionGTE,omitempty"`
+	BasePriceMinPrecisionLT     *int  `json:"basePriceMinPrecisionLT,omitempty"`
+	BasePriceMinPrecisionLTE    *int  `json:"basePriceMinPrecisionLTE,omitempty"`
+	BasePriceMinPrecisionIsNil  bool  `json:"basePriceMinPrecisionIsNil,omitempty"`
+	BasePriceMinPrecisionNotNil bool  `json:"basePriceMinPrecisionNotNil,omitempty"`
 
-	// "counter_precision" field predicates.
-	CounterPrecision       *int  `json:"counterPrecision,omitempty"`
-	CounterPrecisionNEQ    *int  `json:"counterPrecisionNEQ,omitempty"`
-	CounterPrecisionIn     []int `json:"counterPrecisionIn,omitempty"`
-	CounterPrecisionNotIn  []int `json:"counterPrecisionNotIn,omitempty"`
-	CounterPrecisionGT     *int  `json:"counterPrecisionGT,omitempty"`
-	CounterPrecisionGTE    *int  `json:"counterPrecisionGTE,omitempty"`
-	CounterPrecisionLT     *int  `json:"counterPrecisionLT,omitempty"`
-	CounterPrecisionLTE    *int  `json:"counterPrecisionLTE,omitempty"`
-	CounterPrecisionIsNil  bool  `json:"counterPrecisionIsNil,omitempty"`
-	CounterPrecisionNotNil bool  `json:"counterPrecisionNotNil,omitempty"`
+	// "base_price_max_precision" field predicates.
+	BasePriceMaxPrecision       *int  `json:"basePriceMaxPrecision,omitempty"`
+	BasePriceMaxPrecisionNEQ    *int  `json:"basePriceMaxPrecisionNEQ,omitempty"`
+	BasePriceMaxPrecisionIn     []int `json:"basePriceMaxPrecisionIn,omitempty"`
+	BasePriceMaxPrecisionNotIn  []int `json:"basePriceMaxPrecisionNotIn,omitempty"`
+	BasePriceMaxPrecisionGT     *int  `json:"basePriceMaxPrecisionGT,omitempty"`
+	BasePriceMaxPrecisionGTE    *int  `json:"basePriceMaxPrecisionGTE,omitempty"`
+	BasePriceMaxPrecisionLT     *int  `json:"basePriceMaxPrecisionLT,omitempty"`
+	BasePriceMaxPrecisionLTE    *int  `json:"basePriceMaxPrecisionLTE,omitempty"`
+	BasePriceMaxPrecisionIsNil  bool  `json:"basePriceMaxPrecisionIsNil,omitempty"`
+	BasePriceMaxPrecisionNotNil bool  `json:"basePriceMaxPrecisionNotNil,omitempty"`
+
+	// "base_quantity_min_precision" field predicates.
+	BaseQuantityMinPrecision       *int  `json:"baseQuantityMinPrecision,omitempty"`
+	BaseQuantityMinPrecisionNEQ    *int  `json:"baseQuantityMinPrecisionNEQ,omitempty"`
+	BaseQuantityMinPrecisionIn     []int `json:"baseQuantityMinPrecisionIn,omitempty"`
+	BaseQuantityMinPrecisionNotIn  []int `json:"baseQuantityMinPrecisionNotIn,omitempty"`
+	BaseQuantityMinPrecisionGT     *int  `json:"baseQuantityMinPrecisionGT,omitempty"`
+	BaseQuantityMinPrecisionGTE    *int  `json:"baseQuantityMinPrecisionGTE,omitempty"`
+	BaseQuantityMinPrecisionLT     *int  `json:"baseQuantityMinPrecisionLT,omitempty"`
+	BaseQuantityMinPrecisionLTE    *int  `json:"baseQuantityMinPrecisionLTE,omitempty"`
+	BaseQuantityMinPrecisionIsNil  bool  `json:"baseQuantityMinPrecisionIsNil,omitempty"`
+	BaseQuantityMinPrecisionNotNil bool  `json:"baseQuantityMinPrecisionNotNil,omitempty"`
+
+	// "base_quantity_max_precision" field predicates.
+	BaseQuantityMaxPrecision       *int  `json:"baseQuantityMaxPrecision,omitempty"`
+	BaseQuantityMaxPrecisionNEQ    *int  `json:"baseQuantityMaxPrecisionNEQ,omitempty"`
+	BaseQuantityMaxPrecisionIn     []int `json:"baseQuantityMaxPrecisionIn,omitempty"`
+	BaseQuantityMaxPrecisionNotIn  []int `json:"baseQuantityMaxPrecisionNotIn,omitempty"`
+	BaseQuantityMaxPrecisionGT     *int  `json:"baseQuantityMaxPrecisionGT,omitempty"`
+	BaseQuantityMaxPrecisionGTE    *int  `json:"baseQuantityMaxPrecisionGTE,omitempty"`
+	BaseQuantityMaxPrecisionLT     *int  `json:"baseQuantityMaxPrecisionLT,omitempty"`
+	BaseQuantityMaxPrecisionLTE    *int  `json:"baseQuantityMaxPrecisionLTE,omitempty"`
+	BaseQuantityMaxPrecisionIsNil  bool  `json:"baseQuantityMaxPrecisionIsNil,omitempty"`
+	BaseQuantityMaxPrecisionNotNil bool  `json:"baseQuantityMaxPrecisionNotNil,omitempty"`
+
+	// "counter_price_min_precision" field predicates.
+	CounterPriceMinPrecision       *int  `json:"counterPriceMinPrecision,omitempty"`
+	CounterPriceMinPrecisionNEQ    *int  `json:"counterPriceMinPrecisionNEQ,omitempty"`
+	CounterPriceMinPrecisionIn     []int `json:"counterPriceMinPrecisionIn,omitempty"`
+	CounterPriceMinPrecisionNotIn  []int `json:"counterPriceMinPrecisionNotIn,omitempty"`
+	CounterPriceMinPrecisionGT     *int  `json:"counterPriceMinPrecisionGT,omitempty"`
+	CounterPriceMinPrecisionGTE    *int  `json:"counterPriceMinPrecisionGTE,omitempty"`
+	CounterPriceMinPrecisionLT     *int  `json:"counterPriceMinPrecisionLT,omitempty"`
+	CounterPriceMinPrecisionLTE    *int  `json:"counterPriceMinPrecisionLTE,omitempty"`
+	CounterPriceMinPrecisionIsNil  bool  `json:"counterPriceMinPrecisionIsNil,omitempty"`
+	CounterPriceMinPrecisionNotNil bool  `json:"counterPriceMinPrecisionNotNil,omitempty"`
+
+	// "counter_price_max_precision" field predicates.
+	CounterPriceMaxPrecision       *int  `json:"counterPriceMaxPrecision,omitempty"`
+	CounterPriceMaxPrecisionNEQ    *int  `json:"counterPriceMaxPrecisionNEQ,omitempty"`
+	CounterPriceMaxPrecisionIn     []int `json:"counterPriceMaxPrecisionIn,omitempty"`
+	CounterPriceMaxPrecisionNotIn  []int `json:"counterPriceMaxPrecisionNotIn,omitempty"`
+	CounterPriceMaxPrecisionGT     *int  `json:"counterPriceMaxPrecisionGT,omitempty"`
+	CounterPriceMaxPrecisionGTE    *int  `json:"counterPriceMaxPrecisionGTE,omitempty"`
+	CounterPriceMaxPrecisionLT     *int  `json:"counterPriceMaxPrecisionLT,omitempty"`
+	CounterPriceMaxPrecisionLTE    *int  `json:"counterPriceMaxPrecisionLTE,omitempty"`
+	CounterPriceMaxPrecisionIsNil  bool  `json:"counterPriceMaxPrecisionIsNil,omitempty"`
+	CounterPriceMaxPrecisionNotNil bool  `json:"counterPriceMaxPrecisionNotNil,omitempty"`
+
+	// "counter_quantity_min_precision" field predicates.
+	CounterQuantityMinPrecision       *int  `json:"counterQuantityMinPrecision,omitempty"`
+	CounterQuantityMinPrecisionNEQ    *int  `json:"counterQuantityMinPrecisionNEQ,omitempty"`
+	CounterQuantityMinPrecisionIn     []int `json:"counterQuantityMinPrecisionIn,omitempty"`
+	CounterQuantityMinPrecisionNotIn  []int `json:"counterQuantityMinPrecisionNotIn,omitempty"`
+	CounterQuantityMinPrecisionGT     *int  `json:"counterQuantityMinPrecisionGT,omitempty"`
+	CounterQuantityMinPrecisionGTE    *int  `json:"counterQuantityMinPrecisionGTE,omitempty"`
+	CounterQuantityMinPrecisionLT     *int  `json:"counterQuantityMinPrecisionLT,omitempty"`
+	CounterQuantityMinPrecisionLTE    *int  `json:"counterQuantityMinPrecisionLTE,omitempty"`
+	CounterQuantityMinPrecisionIsNil  bool  `json:"counterQuantityMinPrecisionIsNil,omitempty"`
+	CounterQuantityMinPrecisionNotNil bool  `json:"counterQuantityMinPrecisionNotNil,omitempty"`
+
+	// "counter_quantity_max_precision" field predicates.
+	CounterQuantityMaxPrecision       *int  `json:"counterQuantityMaxPrecision,omitempty"`
+	CounterQuantityMaxPrecisionNEQ    *int  `json:"counterQuantityMaxPrecisionNEQ,omitempty"`
+	CounterQuantityMaxPrecisionIn     []int `json:"counterQuantityMaxPrecisionIn,omitempty"`
+	CounterQuantityMaxPrecisionNotIn  []int `json:"counterQuantityMaxPrecisionNotIn,omitempty"`
+	CounterQuantityMaxPrecisionGT     *int  `json:"counterQuantityMaxPrecisionGT,omitempty"`
+	CounterQuantityMaxPrecisionGTE    *int  `json:"counterQuantityMaxPrecisionGTE,omitempty"`
+	CounterQuantityMaxPrecisionLT     *int  `json:"counterQuantityMaxPrecisionLT,omitempty"`
+	CounterQuantityMaxPrecisionLTE    *int  `json:"counterQuantityMaxPrecisionLTE,omitempty"`
+	CounterQuantityMaxPrecisionIsNil  bool  `json:"counterQuantityMaxPrecisionIsNil,omitempty"`
+	CounterQuantityMaxPrecisionNotNil bool  `json:"counterQuantityMaxPrecisionNotNil,omitempty"`
 
 	// "exchange" edge predicates.
 	HasExchange     *bool                 `json:"hasExchange,omitempty"`
@@ -2612,65 +2684,245 @@ func (i *TradingPairWhereInput) P() (predicate.TradingPair, error) {
 	if i.SymbolContainsFold != nil {
 		predicates = append(predicates, tradingpair.SymbolContainsFold(*i.SymbolContainsFold))
 	}
-	if i.BasePrecision != nil {
-		predicates = append(predicates, tradingpair.BasePrecisionEQ(*i.BasePrecision))
+	if i.BasePriceMinPrecision != nil {
+		predicates = append(predicates, tradingpair.BasePriceMinPrecisionEQ(*i.BasePriceMinPrecision))
 	}
-	if i.BasePrecisionNEQ != nil {
-		predicates = append(predicates, tradingpair.BasePrecisionNEQ(*i.BasePrecisionNEQ))
+	if i.BasePriceMinPrecisionNEQ != nil {
+		predicates = append(predicates, tradingpair.BasePriceMinPrecisionNEQ(*i.BasePriceMinPrecisionNEQ))
 	}
-	if len(i.BasePrecisionIn) > 0 {
-		predicates = append(predicates, tradingpair.BasePrecisionIn(i.BasePrecisionIn...))
+	if len(i.BasePriceMinPrecisionIn) > 0 {
+		predicates = append(predicates, tradingpair.BasePriceMinPrecisionIn(i.BasePriceMinPrecisionIn...))
 	}
-	if len(i.BasePrecisionNotIn) > 0 {
-		predicates = append(predicates, tradingpair.BasePrecisionNotIn(i.BasePrecisionNotIn...))
+	if len(i.BasePriceMinPrecisionNotIn) > 0 {
+		predicates = append(predicates, tradingpair.BasePriceMinPrecisionNotIn(i.BasePriceMinPrecisionNotIn...))
 	}
-	if i.BasePrecisionGT != nil {
-		predicates = append(predicates, tradingpair.BasePrecisionGT(*i.BasePrecisionGT))
+	if i.BasePriceMinPrecisionGT != nil {
+		predicates = append(predicates, tradingpair.BasePriceMinPrecisionGT(*i.BasePriceMinPrecisionGT))
 	}
-	if i.BasePrecisionGTE != nil {
-		predicates = append(predicates, tradingpair.BasePrecisionGTE(*i.BasePrecisionGTE))
+	if i.BasePriceMinPrecisionGTE != nil {
+		predicates = append(predicates, tradingpair.BasePriceMinPrecisionGTE(*i.BasePriceMinPrecisionGTE))
 	}
-	if i.BasePrecisionLT != nil {
-		predicates = append(predicates, tradingpair.BasePrecisionLT(*i.BasePrecisionLT))
+	if i.BasePriceMinPrecisionLT != nil {
+		predicates = append(predicates, tradingpair.BasePriceMinPrecisionLT(*i.BasePriceMinPrecisionLT))
 	}
-	if i.BasePrecisionLTE != nil {
-		predicates = append(predicates, tradingpair.BasePrecisionLTE(*i.BasePrecisionLTE))
+	if i.BasePriceMinPrecisionLTE != nil {
+		predicates = append(predicates, tradingpair.BasePriceMinPrecisionLTE(*i.BasePriceMinPrecisionLTE))
 	}
-	if i.BasePrecisionIsNil {
-		predicates = append(predicates, tradingpair.BasePrecisionIsNil())
+	if i.BasePriceMinPrecisionIsNil {
+		predicates = append(predicates, tradingpair.BasePriceMinPrecisionIsNil())
 	}
-	if i.BasePrecisionNotNil {
-		predicates = append(predicates, tradingpair.BasePrecisionNotNil())
+	if i.BasePriceMinPrecisionNotNil {
+		predicates = append(predicates, tradingpair.BasePriceMinPrecisionNotNil())
 	}
-	if i.CounterPrecision != nil {
-		predicates = append(predicates, tradingpair.CounterPrecisionEQ(*i.CounterPrecision))
+	if i.BasePriceMaxPrecision != nil {
+		predicates = append(predicates, tradingpair.BasePriceMaxPrecisionEQ(*i.BasePriceMaxPrecision))
 	}
-	if i.CounterPrecisionNEQ != nil {
-		predicates = append(predicates, tradingpair.CounterPrecisionNEQ(*i.CounterPrecisionNEQ))
+	if i.BasePriceMaxPrecisionNEQ != nil {
+		predicates = append(predicates, tradingpair.BasePriceMaxPrecisionNEQ(*i.BasePriceMaxPrecisionNEQ))
 	}
-	if len(i.CounterPrecisionIn) > 0 {
-		predicates = append(predicates, tradingpair.CounterPrecisionIn(i.CounterPrecisionIn...))
+	if len(i.BasePriceMaxPrecisionIn) > 0 {
+		predicates = append(predicates, tradingpair.BasePriceMaxPrecisionIn(i.BasePriceMaxPrecisionIn...))
 	}
-	if len(i.CounterPrecisionNotIn) > 0 {
-		predicates = append(predicates, tradingpair.CounterPrecisionNotIn(i.CounterPrecisionNotIn...))
+	if len(i.BasePriceMaxPrecisionNotIn) > 0 {
+		predicates = append(predicates, tradingpair.BasePriceMaxPrecisionNotIn(i.BasePriceMaxPrecisionNotIn...))
 	}
-	if i.CounterPrecisionGT != nil {
-		predicates = append(predicates, tradingpair.CounterPrecisionGT(*i.CounterPrecisionGT))
+	if i.BasePriceMaxPrecisionGT != nil {
+		predicates = append(predicates, tradingpair.BasePriceMaxPrecisionGT(*i.BasePriceMaxPrecisionGT))
 	}
-	if i.CounterPrecisionGTE != nil {
-		predicates = append(predicates, tradingpair.CounterPrecisionGTE(*i.CounterPrecisionGTE))
+	if i.BasePriceMaxPrecisionGTE != nil {
+		predicates = append(predicates, tradingpair.BasePriceMaxPrecisionGTE(*i.BasePriceMaxPrecisionGTE))
 	}
-	if i.CounterPrecisionLT != nil {
-		predicates = append(predicates, tradingpair.CounterPrecisionLT(*i.CounterPrecisionLT))
+	if i.BasePriceMaxPrecisionLT != nil {
+		predicates = append(predicates, tradingpair.BasePriceMaxPrecisionLT(*i.BasePriceMaxPrecisionLT))
 	}
-	if i.CounterPrecisionLTE != nil {
-		predicates = append(predicates, tradingpair.CounterPrecisionLTE(*i.CounterPrecisionLTE))
+	if i.BasePriceMaxPrecisionLTE != nil {
+		predicates = append(predicates, tradingpair.BasePriceMaxPrecisionLTE(*i.BasePriceMaxPrecisionLTE))
 	}
-	if i.CounterPrecisionIsNil {
-		predicates = append(predicates, tradingpair.CounterPrecisionIsNil())
+	if i.BasePriceMaxPrecisionIsNil {
+		predicates = append(predicates, tradingpair.BasePriceMaxPrecisionIsNil())
 	}
-	if i.CounterPrecisionNotNil {
-		predicates = append(predicates, tradingpair.CounterPrecisionNotNil())
+	if i.BasePriceMaxPrecisionNotNil {
+		predicates = append(predicates, tradingpair.BasePriceMaxPrecisionNotNil())
+	}
+	if i.BaseQuantityMinPrecision != nil {
+		predicates = append(predicates, tradingpair.BaseQuantityMinPrecisionEQ(*i.BaseQuantityMinPrecision))
+	}
+	if i.BaseQuantityMinPrecisionNEQ != nil {
+		predicates = append(predicates, tradingpair.BaseQuantityMinPrecisionNEQ(*i.BaseQuantityMinPrecisionNEQ))
+	}
+	if len(i.BaseQuantityMinPrecisionIn) > 0 {
+		predicates = append(predicates, tradingpair.BaseQuantityMinPrecisionIn(i.BaseQuantityMinPrecisionIn...))
+	}
+	if len(i.BaseQuantityMinPrecisionNotIn) > 0 {
+		predicates = append(predicates, tradingpair.BaseQuantityMinPrecisionNotIn(i.BaseQuantityMinPrecisionNotIn...))
+	}
+	if i.BaseQuantityMinPrecisionGT != nil {
+		predicates = append(predicates, tradingpair.BaseQuantityMinPrecisionGT(*i.BaseQuantityMinPrecisionGT))
+	}
+	if i.BaseQuantityMinPrecisionGTE != nil {
+		predicates = append(predicates, tradingpair.BaseQuantityMinPrecisionGTE(*i.BaseQuantityMinPrecisionGTE))
+	}
+	if i.BaseQuantityMinPrecisionLT != nil {
+		predicates = append(predicates, tradingpair.BaseQuantityMinPrecisionLT(*i.BaseQuantityMinPrecisionLT))
+	}
+	if i.BaseQuantityMinPrecisionLTE != nil {
+		predicates = append(predicates, tradingpair.BaseQuantityMinPrecisionLTE(*i.BaseQuantityMinPrecisionLTE))
+	}
+	if i.BaseQuantityMinPrecisionIsNil {
+		predicates = append(predicates, tradingpair.BaseQuantityMinPrecisionIsNil())
+	}
+	if i.BaseQuantityMinPrecisionNotNil {
+		predicates = append(predicates, tradingpair.BaseQuantityMinPrecisionNotNil())
+	}
+	if i.BaseQuantityMaxPrecision != nil {
+		predicates = append(predicates, tradingpair.BaseQuantityMaxPrecisionEQ(*i.BaseQuantityMaxPrecision))
+	}
+	if i.BaseQuantityMaxPrecisionNEQ != nil {
+		predicates = append(predicates, tradingpair.BaseQuantityMaxPrecisionNEQ(*i.BaseQuantityMaxPrecisionNEQ))
+	}
+	if len(i.BaseQuantityMaxPrecisionIn) > 0 {
+		predicates = append(predicates, tradingpair.BaseQuantityMaxPrecisionIn(i.BaseQuantityMaxPrecisionIn...))
+	}
+	if len(i.BaseQuantityMaxPrecisionNotIn) > 0 {
+		predicates = append(predicates, tradingpair.BaseQuantityMaxPrecisionNotIn(i.BaseQuantityMaxPrecisionNotIn...))
+	}
+	if i.BaseQuantityMaxPrecisionGT != nil {
+		predicates = append(predicates, tradingpair.BaseQuantityMaxPrecisionGT(*i.BaseQuantityMaxPrecisionGT))
+	}
+	if i.BaseQuantityMaxPrecisionGTE != nil {
+		predicates = append(predicates, tradingpair.BaseQuantityMaxPrecisionGTE(*i.BaseQuantityMaxPrecisionGTE))
+	}
+	if i.BaseQuantityMaxPrecisionLT != nil {
+		predicates = append(predicates, tradingpair.BaseQuantityMaxPrecisionLT(*i.BaseQuantityMaxPrecisionLT))
+	}
+	if i.BaseQuantityMaxPrecisionLTE != nil {
+		predicates = append(predicates, tradingpair.BaseQuantityMaxPrecisionLTE(*i.BaseQuantityMaxPrecisionLTE))
+	}
+	if i.BaseQuantityMaxPrecisionIsNil {
+		predicates = append(predicates, tradingpair.BaseQuantityMaxPrecisionIsNil())
+	}
+	if i.BaseQuantityMaxPrecisionNotNil {
+		predicates = append(predicates, tradingpair.BaseQuantityMaxPrecisionNotNil())
+	}
+	if i.CounterPriceMinPrecision != nil {
+		predicates = append(predicates, tradingpair.CounterPriceMinPrecisionEQ(*i.CounterPriceMinPrecision))
+	}
+	if i.CounterPriceMinPrecisionNEQ != nil {
+		predicates = append(predicates, tradingpair.CounterPriceMinPrecisionNEQ(*i.CounterPriceMinPrecisionNEQ))
+	}
+	if len(i.CounterPriceMinPrecisionIn) > 0 {
+		predicates = append(predicates, tradingpair.CounterPriceMinPrecisionIn(i.CounterPriceMinPrecisionIn...))
+	}
+	if len(i.CounterPriceMinPrecisionNotIn) > 0 {
+		predicates = append(predicates, tradingpair.CounterPriceMinPrecisionNotIn(i.CounterPriceMinPrecisionNotIn...))
+	}
+	if i.CounterPriceMinPrecisionGT != nil {
+		predicates = append(predicates, tradingpair.CounterPriceMinPrecisionGT(*i.CounterPriceMinPrecisionGT))
+	}
+	if i.CounterPriceMinPrecisionGTE != nil {
+		predicates = append(predicates, tradingpair.CounterPriceMinPrecisionGTE(*i.CounterPriceMinPrecisionGTE))
+	}
+	if i.CounterPriceMinPrecisionLT != nil {
+		predicates = append(predicates, tradingpair.CounterPriceMinPrecisionLT(*i.CounterPriceMinPrecisionLT))
+	}
+	if i.CounterPriceMinPrecisionLTE != nil {
+		predicates = append(predicates, tradingpair.CounterPriceMinPrecisionLTE(*i.CounterPriceMinPrecisionLTE))
+	}
+	if i.CounterPriceMinPrecisionIsNil {
+		predicates = append(predicates, tradingpair.CounterPriceMinPrecisionIsNil())
+	}
+	if i.CounterPriceMinPrecisionNotNil {
+		predicates = append(predicates, tradingpair.CounterPriceMinPrecisionNotNil())
+	}
+	if i.CounterPriceMaxPrecision != nil {
+		predicates = append(predicates, tradingpair.CounterPriceMaxPrecisionEQ(*i.CounterPriceMaxPrecision))
+	}
+	if i.CounterPriceMaxPrecisionNEQ != nil {
+		predicates = append(predicates, tradingpair.CounterPriceMaxPrecisionNEQ(*i.CounterPriceMaxPrecisionNEQ))
+	}
+	if len(i.CounterPriceMaxPrecisionIn) > 0 {
+		predicates = append(predicates, tradingpair.CounterPriceMaxPrecisionIn(i.CounterPriceMaxPrecisionIn...))
+	}
+	if len(i.CounterPriceMaxPrecisionNotIn) > 0 {
+		predicates = append(predicates, tradingpair.CounterPriceMaxPrecisionNotIn(i.CounterPriceMaxPrecisionNotIn...))
+	}
+	if i.CounterPriceMaxPrecisionGT != nil {
+		predicates = append(predicates, tradingpair.CounterPriceMaxPrecisionGT(*i.CounterPriceMaxPrecisionGT))
+	}
+	if i.CounterPriceMaxPrecisionGTE != nil {
+		predicates = append(predicates, tradingpair.CounterPriceMaxPrecisionGTE(*i.CounterPriceMaxPrecisionGTE))
+	}
+	if i.CounterPriceMaxPrecisionLT != nil {
+		predicates = append(predicates, tradingpair.CounterPriceMaxPrecisionLT(*i.CounterPriceMaxPrecisionLT))
+	}
+	if i.CounterPriceMaxPrecisionLTE != nil {
+		predicates = append(predicates, tradingpair.CounterPriceMaxPrecisionLTE(*i.CounterPriceMaxPrecisionLTE))
+	}
+	if i.CounterPriceMaxPrecisionIsNil {
+		predicates = append(predicates, tradingpair.CounterPriceMaxPrecisionIsNil())
+	}
+	if i.CounterPriceMaxPrecisionNotNil {
+		predicates = append(predicates, tradingpair.CounterPriceMaxPrecisionNotNil())
+	}
+	if i.CounterQuantityMinPrecision != nil {
+		predicates = append(predicates, tradingpair.CounterQuantityMinPrecisionEQ(*i.CounterQuantityMinPrecision))
+	}
+	if i.CounterQuantityMinPrecisionNEQ != nil {
+		predicates = append(predicates, tradingpair.CounterQuantityMinPrecisionNEQ(*i.CounterQuantityMinPrecisionNEQ))
+	}
+	if len(i.CounterQuantityMinPrecisionIn) > 0 {
+		predicates = append(predicates, tradingpair.CounterQuantityMinPrecisionIn(i.CounterQuantityMinPrecisionIn...))
+	}
+	if len(i.CounterQuantityMinPrecisionNotIn) > 0 {
+		predicates = append(predicates, tradingpair.CounterQuantityMinPrecisionNotIn(i.CounterQuantityMinPrecisionNotIn...))
+	}
+	if i.CounterQuantityMinPrecisionGT != nil {
+		predicates = append(predicates, tradingpair.CounterQuantityMinPrecisionGT(*i.CounterQuantityMinPrecisionGT))
+	}
+	if i.CounterQuantityMinPrecisionGTE != nil {
+		predicates = append(predicates, tradingpair.CounterQuantityMinPrecisionGTE(*i.CounterQuantityMinPrecisionGTE))
+	}
+	if i.CounterQuantityMinPrecisionLT != nil {
+		predicates = append(predicates, tradingpair.CounterQuantityMinPrecisionLT(*i.CounterQuantityMinPrecisionLT))
+	}
+	if i.CounterQuantityMinPrecisionLTE != nil {
+		predicates = append(predicates, tradingpair.CounterQuantityMinPrecisionLTE(*i.CounterQuantityMinPrecisionLTE))
+	}
+	if i.CounterQuantityMinPrecisionIsNil {
+		predicates = append(predicates, tradingpair.CounterQuantityMinPrecisionIsNil())
+	}
+	if i.CounterQuantityMinPrecisionNotNil {
+		predicates = append(predicates, tradingpair.CounterQuantityMinPrecisionNotNil())
+	}
+	if i.CounterQuantityMaxPrecision != nil {
+		predicates = append(predicates, tradingpair.CounterQuantityMaxPrecisionEQ(*i.CounterQuantityMaxPrecision))
+	}
+	if i.CounterQuantityMaxPrecisionNEQ != nil {
+		predicates = append(predicates, tradingpair.CounterQuantityMaxPrecisionNEQ(*i.CounterQuantityMaxPrecisionNEQ))
+	}
+	if len(i.CounterQuantityMaxPrecisionIn) > 0 {
+		predicates = append(predicates, tradingpair.CounterQuantityMaxPrecisionIn(i.CounterQuantityMaxPrecisionIn...))
+	}
+	if len(i.CounterQuantityMaxPrecisionNotIn) > 0 {
+		predicates = append(predicates, tradingpair.CounterQuantityMaxPrecisionNotIn(i.CounterQuantityMaxPrecisionNotIn...))
+	}
+	if i.CounterQuantityMaxPrecisionGT != nil {
+		predicates = append(predicates, tradingpair.CounterQuantityMaxPrecisionGT(*i.CounterQuantityMaxPrecisionGT))
+	}
+	if i.CounterQuantityMaxPrecisionGTE != nil {
+		predicates = append(predicates, tradingpair.CounterQuantityMaxPrecisionGTE(*i.CounterQuantityMaxPrecisionGTE))
+	}
+	if i.CounterQuantityMaxPrecisionLT != nil {
+		predicates = append(predicates, tradingpair.CounterQuantityMaxPrecisionLT(*i.CounterQuantityMaxPrecisionLT))
+	}
+	if i.CounterQuantityMaxPrecisionLTE != nil {
+		predicates = append(predicates, tradingpair.CounterQuantityMaxPrecisionLTE(*i.CounterQuantityMaxPrecisionLTE))
+	}
+	if i.CounterQuantityMaxPrecisionIsNil {
+		predicates = append(predicates, tradingpair.CounterQuantityMaxPrecisionIsNil())
+	}
+	if i.CounterQuantityMaxPrecisionNotNil {
+		predicates = append(predicates, tradingpair.CounterQuantityMaxPrecisionNotNil())
 	}
 
 	if i.HasExchange != nil {
