@@ -23,19 +23,19 @@ generate: ## Generate code
 generate-via-docker: ## Generate code
 	@../api-definitions/asyncapi/events/scripts/generate-all.sh
 	@./shared/scripts/generate.sh
-	@./exchange/shared/scripts/generate.sh
-	@./exchange/exchange-api/scripts/generate.sh
-	@./exchange/binance-processor/scripts/generate.sh
-	@./exchange/bitmart-processor/scripts/generate.sh
-	@./exchange/bittrext-processor/scripts/generate.sh
-	@./exchange/coinbase-processor/scripts/generate.sh
-	@./exchange/crypto-processor/scripts/generate.sh
-	@./exchange/coingecko-processor/scripts/generate.sh
-	@./exchange/gemini-processor/scripts/generate.sh
-	@./exchange/huobi-processor/scripts/generate.sh
-	@./exchange/kraken-processor/scripts/generate.sh
-	@./exchange/kucoin-processor/scripts/generate.sh
-	@./exchange/ftx-processor/scripts/generate.sh
+	@./venue/shared/scripts/generate.sh
+	@./venue/venue-api/scripts/generate.sh
+	@./venue/binance-processor/scripts/generate.sh
+	@./venue/bitmart-processor/scripts/generate.sh
+	@./venue/bittrext-processor/scripts/generate.sh
+	@./venue/coinbase-processor/scripts/generate.sh
+	@./venue/crypto-processor/scripts/generate.sh
+	@./venue/coingecko-processor/scripts/generate.sh
+	@./venue/gemini-processor/scripts/generate.sh
+	@./venue/huobi-processor/scripts/generate.sh
+	@./venue/kraken-processor/scripts/generate.sh
+	@./venue/kucoin-processor/scripts/generate.sh
+	@./venue/ftx-processor/scripts/generate.sh
 	@./order/shared/scripts/generate.sh
 	@./order/order-api/scripts/generate.sh
 	@./order/order-processor/scripts/generate.sh

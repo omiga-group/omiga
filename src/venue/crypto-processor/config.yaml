@@ -1,0 +1,19 @@
+app:
+  source: "urn::omiga::crypto-processor"
+
+exchange:
+  id: "crypto"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "crypto-processor"
+  producerName: "crypto-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+crypto:
+  baseUrl: "https://api.crypto.com/v2"

@@ -31,8 +31,8 @@ jobs:
               - 'src/go.mod'
               - 'src/go.sum'
               - 'src/shared/**'
-              - 'src/exchange/shared/**'
-              - 'src/exchange/gemini-processor/**'
+              - 'src/venue/shared/**'
+              - 'src/venue/gemini-processor/**'
 
       - name: Install GitVersion
         if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
@@ -53,7 +53,7 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
              --pull \
              --target build \
-            --file ./src/exchange/gemini-processor/Dockerfile \
+            --file ./src/venue/gemini-processor/Dockerfile \
             ./src
 
       - name: Unit Tests
@@ -63,7 +63,7 @@ jobs:
              --pull \
              --target test \
             --tag omiga/gemini-processor-unittests:$GitVersion_SemVer \
-            --file ./src/exchange/gemini-processor/Dockerfile \
+            --file ./src/venue/gemini-processor/Dockerfile \
             ./src
           mkdir -p ./coverage/reports
           docker create --name extract-container omiga/gemini-processor-unittests:$GitVersion_SemVer
@@ -87,7 +87,7 @@ jobs:
              --target final \
             --tag omiga/gemini-processor:$GitVersion_SemVer \
             --tag omiga/gemini-processor:${{ github.sha }} \
-            --file ./src/exchange/gemini-processor/Dockerfile \
+            --file ./src/venue/gemini-processor/Dockerfile \
             ./src
           docker save -o image.tar omiga/gemini-processor:$GitVersion_SemVer
 

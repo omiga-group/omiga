@@ -1,0 +1,24 @@
+app:
+  source: "urn::omiga::gemini-processor"
+
+exchange:
+  id: "gemini"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "gemini-processor"
+  producerName: "gemini-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+gemini:
+  apiUrl: https://api.gemini.com/v1
+  websocketUrl: wss://api.sandbox.gemini.com
+  timeout: 10
+  orderBook:
+    markets:
+      - market: ETH-PERP

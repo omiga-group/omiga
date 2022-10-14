@@ -1,0 +1,23 @@
+app:
+  source: "urn::omiga::coinbase-processor"
+
+exchange:
+  id: "coinbase"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "coinbase-processor"
+  producerName: "coinbase-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+coinbase:
+  useSandbox: false
+  baseUrl: "https://api.pro.coinbase.com"
+  apiKey: ""
+  passphrase: ""
+  secretKey: ""

@@ -1,0 +1,100 @@
+app:
+  source: "urn::omiga::kraken-processor"
+
+exchange:
+  id: "kraken"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "kraken-processor"
+  producerName: "kraken-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+kraken:
+  apiKey: ""
+  secretKey: ""
+  orderBook:
+    pairs:
+      - pair: XBT/USD
+      - pair: ADA/CAD
+      - pair: ADA/ETH
+      - pair: ADA/EUR
+      - pair: ADA/USD
+      - pair: ADA/XBT
+      - pair: BCH/EUR
+      - pair: BCH/USD
+      - pair: BCH/XBT
+      - pair: BSV/EUR
+      - pair: BSV/USD
+      - pair: BSV/XBT
+      - pair: XBT/EUR
+      - pair: XBT/USD
+      - pair: XBT/CAD
+      - pair: XBT/JPY
+      - pair: XBT/GBP
+      - pair: XBT/USDT
+      - pair: DASH/EUR
+      - pair: DASH/USD
+      - pair: DASH/XBT
+      - pair: XDG/XBT
+      - pair: DOT/EUR
+      - pair: DOT/USD
+      - pair: EOS/ETH
+      - pair: EOS/EUR
+      - pair: EOS/USD
+      - pair: EOS/XBT
+      - pair: ETC/ETH
+      - pair: ETC/EUR
+      - pair: ETC/USD
+      - pair: ETC/XBT
+      - pair: ETH/CAD
+      - pair: ETH/EUR
+      - pair: ETH/USD
+      - pair: ETH/XBT
+      - pair: ETH/JPY
+      - pair: ETH/GBP
+      - pair: ETH/USDT
+      - pair: GNO/ETH
+      - pair: GNO/EUR
+      - pair: GNO/USD
+      - pair: GNO/XBT
+      - pair: LTC/EUR
+      - pair: LTC/USD
+      - pair: LTC/XBT
+      - pair: LTC/USDT
+      - pair: MLN/ETH
+      - pair: MLN/XBT
+      - pair: QTUM/CAD
+      - pair: QTUM/ETH
+      - pair: QTUM/EUR
+      - pair: QTUM/USD
+      - pair: QTUM/XBT
+      - pair: REP/ETH
+      - pair: REP/EUR
+      - pair: REP/USD
+      - pair: REP/XBT
+      - pair: USDT/USD
+      - pair: XLM/EUR
+      - pair: XLM/USD
+      - pair: XLM/XBT
+      - pair: XMR/EUR
+      - pair: XMR/USD
+      - pair: XMR/XBT
+      - pair: XRP/CAD
+      - pair: XRP/EUR
+      - pair: XRP/JPY
+      - pair: XRP/USD
+      - pair: XRP/XBT
+      - pair: XTZ/CAD
+      - pair: XTZ/ETH
+      - pair: XTZ/EUR
+      - pair: XTZ/USD
+      - pair: XTZ/XBT
+      - pair: ZEC/EUR
+      - pair: ZEC/JPY
+      - pair: ZEC/USD

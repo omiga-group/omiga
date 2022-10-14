@@ -41,5 +41,5 @@ Please note that starting dependecies only won't create database and migrate the
 Please note that starting dependecies only won't create database and migrate the schema
 
 ```bash
-./src/exchange/scripts/run-docker-compose.sh up --build
+./src/venue/scripts/run-docker-compose.sh up --build
 ```
