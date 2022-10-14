@@ -2,9 +2,23 @@ name: "Web"
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/codeql-analysis.yml"
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/web.yml"
+      - "api-definitions/graphql/omiga/**"
+      - "src/web/**"
   pull_request:
-    branches: ["main"]
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/codeql-analysis.yml"
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/web.yml"
+      - "api-definitions/graphql/omiga/**"
+      - "src/web/**"
 
 jobs:
   build:
@@ -20,32 +34,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: dorny/paths-filter@v2.10.2
-        id: filter
-        with:
-          filters: |
-            relevant_directories_changed:
-              - '.github/workflows/codeql-analysis.yml'
-              - '.github/workflows/lint.yml'
-              - '.github/workflows/web.yml'
-              - 'api-definitions/graphql/omiga/**'
-              - 'src/web/**'
-
       - name: Install GitVersion
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         uses: gittools/actions/gitversion/setup@v0.9.13
         with:
           versionSpec: "5.x"
 
       - name: Determine Version
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         uses: gittools/actions/gitversion/execute@v0.9.13
         with:
           useConfigFile: true
           configFilePath: GitVersion.yml
 
       - name: Build
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         run: |
           DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
              --pull \
@@ -55,7 +55,6 @@ jobs:
             ./
 
       - name: Run Trivy vulnerability scanner
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: omiga/web:${{ github.sha }}

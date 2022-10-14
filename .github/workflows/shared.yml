@@ -2,9 +2,25 @@ name: "Shared"
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/codeql-analysis.yml"
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/shared.yml"
+      - "src/go.mod"
+      - "src/go.sum"
+      - "src/shared/**"
   pull_request:
-    branches: ["main"]
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/codeql-analysis.yml"
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/shared.yml"
+      - "src/go.mod"
+      - "src/go.sum"
+      - "src/shared/**"
 
 jobs:
   build:
@@ -20,33 +36,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: dorny/paths-filter@v2.10.2
-        id: filter
-        with:
-          filters: |
-            relevant_directories_changed:
-              - '.github/workflows/codeql-analysis.yml'
-              - '.github/workflows/lint.yml'
-              - '.github/workflows/shared.yml'
-              - 'src/go.mod'
-              - 'src/go.sum'
-              - 'src/shared/**'
-
       - name: Install GitVersion
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         uses: gittools/actions/gitversion/setup@v0.9.13
         with:
           versionSpec: "5.x"
 
       - name: Determine Version
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         uses: gittools/actions/gitversion/execute@v0.9.13
         with:
           useConfigFile: true
           configFilePath: GitVersion.yml
 
       - name: Unit Tests
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         run: |
           DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
              --pull \
@@ -59,7 +60,7 @@ jobs:
           docker cp extract-container:/coverage/reports/. "./coverage/reports/"
 
       - name: Upload coverage to Codecov
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' && github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
