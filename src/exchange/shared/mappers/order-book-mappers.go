@@ -43,7 +43,7 @@ func fromQuantityToEventQuantity(src models.Quantity) orderbookv1.Quantity {
 	}
 }
 
-func fromCurrencyToEventCurrency(src models.Currency) orderbookv1.Currency {
+func fromCurrencyToEventCurrency(src models.OrderCurrency) orderbookv1.Currency {
 	return orderbookv1.Currency{
 		Name:         src.Name,
 		Code:         src.Code,

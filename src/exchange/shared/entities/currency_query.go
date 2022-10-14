@@ -12,65 +12,65 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
-// CoinQuery is the builder for querying Coin entities.
-type CoinQuery struct {
+// CurrencyQuery is the builder for querying Currency entities.
+type CurrencyQuery struct {
 	config
-	limit                *int
-	offset               *int
-	unique               *bool
-	order                []OrderFunc
-	fields               []string
-	predicates           []predicate.Coin
-	withCoinBase         *TradingPairQuery
-	withCoinCounter      *TradingPairQuery
-	loadTotal            []func(context.Context, []*Coin) error
-	modifiers            []func(*sql.Selector)
-	withNamedCoinBase    map[string]*TradingPairQuery
-	withNamedCoinCounter map[string]*TradingPairQuery
+	limit                    *int
+	offset                   *int
+	unique                   *bool
+	order                    []OrderFunc
+	fields                   []string
+	predicates               []predicate.Currency
+	withCurrencyBase         *TradingPairQuery
+	withCurrencyCounter      *TradingPairQuery
+	loadTotal                []func(context.Context, []*Currency) error
+	modifiers                []func(*sql.Selector)
+	withNamedCurrencyBase    map[string]*TradingPairQuery
+	withNamedCurrencyCounter map[string]*TradingPairQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the CoinQuery builder.
-func (cq *CoinQuery) Where(ps ...predicate.Coin) *CoinQuery {
+// Where adds a new predicate for the CurrencyQuery builder.
+func (cq *CurrencyQuery) Where(ps ...predicate.Currency) *CurrencyQuery {
 	cq.predicates = append(cq.predicates, ps...)
 	return cq
 }
 
 // Limit adds a limit step to the query.
-func (cq *CoinQuery) Limit(limit int) *CoinQuery {
+func (cq *CurrencyQuery) Limit(limit int) *CurrencyQuery {
 	cq.limit = &limit
 	return cq
 }
 
 // Offset adds an offset step to the query.
-func (cq *CoinQuery) Offset(offset int) *CoinQuery {
+func (cq *CurrencyQuery) Offset(offset int) *CurrencyQuery {
 	cq.offset = &offset
 	return cq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (cq *CoinQuery) Unique(unique bool) *CoinQuery {
+func (cq *CurrencyQuery) Unique(unique bool) *CurrencyQuery {
 	cq.unique = &unique
 	return cq
 }
 
 // Order adds an order step to the query.
-func (cq *CoinQuery) Order(o ...OrderFunc) *CoinQuery {
+func (cq *CurrencyQuery) Order(o ...OrderFunc) *CurrencyQuery {
 	cq.order = append(cq.order, o...)
 	return cq
 }
 
-// QueryCoinBase chains the current query on the "coin_base" edge.
-func (cq *CoinQuery) QueryCoinBase() *TradingPairQuery {
+// QueryCurrencyBase chains the current query on the "currency_base" edge.
+func (cq *CurrencyQuery) QueryCurrencyBase() *TradingPairQuery {
 	query := &TradingPairQuery{config: cq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := cq.prepareQuery(ctx); err != nil {
@@ -81,9 +81,9 @@ func (cq *CoinQuery) QueryCoinBase() *TradingPairQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(coin.Table, coin.FieldID, selector),
+			sqlgraph.From(currency.Table, currency.FieldID, selector),
 			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, coin.CoinBaseTable, coin.CoinBaseColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, currency.CurrencyBaseTable, currency.CurrencyBaseColumn),
 		)
 		schemaConfig := cq.schemaConfig
 		step.To.Schema = schemaConfig.TradingPair
@@ -94,8 +94,8 @@ func (cq *CoinQuery) QueryCoinBase() *TradingPairQuery {
 	return query
 }
 
-// QueryCoinCounter chains the current query on the "coin_counter" edge.
-func (cq *CoinQuery) QueryCoinCounter() *TradingPairQuery {
+// QueryCurrencyCounter chains the current query on the "currency_counter" edge.
+func (cq *CurrencyQuery) QueryCurrencyCounter() *TradingPairQuery {
 	query := &TradingPairQuery{config: cq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := cq.prepareQuery(ctx); err != nil {
@@ -106,9 +106,9 @@ func (cq *CoinQuery) QueryCoinCounter() *TradingPairQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(coin.Table, coin.FieldID, selector),
+			sqlgraph.From(currency.Table, currency.FieldID, selector),
 			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, coin.CoinCounterTable, coin.CoinCounterColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, currency.CurrencyCounterTable, currency.CurrencyCounterColumn),
 		)
 		schemaConfig := cq.schemaConfig
 		step.To.Schema = schemaConfig.TradingPair
@@ -119,21 +119,21 @@ func (cq *CoinQuery) QueryCoinCounter() *TradingPairQuery {
 	return query
 }
 
-// First returns the first Coin entity from the query.
-// Returns a *NotFoundError when no Coin was found.
-func (cq *CoinQuery) First(ctx context.Context) (*Coin, error) {
+// First returns the first Currency entity from the query.
+// Returns a *NotFoundError when no Currency was found.
+func (cq *CurrencyQuery) First(ctx context.Context) (*Currency, error) {
 	nodes, err := cq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{coin.Label}
+		return nil, &NotFoundError{currency.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (cq *CoinQuery) FirstX(ctx context.Context) *Coin {
+func (cq *CurrencyQuery) FirstX(ctx context.Context) *Currency {
 	node, err := cq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -141,22 +141,22 @@ func (cq *CoinQuery) FirstX(ctx context.Context) *Coin {
 	return node
 }
 
-// FirstID returns the first Coin ID from the query.
-// Returns a *NotFoundError when no Coin ID was found.
-func (cq *CoinQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first Currency ID from the query.
+// Returns a *NotFoundError when no Currency ID was found.
+func (cq *CurrencyQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = cq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{coin.Label}
+		err = &NotFoundError{currency.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (cq *CoinQuery) FirstIDX(ctx context.Context) int {
+func (cq *CurrencyQuery) FirstIDX(ctx context.Context) int {
 	id, err := cq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -164,10 +164,10 @@ func (cq *CoinQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single Coin entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one Coin entity is found.
-// Returns a *NotFoundError when no Coin entities are found.
-func (cq *CoinQuery) Only(ctx context.Context) (*Coin, error) {
+// Only returns a single Currency entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one Currency entity is found.
+// Returns a *NotFoundError when no Currency entities are found.
+func (cq *CurrencyQuery) Only(ctx context.Context) (*Currency, error) {
 	nodes, err := cq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
@@ -176,14 +176,14 @@ func (cq *CoinQuery) Only(ctx context.Context) (*Coin, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{coin.Label}
+		return nil, &NotFoundError{currency.Label}
 	default:
-		return nil, &NotSingularError{coin.Label}
+		return nil, &NotSingularError{currency.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (cq *CoinQuery) OnlyX(ctx context.Context) *Coin {
+func (cq *CurrencyQuery) OnlyX(ctx context.Context) *Currency {
 	node, err := cq.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -191,10 +191,10 @@ func (cq *CoinQuery) OnlyX(ctx context.Context) *Coin {
 	return node
 }
 
-// OnlyID is like Only, but returns the only Coin ID in the query.
-// Returns a *NotSingularError when more than one Coin ID is found.
+// OnlyID is like Only, but returns the only Currency ID in the query.
+// Returns a *NotSingularError when more than one Currency ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (cq *CoinQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (cq *CurrencyQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = cq.Limit(2).IDs(ctx); err != nil {
 		return
@@ -203,15 +203,15 @@ func (cq *CoinQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{coin.Label}
+		err = &NotFoundError{currency.Label}
 	default:
-		err = &NotSingularError{coin.Label}
+		err = &NotSingularError{currency.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (cq *CoinQuery) OnlyIDX(ctx context.Context) int {
+func (cq *CurrencyQuery) OnlyIDX(ctx context.Context) int {
 	id, err := cq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -219,8 +219,8 @@ func (cq *CoinQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of Coins.
-func (cq *CoinQuery) All(ctx context.Context) ([]*Coin, error) {
+// All executes the query and returns a list of Currencies.
+func (cq *CurrencyQuery) All(ctx context.Context) ([]*Currency, error) {
 	if err := cq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -228,7 +228,7 @@ func (cq *CoinQuery) All(ctx context.Context) ([]*Coin, error) {
 }
 
 // AllX is like All, but panics if an error occurs.
-func (cq *CoinQuery) AllX(ctx context.Context) []*Coin {
+func (cq *CurrencyQuery) AllX(ctx context.Context) []*Currency {
 	nodes, err := cq.All(ctx)
 	if err != nil {
 		panic(err)
@@ -236,17 +236,17 @@ func (cq *CoinQuery) AllX(ctx context.Context) []*Coin {
 	return nodes
 }
 
-// IDs executes the query and returns a list of Coin IDs.
-func (cq *CoinQuery) IDs(ctx context.Context) ([]int, error) {
+// IDs executes the query and returns a list of Currency IDs.
+func (cq *CurrencyQuery) IDs(ctx context.Context) ([]int, error) {
 	var ids []int
-	if err := cq.Select(coin.FieldID).Scan(ctx, &ids); err != nil {
+	if err := cq.Select(currency.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (cq *CoinQuery) IDsX(ctx context.Context) []int {
+func (cq *CurrencyQuery) IDsX(ctx context.Context) []int {
 	ids, err := cq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -255,7 +255,7 @@ func (cq *CoinQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (cq *CoinQuery) Count(ctx context.Context) (int, error) {
+func (cq *CurrencyQuery) Count(ctx context.Context) (int, error) {
 	if err := cq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -263,7 +263,7 @@ func (cq *CoinQuery) Count(ctx context.Context) (int, error) {
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (cq *CoinQuery) CountX(ctx context.Context) int {
+func (cq *CurrencyQuery) CountX(ctx context.Context) int {
 	count, err := cq.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -272,7 +272,7 @@ func (cq *CoinQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (cq *CoinQuery) Exist(ctx context.Context) (bool, error) {
+func (cq *CurrencyQuery) Exist(ctx context.Context) (bool, error) {
 	if err := cq.prepareQuery(ctx); err != nil {
 		return false, err
 	}
@@ -280,7 +280,7 @@ func (cq *CoinQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (cq *CoinQuery) ExistX(ctx context.Context) bool {
+func (cq *CurrencyQuery) ExistX(ctx context.Context) bool {
 	exist, err := cq.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -288,20 +288,20 @@ func (cq *CoinQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the CoinQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the CurrencyQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (cq *CoinQuery) Clone() *CoinQuery {
+func (cq *CurrencyQuery) Clone() *CurrencyQuery {
 	if cq == nil {
 		return nil
 	}
-	return &CoinQuery{
-		config:          cq.config,
-		limit:           cq.limit,
-		offset:          cq.offset,
-		order:           append([]OrderFunc{}, cq.order...),
-		predicates:      append([]predicate.Coin{}, cq.predicates...),
-		withCoinBase:    cq.withCoinBase.Clone(),
-		withCoinCounter: cq.withCoinCounter.Clone(),
+	return &CurrencyQuery{
+		config:              cq.config,
+		limit:               cq.limit,
+		offset:              cq.offset,
+		order:               append([]OrderFunc{}, cq.order...),
+		predicates:          append([]predicate.Currency{}, cq.predicates...),
+		withCurrencyBase:    cq.withCurrencyBase.Clone(),
+		withCurrencyCounter: cq.withCurrencyCounter.Clone(),
 		// clone intermediate query.
 		sql:    cq.sql.Clone(),
 		path:   cq.path,
@@ -309,25 +309,25 @@ func (cq *CoinQuery) Clone() *CoinQuery {
 	}
 }
 
-// WithCoinBase tells the query-builder to eager-load the nodes that are connected to
-// the "coin_base" edge. The optional arguments are used to configure the query builder of the edge.
-func (cq *CoinQuery) WithCoinBase(opts ...func(*TradingPairQuery)) *CoinQuery {
+// WithCurrencyBase tells the query-builder to eager-load the nodes that are connected to
+// the "currency_base" edge. The optional arguments are used to configure the query builder of the edge.
+func (cq *CurrencyQuery) WithCurrencyBase(opts ...func(*TradingPairQuery)) *CurrencyQuery {
 	query := &TradingPairQuery{config: cq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	cq.withCoinBase = query
+	cq.withCurrencyBase = query
 	return cq
 }
 
-// WithCoinCounter tells the query-builder to eager-load the nodes that are connected to
-// the "coin_counter" edge. The optional arguments are used to configure the query builder of the edge.
-func (cq *CoinQuery) WithCoinCounter(opts ...func(*TradingPairQuery)) *CoinQuery {
+// WithCurrencyCounter tells the query-builder to eager-load the nodes that are connected to
+// the "currency_counter" edge. The optional arguments are used to configure the query builder of the edge.
+func (cq *CurrencyQuery) WithCurrencyCounter(opts ...func(*TradingPairQuery)) *CurrencyQuery {
 	query := &TradingPairQuery{config: cq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	cq.withCoinCounter = query
+	cq.withCurrencyCounter = query
 	return cq
 }
 
@@ -341,12 +341,12 @@ func (cq *CoinQuery) WithCoinCounter(opts ...func(*TradingPairQuery)) *CoinQuery
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.Coin.Query().
-//		GroupBy(coin.FieldSymbol).
+//	client.Currency.Query().
+//		GroupBy(currency.FieldSymbol).
 //		Aggregate(entities.Count()).
 //		Scan(ctx, &v)
-func (cq *CoinQuery) GroupBy(field string, fields ...string) *CoinGroupBy {
-	grbuild := &CoinGroupBy{config: cq.config}
+func (cq *CurrencyQuery) GroupBy(field string, fields ...string) *CurrencyGroupBy {
+	grbuild := &CurrencyGroupBy{config: cq.config}
 	grbuild.fields = append([]string{field}, fields...)
 	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
 		if err := cq.prepareQuery(ctx); err != nil {
@@ -354,7 +354,7 @@ func (cq *CoinQuery) GroupBy(field string, fields ...string) *CoinGroupBy {
 		}
 		return cq.sqlQuery(ctx), nil
 	}
-	grbuild.label = coin.Label
+	grbuild.label = currency.Label
 	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
 	return grbuild
 }
@@ -368,20 +368,20 @@ func (cq *CoinQuery) GroupBy(field string, fields ...string) *CoinGroupBy {
 //		Symbol string `json:"symbol,omitempty"`
 //	}
 //
-//	client.Coin.Query().
-//		Select(coin.FieldSymbol).
+//	client.Currency.Query().
+//		Select(currency.FieldSymbol).
 //		Scan(ctx, &v)
-func (cq *CoinQuery) Select(fields ...string) *CoinSelect {
+func (cq *CurrencyQuery) Select(fields ...string) *CurrencySelect {
 	cq.fields = append(cq.fields, fields...)
-	selbuild := &CoinSelect{CoinQuery: cq}
-	selbuild.label = coin.Label
+	selbuild := &CurrencySelect{CurrencyQuery: cq}
+	selbuild.label = currency.Label
 	selbuild.flds, selbuild.scan = &cq.fields, selbuild.Scan
 	return selbuild
 }
 
-func (cq *CoinQuery) prepareQuery(ctx context.Context) error {
+func (cq *CurrencyQuery) prepareQuery(ctx context.Context) error {
 	for _, f := range cq.fields {
-		if !coin.ValidColumn(f) {
+		if !currency.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("entities: invalid field %q for query", f)}
 		}
 	}
@@ -395,25 +395,25 @@ func (cq *CoinQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (cq *CoinQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Coin, error) {
+func (cq *CurrencyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Currency, error) {
 	var (
-		nodes       = []*Coin{}
+		nodes       = []*Currency{}
 		_spec       = cq.querySpec()
 		loadedTypes = [2]bool{
-			cq.withCoinBase != nil,
-			cq.withCoinCounter != nil,
+			cq.withCurrencyBase != nil,
+			cq.withCurrencyCounter != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*Coin).scanValues(nil, columns)
+		return (*Currency).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &Coin{config: cq.config}
+		node := &Currency{config: cq.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
-	_spec.Node.Schema = cq.schemaConfig.Coin
+	_spec.Node.Schema = cq.schemaConfig.Currency
 	ctx = internal.NewSchemaConfigContext(ctx, cq.schemaConfig)
 	if len(cq.modifiers) > 0 {
 		_spec.Modifiers = cq.modifiers
@@ -427,31 +427,31 @@ func (cq *CoinQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Coin, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := cq.withCoinBase; query != nil {
-		if err := cq.loadCoinBase(ctx, query, nodes,
-			func(n *Coin) { n.Edges.CoinBase = []*TradingPair{} },
-			func(n *Coin, e *TradingPair) { n.Edges.CoinBase = append(n.Edges.CoinBase, e) }); err != nil {
+	if query := cq.withCurrencyBase; query != nil {
+		if err := cq.loadCurrencyBase(ctx, query, nodes,
+			func(n *Currency) { n.Edges.CurrencyBase = []*TradingPair{} },
+			func(n *Currency, e *TradingPair) { n.Edges.CurrencyBase = append(n.Edges.CurrencyBase, e) }); err != nil {
 			return nil, err
 		}
 	}
-	if query := cq.withCoinCounter; query != nil {
-		if err := cq.loadCoinCounter(ctx, query, nodes,
-			func(n *Coin) { n.Edges.CoinCounter = []*TradingPair{} },
-			func(n *Coin, e *TradingPair) { n.Edges.CoinCounter = append(n.Edges.CoinCounter, e) }); err != nil {
+	if query := cq.withCurrencyCounter; query != nil {
+		if err := cq.loadCurrencyCounter(ctx, query, nodes,
+			func(n *Currency) { n.Edges.CurrencyCounter = []*TradingPair{} },
+			func(n *Currency, e *TradingPair) { n.Edges.CurrencyCounter = append(n.Edges.CurrencyCounter, e) }); err != nil {
 			return nil, err
 		}
 	}
-	for name, query := range cq.withNamedCoinBase {
-		if err := cq.loadCoinBase(ctx, query, nodes,
-			func(n *Coin) { n.appendNamedCoinBase(name) },
-			func(n *Coin, e *TradingPair) { n.appendNamedCoinBase(name, e) }); err != nil {
+	for name, query := range cq.withNamedCurrencyBase {
+		if err := cq.loadCurrencyBase(ctx, query, nodes,
+			func(n *Currency) { n.appendNamedCurrencyBase(name) },
+			func(n *Currency, e *TradingPair) { n.appendNamedCurrencyBase(name, e) }); err != nil {
 			return nil, err
 		}
 	}
-	for name, query := range cq.withNamedCoinCounter {
-		if err := cq.loadCoinCounter(ctx, query, nodes,
-			func(n *Coin) { n.appendNamedCoinCounter(name) },
-			func(n *Coin, e *TradingPair) { n.appendNamedCoinCounter(name, e) }); err != nil {
+	for name, query := range cq.withNamedCurrencyCounter {
+		if err := cq.loadCurrencyCounter(ctx, query, nodes,
+			func(n *Currency) { n.appendNamedCurrencyCounter(name) },
+			func(n *Currency, e *TradingPair) { n.appendNamedCurrencyCounter(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -463,9 +463,9 @@ func (cq *CoinQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Coin, e
 	return nodes, nil
 }
 
-func (cq *CoinQuery) loadCoinBase(ctx context.Context, query *TradingPairQuery, nodes []*Coin, init func(*Coin), assign func(*Coin, *TradingPair)) error {
+func (cq *CurrencyQuery) loadCurrencyBase(ctx context.Context, query *TradingPairQuery, nodes []*Currency, init func(*Currency), assign func(*Currency, *TradingPair)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Coin)
+	nodeids := make(map[int]*Currency)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -475,28 +475,28 @@ func (cq *CoinQuery) loadCoinBase(ctx context.Context, query *TradingPairQuery, 
 	}
 	query.withFKs = true
 	query.Where(predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.InValues(coin.CoinBaseColumn, fks...))
+		s.Where(sql.InValues(currency.CurrencyBaseColumn, fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.coin_coin_base
+		fk := n.currency_currency_base
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "coin_coin_base" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "currency_currency_base" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "coin_coin_base" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "currency_currency_base" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
 	return nil
 }
-func (cq *CoinQuery) loadCoinCounter(ctx context.Context, query *TradingPairQuery, nodes []*Coin, init func(*Coin), assign func(*Coin, *TradingPair)) error {
+func (cq *CurrencyQuery) loadCurrencyCounter(ctx context.Context, query *TradingPairQuery, nodes []*Currency, init func(*Currency), assign func(*Currency, *TradingPair)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Coin)
+	nodeids := make(map[int]*Currency)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -506,29 +506,29 @@ func (cq *CoinQuery) loadCoinCounter(ctx context.Context, query *TradingPairQuer
 	}
 	query.withFKs = true
 	query.Where(predicate.TradingPair(func(s *sql.Selector) {
-		s.Where(sql.InValues(coin.CoinCounterColumn, fks...))
+		s.Where(sql.InValues(currency.CurrencyCounterColumn, fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.coin_coin_counter
+		fk := n.currency_currency_counter
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "coin_coin_counter" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "currency_currency_counter" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "coin_coin_counter" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "currency_currency_counter" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
 	return nil
 }
 
-func (cq *CoinQuery) sqlCount(ctx context.Context) (int, error) {
+func (cq *CurrencyQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := cq.querySpec()
-	_spec.Node.Schema = cq.schemaConfig.Coin
+	_spec.Node.Schema = cq.schemaConfig.Currency
 	ctx = internal.NewSchemaConfigContext(ctx, cq.schemaConfig)
 	if len(cq.modifiers) > 0 {
 		_spec.Modifiers = cq.modifiers
@@ -540,7 +540,7 @@ func (cq *CoinQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, cq.driver, _spec)
 }
 
-func (cq *CoinQuery) sqlExist(ctx context.Context) (bool, error) {
+func (cq *CurrencyQuery) sqlExist(ctx context.Context) (bool, error) {
 	n, err := cq.sqlCount(ctx)
 	if err != nil {
 		return false, fmt.Errorf("entities: check existence: %w", err)
@@ -548,14 +548,14 @@ func (cq *CoinQuery) sqlExist(ctx context.Context) (bool, error) {
 	return n > 0, nil
 }
 
-func (cq *CoinQuery) querySpec() *sqlgraph.QuerySpec {
+func (cq *CurrencyQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   coin.Table,
-			Columns: coin.Columns,
+			Table:   currency.Table,
+			Columns: currency.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: coin.FieldID,
+				Column: currency.FieldID,
 			},
 		},
 		From:   cq.sql,
@@ -566,9 +566,9 @@ func (cq *CoinQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := cq.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, coin.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, currency.FieldID)
 		for i := range fields {
-			if fields[i] != coin.FieldID {
+			if fields[i] != currency.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -596,12 +596,12 @@ func (cq *CoinQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (cq *CoinQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (cq *CurrencyQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(cq.driver.Dialect())
-	t1 := builder.Table(coin.Table)
+	t1 := builder.Table(currency.Table)
 	columns := cq.fields
 	if len(columns) == 0 {
-		columns = coin.Columns
+		columns = currency.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if cq.sql != nil {
@@ -611,7 +611,7 @@ func (cq *CoinQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if cq.unique != nil && *cq.unique {
 		selector.Distinct()
 	}
-	t1.Schema(cq.schemaConfig.Coin)
+	t1.Schema(cq.schemaConfig.Currency)
 	ctx = internal.NewSchemaConfigContext(ctx, cq.schemaConfig)
 	selector.WithContext(ctx)
 	for _, m := range cq.modifiers {
@@ -637,7 +637,7 @@ func (cq *CoinQuery) sqlQuery(ctx context.Context) *sql.Selector {
 // ForUpdate locks the selected rows against concurrent updates, and prevent them from being
 // updated, deleted or "selected ... for update" by other sessions, until the transaction is
 // either committed or rolled-back.
-func (cq *CoinQuery) ForUpdate(opts ...sql.LockOption) *CoinQuery {
+func (cq *CurrencyQuery) ForUpdate(opts ...sql.LockOption) *CurrencyQuery {
 	if cq.driver.Dialect() == dialect.Postgres {
 		cq.Unique(false)
 	}
@@ -650,7 +650,7 @@ func (cq *CoinQuery) ForUpdate(opts ...sql.LockOption) *CoinQuery {
 // ForShare behaves similarly to ForUpdate, except that it acquires a shared mode lock
 // on any rows that are read. Other sessions can read the rows, but cannot modify them
 // until your transaction commits.
-func (cq *CoinQuery) ForShare(opts ...sql.LockOption) *CoinQuery {
+func (cq *CurrencyQuery) ForShare(opts ...sql.LockOption) *CurrencyQuery {
 	if cq.driver.Dialect() == dialect.Postgres {
 		cq.Unique(false)
 	}
@@ -661,41 +661,41 @@ func (cq *CoinQuery) ForShare(opts ...sql.LockOption) *CoinQuery {
 }
 
 // Modify adds a query modifier for attaching custom logic to queries.
-func (cq *CoinQuery) Modify(modifiers ...func(s *sql.Selector)) *CoinSelect {
+func (cq *CurrencyQuery) Modify(modifiers ...func(s *sql.Selector)) *CurrencySelect {
 	cq.modifiers = append(cq.modifiers, modifiers...)
 	return cq.Select()
 }
 
-// WithNamedCoinBase tells the query-builder to eager-load the nodes that are connected to the "coin_base"
+// WithNamedCurrencyBase tells the query-builder to eager-load the nodes that are connected to the "currency_base"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (cq *CoinQuery) WithNamedCoinBase(name string, opts ...func(*TradingPairQuery)) *CoinQuery {
+func (cq *CurrencyQuery) WithNamedCurrencyBase(name string, opts ...func(*TradingPairQuery)) *CurrencyQuery {
 	query := &TradingPairQuery{config: cq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	if cq.withNamedCoinBase == nil {
-		cq.withNamedCoinBase = make(map[string]*TradingPairQuery)
+	if cq.withNamedCurrencyBase == nil {
+		cq.withNamedCurrencyBase = make(map[string]*TradingPairQuery)
 	}
-	cq.withNamedCoinBase[name] = query
+	cq.withNamedCurrencyBase[name] = query
 	return cq
 }
 
-// WithNamedCoinCounter tells the query-builder to eager-load the nodes that are connected to the "coin_counter"
+// WithNamedCurrencyCounter tells the query-builder to eager-load the nodes that are connected to the "currency_counter"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (cq *CoinQuery) WithNamedCoinCounter(name string, opts ...func(*TradingPairQuery)) *CoinQuery {
+func (cq *CurrencyQuery) WithNamedCurrencyCounter(name string, opts ...func(*TradingPairQuery)) *CurrencyQuery {
 	query := &TradingPairQuery{config: cq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	if cq.withNamedCoinCounter == nil {
-		cq.withNamedCoinCounter = make(map[string]*TradingPairQuery)
+	if cq.withNamedCurrencyCounter == nil {
+		cq.withNamedCurrencyCounter = make(map[string]*TradingPairQuery)
 	}
-	cq.withNamedCoinCounter[name] = query
+	cq.withNamedCurrencyCounter[name] = query
 	return cq
 }
 
-// CoinGroupBy is the group-by builder for Coin entities.
-type CoinGroupBy struct {
+// CurrencyGroupBy is the group-by builder for Currency entities.
+type CurrencyGroupBy struct {
 	config
 	selector
 	fields []string
@@ -706,13 +706,13 @@ type CoinGroupBy struct {
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (cgb *CoinGroupBy) Aggregate(fns ...AggregateFunc) *CoinGroupBy {
+func (cgb *CurrencyGroupBy) Aggregate(fns ...AggregateFunc) *CurrencyGroupBy {
 	cgb.fns = append(cgb.fns, fns...)
 	return cgb
 }
 
 // Scan applies the group-by query and scans the result into the given value.
-func (cgb *CoinGroupBy) Scan(ctx context.Context, v any) error {
+func (cgb *CurrencyGroupBy) Scan(ctx context.Context, v any) error {
 	query, err := cgb.path(ctx)
 	if err != nil {
 		return err
@@ -721,9 +721,9 @@ func (cgb *CoinGroupBy) Scan(ctx context.Context, v any) error {
 	return cgb.sqlScan(ctx, v)
 }
 
-func (cgb *CoinGroupBy) sqlScan(ctx context.Context, v any) error {
+func (cgb *CurrencyGroupBy) sqlScan(ctx context.Context, v any) error {
 	for _, f := range cgb.fields {
-		if !coin.ValidColumn(f) {
+		if !currency.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
 		}
 	}
@@ -740,7 +740,7 @@ func (cgb *CoinGroupBy) sqlScan(ctx context.Context, v any) error {
 	return sql.ScanSlice(rows, v)
 }
 
-func (cgb *CoinGroupBy) sqlQuery() *sql.Selector {
+func (cgb *CurrencyGroupBy) sqlQuery() *sql.Selector {
 	selector := cgb.sql.Select()
 	aggregation := make([]string, 0, len(cgb.fns))
 	for _, fn := range cgb.fns {
@@ -759,24 +759,24 @@ func (cgb *CoinGroupBy) sqlQuery() *sql.Selector {
 	return selector.GroupBy(selector.Columns(cgb.fields...)...)
 }
 
-// CoinSelect is the builder for selecting fields of Coin entities.
-type CoinSelect struct {
-	*CoinQuery
+// CurrencySelect is the builder for selecting fields of Currency entities.
+type CurrencySelect struct {
+	*CurrencyQuery
 	selector
 	// intermediate query (i.e. traversal path).
 	sql *sql.Selector
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (cs *CoinSelect) Scan(ctx context.Context, v any) error {
+func (cs *CurrencySelect) Scan(ctx context.Context, v any) error {
 	if err := cs.prepareQuery(ctx); err != nil {
 		return err
 	}
-	cs.sql = cs.CoinQuery.sqlQuery(ctx)
+	cs.sql = cs.CurrencyQuery.sqlQuery(ctx)
 	return cs.sqlScan(ctx, v)
 }
 
-func (cs *CoinSelect) sqlScan(ctx context.Context, v any) error {
+func (cs *CurrencySelect) sqlScan(ctx context.Context, v any) error {
 	rows := &sql.Rows{}
 	query, args := cs.sql.Query()
 	if err := cs.driver.Query(ctx, query, args, rows); err != nil {
@@ -787,7 +787,7 @@ func (cs *CoinSelect) sqlScan(ctx context.Context, v any) error {
 }
 
 // Modify adds a query modifier for attaching custom logic to queries.
-func (cs *CoinSelect) Modify(modifiers ...func(s *sql.Selector)) *CoinSelect {
+func (cs *CurrencySelect) Modify(modifiers ...func(s *sql.Selector)) *CurrencySelect {
 	cs.modifiers = append(cs.modifiers, modifiers...)
 	return cs
 }

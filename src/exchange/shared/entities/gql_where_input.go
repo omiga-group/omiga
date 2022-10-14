@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
@@ -16,12 +16,12 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
-// CoinWhereInput represents a where input for filtering Coin queries.
-type CoinWhereInput struct {
-	Predicates []predicate.Coin  `json:"-"`
-	Not        *CoinWhereInput   `json:"not,omitempty"`
-	Or         []*CoinWhereInput `json:"or,omitempty"`
-	And        []*CoinWhereInput `json:"and,omitempty"`
+// CurrencyWhereInput represents a where input for filtering Currency queries.
+type CurrencyWhereInput struct {
+	Predicates []predicate.Currency  `json:"-"`
+	Not        *CurrencyWhereInput   `json:"not,omitempty"`
+	Or         []*CurrencyWhereInput `json:"or,omitempty"`
+	And        []*CurrencyWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
 	ID      *int  `json:"id,omitempty"`
@@ -65,28 +65,34 @@ type CoinWhereInput struct {
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
 
-	// "coin_base" edge predicates.
-	HasCoinBase     *bool                    `json:"hasCoinBase,omitempty"`
-	HasCoinBaseWith []*TradingPairWhereInput `json:"hasCoinBaseWith,omitempty"`
+	// "type" field predicates.
+	Type      *currency.Type  `json:"type,omitempty"`
+	TypeNEQ   *currency.Type  `json:"typeNEQ,omitempty"`
+	TypeIn    []currency.Type `json:"typeIn,omitempty"`
+	TypeNotIn []currency.Type `json:"typeNotIn,omitempty"`
 
-	// "coin_counter" edge predicates.
-	HasCoinCounter     *bool                    `json:"hasCoinCounter,omitempty"`
-	HasCoinCounterWith []*TradingPairWhereInput `json:"hasCoinCounterWith,omitempty"`
+	// "currency_base" edge predicates.
+	HasCurrencyBase     *bool                    `json:"hasCurrencyBase,omitempty"`
+	HasCurrencyBaseWith []*TradingPairWhereInput `json:"hasCurrencyBaseWith,omitempty"`
+
+	// "currency_counter" edge predicates.
+	HasCurrencyCounter     *bool                    `json:"hasCurrencyCounter,omitempty"`
+	HasCurrencyCounterWith []*TradingPairWhereInput `json:"hasCurrencyCounterWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
-func (i *CoinWhereInput) AddPredicates(predicates ...predicate.Coin) {
+func (i *CurrencyWhereInput) AddPredicates(predicates ...predicate.Currency) {
 	i.Predicates = append(i.Predicates, predicates...)
 }
 
-// Filter applies the CoinWhereInput filter on the CoinQuery builder.
-func (i *CoinWhereInput) Filter(q *CoinQuery) (*CoinQuery, error) {
+// Filter applies the CurrencyWhereInput filter on the CurrencyQuery builder.
+func (i *CurrencyWhereInput) Filter(q *CurrencyQuery) (*CurrencyQuery, error) {
 	if i == nil {
 		return q, nil
 	}
 	p, err := i.P()
 	if err != nil {
-		if err == ErrEmptyCoinWhereInput {
+		if err == ErrEmptyCurrencyWhereInput {
 			return q, nil
 		}
 		return nil, err
@@ -94,19 +100,19 @@ func (i *CoinWhereInput) Filter(q *CoinQuery) (*CoinQuery, error) {
 	return q.Where(p), nil
 }
 
-// ErrEmptyCoinWhereInput is returned in case the CoinWhereInput is empty.
-var ErrEmptyCoinWhereInput = errors.New("entities: empty predicate CoinWhereInput")
+// ErrEmptyCurrencyWhereInput is returned in case the CurrencyWhereInput is empty.
+var ErrEmptyCurrencyWhereInput = errors.New("entities: empty predicate CurrencyWhereInput")
 
-// P returns a predicate for filtering coins.
+// P returns a predicate for filtering currencies.
 // An error is returned if the input is empty or invalid.
-func (i *CoinWhereInput) P() (predicate.Coin, error) {
-	var predicates []predicate.Coin
+func (i *CurrencyWhereInput) P() (predicate.Currency, error) {
+	var predicates []predicate.Currency
 	if i.Not != nil {
 		p, err := i.Not.P()
 		if err != nil {
 			return nil, fmt.Errorf("%w: field 'not'", err)
 		}
-		predicates = append(predicates, coin.Not(p))
+		predicates = append(predicates, currency.Not(p))
 	}
 	switch n := len(i.Or); {
 	case n == 1:
@@ -116,7 +122,7 @@ func (i *CoinWhereInput) P() (predicate.Coin, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		or := make([]predicate.Coin, 0, n)
+		or := make([]predicate.Currency, 0, n)
 		for _, w := range i.Or {
 			p, err := w.P()
 			if err != nil {
@@ -124,7 +130,7 @@ func (i *CoinWhereInput) P() (predicate.Coin, error) {
 			}
 			or = append(or, p)
 		}
-		predicates = append(predicates, coin.Or(or...))
+		predicates = append(predicates, currency.Or(or...))
 	}
 	switch n := len(i.And); {
 	case n == 1:
@@ -134,7 +140,7 @@ func (i *CoinWhereInput) P() (predicate.Coin, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		and := make([]predicate.Coin, 0, n)
+		and := make([]predicate.Currency, 0, n)
 		for _, w := range i.And {
 			p, err := w.P()
 			if err != nil {
@@ -142,161 +148,173 @@ func (i *CoinWhereInput) P() (predicate.Coin, error) {
 			}
 			and = append(and, p)
 		}
-		predicates = append(predicates, coin.And(and...))
+		predicates = append(predicates, currency.And(and...))
 	}
 	predicates = append(predicates, i.Predicates...)
 	if i.ID != nil {
-		predicates = append(predicates, coin.IDEQ(*i.ID))
+		predicates = append(predicates, currency.IDEQ(*i.ID))
 	}
 	if i.IDNEQ != nil {
-		predicates = append(predicates, coin.IDNEQ(*i.IDNEQ))
+		predicates = append(predicates, currency.IDNEQ(*i.IDNEQ))
 	}
 	if len(i.IDIn) > 0 {
-		predicates = append(predicates, coin.IDIn(i.IDIn...))
+		predicates = append(predicates, currency.IDIn(i.IDIn...))
 	}
 	if len(i.IDNotIn) > 0 {
-		predicates = append(predicates, coin.IDNotIn(i.IDNotIn...))
+		predicates = append(predicates, currency.IDNotIn(i.IDNotIn...))
 	}
 	if i.IDGT != nil {
-		predicates = append(predicates, coin.IDGT(*i.IDGT))
+		predicates = append(predicates, currency.IDGT(*i.IDGT))
 	}
 	if i.IDGTE != nil {
-		predicates = append(predicates, coin.IDGTE(*i.IDGTE))
+		predicates = append(predicates, currency.IDGTE(*i.IDGTE))
 	}
 	if i.IDLT != nil {
-		predicates = append(predicates, coin.IDLT(*i.IDLT))
+		predicates = append(predicates, currency.IDLT(*i.IDLT))
 	}
 	if i.IDLTE != nil {
-		predicates = append(predicates, coin.IDLTE(*i.IDLTE))
+		predicates = append(predicates, currency.IDLTE(*i.IDLTE))
 	}
 	if i.Symbol != nil {
-		predicates = append(predicates, coin.SymbolEQ(*i.Symbol))
+		predicates = append(predicates, currency.SymbolEQ(*i.Symbol))
 	}
 	if i.SymbolNEQ != nil {
-		predicates = append(predicates, coin.SymbolNEQ(*i.SymbolNEQ))
+		predicates = append(predicates, currency.SymbolNEQ(*i.SymbolNEQ))
 	}
 	if len(i.SymbolIn) > 0 {
-		predicates = append(predicates, coin.SymbolIn(i.SymbolIn...))
+		predicates = append(predicates, currency.SymbolIn(i.SymbolIn...))
 	}
 	if len(i.SymbolNotIn) > 0 {
-		predicates = append(predicates, coin.SymbolNotIn(i.SymbolNotIn...))
+		predicates = append(predicates, currency.SymbolNotIn(i.SymbolNotIn...))
 	}
 	if i.SymbolGT != nil {
-		predicates = append(predicates, coin.SymbolGT(*i.SymbolGT))
+		predicates = append(predicates, currency.SymbolGT(*i.SymbolGT))
 	}
 	if i.SymbolGTE != nil {
-		predicates = append(predicates, coin.SymbolGTE(*i.SymbolGTE))
+		predicates = append(predicates, currency.SymbolGTE(*i.SymbolGTE))
 	}
 	if i.SymbolLT != nil {
-		predicates = append(predicates, coin.SymbolLT(*i.SymbolLT))
+		predicates = append(predicates, currency.SymbolLT(*i.SymbolLT))
 	}
 	if i.SymbolLTE != nil {
-		predicates = append(predicates, coin.SymbolLTE(*i.SymbolLTE))
+		predicates = append(predicates, currency.SymbolLTE(*i.SymbolLTE))
 	}
 	if i.SymbolContains != nil {
-		predicates = append(predicates, coin.SymbolContains(*i.SymbolContains))
+		predicates = append(predicates, currency.SymbolContains(*i.SymbolContains))
 	}
 	if i.SymbolHasPrefix != nil {
-		predicates = append(predicates, coin.SymbolHasPrefix(*i.SymbolHasPrefix))
+		predicates = append(predicates, currency.SymbolHasPrefix(*i.SymbolHasPrefix))
 	}
 	if i.SymbolHasSuffix != nil {
-		predicates = append(predicates, coin.SymbolHasSuffix(*i.SymbolHasSuffix))
+		predicates = append(predicates, currency.SymbolHasSuffix(*i.SymbolHasSuffix))
 	}
 	if i.SymbolEqualFold != nil {
-		predicates = append(predicates, coin.SymbolEqualFold(*i.SymbolEqualFold))
+		predicates = append(predicates, currency.SymbolEqualFold(*i.SymbolEqualFold))
 	}
 	if i.SymbolContainsFold != nil {
-		predicates = append(predicates, coin.SymbolContainsFold(*i.SymbolContainsFold))
+		predicates = append(predicates, currency.SymbolContainsFold(*i.SymbolContainsFold))
 	}
 	if i.Name != nil {
-		predicates = append(predicates, coin.NameEQ(*i.Name))
+		predicates = append(predicates, currency.NameEQ(*i.Name))
 	}
 	if i.NameNEQ != nil {
-		predicates = append(predicates, coin.NameNEQ(*i.NameNEQ))
+		predicates = append(predicates, currency.NameNEQ(*i.NameNEQ))
 	}
 	if len(i.NameIn) > 0 {
-		predicates = append(predicates, coin.NameIn(i.NameIn...))
+		predicates = append(predicates, currency.NameIn(i.NameIn...))
 	}
 	if len(i.NameNotIn) > 0 {
-		predicates = append(predicates, coin.NameNotIn(i.NameNotIn...))
+		predicates = append(predicates, currency.NameNotIn(i.NameNotIn...))
 	}
 	if i.NameGT != nil {
-		predicates = append(predicates, coin.NameGT(*i.NameGT))
+		predicates = append(predicates, currency.NameGT(*i.NameGT))
 	}
 	if i.NameGTE != nil {
-		predicates = append(predicates, coin.NameGTE(*i.NameGTE))
+		predicates = append(predicates, currency.NameGTE(*i.NameGTE))
 	}
 	if i.NameLT != nil {
-		predicates = append(predicates, coin.NameLT(*i.NameLT))
+		predicates = append(predicates, currency.NameLT(*i.NameLT))
 	}
 	if i.NameLTE != nil {
-		predicates = append(predicates, coin.NameLTE(*i.NameLTE))
+		predicates = append(predicates, currency.NameLTE(*i.NameLTE))
 	}
 	if i.NameContains != nil {
-		predicates = append(predicates, coin.NameContains(*i.NameContains))
+		predicates = append(predicates, currency.NameContains(*i.NameContains))
 	}
 	if i.NameHasPrefix != nil {
-		predicates = append(predicates, coin.NameHasPrefix(*i.NameHasPrefix))
+		predicates = append(predicates, currency.NameHasPrefix(*i.NameHasPrefix))
 	}
 	if i.NameHasSuffix != nil {
-		predicates = append(predicates, coin.NameHasSuffix(*i.NameHasSuffix))
+		predicates = append(predicates, currency.NameHasSuffix(*i.NameHasSuffix))
 	}
 	if i.NameIsNil {
-		predicates = append(predicates, coin.NameIsNil())
+		predicates = append(predicates, currency.NameIsNil())
 	}
 	if i.NameNotNil {
-		predicates = append(predicates, coin.NameNotNil())
+		predicates = append(predicates, currency.NameNotNil())
 	}
 	if i.NameEqualFold != nil {
-		predicates = append(predicates, coin.NameEqualFold(*i.NameEqualFold))
+		predicates = append(predicates, currency.NameEqualFold(*i.NameEqualFold))
 	}
 	if i.NameContainsFold != nil {
-		predicates = append(predicates, coin.NameContainsFold(*i.NameContainsFold))
+		predicates = append(predicates, currency.NameContainsFold(*i.NameContainsFold))
+	}
+	if i.Type != nil {
+		predicates = append(predicates, currency.TypeEQ(*i.Type))
+	}
+	if i.TypeNEQ != nil {
+		predicates = append(predicates, currency.TypeNEQ(*i.TypeNEQ))
+	}
+	if len(i.TypeIn) > 0 {
+		predicates = append(predicates, currency.TypeIn(i.TypeIn...))
+	}
+	if len(i.TypeNotIn) > 0 {
+		predicates = append(predicates, currency.TypeNotIn(i.TypeNotIn...))
 	}
 
-	if i.HasCoinBase != nil {
-		p := coin.HasCoinBase()
-		if !*i.HasCoinBase {
-			p = coin.Not(p)
+	if i.HasCurrencyBase != nil {
+		p := currency.HasCurrencyBase()
+		if !*i.HasCurrencyBase {
+			p = currency.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasCoinBaseWith) > 0 {
-		with := make([]predicate.TradingPair, 0, len(i.HasCoinBaseWith))
-		for _, w := range i.HasCoinBaseWith {
+	if len(i.HasCurrencyBaseWith) > 0 {
+		with := make([]predicate.TradingPair, 0, len(i.HasCurrencyBaseWith))
+		for _, w := range i.HasCurrencyBaseWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasCoinBaseWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasCurrencyBaseWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, coin.HasCoinBaseWith(with...))
+		predicates = append(predicates, currency.HasCurrencyBaseWith(with...))
 	}
-	if i.HasCoinCounter != nil {
-		p := coin.HasCoinCounter()
-		if !*i.HasCoinCounter {
-			p = coin.Not(p)
+	if i.HasCurrencyCounter != nil {
+		p := currency.HasCurrencyCounter()
+		if !*i.HasCurrencyCounter {
+			p = currency.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasCoinCounterWith) > 0 {
-		with := make([]predicate.TradingPair, 0, len(i.HasCoinCounterWith))
-		for _, w := range i.HasCoinCounterWith {
+	if len(i.HasCurrencyCounterWith) > 0 {
+		with := make([]predicate.TradingPair, 0, len(i.HasCurrencyCounterWith))
+		for _, w := range i.HasCurrencyCounterWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasCoinCounterWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasCurrencyCounterWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, coin.HasCoinCounterWith(with...))
+		predicates = append(predicates, currency.HasCurrencyCounterWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
-		return nil, ErrEmptyCoinWhereInput
+		return nil, ErrEmptyCurrencyWhereInput
 	case 1:
 		return predicates[0], nil
 	default:
-		return coin.And(predicates...), nil
+		return currency.And(predicates...), nil
 	}
 }
 
@@ -2805,12 +2823,12 @@ type TradingPairWhereInput struct {
 	HasExchangeWith []*ExchangeWhereInput `json:"hasExchangeWith,omitempty"`
 
 	// "base" edge predicates.
-	HasBase     *bool             `json:"hasBase,omitempty"`
-	HasBaseWith []*CoinWhereInput `json:"hasBaseWith,omitempty"`
+	HasBase     *bool                 `json:"hasBase,omitempty"`
+	HasBaseWith []*CurrencyWhereInput `json:"hasBaseWith,omitempty"`
 
 	// "counter" edge predicates.
-	HasCounter     *bool             `json:"hasCounter,omitempty"`
-	HasCounterWith []*CoinWhereInput `json:"hasCounterWith,omitempty"`
+	HasCounter     *bool                 `json:"hasCounter,omitempty"`
+	HasCounterWith []*CurrencyWhereInput `json:"hasCounterWith,omitempty"`
 
 	// "market" edge predicates.
 	HasMarket     *bool               `json:"hasMarket,omitempty"`
@@ -3218,7 +3236,7 @@ func (i *TradingPairWhereInput) P() (predicate.TradingPair, error) {
 		predicates = append(predicates, p)
 	}
 	if len(i.HasBaseWith) > 0 {
-		with := make([]predicate.Coin, 0, len(i.HasBaseWith))
+		with := make([]predicate.Currency, 0, len(i.HasBaseWith))
 		for _, w := range i.HasBaseWith {
 			p, err := w.P()
 			if err != nil {
@@ -3236,7 +3254,7 @@ func (i *TradingPairWhereInput) P() (predicate.TradingPair, error) {
 		predicates = append(predicates, p)
 	}
 	if len(i.HasCounterWith) > 0 {
-		with := make([]predicate.Coin, 0, len(i.HasCounterWith))
+		with := make([]predicate.Currency, 0, len(i.HasCounterWith))
 		for _, w := range i.HasCounterWith {
 			p, err := w.P()
 			if err != nil {

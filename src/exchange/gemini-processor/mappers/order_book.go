@@ -10,8 +10,8 @@ import (
 )
 
 func ToModelOrderBook(
-	baseCurrency exchangeModels.Currency,
-	counterCurrency exchangeModels.Currency,
+	baseCurrency exchangeModels.OrderCurrency,
+	counterCurrency exchangeModels.OrderCurrency,
 	orderBook []models.OrderBookEntry) exchangeModels.OrderBook {
 	asks := slices.Filter(orderBook, func(entry models.OrderBookEntry) bool {
 		return entry.Ask != nil

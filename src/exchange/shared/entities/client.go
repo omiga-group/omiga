@@ -10,7 +10,7 @@ import (
 
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/migrate"
 
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
@@ -27,8 +27,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// Coin is the client for interacting with the Coin builders.
-	Coin *CoinClient
+	// Currency is the client for interacting with the Currency builders.
+	Currency *CurrencyClient
 	// Exchange is the client for interacting with the Exchange builders.
 	Exchange *ExchangeClient
 	// Market is the client for interacting with the Market builders.
@@ -54,7 +54,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.Coin = NewCoinClient(c.config)
+	c.Currency = NewCurrencyClient(c.config)
 	c.Exchange = NewExchangeClient(c.config)
 	c.Market = NewMarketClient(c.config)
 	c.Outbox = NewOutboxClient(c.config)
@@ -93,7 +93,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:         ctx,
 		config:      cfg,
-		Coin:        NewCoinClient(cfg),
+		Currency:    NewCurrencyClient(cfg),
 		Exchange:    NewExchangeClient(cfg),
 		Market:      NewMarketClient(cfg),
 		Outbox:      NewOutboxClient(cfg),
@@ -118,7 +118,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:         ctx,
 		config:      cfg,
-		Coin:        NewCoinClient(cfg),
+		Currency:    NewCurrencyClient(cfg),
 		Exchange:    NewExchangeClient(cfg),
 		Market:      NewMarketClient(cfg),
 		Outbox:      NewOutboxClient(cfg),
@@ -130,7 +130,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Coin.
+//		Currency.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -152,7 +152,7 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Coin.Use(hooks...)
+	c.Currency.Use(hooks...)
 	c.Exchange.Use(hooks...)
 	c.Market.Use(hooks...)
 	c.Outbox.Use(hooks...)
@@ -160,84 +160,84 @@ func (c *Client) Use(hooks ...Hook) {
 	c.TradingPair.Use(hooks...)
 }
 
-// CoinClient is a client for the Coin schema.
-type CoinClient struct {
+// CurrencyClient is a client for the Currency schema.
+type CurrencyClient struct {
 	config
 }
 
-// NewCoinClient returns a client for the Coin from the given config.
-func NewCoinClient(c config) *CoinClient {
-	return &CoinClient{config: c}
+// NewCurrencyClient returns a client for the Currency from the given config.
+func NewCurrencyClient(c config) *CurrencyClient {
+	return &CurrencyClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `coin.Hooks(f(g(h())))`.
-func (c *CoinClient) Use(hooks ...Hook) {
-	c.hooks.Coin = append(c.hooks.Coin, hooks...)
+// A call to `Use(f, g, h)` equals to `currency.Hooks(f(g(h())))`.
+func (c *CurrencyClient) Use(hooks ...Hook) {
+	c.hooks.Currency = append(c.hooks.Currency, hooks...)
 }
 
-// Create returns a builder for creating a Coin entity.
-func (c *CoinClient) Create() *CoinCreate {
-	mutation := newCoinMutation(c.config, OpCreate)
-	return &CoinCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a Currency entity.
+func (c *CurrencyClient) Create() *CurrencyCreate {
+	mutation := newCurrencyMutation(c.config, OpCreate)
+	return &CurrencyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of Coin entities.
-func (c *CoinClient) CreateBulk(builders ...*CoinCreate) *CoinCreateBulk {
-	return &CoinCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Currency entities.
+func (c *CurrencyClient) CreateBulk(builders ...*CurrencyCreate) *CurrencyCreateBulk {
+	return &CurrencyCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for Coin.
-func (c *CoinClient) Update() *CoinUpdate {
-	mutation := newCoinMutation(c.config, OpUpdate)
-	return &CoinUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Currency.
+func (c *CurrencyClient) Update() *CurrencyUpdate {
+	mutation := newCurrencyMutation(c.config, OpUpdate)
+	return &CurrencyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *CoinClient) UpdateOne(co *Coin) *CoinUpdateOne {
-	mutation := newCoinMutation(c.config, OpUpdateOne, withCoin(co))
-	return &CoinUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *CurrencyClient) UpdateOne(cu *Currency) *CurrencyUpdateOne {
+	mutation := newCurrencyMutation(c.config, OpUpdateOne, withCurrency(cu))
+	return &CurrencyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *CoinClient) UpdateOneID(id int) *CoinUpdateOne {
-	mutation := newCoinMutation(c.config, OpUpdateOne, withCoinID(id))
-	return &CoinUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *CurrencyClient) UpdateOneID(id int) *CurrencyUpdateOne {
+	mutation := newCurrencyMutation(c.config, OpUpdateOne, withCurrencyID(id))
+	return &CurrencyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Coin.
-func (c *CoinClient) Delete() *CoinDelete {
-	mutation := newCoinMutation(c.config, OpDelete)
-	return &CoinDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Currency.
+func (c *CurrencyClient) Delete() *CurrencyDelete {
+	mutation := newCurrencyMutation(c.config, OpDelete)
+	return &CurrencyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *CoinClient) DeleteOne(co *Coin) *CoinDeleteOne {
-	return c.DeleteOneID(co.ID)
+func (c *CurrencyClient) DeleteOne(cu *Currency) *CurrencyDeleteOne {
+	return c.DeleteOneID(cu.ID)
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *CoinClient) DeleteOneID(id int) *CoinDeleteOne {
-	builder := c.Delete().Where(coin.ID(id))
+func (c *CurrencyClient) DeleteOneID(id int) *CurrencyDeleteOne {
+	builder := c.Delete().Where(currency.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &CoinDeleteOne{builder}
+	return &CurrencyDeleteOne{builder}
 }
 
-// Query returns a query builder for Coin.
-func (c *CoinClient) Query() *CoinQuery {
-	return &CoinQuery{
+// Query returns a query builder for Currency.
+func (c *CurrencyClient) Query() *CurrencyQuery {
+	return &CurrencyQuery{
 		config: c.config,
 	}
 }
 
-// Get returns a Coin entity by its id.
-func (c *CoinClient) Get(ctx context.Context, id int) (*Coin, error) {
-	return c.Query().Where(coin.ID(id)).Only(ctx)
+// Get returns a Currency entity by its id.
+func (c *CurrencyClient) Get(ctx context.Context, id int) (*Currency, error) {
+	return c.Query().Where(currency.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *CoinClient) GetX(ctx context.Context, id int) *Coin {
+func (c *CurrencyClient) GetX(ctx context.Context, id int) *Currency {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -245,47 +245,47 @@ func (c *CoinClient) GetX(ctx context.Context, id int) *Coin {
 	return obj
 }
 
-// QueryCoinBase queries the coin_base edge of a Coin.
-func (c *CoinClient) QueryCoinBase(co *Coin) *TradingPairQuery {
+// QueryCurrencyBase queries the currency_base edge of a Currency.
+func (c *CurrencyClient) QueryCurrencyBase(cu *Currency) *TradingPairQuery {
 	query := &TradingPairQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := co.ID
+		id := cu.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(coin.Table, coin.FieldID, id),
+			sqlgraph.From(currency.Table, currency.FieldID, id),
 			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, coin.CoinBaseTable, coin.CoinBaseColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, currency.CurrencyBaseTable, currency.CurrencyBaseColumn),
 		)
-		schemaConfig := co.schemaConfig
+		schemaConfig := cu.schemaConfig
 		step.To.Schema = schemaConfig.TradingPair
 		step.Edge.Schema = schemaConfig.TradingPair
-		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		fromV = sqlgraph.Neighbors(cu.driver.Dialect(), step)
 		return fromV, nil
 	}
 	return query
 }
 
-// QueryCoinCounter queries the coin_counter edge of a Coin.
-func (c *CoinClient) QueryCoinCounter(co *Coin) *TradingPairQuery {
+// QueryCurrencyCounter queries the currency_counter edge of a Currency.
+func (c *CurrencyClient) QueryCurrencyCounter(cu *Currency) *TradingPairQuery {
 	query := &TradingPairQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := co.ID
+		id := cu.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(coin.Table, coin.FieldID, id),
+			sqlgraph.From(currency.Table, currency.FieldID, id),
 			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, coin.CoinCounterTable, coin.CoinCounterColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, currency.CurrencyCounterTable, currency.CurrencyCounterColumn),
 		)
-		schemaConfig := co.schemaConfig
+		schemaConfig := cu.schemaConfig
 		step.To.Schema = schemaConfig.TradingPair
 		step.Edge.Schema = schemaConfig.TradingPair
-		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		fromV = sqlgraph.Neighbors(cu.driver.Dialect(), step)
 		return fromV, nil
 	}
 	return query
 }
 
 // Hooks returns the client hooks.
-func (c *CoinClient) Hooks() []Hook {
-	return c.hooks.Coin
+func (c *CurrencyClient) Hooks() []Hook {
+	return c.hooks.Currency
 }
 
 // ExchangeClient is a client for the Exchange schema.
@@ -867,17 +867,17 @@ func (c *TradingPairClient) QueryExchange(tp *TradingPair) *ExchangeQuery {
 }
 
 // QueryBase queries the base edge of a TradingPair.
-func (c *TradingPairClient) QueryBase(tp *TradingPair) *CoinQuery {
-	query := &CoinQuery{config: c.config}
+func (c *TradingPairClient) QueryBase(tp *TradingPair) *CurrencyQuery {
+	query := &CurrencyQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := tp.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, id),
-			sqlgraph.To(coin.Table, coin.FieldID),
+			sqlgraph.To(currency.Table, currency.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, tradingpair.BaseTable, tradingpair.BaseColumn),
 		)
 		schemaConfig := tp.schemaConfig
-		step.To.Schema = schemaConfig.Coin
+		step.To.Schema = schemaConfig.Currency
 		step.Edge.Schema = schemaConfig.TradingPair
 		fromV = sqlgraph.Neighbors(tp.driver.Dialect(), step)
 		return fromV, nil
@@ -886,17 +886,17 @@ func (c *TradingPairClient) QueryBase(tp *TradingPair) *CoinQuery {
 }
 
 // QueryCounter queries the counter edge of a TradingPair.
-func (c *TradingPairClient) QueryCounter(tp *TradingPair) *CoinQuery {
-	query := &CoinQuery{config: c.config}
+func (c *TradingPairClient) QueryCounter(tp *TradingPair) *CurrencyQuery {
+	query := &CurrencyQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := tp.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, id),
-			sqlgraph.To(coin.Table, coin.FieldID),
+			sqlgraph.To(currency.Table, currency.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, tradingpair.CounterTable, tradingpair.CounterColumn),
 		)
 		schemaConfig := tp.schemaConfig
-		step.To.Schema = schemaConfig.Coin
+		step.To.Schema = schemaConfig.Currency
 		step.Edge.Schema = schemaConfig.TradingPair
 		fromV = sqlgraph.Neighbors(tp.driver.Dialect(), step)
 		return fromV, nil

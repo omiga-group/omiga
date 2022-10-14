@@ -16,6 +16,11 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
+// Type is the resolver for the type field.
+func (r *currencyResolver) Type(ctx context.Context, obj *entities.Currency) (models.CurrencyType, error) {
+	return models.CurrencyType(obj.Type), nil
+}
+
 // Links is the resolver for the links field.
 func (r *exchangeResolver) Links(ctx context.Context, obj *entities.Exchange) (*models.Links, error) {
 	links := models.Links{}
@@ -76,9 +81,9 @@ func (r *marketResolver) Type(ctx context.Context, obj *entities.Market) (models
 	return models.MarketType(obj.Type), nil
 }
 
-// Coin is the resolver for the coin field.
-func (r *queryResolver) Coin(ctx context.Context, where *entities.CoinWhereInput) (*entities.Coin, error) {
-	query, err := where.Filter(r.client.Coin.Query())
+// Currency is the resolver for the currency field.
+func (r *queryResolver) Currency(ctx context.Context, where *entities.CurrencyWhereInput) (*entities.Currency, error) {
+	query, err := where.Filter(r.client.Currency.Query())
 	if err != nil {
 		return nil, err
 	}
@@ -93,17 +98,17 @@ func (r *queryResolver) Coin(ctx context.Context, where *entities.CoinWhereInput
 	return result, nil
 }
 
-// Coins is the resolver for the coins field.
-func (r *queryResolver) Coins(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.CoinOrder, where *entities.CoinWhereInput) (*entities.CoinConnection, error) {
+// Currencies is the resolver for the currencies field.
+func (r *queryResolver) Currencies(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.CurrencyOrder, where *entities.CurrencyWhereInput) (*entities.CurrencyConnection, error) {
 	orderBy = slices.Reverse(orderBy)
 
-	pageOrder := slices.Map(orderBy, func(item *entities.CoinOrder) entities.CoinPaginateOption {
-		return entities.WithCoinOrder(item)
+	pageOrder := slices.Map(orderBy, func(item *entities.CurrencyOrder) entities.CurrencyPaginateOption {
+		return entities.WithCurrencyOrder(item)
 	})
 
-	pageOrderAndFilter := append(pageOrder, entities.WithCoinFilter(where.Filter))
+	pageOrderAndFilter := append(pageOrder, entities.WithCurrencyFilter(where.Filter))
 
-	return r.client.Coin.
+	return r.client.Currency.
 		Query().
 		Paginate(
 			ctx,
@@ -184,6 +189,9 @@ func (r *tradingPairResolver) Markets(ctx context.Context, obj *entities.Trading
 	return obj.Market(ctx)
 }
 
+// Currency returns generated.CurrencyResolver implementation.
+func (r *Resolver) Currency() generated.CurrencyResolver { return &currencyResolver{r} }
+
 // Exchange returns generated.ExchangeResolver implementation.
 func (r *Resolver) Exchange() generated.ExchangeResolver { return &exchangeResolver{r} }
 
@@ -199,6 +207,7 @@ func (r *Resolver) Ticker() generated.TickerResolver { return &tickerResolver{r}
 // TradingPair returns generated.TradingPairResolver implementation.
 func (r *Resolver) TradingPair() generated.TradingPairResolver { return &tradingPairResolver{r} }
 
+type currencyResolver struct{ *Resolver }
 type exchangeResolver struct{ *Resolver }
 type marketResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

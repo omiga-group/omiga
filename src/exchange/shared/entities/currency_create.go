@@ -10,78 +10,84 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
-// CoinCreate is the builder for creating a Coin entity.
-type CoinCreate struct {
+// CurrencyCreate is the builder for creating a Currency entity.
+type CurrencyCreate struct {
 	config
-	mutation *CoinMutation
+	mutation *CurrencyMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
 }
 
 // SetSymbol sets the "symbol" field.
-func (cc *CoinCreate) SetSymbol(s string) *CoinCreate {
+func (cc *CurrencyCreate) SetSymbol(s string) *CurrencyCreate {
 	cc.mutation.SetSymbol(s)
 	return cc
 }
 
 // SetName sets the "name" field.
-func (cc *CoinCreate) SetName(s string) *CoinCreate {
+func (cc *CurrencyCreate) SetName(s string) *CurrencyCreate {
 	cc.mutation.SetName(s)
 	return cc
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (cc *CoinCreate) SetNillableName(s *string) *CoinCreate {
+func (cc *CurrencyCreate) SetNillableName(s *string) *CurrencyCreate {
 	if s != nil {
 		cc.SetName(*s)
 	}
 	return cc
 }
 
-// AddCoinBaseIDs adds the "coin_base" edge to the TradingPair entity by IDs.
-func (cc *CoinCreate) AddCoinBaseIDs(ids ...int) *CoinCreate {
-	cc.mutation.AddCoinBaseIDs(ids...)
+// SetType sets the "type" field.
+func (cc *CurrencyCreate) SetType(c currency.Type) *CurrencyCreate {
+	cc.mutation.SetType(c)
 	return cc
 }
 
-// AddCoinBase adds the "coin_base" edges to the TradingPair entity.
-func (cc *CoinCreate) AddCoinBase(t ...*TradingPair) *CoinCreate {
+// AddCurrencyBaseIDs adds the "currency_base" edge to the TradingPair entity by IDs.
+func (cc *CurrencyCreate) AddCurrencyBaseIDs(ids ...int) *CurrencyCreate {
+	cc.mutation.AddCurrencyBaseIDs(ids...)
+	return cc
+}
+
+// AddCurrencyBase adds the "currency_base" edges to the TradingPair entity.
+func (cc *CurrencyCreate) AddCurrencyBase(t ...*TradingPair) *CurrencyCreate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return cc.AddCoinBaseIDs(ids...)
+	return cc.AddCurrencyBaseIDs(ids...)
 }
 
-// AddCoinCounterIDs adds the "coin_counter" edge to the TradingPair entity by IDs.
-func (cc *CoinCreate) AddCoinCounterIDs(ids ...int) *CoinCreate {
-	cc.mutation.AddCoinCounterIDs(ids...)
+// AddCurrencyCounterIDs adds the "currency_counter" edge to the TradingPair entity by IDs.
+func (cc *CurrencyCreate) AddCurrencyCounterIDs(ids ...int) *CurrencyCreate {
+	cc.mutation.AddCurrencyCounterIDs(ids...)
 	return cc
 }
 
-// AddCoinCounter adds the "coin_counter" edges to the TradingPair entity.
-func (cc *CoinCreate) AddCoinCounter(t ...*TradingPair) *CoinCreate {
+// AddCurrencyCounter adds the "currency_counter" edges to the TradingPair entity.
+func (cc *CurrencyCreate) AddCurrencyCounter(t ...*TradingPair) *CurrencyCreate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return cc.AddCoinCounterIDs(ids...)
+	return cc.AddCurrencyCounterIDs(ids...)
 }
 
-// Mutation returns the CoinMutation object of the builder.
-func (cc *CoinCreate) Mutation() *CoinMutation {
+// Mutation returns the CurrencyMutation object of the builder.
+func (cc *CurrencyCreate) Mutation() *CurrencyMutation {
 	return cc.mutation
 }
 
-// Save creates the Coin in the database.
-func (cc *CoinCreate) Save(ctx context.Context) (*Coin, error) {
+// Save creates the Currency in the database.
+func (cc *CurrencyCreate) Save(ctx context.Context) (*Currency, error) {
 	var (
 		err  error
-		node *Coin
+		node *Currency
 	)
 	if len(cc.hooks) == 0 {
 		if err = cc.check(); err != nil {
@@ -90,7 +96,7 @@ func (cc *CoinCreate) Save(ctx context.Context) (*Coin, error) {
 		node, err = cc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*CoinMutation)
+			mutation, ok := m.(*CurrencyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -115,9 +121,9 @@ func (cc *CoinCreate) Save(ctx context.Context) (*Coin, error) {
 		if err != nil {
 			return nil, err
 		}
-		nv, ok := v.(*Coin)
+		nv, ok := v.(*Currency)
 		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from CoinMutation", v)
+			return nil, fmt.Errorf("unexpected node type %T returned from CurrencyMutation", v)
 		}
 		node = nv
 	}
@@ -125,7 +131,7 @@ func (cc *CoinCreate) Save(ctx context.Context) (*Coin, error) {
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (cc *CoinCreate) SaveX(ctx context.Context) *Coin {
+func (cc *CurrencyCreate) SaveX(ctx context.Context) *Currency {
 	v, err := cc.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -134,27 +140,35 @@ func (cc *CoinCreate) SaveX(ctx context.Context) *Coin {
 }
 
 // Exec executes the query.
-func (cc *CoinCreate) Exec(ctx context.Context) error {
+func (cc *CurrencyCreate) Exec(ctx context.Context) error {
 	_, err := cc.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cc *CoinCreate) ExecX(ctx context.Context) {
+func (cc *CurrencyCreate) ExecX(ctx context.Context) {
 	if err := cc.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (cc *CoinCreate) check() error {
+func (cc *CurrencyCreate) check() error {
 	if _, ok := cc.mutation.Symbol(); !ok {
-		return &ValidationError{Name: "symbol", err: errors.New(`entities: missing required field "Coin.symbol"`)}
+		return &ValidationError{Name: "symbol", err: errors.New(`entities: missing required field "Currency.symbol"`)}
+	}
+	if _, ok := cc.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`entities: missing required field "Currency.type"`)}
+	}
+	if v, ok := cc.mutation.GetType(); ok {
+		if err := currency.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`entities: validator failed for field "Currency.type": %w`, err)}
+		}
 	}
 	return nil
 }
 
-func (cc *CoinCreate) sqlSave(ctx context.Context) (*Coin, error) {
+func (cc *CurrencyCreate) sqlSave(ctx context.Context) (*Currency, error) {
 	_node, _spec := cc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, cc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -167,24 +181,24 @@ func (cc *CoinCreate) sqlSave(ctx context.Context) (*Coin, error) {
 	return _node, nil
 }
 
-func (cc *CoinCreate) createSpec() (*Coin, *sqlgraph.CreateSpec) {
+func (cc *CurrencyCreate) createSpec() (*Currency, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Coin{config: cc.config}
+		_node = &Currency{config: cc.config}
 		_spec = &sqlgraph.CreateSpec{
-			Table: coin.Table,
+			Table: currency.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: coin.FieldID,
+				Column: currency.FieldID,
 			},
 		}
 	)
-	_spec.Schema = cc.schemaConfig.Coin
+	_spec.Schema = cc.schemaConfig.Currency
 	_spec.OnConflict = cc.conflict
 	if value, ok := cc.mutation.Symbol(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: coin.FieldSymbol,
+			Column: currency.FieldSymbol,
 		})
 		_node.Symbol = value
 	}
@@ -192,16 +206,24 @@ func (cc *CoinCreate) createSpec() (*Coin, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: coin.FieldName,
+			Column: currency.FieldName,
 		})
 		_node.Name = value
 	}
-	if nodes := cc.mutation.CoinBaseIDs(); len(nodes) > 0 {
+	if value, ok := cc.mutation.GetType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: currency.FieldType,
+		})
+		_node.Type = value
+	}
+	if nodes := cc.mutation.CurrencyBaseIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   coin.CoinBaseTable,
-			Columns: []string{coin.CoinBaseColumn},
+			Table:   currency.CurrencyBaseTable,
+			Columns: []string{currency.CurrencyBaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -216,12 +238,12 @@ func (cc *CoinCreate) createSpec() (*Coin, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := cc.mutation.CoinCounterIDs(); len(nodes) > 0 {
+	if nodes := cc.mutation.CurrencyCounterIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   coin.CoinCounterTable,
-			Columns: []string{coin.CoinCounterColumn},
+			Table:   currency.CurrencyCounterTable,
+			Columns: []string{currency.CurrencyCounterColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -242,7 +264,7 @@ func (cc *CoinCreate) createSpec() (*Coin, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.Coin.Create().
+//	client.Currency.Create().
 //		SetSymbol(v).
 //		OnConflict(
 //			// Update the row with the new values
@@ -251,13 +273,13 @@ func (cc *CoinCreate) createSpec() (*Coin, *sqlgraph.CreateSpec) {
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		Update(func(u *ent.CoinUpsert) {
+//		Update(func(u *ent.CurrencyUpsert) {
 //			SetSymbol(v+v).
 //		}).
 //		Exec(ctx)
-func (cc *CoinCreate) OnConflict(opts ...sql.ConflictOption) *CoinUpsertOne {
+func (cc *CurrencyCreate) OnConflict(opts ...sql.ConflictOption) *CurrencyUpsertOne {
 	cc.conflict = opts
-	return &CoinUpsertOne{
+	return &CurrencyUpsertOne{
 		create: cc,
 	}
 }
@@ -265,68 +287,80 @@ func (cc *CoinCreate) OnConflict(opts ...sql.ConflictOption) *CoinUpsertOne {
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Coin.Create().
+//	client.Currency.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (cc *CoinCreate) OnConflictColumns(columns ...string) *CoinUpsertOne {
+func (cc *CurrencyCreate) OnConflictColumns(columns ...string) *CurrencyUpsertOne {
 	cc.conflict = append(cc.conflict, sql.ConflictColumns(columns...))
-	return &CoinUpsertOne{
+	return &CurrencyUpsertOne{
 		create: cc,
 	}
 }
 
 type (
-	// CoinUpsertOne is the builder for "upsert"-ing
-	//  one Coin node.
-	CoinUpsertOne struct {
-		create *CoinCreate
+	// CurrencyUpsertOne is the builder for "upsert"-ing
+	//  one Currency node.
+	CurrencyUpsertOne struct {
+		create *CurrencyCreate
 	}
 
-	// CoinUpsert is the "OnConflict" setter.
-	CoinUpsert struct {
+	// CurrencyUpsert is the "OnConflict" setter.
+	CurrencyUpsert struct {
 		*sql.UpdateSet
 	}
 )
 
 // SetSymbol sets the "symbol" field.
-func (u *CoinUpsert) SetSymbol(v string) *CoinUpsert {
-	u.Set(coin.FieldSymbol, v)
+func (u *CurrencyUpsert) SetSymbol(v string) *CurrencyUpsert {
+	u.Set(currency.FieldSymbol, v)
 	return u
 }
 
 // UpdateSymbol sets the "symbol" field to the value that was provided on create.
-func (u *CoinUpsert) UpdateSymbol() *CoinUpsert {
-	u.SetExcluded(coin.FieldSymbol)
+func (u *CurrencyUpsert) UpdateSymbol() *CurrencyUpsert {
+	u.SetExcluded(currency.FieldSymbol)
 	return u
 }
 
 // SetName sets the "name" field.
-func (u *CoinUpsert) SetName(v string) *CoinUpsert {
-	u.Set(coin.FieldName, v)
+func (u *CurrencyUpsert) SetName(v string) *CurrencyUpsert {
+	u.Set(currency.FieldName, v)
 	return u
 }
 
 // UpdateName sets the "name" field to the value that was provided on create.
-func (u *CoinUpsert) UpdateName() *CoinUpsert {
-	u.SetExcluded(coin.FieldName)
+func (u *CurrencyUpsert) UpdateName() *CurrencyUpsert {
+	u.SetExcluded(currency.FieldName)
 	return u
 }
 
 // ClearName clears the value of the "name" field.
-func (u *CoinUpsert) ClearName() *CoinUpsert {
-	u.SetNull(coin.FieldName)
+func (u *CurrencyUpsert) ClearName() *CurrencyUpsert {
+	u.SetNull(currency.FieldName)
+	return u
+}
+
+// SetType sets the "type" field.
+func (u *CurrencyUpsert) SetType(v currency.Type) *CurrencyUpsert {
+	u.Set(currency.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *CurrencyUpsert) UpdateType() *CurrencyUpsert {
+	u.SetExcluded(currency.FieldType)
 	return u
 }
 
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
-//	client.Coin.Create().
+//	client.Currency.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
-func (u *CoinUpsertOne) UpdateNewValues() *CoinUpsertOne {
+func (u *CurrencyUpsertOne) UpdateNewValues() *CurrencyUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
 }
@@ -334,82 +368,96 @@ func (u *CoinUpsertOne) UpdateNewValues() *CoinUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Coin.Create().
+//	client.Currency.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
-func (u *CoinUpsertOne) Ignore() *CoinUpsertOne {
+func (u *CurrencyUpsertOne) Ignore() *CurrencyUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
 }
 
 // DoNothing configures the conflict_action to `DO NOTHING`.
 // Supported only by SQLite and PostgreSQL.
-func (u *CoinUpsertOne) DoNothing() *CoinUpsertOne {
+func (u *CurrencyUpsertOne) DoNothing() *CurrencyUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.DoNothing())
 	return u
 }
 
-// Update allows overriding fields `UPDATE` values. See the CoinCreate.OnConflict
+// Update allows overriding fields `UPDATE` values. See the CurrencyCreate.OnConflict
 // documentation for more info.
-func (u *CoinUpsertOne) Update(set func(*CoinUpsert)) *CoinUpsertOne {
+func (u *CurrencyUpsertOne) Update(set func(*CurrencyUpsert)) *CurrencyUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
-		set(&CoinUpsert{UpdateSet: update})
+		set(&CurrencyUpsert{UpdateSet: update})
 	}))
 	return u
 }
 
 // SetSymbol sets the "symbol" field.
-func (u *CoinUpsertOne) SetSymbol(v string) *CoinUpsertOne {
-	return u.Update(func(s *CoinUpsert) {
+func (u *CurrencyUpsertOne) SetSymbol(v string) *CurrencyUpsertOne {
+	return u.Update(func(s *CurrencyUpsert) {
 		s.SetSymbol(v)
 	})
 }
 
 // UpdateSymbol sets the "symbol" field to the value that was provided on create.
-func (u *CoinUpsertOne) UpdateSymbol() *CoinUpsertOne {
-	return u.Update(func(s *CoinUpsert) {
+func (u *CurrencyUpsertOne) UpdateSymbol() *CurrencyUpsertOne {
+	return u.Update(func(s *CurrencyUpsert) {
 		s.UpdateSymbol()
 	})
 }
 
 // SetName sets the "name" field.
-func (u *CoinUpsertOne) SetName(v string) *CoinUpsertOne {
-	return u.Update(func(s *CoinUpsert) {
+func (u *CurrencyUpsertOne) SetName(v string) *CurrencyUpsertOne {
+	return u.Update(func(s *CurrencyUpsert) {
 		s.SetName(v)
 	})
 }
 
 // UpdateName sets the "name" field to the value that was provided on create.
-func (u *CoinUpsertOne) UpdateName() *CoinUpsertOne {
-	return u.Update(func(s *CoinUpsert) {
+func (u *CurrencyUpsertOne) UpdateName() *CurrencyUpsertOne {
+	return u.Update(func(s *CurrencyUpsert) {
 		s.UpdateName()
 	})
 }
 
 // ClearName clears the value of the "name" field.
-func (u *CoinUpsertOne) ClearName() *CoinUpsertOne {
-	return u.Update(func(s *CoinUpsert) {
+func (u *CurrencyUpsertOne) ClearName() *CurrencyUpsertOne {
+	return u.Update(func(s *CurrencyUpsert) {
 		s.ClearName()
 	})
 }
 
+// SetType sets the "type" field.
+func (u *CurrencyUpsertOne) SetType(v currency.Type) *CurrencyUpsertOne {
+	return u.Update(func(s *CurrencyUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *CurrencyUpsertOne) UpdateType() *CurrencyUpsertOne {
+	return u.Update(func(s *CurrencyUpsert) {
+		s.UpdateType()
+	})
+}
+
 // Exec executes the query.
-func (u *CoinUpsertOne) Exec(ctx context.Context) error {
+func (u *CurrencyUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
-		return errors.New("entities: missing options for CoinCreate.OnConflict")
+		return errors.New("entities: missing options for CurrencyCreate.OnConflict")
 	}
 	return u.create.Exec(ctx)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (u *CoinUpsertOne) ExecX(ctx context.Context) {
+func (u *CurrencyUpsertOne) ExecX(ctx context.Context) {
 	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CoinUpsertOne) ID(ctx context.Context) (id int, err error) {
+func (u *CurrencyUpsertOne) ID(ctx context.Context) (id int, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -418,7 +466,7 @@ func (u *CoinUpsertOne) ID(ctx context.Context) (id int, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CoinUpsertOne) IDX(ctx context.Context) int {
+func (u *CurrencyUpsertOne) IDX(ctx context.Context) int {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -426,23 +474,23 @@ func (u *CoinUpsertOne) IDX(ctx context.Context) int {
 	return id
 }
 
-// CoinCreateBulk is the builder for creating many Coin entities in bulk.
-type CoinCreateBulk struct {
+// CurrencyCreateBulk is the builder for creating many Currency entities in bulk.
+type CurrencyCreateBulk struct {
 	config
-	builders []*CoinCreate
+	builders []*CurrencyCreate
 	conflict []sql.ConflictOption
 }
 
-// Save creates the Coin entities in the database.
-func (ccb *CoinCreateBulk) Save(ctx context.Context) ([]*Coin, error) {
+// Save creates the Currency entities in the database.
+func (ccb *CurrencyCreateBulk) Save(ctx context.Context) ([]*Currency, error) {
 	specs := make([]*sqlgraph.CreateSpec, len(ccb.builders))
-	nodes := make([]*Coin, len(ccb.builders))
+	nodes := make([]*Currency, len(ccb.builders))
 	mutators := make([]Mutator, len(ccb.builders))
 	for i := range ccb.builders {
 		func(i int, root context.Context) {
 			builder := ccb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*CoinMutation)
+				mutation, ok := m.(*CurrencyMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -490,7 +538,7 @@ func (ccb *CoinCreateBulk) Save(ctx context.Context) ([]*Coin, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ccb *CoinCreateBulk) SaveX(ctx context.Context) []*Coin {
+func (ccb *CurrencyCreateBulk) SaveX(ctx context.Context) []*Currency {
 	v, err := ccb.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -499,13 +547,13 @@ func (ccb *CoinCreateBulk) SaveX(ctx context.Context) []*Coin {
 }
 
 // Exec executes the query.
-func (ccb *CoinCreateBulk) Exec(ctx context.Context) error {
+func (ccb *CurrencyCreateBulk) Exec(ctx context.Context) error {
 	_, err := ccb.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ccb *CoinCreateBulk) ExecX(ctx context.Context) {
+func (ccb *CurrencyCreateBulk) ExecX(ctx context.Context) {
 	if err := ccb.Exec(ctx); err != nil {
 		panic(err)
 	}
@@ -514,7 +562,7 @@ func (ccb *CoinCreateBulk) ExecX(ctx context.Context) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.Coin.CreateBulk(builders...).
+//	client.Currency.CreateBulk(builders...).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -522,13 +570,13 @@ func (ccb *CoinCreateBulk) ExecX(ctx context.Context) {
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		Update(func(u *ent.CoinUpsert) {
+//		Update(func(u *ent.CurrencyUpsert) {
 //			SetSymbol(v+v).
 //		}).
 //		Exec(ctx)
-func (ccb *CoinCreateBulk) OnConflict(opts ...sql.ConflictOption) *CoinUpsertBulk {
+func (ccb *CurrencyCreateBulk) OnConflict(opts ...sql.ConflictOption) *CurrencyUpsertBulk {
 	ccb.conflict = opts
-	return &CoinUpsertBulk{
+	return &CurrencyUpsertBulk{
 		create: ccb,
 	}
 }
@@ -536,31 +584,31 @@ func (ccb *CoinCreateBulk) OnConflict(opts ...sql.ConflictOption) *CoinUpsertBul
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Coin.Create().
+//	client.Currency.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (ccb *CoinCreateBulk) OnConflictColumns(columns ...string) *CoinUpsertBulk {
+func (ccb *CurrencyCreateBulk) OnConflictColumns(columns ...string) *CurrencyUpsertBulk {
 	ccb.conflict = append(ccb.conflict, sql.ConflictColumns(columns...))
-	return &CoinUpsertBulk{
+	return &CurrencyUpsertBulk{
 		create: ccb,
 	}
 }
 
-// CoinUpsertBulk is the builder for "upsert"-ing
-// a bulk of Coin nodes.
-type CoinUpsertBulk struct {
-	create *CoinCreateBulk
+// CurrencyUpsertBulk is the builder for "upsert"-ing
+// a bulk of Currency nodes.
+type CurrencyUpsertBulk struct {
+	create *CurrencyCreateBulk
 }
 
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.Coin.Create().
+//	client.Currency.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
-func (u *CoinUpsertBulk) UpdateNewValues() *CoinUpsertBulk {
+func (u *CurrencyUpsertBulk) UpdateNewValues() *CurrencyUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	return u
 }
@@ -568,80 +616,94 @@ func (u *CoinUpsertBulk) UpdateNewValues() *CoinUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Coin.Create().
+//	client.Currency.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-func (u *CoinUpsertBulk) Ignore() *CoinUpsertBulk {
+func (u *CurrencyUpsertBulk) Ignore() *CurrencyUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
 }
 
 // DoNothing configures the conflict_action to `DO NOTHING`.
 // Supported only by SQLite and PostgreSQL.
-func (u *CoinUpsertBulk) DoNothing() *CoinUpsertBulk {
+func (u *CurrencyUpsertBulk) DoNothing() *CurrencyUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.DoNothing())
 	return u
 }
 
-// Update allows overriding fields `UPDATE` values. See the CoinCreateBulk.OnConflict
+// Update allows overriding fields `UPDATE` values. See the CurrencyCreateBulk.OnConflict
 // documentation for more info.
-func (u *CoinUpsertBulk) Update(set func(*CoinUpsert)) *CoinUpsertBulk {
+func (u *CurrencyUpsertBulk) Update(set func(*CurrencyUpsert)) *CurrencyUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
-		set(&CoinUpsert{UpdateSet: update})
+		set(&CurrencyUpsert{UpdateSet: update})
 	}))
 	return u
 }
 
 // SetSymbol sets the "symbol" field.
-func (u *CoinUpsertBulk) SetSymbol(v string) *CoinUpsertBulk {
-	return u.Update(func(s *CoinUpsert) {
+func (u *CurrencyUpsertBulk) SetSymbol(v string) *CurrencyUpsertBulk {
+	return u.Update(func(s *CurrencyUpsert) {
 		s.SetSymbol(v)
 	})
 }
 
 // UpdateSymbol sets the "symbol" field to the value that was provided on create.
-func (u *CoinUpsertBulk) UpdateSymbol() *CoinUpsertBulk {
-	return u.Update(func(s *CoinUpsert) {
+func (u *CurrencyUpsertBulk) UpdateSymbol() *CurrencyUpsertBulk {
+	return u.Update(func(s *CurrencyUpsert) {
 		s.UpdateSymbol()
 	})
 }
 
 // SetName sets the "name" field.
-func (u *CoinUpsertBulk) SetName(v string) *CoinUpsertBulk {
-	return u.Update(func(s *CoinUpsert) {
+func (u *CurrencyUpsertBulk) SetName(v string) *CurrencyUpsertBulk {
+	return u.Update(func(s *CurrencyUpsert) {
 		s.SetName(v)
 	})
 }
 
 // UpdateName sets the "name" field to the value that was provided on create.
-func (u *CoinUpsertBulk) UpdateName() *CoinUpsertBulk {
-	return u.Update(func(s *CoinUpsert) {
+func (u *CurrencyUpsertBulk) UpdateName() *CurrencyUpsertBulk {
+	return u.Update(func(s *CurrencyUpsert) {
 		s.UpdateName()
 	})
 }
 
 // ClearName clears the value of the "name" field.
-func (u *CoinUpsertBulk) ClearName() *CoinUpsertBulk {
-	return u.Update(func(s *CoinUpsert) {
+func (u *CurrencyUpsertBulk) ClearName() *CurrencyUpsertBulk {
+	return u.Update(func(s *CurrencyUpsert) {
 		s.ClearName()
 	})
 }
 
+// SetType sets the "type" field.
+func (u *CurrencyUpsertBulk) SetType(v currency.Type) *CurrencyUpsertBulk {
+	return u.Update(func(s *CurrencyUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *CurrencyUpsertBulk) UpdateType() *CurrencyUpsertBulk {
+	return u.Update(func(s *CurrencyUpsert) {
+		s.UpdateType()
+	})
+}
+
 // Exec executes the query.
-func (u *CoinUpsertBulk) Exec(ctx context.Context) error {
+func (u *CurrencyUpsertBulk) Exec(ctx context.Context) error {
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
-			return fmt.Errorf("entities: OnConflict was set for builder %d. Set it on the CoinCreateBulk instead", i)
+			return fmt.Errorf("entities: OnConflict was set for builder %d. Set it on the CurrencyCreateBulk instead", i)
 		}
 	}
 	if len(u.create.conflict) == 0 {
-		return errors.New("entities: missing options for CoinCreateBulk.OnConflict")
+		return errors.New("entities: missing options for CurrencyCreateBulk.OnConflict")
 	}
 	return u.create.Exec(ctx)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (u *CoinUpsertBulk) ExecX(ctx context.Context) {
+func (u *CurrencyUpsertBulk) ExecX(ctx context.Context) {
 	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}

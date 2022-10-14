@@ -75,7 +75,7 @@ func NewBittrexTradingPairSubscriber(
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
-		repositories.NewCoinRepository,
+		repositories.NewCurrencyRepository,
 		repositories.NewExchangeRepository,
 		repositories.NewTradingPairRepository,
 		subscribers.NewBittrexTradingPairSubscriber)

@@ -95,11 +95,11 @@ func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
-	coinHelper, err := services.NewCoinHelper(entgoClient)
+	currencyHelper, err := services.NewCurrencyHelper(entgoClient)
 	if err != nil {
 		return nil, err
 	}
-	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, pairConfig, orderBookPublisher, coinHelper)
+	binanceOrderBookSubscriber, err := subscribers.NewBinanceOrderBookSubscriber(ctx, logger, pairConfig, orderBookPublisher, currencyHelper)
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func NewBinanceTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLog
 	if err != nil {
 		return nil, err
 	}
-	coinRepository, err := repositories.NewCoinRepository(logger, entgoClient)
+	currencyRepository, err := repositories.NewCurrencyRepository(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +123,7 @@ func NewBinanceTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLog
 	if err != nil {
 		return nil, err
 	}
-	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, coinRepository, exchangeRepository)
+	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, currencyRepository, exchangeRepository)
 	if err != nil {
 		return nil, err
 	}

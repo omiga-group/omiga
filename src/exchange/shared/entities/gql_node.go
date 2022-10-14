@@ -15,7 +15,7 @@ import (
 	"entgo.io/ent/dialect/sql/schema"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/hashicorp/go-multierror"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
@@ -51,11 +51,11 @@ type Edge struct {
 	IDs  []int  `json:"ids,omitempty"`  // node ids (where this edge point to).
 }
 
-func (c *Coin) Node(ctx context.Context) (node *Node, err error) {
+func (c *Currency) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     c.ID,
-		Type:   "Coin",
-		Fields: make([]*Field, 2),
+		Type:   "Currency",
+		Fields: make([]*Field, 3),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
@@ -75,11 +75,19 @@ func (c *Coin) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "name",
 		Value: string(buf),
 	}
+	if buf, err = json.Marshal(c.Type); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "currency.Type",
+		Name:  "type",
+		Value: string(buf),
+	}
 	node.Edges[0] = &Edge{
 		Type: "TradingPair",
-		Name: "coin_base",
+		Name: "currency_base",
 	}
-	err = c.QueryCoinBase().
+	err = c.QueryCurrencyBase().
 		Select(tradingpair.FieldID).
 		Scan(ctx, &node.Edges[0].IDs)
 	if err != nil {
@@ -87,9 +95,9 @@ func (c *Coin) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[1] = &Edge{
 		Type: "TradingPair",
-		Name: "coin_counter",
+		Name: "currency_counter",
 	}
-	err = c.QueryCoinCounter().
+	err = c.QueryCurrencyCounter().
 		Select(tradingpair.FieldID).
 		Scan(ctx, &node.Edges[1].IDs)
 	if err != nil {
@@ -669,21 +677,21 @@ func (tp *TradingPair) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-		Type: "Coin",
+		Type: "Currency",
 		Name: "base",
 	}
 	err = tp.QueryBase().
-		Select(coin.FieldID).
+		Select(currency.FieldID).
 		Scan(ctx, &node.Edges[1].IDs)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		Type: "Coin",
+		Type: "Currency",
 		Name: "counter",
 	}
 	err = tp.QueryCounter().
-		Select(coin.FieldID).
+		Select(currency.FieldID).
 		Scan(ctx, &node.Edges[2].IDs)
 	if err != nil {
 		return nil, err
@@ -767,10 +775,10 @@ func (c *Client) Noder(ctx context.Context, id int, opts ...NodeOption) (_ Noder
 
 func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error) {
 	switch table {
-	case coin.Table:
-		query := c.Coin.Query().
-			Where(coin.ID(id))
-		query, err := query.CollectFields(ctx, "Coin")
+	case currency.Table:
+		query := c.Currency.Query().
+			Where(currency.ID(id))
+		query, err := query.CollectFields(ctx, "Currency")
 		if err != nil {
 			return nil, err
 		}
@@ -912,10 +920,10 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 		idmap[id] = append(idmap[id], &noders[i])
 	}
 	switch table {
-	case coin.Table:
-		query := c.Coin.Query().
-			Where(coin.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "Coin")
+	case currency.Table:
+		query := c.Currency.Query().
+			Where(currency.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Currency")
 		if err != nil {
 			return nil, err
 		}

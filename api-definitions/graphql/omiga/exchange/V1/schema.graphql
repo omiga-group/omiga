@@ -16,14 +16,14 @@ interface Node {
 }
 
 extend type Query {
-  coin(
+  currency(
     """
     Ordering directions
     """
-    where: CoinWhereInput
-  ): Coin
+    where: CurrencyWhereInput
+  ): Currency
 
-  coins(
+  currencies(
     """
     Returns the items in the list that come after the specified cursor.
     """
@@ -47,13 +47,13 @@ extend type Query {
     """
     Ordering directions
     """
-    orderBy: [CoinOrder!]
+    orderBy: [CurrencyOrder!]
 
     """
     Ordering directions
     """
-    where: CoinWhereInput
-  ): CoinConnection
+    where: CurrencyWhereInput
+  ): CurrencyConnection
 
   exchange(
     """
@@ -125,26 +125,28 @@ type PageInfo {
   endCursor: Cursor
 }
 
-enum CoinOrderField {
+enum CurrencyOrderField {
   symbol
   name
+  type
 }
 
-input CoinOrder {
+input CurrencyOrder {
   direction: OrderDirection!
-  field: CoinOrderField
+  field: CurrencyOrderField
 }
 
-type Coin implements Node {
+type Currency implements Node {
   id: ID!
   symbol: String!
   name: String
+  type: CurrencyType!
 }
 
 """
 A connection to a list of items.
 """
-type CoinConnection {
+type CurrencyConnection {
   """
   Information to aid in pagination.
   """
@@ -153,10 +155,10 @@ type CoinConnection {
   """
   A list of edges.
   """
-  edges: [CoinEdge]
+  edges: [CurrencyEdge]
 
   """
-  Total number of coins
+  Total number of currencies
   """
   totalCount: Int
 }
@@ -164,11 +166,11 @@ type CoinConnection {
 """
 An edge in a connection.
 """
-type CoinEdge {
+type CurrencyEdge {
   """
   The item at the end of the edge
   """
-  node: Coin
+  node: Currency
 
   """
   A cursor for use in pagination
@@ -256,12 +258,12 @@ type Ticker implements Node {
 type TradingPair implements Node {
   id: ID!
   symbol: String!
-  base: Coin!
+  base: Currency!
   basePriceMinPrecision: Int
   basePriceMaxPrecision: Int
   baseQuantityMinPrecision: Int
   baseQuantityMaxPrecision: Int
-  counter: Coin!
+  counter: Currency!
   counterPriceMinPrecision: Int
   counterPriceMaxPrecision: Int
   counterQuantityMinPrecision: Int
@@ -328,6 +330,11 @@ type Market implements Node {
   type: MarketType!
 }
 
+enum CurrencyType {
+  DIGITAL
+  FIAT
+}
+
 enum MarketType {
   SPORT_TRADING
   MARGIN_TRADING
@@ -344,5 +351,5 @@ enum MarketType {
   FAN_TOKEN
   ETF
   NFT
-  Swap
+  SWAP
 }

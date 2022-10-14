@@ -10,7 +10,7 @@ import (
 )
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (c *CoinQuery) CollectFields(ctx context.Context, satisfies ...string) (*CoinQuery, error) {
+func (c *CurrencyQuery) CollectFields(ctx context.Context, satisfies ...string) (*CurrencyQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
 		return c, nil
@@ -21,11 +21,11 @@ func (c *CoinQuery) CollectFields(ctx context.Context, satisfies ...string) (*Co
 	return c, nil
 }
 
-func (c *CoinQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+func (c *CurrencyQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
 		switch field.Name {
-		case "coinBase", "coin_base":
+		case "currencyBase", "currency_base":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -34,10 +34,10 @@ func (c *CoinQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
-			c.WithNamedCoinBase(alias, func(wq *TradingPairQuery) {
+			c.WithNamedCurrencyBase(alias, func(wq *TradingPairQuery) {
 				*wq = *query
 			})
-		case "coinCounter", "coin_counter":
+		case "currencyCounter", "currency_counter":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -46,7 +46,7 @@ func (c *CoinQuery) collectField(ctx context.Context, op *graphql.OperationConte
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
-			c.WithNamedCoinCounter(alias, func(wq *TradingPairQuery) {
+			c.WithNamedCurrencyCounter(alias, func(wq *TradingPairQuery) {
 				*wq = *query
 			})
 		}
@@ -54,14 +54,14 @@ func (c *CoinQuery) collectField(ctx context.Context, op *graphql.OperationConte
 	return nil
 }
 
-type coinPaginateArgs struct {
+type currencyPaginateArgs struct {
 	first, last   *int
 	after, before *Cursor
-	opts          []CoinPaginateOption
+	opts          []CurrencyPaginateOption
 }
 
-func newCoinPaginateArgs(rv map[string]interface{}) *coinPaginateArgs {
-	args := &coinPaginateArgs{}
+func newCurrencyPaginateArgs(rv map[string]interface{}) *currencyPaginateArgs {
+	args := &currencyPaginateArgs{}
 	if rv == nil {
 		return args
 	}
@@ -82,7 +82,7 @@ func newCoinPaginateArgs(rv map[string]interface{}) *coinPaginateArgs {
 		case map[string]interface{}:
 			var (
 				err1, err2 error
-				order      = &CoinOrder{Field: &CoinOrderField{}}
+				order      = &CurrencyOrder{Field: &CurrencyOrderField{}}
 			)
 			if d, ok := v[directionField]; ok {
 				err1 = order.Direction.UnmarshalGQL(d)
@@ -91,16 +91,16 @@ func newCoinPaginateArgs(rv map[string]interface{}) *coinPaginateArgs {
 				err2 = order.Field.UnmarshalGQL(f)
 			}
 			if err1 == nil && err2 == nil {
-				args.opts = append(args.opts, WithCoinOrder(order))
+				args.opts = append(args.opts, WithCurrencyOrder(order))
 			}
-		case *CoinOrder:
+		case *CurrencyOrder:
 			if v != nil {
-				args.opts = append(args.opts, WithCoinOrder(v))
+				args.opts = append(args.opts, WithCurrencyOrder(v))
 			}
 		}
 	}
-	if v, ok := rv[whereField].(*CoinWhereInput); ok {
-		args.opts = append(args.opts, WithCoinFilter(v.Filter))
+	if v, ok := rv[whereField].(*CurrencyWhereInput); ok {
+		args.opts = append(args.opts, WithCurrencyFilter(v.Filter))
 	}
 	return args
 }
@@ -465,7 +465,7 @@ func (tp *TradingPairQuery) collectField(ctx context.Context, op *graphql.Operat
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &CoinQuery{config: tp.config}
+				query = &CurrencyQuery{config: tp.config}
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
@@ -475,7 +475,7 @@ func (tp *TradingPairQuery) collectField(ctx context.Context, op *graphql.Operat
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &CoinQuery{config: tp.config}
+				query = &CurrencyQuery{config: tp.config}
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err

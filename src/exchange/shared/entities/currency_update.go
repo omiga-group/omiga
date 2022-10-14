@@ -10,40 +10,40 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
 
-// CoinUpdate is the builder for updating Coin entities.
-type CoinUpdate struct {
+// CurrencyUpdate is the builder for updating Currency entities.
+type CurrencyUpdate struct {
 	config
 	hooks     []Hook
-	mutation  *CoinMutation
+	mutation  *CurrencyMutation
 	modifiers []func(*sql.UpdateBuilder)
 }
 
-// Where appends a list predicates to the CoinUpdate builder.
-func (cu *CoinUpdate) Where(ps ...predicate.Coin) *CoinUpdate {
+// Where appends a list predicates to the CurrencyUpdate builder.
+func (cu *CurrencyUpdate) Where(ps ...predicate.Currency) *CurrencyUpdate {
 	cu.mutation.Where(ps...)
 	return cu
 }
 
 // SetSymbol sets the "symbol" field.
-func (cu *CoinUpdate) SetSymbol(s string) *CoinUpdate {
+func (cu *CurrencyUpdate) SetSymbol(s string) *CurrencyUpdate {
 	cu.mutation.SetSymbol(s)
 	return cu
 }
 
 // SetName sets the "name" field.
-func (cu *CoinUpdate) SetName(s string) *CoinUpdate {
+func (cu *CurrencyUpdate) SetName(s string) *CurrencyUpdate {
 	cu.mutation.SetName(s)
 	return cu
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (cu *CoinUpdate) SetNillableName(s *string) *CoinUpdate {
+func (cu *CurrencyUpdate) SetNillableName(s *string) *CurrencyUpdate {
 	if s != nil {
 		cu.SetName(*s)
 	}
@@ -51,101 +51,113 @@ func (cu *CoinUpdate) SetNillableName(s *string) *CoinUpdate {
 }
 
 // ClearName clears the value of the "name" field.
-func (cu *CoinUpdate) ClearName() *CoinUpdate {
+func (cu *CurrencyUpdate) ClearName() *CurrencyUpdate {
 	cu.mutation.ClearName()
 	return cu
 }
 
-// AddCoinBaseIDs adds the "coin_base" edge to the TradingPair entity by IDs.
-func (cu *CoinUpdate) AddCoinBaseIDs(ids ...int) *CoinUpdate {
-	cu.mutation.AddCoinBaseIDs(ids...)
+// SetType sets the "type" field.
+func (cu *CurrencyUpdate) SetType(c currency.Type) *CurrencyUpdate {
+	cu.mutation.SetType(c)
 	return cu
 }
 
-// AddCoinBase adds the "coin_base" edges to the TradingPair entity.
-func (cu *CoinUpdate) AddCoinBase(t ...*TradingPair) *CoinUpdate {
+// AddCurrencyBaseIDs adds the "currency_base" edge to the TradingPair entity by IDs.
+func (cu *CurrencyUpdate) AddCurrencyBaseIDs(ids ...int) *CurrencyUpdate {
+	cu.mutation.AddCurrencyBaseIDs(ids...)
+	return cu
+}
+
+// AddCurrencyBase adds the "currency_base" edges to the TradingPair entity.
+func (cu *CurrencyUpdate) AddCurrencyBase(t ...*TradingPair) *CurrencyUpdate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return cu.AddCoinBaseIDs(ids...)
+	return cu.AddCurrencyBaseIDs(ids...)
 }
 
-// AddCoinCounterIDs adds the "coin_counter" edge to the TradingPair entity by IDs.
-func (cu *CoinUpdate) AddCoinCounterIDs(ids ...int) *CoinUpdate {
-	cu.mutation.AddCoinCounterIDs(ids...)
+// AddCurrencyCounterIDs adds the "currency_counter" edge to the TradingPair entity by IDs.
+func (cu *CurrencyUpdate) AddCurrencyCounterIDs(ids ...int) *CurrencyUpdate {
+	cu.mutation.AddCurrencyCounterIDs(ids...)
 	return cu
 }
 
-// AddCoinCounter adds the "coin_counter" edges to the TradingPair entity.
-func (cu *CoinUpdate) AddCoinCounter(t ...*TradingPair) *CoinUpdate {
+// AddCurrencyCounter adds the "currency_counter" edges to the TradingPair entity.
+func (cu *CurrencyUpdate) AddCurrencyCounter(t ...*TradingPair) *CurrencyUpdate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return cu.AddCoinCounterIDs(ids...)
+	return cu.AddCurrencyCounterIDs(ids...)
 }
 
-// Mutation returns the CoinMutation object of the builder.
-func (cu *CoinUpdate) Mutation() *CoinMutation {
+// Mutation returns the CurrencyMutation object of the builder.
+func (cu *CurrencyUpdate) Mutation() *CurrencyMutation {
 	return cu.mutation
 }
 
-// ClearCoinBase clears all "coin_base" edges to the TradingPair entity.
-func (cu *CoinUpdate) ClearCoinBase() *CoinUpdate {
-	cu.mutation.ClearCoinBase()
+// ClearCurrencyBase clears all "currency_base" edges to the TradingPair entity.
+func (cu *CurrencyUpdate) ClearCurrencyBase() *CurrencyUpdate {
+	cu.mutation.ClearCurrencyBase()
 	return cu
 }
 
-// RemoveCoinBaseIDs removes the "coin_base" edge to TradingPair entities by IDs.
-func (cu *CoinUpdate) RemoveCoinBaseIDs(ids ...int) *CoinUpdate {
-	cu.mutation.RemoveCoinBaseIDs(ids...)
+// RemoveCurrencyBaseIDs removes the "currency_base" edge to TradingPair entities by IDs.
+func (cu *CurrencyUpdate) RemoveCurrencyBaseIDs(ids ...int) *CurrencyUpdate {
+	cu.mutation.RemoveCurrencyBaseIDs(ids...)
 	return cu
 }
 
-// RemoveCoinBase removes "coin_base" edges to TradingPair entities.
-func (cu *CoinUpdate) RemoveCoinBase(t ...*TradingPair) *CoinUpdate {
+// RemoveCurrencyBase removes "currency_base" edges to TradingPair entities.
+func (cu *CurrencyUpdate) RemoveCurrencyBase(t ...*TradingPair) *CurrencyUpdate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return cu.RemoveCoinBaseIDs(ids...)
+	return cu.RemoveCurrencyBaseIDs(ids...)
 }
 
-// ClearCoinCounter clears all "coin_counter" edges to the TradingPair entity.
-func (cu *CoinUpdate) ClearCoinCounter() *CoinUpdate {
-	cu.mutation.ClearCoinCounter()
+// ClearCurrencyCounter clears all "currency_counter" edges to the TradingPair entity.
+func (cu *CurrencyUpdate) ClearCurrencyCounter() *CurrencyUpdate {
+	cu.mutation.ClearCurrencyCounter()
 	return cu
 }
 
-// RemoveCoinCounterIDs removes the "coin_counter" edge to TradingPair entities by IDs.
-func (cu *CoinUpdate) RemoveCoinCounterIDs(ids ...int) *CoinUpdate {
-	cu.mutation.RemoveCoinCounterIDs(ids...)
+// RemoveCurrencyCounterIDs removes the "currency_counter" edge to TradingPair entities by IDs.
+func (cu *CurrencyUpdate) RemoveCurrencyCounterIDs(ids ...int) *CurrencyUpdate {
+	cu.mutation.RemoveCurrencyCounterIDs(ids...)
 	return cu
 }
 
-// RemoveCoinCounter removes "coin_counter" edges to TradingPair entities.
-func (cu *CoinUpdate) RemoveCoinCounter(t ...*TradingPair) *CoinUpdate {
+// RemoveCurrencyCounter removes "currency_counter" edges to TradingPair entities.
+func (cu *CurrencyUpdate) RemoveCurrencyCounter(t ...*TradingPair) *CurrencyUpdate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return cu.RemoveCoinCounterIDs(ids...)
+	return cu.RemoveCurrencyCounterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (cu *CoinUpdate) Save(ctx context.Context) (int, error) {
+func (cu *CurrencyUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error
 		affected int
 	)
 	if len(cu.hooks) == 0 {
+		if err = cu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = cu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*CoinMutation)
+			mutation, ok := m.(*CurrencyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cu.check(); err != nil {
+				return 0, err
 			}
 			cu.mutation = mutation
 			affected, err = cu.sqlSave(ctx)
@@ -166,7 +178,7 @@ func (cu *CoinUpdate) Save(ctx context.Context) (int, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (cu *CoinUpdate) SaveX(ctx context.Context) int {
+func (cu *CurrencyUpdate) SaveX(ctx context.Context) int {
 	affected, err := cu.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -175,32 +187,42 @@ func (cu *CoinUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (cu *CoinUpdate) Exec(ctx context.Context) error {
+func (cu *CurrencyUpdate) Exec(ctx context.Context) error {
 	_, err := cu.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cu *CoinUpdate) ExecX(ctx context.Context) {
+func (cu *CurrencyUpdate) ExecX(ctx context.Context) {
 	if err := cu.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (cu *CurrencyUpdate) check() error {
+	if v, ok := cu.mutation.GetType(); ok {
+		if err := currency.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`entities: validator failed for field "Currency.type": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (cu *CoinUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CoinUpdate {
+func (cu *CurrencyUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CurrencyUpdate {
 	cu.modifiers = append(cu.modifiers, modifiers...)
 	return cu
 }
 
-func (cu *CoinUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (cu *CurrencyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   coin.Table,
-			Columns: coin.Columns,
+			Table:   currency.Table,
+			Columns: currency.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: coin.FieldID,
+				Column: currency.FieldID,
 			},
 		},
 	}
@@ -215,28 +237,35 @@ func (cu *CoinUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: coin.FieldSymbol,
+			Column: currency.FieldSymbol,
 		})
 	}
 	if value, ok := cu.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: coin.FieldName,
+			Column: currency.FieldName,
 		})
 	}
 	if cu.mutation.NameCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: coin.FieldName,
+			Column: currency.FieldName,
 		})
 	}
-	if cu.mutation.CoinBaseCleared() {
+	if value, ok := cu.mutation.GetType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: currency.FieldType,
+		})
+	}
+	if cu.mutation.CurrencyBaseCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   coin.CoinBaseTable,
-			Columns: []string{coin.CoinBaseColumn},
+			Table:   currency.CurrencyBaseTable,
+			Columns: []string{currency.CurrencyBaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -248,12 +277,12 @@ func (cu *CoinUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge.Schema = cu.schemaConfig.TradingPair
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := cu.mutation.RemovedCoinBaseIDs(); len(nodes) > 0 && !cu.mutation.CoinBaseCleared() {
+	if nodes := cu.mutation.RemovedCurrencyBaseIDs(); len(nodes) > 0 && !cu.mutation.CurrencyBaseCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   coin.CoinBaseTable,
-			Columns: []string{coin.CoinBaseColumn},
+			Table:   currency.CurrencyBaseTable,
+			Columns: []string{currency.CurrencyBaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -268,69 +297,12 @@ func (cu *CoinUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := cu.mutation.CoinBaseIDs(); len(nodes) > 0 {
+	if nodes := cu.mutation.CurrencyBaseIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   coin.CoinBaseTable,
-			Columns: []string{coin.CoinBaseColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: tradingpair.FieldID,
-				},
-			},
-		}
-		edge.Schema = cu.schemaConfig.TradingPair
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if cu.mutation.CoinCounterCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   coin.CoinCounterTable,
-			Columns: []string{coin.CoinCounterColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: tradingpair.FieldID,
-				},
-			},
-		}
-		edge.Schema = cu.schemaConfig.TradingPair
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := cu.mutation.RemovedCoinCounterIDs(); len(nodes) > 0 && !cu.mutation.CoinCounterCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   coin.CoinCounterTable,
-			Columns: []string{coin.CoinCounterColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: tradingpair.FieldID,
-				},
-			},
-		}
-		edge.Schema = cu.schemaConfig.TradingPair
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := cu.mutation.CoinCounterIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   coin.CoinCounterTable,
-			Columns: []string{coin.CoinCounterColumn},
+			Table:   currency.CurrencyBaseTable,
+			Columns: []string{currency.CurrencyBaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -345,12 +317,69 @@ func (cu *CoinUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_spec.Node.Schema = cu.schemaConfig.Coin
+	if cu.mutation.CurrencyCounterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.CurrencyCounterTable,
+			Columns: []string{currency.CurrencyCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cu.schemaConfig.TradingPair
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.RemovedCurrencyCounterIDs(); len(nodes) > 0 && !cu.mutation.CurrencyCounterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.CurrencyCounterTable,
+			Columns: []string{currency.CurrencyCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cu.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.CurrencyCounterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.CurrencyCounterTable,
+			Columns: []string{currency.CurrencyCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cu.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	_spec.Node.Schema = cu.schemaConfig.Currency
 	ctx = internal.NewSchemaConfigContext(ctx, cu.schemaConfig)
 	_spec.Modifiers = cu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{coin.Label}
+			err = &NotFoundError{currency.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -359,29 +388,29 @@ func (cu *CoinUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	return n, nil
 }
 
-// CoinUpdateOne is the builder for updating a single Coin entity.
-type CoinUpdateOne struct {
+// CurrencyUpdateOne is the builder for updating a single Currency entity.
+type CurrencyUpdateOne struct {
 	config
 	fields    []string
 	hooks     []Hook
-	mutation  *CoinMutation
+	mutation  *CurrencyMutation
 	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetSymbol sets the "symbol" field.
-func (cuo *CoinUpdateOne) SetSymbol(s string) *CoinUpdateOne {
+func (cuo *CurrencyUpdateOne) SetSymbol(s string) *CurrencyUpdateOne {
 	cuo.mutation.SetSymbol(s)
 	return cuo
 }
 
 // SetName sets the "name" field.
-func (cuo *CoinUpdateOne) SetName(s string) *CoinUpdateOne {
+func (cuo *CurrencyUpdateOne) SetName(s string) *CurrencyUpdateOne {
 	cuo.mutation.SetName(s)
 	return cuo
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (cuo *CoinUpdateOne) SetNillableName(s *string) *CoinUpdateOne {
+func (cuo *CurrencyUpdateOne) SetNillableName(s *string) *CurrencyUpdateOne {
 	if s != nil {
 		cuo.SetName(*s)
 	}
@@ -389,108 +418,120 @@ func (cuo *CoinUpdateOne) SetNillableName(s *string) *CoinUpdateOne {
 }
 
 // ClearName clears the value of the "name" field.
-func (cuo *CoinUpdateOne) ClearName() *CoinUpdateOne {
+func (cuo *CurrencyUpdateOne) ClearName() *CurrencyUpdateOne {
 	cuo.mutation.ClearName()
 	return cuo
 }
 
-// AddCoinBaseIDs adds the "coin_base" edge to the TradingPair entity by IDs.
-func (cuo *CoinUpdateOne) AddCoinBaseIDs(ids ...int) *CoinUpdateOne {
-	cuo.mutation.AddCoinBaseIDs(ids...)
+// SetType sets the "type" field.
+func (cuo *CurrencyUpdateOne) SetType(c currency.Type) *CurrencyUpdateOne {
+	cuo.mutation.SetType(c)
 	return cuo
 }
 
-// AddCoinBase adds the "coin_base" edges to the TradingPair entity.
-func (cuo *CoinUpdateOne) AddCoinBase(t ...*TradingPair) *CoinUpdateOne {
+// AddCurrencyBaseIDs adds the "currency_base" edge to the TradingPair entity by IDs.
+func (cuo *CurrencyUpdateOne) AddCurrencyBaseIDs(ids ...int) *CurrencyUpdateOne {
+	cuo.mutation.AddCurrencyBaseIDs(ids...)
+	return cuo
+}
+
+// AddCurrencyBase adds the "currency_base" edges to the TradingPair entity.
+func (cuo *CurrencyUpdateOne) AddCurrencyBase(t ...*TradingPair) *CurrencyUpdateOne {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return cuo.AddCoinBaseIDs(ids...)
+	return cuo.AddCurrencyBaseIDs(ids...)
 }
 
-// AddCoinCounterIDs adds the "coin_counter" edge to the TradingPair entity by IDs.
-func (cuo *CoinUpdateOne) AddCoinCounterIDs(ids ...int) *CoinUpdateOne {
-	cuo.mutation.AddCoinCounterIDs(ids...)
+// AddCurrencyCounterIDs adds the "currency_counter" edge to the TradingPair entity by IDs.
+func (cuo *CurrencyUpdateOne) AddCurrencyCounterIDs(ids ...int) *CurrencyUpdateOne {
+	cuo.mutation.AddCurrencyCounterIDs(ids...)
 	return cuo
 }
 
-// AddCoinCounter adds the "coin_counter" edges to the TradingPair entity.
-func (cuo *CoinUpdateOne) AddCoinCounter(t ...*TradingPair) *CoinUpdateOne {
+// AddCurrencyCounter adds the "currency_counter" edges to the TradingPair entity.
+func (cuo *CurrencyUpdateOne) AddCurrencyCounter(t ...*TradingPair) *CurrencyUpdateOne {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return cuo.AddCoinCounterIDs(ids...)
+	return cuo.AddCurrencyCounterIDs(ids...)
 }
 
-// Mutation returns the CoinMutation object of the builder.
-func (cuo *CoinUpdateOne) Mutation() *CoinMutation {
+// Mutation returns the CurrencyMutation object of the builder.
+func (cuo *CurrencyUpdateOne) Mutation() *CurrencyMutation {
 	return cuo.mutation
 }
 
-// ClearCoinBase clears all "coin_base" edges to the TradingPair entity.
-func (cuo *CoinUpdateOne) ClearCoinBase() *CoinUpdateOne {
-	cuo.mutation.ClearCoinBase()
+// ClearCurrencyBase clears all "currency_base" edges to the TradingPair entity.
+func (cuo *CurrencyUpdateOne) ClearCurrencyBase() *CurrencyUpdateOne {
+	cuo.mutation.ClearCurrencyBase()
 	return cuo
 }
 
-// RemoveCoinBaseIDs removes the "coin_base" edge to TradingPair entities by IDs.
-func (cuo *CoinUpdateOne) RemoveCoinBaseIDs(ids ...int) *CoinUpdateOne {
-	cuo.mutation.RemoveCoinBaseIDs(ids...)
+// RemoveCurrencyBaseIDs removes the "currency_base" edge to TradingPair entities by IDs.
+func (cuo *CurrencyUpdateOne) RemoveCurrencyBaseIDs(ids ...int) *CurrencyUpdateOne {
+	cuo.mutation.RemoveCurrencyBaseIDs(ids...)
 	return cuo
 }
 
-// RemoveCoinBase removes "coin_base" edges to TradingPair entities.
-func (cuo *CoinUpdateOne) RemoveCoinBase(t ...*TradingPair) *CoinUpdateOne {
+// RemoveCurrencyBase removes "currency_base" edges to TradingPair entities.
+func (cuo *CurrencyUpdateOne) RemoveCurrencyBase(t ...*TradingPair) *CurrencyUpdateOne {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return cuo.RemoveCoinBaseIDs(ids...)
+	return cuo.RemoveCurrencyBaseIDs(ids...)
 }
 
-// ClearCoinCounter clears all "coin_counter" edges to the TradingPair entity.
-func (cuo *CoinUpdateOne) ClearCoinCounter() *CoinUpdateOne {
-	cuo.mutation.ClearCoinCounter()
+// ClearCurrencyCounter clears all "currency_counter" edges to the TradingPair entity.
+func (cuo *CurrencyUpdateOne) ClearCurrencyCounter() *CurrencyUpdateOne {
+	cuo.mutation.ClearCurrencyCounter()
 	return cuo
 }
 
-// RemoveCoinCounterIDs removes the "coin_counter" edge to TradingPair entities by IDs.
-func (cuo *CoinUpdateOne) RemoveCoinCounterIDs(ids ...int) *CoinUpdateOne {
-	cuo.mutation.RemoveCoinCounterIDs(ids...)
+// RemoveCurrencyCounterIDs removes the "currency_counter" edge to TradingPair entities by IDs.
+func (cuo *CurrencyUpdateOne) RemoveCurrencyCounterIDs(ids ...int) *CurrencyUpdateOne {
+	cuo.mutation.RemoveCurrencyCounterIDs(ids...)
 	return cuo
 }
 
-// RemoveCoinCounter removes "coin_counter" edges to TradingPair entities.
-func (cuo *CoinUpdateOne) RemoveCoinCounter(t ...*TradingPair) *CoinUpdateOne {
+// RemoveCurrencyCounter removes "currency_counter" edges to TradingPair entities.
+func (cuo *CurrencyUpdateOne) RemoveCurrencyCounter(t ...*TradingPair) *CurrencyUpdateOne {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return cuo.RemoveCoinCounterIDs(ids...)
+	return cuo.RemoveCurrencyCounterIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (cuo *CoinUpdateOne) Select(field string, fields ...string) *CoinUpdateOne {
+func (cuo *CurrencyUpdateOne) Select(field string, fields ...string) *CurrencyUpdateOne {
 	cuo.fields = append([]string{field}, fields...)
 	return cuo
 }
 
-// Save executes the query and returns the updated Coin entity.
-func (cuo *CoinUpdateOne) Save(ctx context.Context) (*Coin, error) {
+// Save executes the query and returns the updated Currency entity.
+func (cuo *CurrencyUpdateOne) Save(ctx context.Context) (*Currency, error) {
 	var (
 		err  error
-		node *Coin
+		node *Currency
 	)
 	if len(cuo.hooks) == 0 {
+		if err = cuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = cuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*CoinMutation)
+			mutation, ok := m.(*CurrencyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cuo.check(); err != nil {
+				return nil, err
 			}
 			cuo.mutation = mutation
 			node, err = cuo.sqlSave(ctx)
@@ -507,9 +548,9 @@ func (cuo *CoinUpdateOne) Save(ctx context.Context) (*Coin, error) {
 		if err != nil {
 			return nil, err
 		}
-		nv, ok := v.(*Coin)
+		nv, ok := v.(*Currency)
 		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from CoinMutation", v)
+			return nil, fmt.Errorf("unexpected node type %T returned from CurrencyMutation", v)
 		}
 		node = nv
 	}
@@ -517,7 +558,7 @@ func (cuo *CoinUpdateOne) Save(ctx context.Context) (*Coin, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (cuo *CoinUpdateOne) SaveX(ctx context.Context) *Coin {
+func (cuo *CurrencyUpdateOne) SaveX(ctx context.Context) *Currency {
 	node, err := cuo.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -526,48 +567,58 @@ func (cuo *CoinUpdateOne) SaveX(ctx context.Context) *Coin {
 }
 
 // Exec executes the query on the entity.
-func (cuo *CoinUpdateOne) Exec(ctx context.Context) error {
+func (cuo *CurrencyUpdateOne) Exec(ctx context.Context) error {
 	_, err := cuo.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cuo *CoinUpdateOne) ExecX(ctx context.Context) {
+func (cuo *CurrencyUpdateOne) ExecX(ctx context.Context) {
 	if err := cuo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (cuo *CurrencyUpdateOne) check() error {
+	if v, ok := cuo.mutation.GetType(); ok {
+		if err := currency.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`entities: validator failed for field "Currency.type": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (cuo *CoinUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CoinUpdateOne {
+func (cuo *CurrencyUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CurrencyUpdateOne {
 	cuo.modifiers = append(cuo.modifiers, modifiers...)
 	return cuo
 }
 
-func (cuo *CoinUpdateOne) sqlSave(ctx context.Context) (_node *Coin, err error) {
+func (cuo *CurrencyUpdateOne) sqlSave(ctx context.Context) (_node *Currency, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   coin.Table,
-			Columns: coin.Columns,
+			Table:   currency.Table,
+			Columns: currency.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: coin.FieldID,
+				Column: currency.FieldID,
 			},
 		},
 	}
 	id, ok := cuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`entities: missing "Coin.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`entities: missing "Currency.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := cuo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, coin.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, currency.FieldID)
 		for _, f := range fields {
-			if !coin.ValidColumn(f) {
+			if !currency.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("entities: invalid field %q for query", f)}
 			}
-			if f != coin.FieldID {
+			if f != currency.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -583,28 +634,35 @@ func (cuo *CoinUpdateOne) sqlSave(ctx context.Context) (_node *Coin, err error) 
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: coin.FieldSymbol,
+			Column: currency.FieldSymbol,
 		})
 	}
 	if value, ok := cuo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: coin.FieldName,
+			Column: currency.FieldName,
 		})
 	}
 	if cuo.mutation.NameCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: coin.FieldName,
+			Column: currency.FieldName,
 		})
 	}
-	if cuo.mutation.CoinBaseCleared() {
+	if value, ok := cuo.mutation.GetType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: currency.FieldType,
+		})
+	}
+	if cuo.mutation.CurrencyBaseCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   coin.CoinBaseTable,
-			Columns: []string{coin.CoinBaseColumn},
+			Table:   currency.CurrencyBaseTable,
+			Columns: []string{currency.CurrencyBaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -616,12 +674,12 @@ func (cuo *CoinUpdateOne) sqlSave(ctx context.Context) (_node *Coin, err error) 
 		edge.Schema = cuo.schemaConfig.TradingPair
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := cuo.mutation.RemovedCoinBaseIDs(); len(nodes) > 0 && !cuo.mutation.CoinBaseCleared() {
+	if nodes := cuo.mutation.RemovedCurrencyBaseIDs(); len(nodes) > 0 && !cuo.mutation.CurrencyBaseCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   coin.CoinBaseTable,
-			Columns: []string{coin.CoinBaseColumn},
+			Table:   currency.CurrencyBaseTable,
+			Columns: []string{currency.CurrencyBaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -636,69 +694,12 @@ func (cuo *CoinUpdateOne) sqlSave(ctx context.Context) (_node *Coin, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := cuo.mutation.CoinBaseIDs(); len(nodes) > 0 {
+	if nodes := cuo.mutation.CurrencyBaseIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   coin.CoinBaseTable,
-			Columns: []string{coin.CoinBaseColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: tradingpair.FieldID,
-				},
-			},
-		}
-		edge.Schema = cuo.schemaConfig.TradingPair
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if cuo.mutation.CoinCounterCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   coin.CoinCounterTable,
-			Columns: []string{coin.CoinCounterColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: tradingpair.FieldID,
-				},
-			},
-		}
-		edge.Schema = cuo.schemaConfig.TradingPair
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := cuo.mutation.RemovedCoinCounterIDs(); len(nodes) > 0 && !cuo.mutation.CoinCounterCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   coin.CoinCounterTable,
-			Columns: []string{coin.CoinCounterColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: tradingpair.FieldID,
-				},
-			},
-		}
-		edge.Schema = cuo.schemaConfig.TradingPair
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := cuo.mutation.CoinCounterIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   coin.CoinCounterTable,
-			Columns: []string{coin.CoinCounterColumn},
+			Table:   currency.CurrencyBaseTable,
+			Columns: []string{currency.CurrencyBaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -713,15 +714,72 @@ func (cuo *CoinUpdateOne) sqlSave(ctx context.Context) (_node *Coin, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_spec.Node.Schema = cuo.schemaConfig.Coin
+	if cuo.mutation.CurrencyCounterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.CurrencyCounterTable,
+			Columns: []string{currency.CurrencyCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cuo.schemaConfig.TradingPair
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.RemovedCurrencyCounterIDs(); len(nodes) > 0 && !cuo.mutation.CurrencyCounterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.CurrencyCounterTable,
+			Columns: []string{currency.CurrencyCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cuo.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.CurrencyCounterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.CurrencyCounterTable,
+			Columns: []string{currency.CurrencyCounterColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: tradingpair.FieldID,
+				},
+			},
+		}
+		edge.Schema = cuo.schemaConfig.TradingPair
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	_spec.Node.Schema = cuo.schemaConfig.Currency
 	ctx = internal.NewSchemaConfigContext(ctx, cuo.schemaConfig)
 	_spec.Modifiers = cuo.modifiers
-	_node = &Coin{config: cuo.config}
+	_node = &Currency{config: cuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, cuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{coin.Label}
+			err = &NotFoundError{currency.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

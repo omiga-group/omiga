@@ -95,11 +95,11 @@ func NewKrakenOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	if err != nil {
 		return nil, err
 	}
-	coinHelper, err := services.NewCoinHelper(entgoClient)
+	currencyHelper, err := services.NewCurrencyHelper(entgoClient)
 	if err != nil {
 		return nil, err
 	}
-	krakenOrderBookSubscriber, err := subscribers.NewKrakenOrderBookSubscriber(ctx, logger, krakenConfig, orderBookPublisher, coinHelper)
+	krakenOrderBookSubscriber, err := subscribers.NewKrakenOrderBookSubscriber(ctx, logger, krakenConfig, orderBookPublisher, currencyHelper)
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func NewKrakenTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	coinRepository, err := repositories.NewCoinRepository(logger, entgoClient)
+	currencyRepository, err := repositories.NewCurrencyRepository(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +123,7 @@ func NewKrakenTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, coinRepository, exchangeRepository)
+	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, currencyRepository, exchangeRepository)
 	if err != nil {
 		return nil, err
 	}

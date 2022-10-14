@@ -44,18 +44,18 @@ const (
 	ExchangeColumn = "exchange_trading_pair"
 	// BaseTable is the table that holds the base relation/edge.
 	BaseTable = "trading_pairs"
-	// BaseInverseTable is the table name for the Coin entity.
-	// It exists in this package in order to avoid circular dependency with the "coin" package.
-	BaseInverseTable = "coins"
+	// BaseInverseTable is the table name for the Currency entity.
+	// It exists in this package in order to avoid circular dependency with the "currency" package.
+	BaseInverseTable = "currencies"
 	// BaseColumn is the table column denoting the base relation/edge.
-	BaseColumn = "coin_coin_base"
+	BaseColumn = "currency_currency_base"
 	// CounterTable is the table that holds the counter relation/edge.
 	CounterTable = "trading_pairs"
-	// CounterInverseTable is the table name for the Coin entity.
-	// It exists in this package in order to avoid circular dependency with the "coin" package.
-	CounterInverseTable = "coins"
+	// CounterInverseTable is the table name for the Currency entity.
+	// It exists in this package in order to avoid circular dependency with the "currency" package.
+	CounterInverseTable = "currencies"
 	// CounterColumn is the table column denoting the counter relation/edge.
-	CounterColumn = "coin_coin_counter"
+	CounterColumn = "currency_currency_counter"
 	// MarketTable is the table that holds the market relation/edge. The primary key declared below.
 	MarketTable = "market_trading_pair"
 	// MarketInverseTable is the table name for the Market entity.
@@ -80,8 +80,8 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "trading_pairs"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"coin_coin_base",
-	"coin_coin_counter",
+	"currency_currency_base",
+	"currency_currency_counter",
 	"exchange_trading_pair",
 }
 

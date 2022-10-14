@@ -1,5 +1,5 @@
 package repositories
 
-//go:generate mockgen -source=exchange-repository.go -destination=mock/exchange-repository_gen.go
-//go:generate mockgen -source=coin-repository.go -destination=mock/coin-repository_gen.go
-//go:generate mockgen -source=tradingpair-repository.go -destination=mock/tradingpair-repository_gen.go
+//go:generate mockgen -source=currency_repository.go -destination=mock/currency_repository_gen.go
+//go:generate mockgen -source=exchange_repository.go -destination=mock/exchange_repository_gen.go
+//go:generate mockgen -source=trading_pair_repository.go -destination=mock/trading_pair_repository_gen.go

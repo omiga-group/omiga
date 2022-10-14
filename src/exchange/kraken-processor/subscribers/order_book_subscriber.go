@@ -24,7 +24,7 @@ type krakenOrderBookSubscriber struct {
 	logger             *zap.SugaredLogger
 	pairs              []configuration.PairConfig
 	orderBookPublisher publishers.OrderBookPublisher
-	coinHelper         services.CoinHelper
+	coinHelper         services.CurrencyHelper
 }
 
 func NewKrakenOrderBookSubscriber(
@@ -32,7 +32,7 @@ func NewKrakenOrderBookSubscriber(
 	logger *zap.SugaredLogger,
 	krakenConfig configuration.KrakenConfig,
 	orderBookPublisher publishers.OrderBookPublisher,
-	coinHelper services.CoinHelper) (KrakenOrderBookSubscriber, error) {
+	coinHelper services.CurrencyHelper) (KrakenOrderBookSubscriber, error) {
 
 	instance := &krakenOrderBookSubscriber{
 		ctx:                ctx,
@@ -127,13 +127,13 @@ func (kobs *krakenOrderBookSubscriber) connectAndSubscribe() {
 				counterCoinName := coins[symbol2]
 
 				orderBook := mappers.KrakenOrderBookToOrderBook(
-					exchangeModels.Currency{
+					exchangeModels.OrderCurrency{
 						Name:         baseCoinName,
 						Code:         pairs[0],
 						MaxPrecision: 1,
 						Digital:      true,
 					},
-					exchangeModels.Currency{
+					exchangeModels.OrderCurrency{
 						Name:         counterCoinName,
 						Code:         pairs[1],
 						MaxPrecision: 1,

@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type Currency struct {
+type OrderCurrency struct {
 	Name         string
 	Code         string
 	MaxPrecision int32
@@ -22,8 +22,8 @@ type OrderBookEntry struct {
 
 type OrderBook struct {
 	ExchangeId      string
-	BaseCurrency    Currency
-	CounterCurrency Currency
+	BaseCurrency    OrderCurrency
+	CounterCurrency OrderCurrency
 	Bids            []OrderBookEntry
 	Asks            []OrderBookEntry
 }

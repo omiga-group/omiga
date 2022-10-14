@@ -9,15 +9,15 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 )
 
-// The CoinFunc type is an adapter to allow the use of ordinary
-// function as Coin mutator.
-type CoinFunc func(context.Context, *entities.CoinMutation) (entities.Value, error)
+// The CurrencyFunc type is an adapter to allow the use of ordinary
+// function as Currency mutator.
+type CurrencyFunc func(context.Context, *entities.CurrencyMutation) (entities.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f CoinFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
-	mv, ok := m.(*entities.CoinMutation)
+func (f CurrencyFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
+	mv, ok := m.(*entities.CurrencyMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.CoinMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.CurrencyMutation", m)
 	}
 	return f(ctx, mv)
 }

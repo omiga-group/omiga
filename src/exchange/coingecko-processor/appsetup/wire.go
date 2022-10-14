@@ -76,7 +76,7 @@ func NewCoingeckoCoinSubscriber(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
 		subscribers.NewCoingeckoCoinSubscriber,
-		repositories.NewCoinRepository)
+		repositories.NewCurrencyRepository)
 
 	return nil, nil
 }

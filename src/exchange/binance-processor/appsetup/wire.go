@@ -87,7 +87,7 @@ func NewBinanceOrderBookSubscriber(
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
 		subscribers.NewBinanceOrderBookSubscriber,
-		services.NewCoinHelper)
+		services.NewCurrencyHelper)
 
 	return nil, nil
 }
@@ -102,7 +102,7 @@ func NewBinanceTradingPairSubscriber(
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
-		repositories.NewCoinRepository,
+		repositories.NewCurrencyRepository,
 		repositories.NewExchangeRepository,
 		repositories.NewTradingPairRepository,
 		subscribers.NewBinanceTradingPairSubscriber)

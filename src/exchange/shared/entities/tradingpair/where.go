@@ -909,14 +909,14 @@ func HasBase() predicate.TradingPair {
 			sqlgraph.Edge(sqlgraph.M2O, true, BaseTable, BaseColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Coin
+		step.To.Schema = schemaConfig.Currency
 		step.Edge.Schema = schemaConfig.TradingPair
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
 // HasBaseWith applies the HasEdge predicate on the "base" edge with a given conditions (other predicates).
-func HasBaseWith(preds ...predicate.Coin) predicate.TradingPair {
+func HasBaseWith(preds ...predicate.Currency) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
@@ -924,7 +924,7 @@ func HasBaseWith(preds ...predicate.Coin) predicate.TradingPair {
 			sqlgraph.Edge(sqlgraph.M2O, true, BaseTable, BaseColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Coin
+		step.To.Schema = schemaConfig.Currency
 		step.Edge.Schema = schemaConfig.TradingPair
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -943,14 +943,14 @@ func HasCounter() predicate.TradingPair {
 			sqlgraph.Edge(sqlgraph.M2O, true, CounterTable, CounterColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Coin
+		step.To.Schema = schemaConfig.Currency
 		step.Edge.Schema = schemaConfig.TradingPair
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
 // HasCounterWith applies the HasEdge predicate on the "counter" edge with a given conditions (other predicates).
-func HasCounterWith(preds ...predicate.Coin) predicate.TradingPair {
+func HasCounterWith(preds ...predicate.Currency) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
@@ -958,7 +958,7 @@ func HasCounterWith(preds ...predicate.Coin) predicate.TradingPair {
 			sqlgraph.Edge(sqlgraph.M2O, true, CounterTable, CounterColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Coin
+		step.To.Schema = schemaConfig.Currency
 		step.Edge.Schema = schemaConfig.TradingPair
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

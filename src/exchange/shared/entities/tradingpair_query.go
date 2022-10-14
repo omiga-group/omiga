@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
@@ -30,8 +30,8 @@ type TradingPairQuery struct {
 	fields          []string
 	predicates      []predicate.TradingPair
 	withExchange    *ExchangeQuery
-	withBase        *CoinQuery
-	withCounter     *CoinQuery
+	withBase        *CurrencyQuery
+	withCounter     *CurrencyQuery
 	withMarket      *MarketQuery
 	withFKs         bool
 	loadTotal       []func(context.Context, []*TradingPair) error
@@ -99,8 +99,8 @@ func (tpq *TradingPairQuery) QueryExchange() *ExchangeQuery {
 }
 
 // QueryBase chains the current query on the "base" edge.
-func (tpq *TradingPairQuery) QueryBase() *CoinQuery {
-	query := &CoinQuery{config: tpq.config}
+func (tpq *TradingPairQuery) QueryBase() *CurrencyQuery {
+	query := &CurrencyQuery{config: tpq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tpq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -111,11 +111,11 @@ func (tpq *TradingPairQuery) QueryBase() *CoinQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, selector),
-			sqlgraph.To(coin.Table, coin.FieldID),
+			sqlgraph.To(currency.Table, currency.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, tradingpair.BaseTable, tradingpair.BaseColumn),
 		)
 		schemaConfig := tpq.schemaConfig
-		step.To.Schema = schemaConfig.Coin
+		step.To.Schema = schemaConfig.Currency
 		step.Edge.Schema = schemaConfig.TradingPair
 		fromU = sqlgraph.SetNeighbors(tpq.driver.Dialect(), step)
 		return fromU, nil
@@ -124,8 +124,8 @@ func (tpq *TradingPairQuery) QueryBase() *CoinQuery {
 }
 
 // QueryCounter chains the current query on the "counter" edge.
-func (tpq *TradingPairQuery) QueryCounter() *CoinQuery {
-	query := &CoinQuery{config: tpq.config}
+func (tpq *TradingPairQuery) QueryCounter() *CurrencyQuery {
+	query := &CurrencyQuery{config: tpq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tpq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -136,11 +136,11 @@ func (tpq *TradingPairQuery) QueryCounter() *CoinQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, selector),
-			sqlgraph.To(coin.Table, coin.FieldID),
+			sqlgraph.To(currency.Table, currency.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, tradingpair.CounterTable, tradingpair.CounterColumn),
 		)
 		schemaConfig := tpq.schemaConfig
-		step.To.Schema = schemaConfig.Coin
+		step.To.Schema = schemaConfig.Currency
 		step.Edge.Schema = schemaConfig.TradingPair
 		fromU = sqlgraph.SetNeighbors(tpq.driver.Dialect(), step)
 		return fromU, nil
@@ -378,8 +378,8 @@ func (tpq *TradingPairQuery) WithExchange(opts ...func(*ExchangeQuery)) *Trading
 
 // WithBase tells the query-builder to eager-load the nodes that are connected to
 // the "base" edge. The optional arguments are used to configure the query builder of the edge.
-func (tpq *TradingPairQuery) WithBase(opts ...func(*CoinQuery)) *TradingPairQuery {
-	query := &CoinQuery{config: tpq.config}
+func (tpq *TradingPairQuery) WithBase(opts ...func(*CurrencyQuery)) *TradingPairQuery {
+	query := &CurrencyQuery{config: tpq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -389,8 +389,8 @@ func (tpq *TradingPairQuery) WithBase(opts ...func(*CoinQuery)) *TradingPairQuer
 
 // WithCounter tells the query-builder to eager-load the nodes that are connected to
 // the "counter" edge. The optional arguments are used to configure the query builder of the edge.
-func (tpq *TradingPairQuery) WithCounter(opts ...func(*CoinQuery)) *TradingPairQuery {
-	query := &CoinQuery{config: tpq.config}
+func (tpq *TradingPairQuery) WithCounter(opts ...func(*CurrencyQuery)) *TradingPairQuery {
+	query := &CurrencyQuery{config: tpq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -522,13 +522,13 @@ func (tpq *TradingPairQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	}
 	if query := tpq.withBase; query != nil {
 		if err := tpq.loadBase(ctx, query, nodes, nil,
-			func(n *TradingPair, e *Coin) { n.Edges.Base = e }); err != nil {
+			func(n *TradingPair, e *Currency) { n.Edges.Base = e }); err != nil {
 			return nil, err
 		}
 	}
 	if query := tpq.withCounter; query != nil {
 		if err := tpq.loadCounter(ctx, query, nodes, nil,
-			func(n *TradingPair, e *Coin) { n.Edges.Counter = e }); err != nil {
+			func(n *TradingPair, e *Currency) { n.Edges.Counter = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -583,20 +583,20 @@ func (tpq *TradingPairQuery) loadExchange(ctx context.Context, query *ExchangeQu
 	}
 	return nil
 }
-func (tpq *TradingPairQuery) loadBase(ctx context.Context, query *CoinQuery, nodes []*TradingPair, init func(*TradingPair), assign func(*TradingPair, *Coin)) error {
+func (tpq *TradingPairQuery) loadBase(ctx context.Context, query *CurrencyQuery, nodes []*TradingPair, init func(*TradingPair), assign func(*TradingPair, *Currency)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*TradingPair)
 	for i := range nodes {
-		if nodes[i].coin_coin_base == nil {
+		if nodes[i].currency_currency_base == nil {
 			continue
 		}
-		fk := *nodes[i].coin_coin_base
+		fk := *nodes[i].currency_currency_base
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.Where(coin.IDIn(ids...))
+	query.Where(currency.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -604,7 +604,7 @@ func (tpq *TradingPairQuery) loadBase(ctx context.Context, query *CoinQuery, nod
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "coin_coin_base" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "currency_currency_base" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -612,20 +612,20 @@ func (tpq *TradingPairQuery) loadBase(ctx context.Context, query *CoinQuery, nod
 	}
 	return nil
 }
-func (tpq *TradingPairQuery) loadCounter(ctx context.Context, query *CoinQuery, nodes []*TradingPair, init func(*TradingPair), assign func(*TradingPair, *Coin)) error {
+func (tpq *TradingPairQuery) loadCounter(ctx context.Context, query *CurrencyQuery, nodes []*TradingPair, init func(*TradingPair), assign func(*TradingPair, *Currency)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*TradingPair)
 	for i := range nodes {
-		if nodes[i].coin_coin_counter == nil {
+		if nodes[i].currency_currency_counter == nil {
 			continue
 		}
-		fk := *nodes[i].coin_coin_counter
+		fk := *nodes[i].currency_currency_counter
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.Where(coin.IDIn(ids...))
+	query.Where(currency.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -633,7 +633,7 @@ func (tpq *TradingPairQuery) loadCounter(ctx context.Context, query *CoinQuery, 
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "coin_coin_counter" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "currency_currency_counter" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

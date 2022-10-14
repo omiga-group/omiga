@@ -104,7 +104,7 @@ func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	coinRepository, err := repositories.NewCoinRepository(logger, entgoClient)
+	currencyRepository, err := repositories.NewCurrencyRepository(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, coinRepository, exchangeRepository)
+	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, currencyRepository, exchangeRepository)
 	if err != nil {
 		return nil, err
 	}

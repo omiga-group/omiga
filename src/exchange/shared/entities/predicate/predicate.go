@@ -6,8 +6,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// Coin is the predicate function for coin builders.
-type Coin func(*sql.Selector)
+// Currency is the predicate function for currency builders.
+type Currency func(*sql.Selector)
 
 // Exchange is the predicate function for exchange builders.
 type Exchange func(*sql.Selector)

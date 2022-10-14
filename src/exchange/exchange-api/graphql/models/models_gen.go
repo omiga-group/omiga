@@ -29,6 +29,47 @@ type TickerMarket struct {
 	Name                *string `json:"name"`
 }
 
+type CurrencyType string
+
+const (
+	CurrencyTypeDigital CurrencyType = "DIGITAL"
+	CurrencyTypeFiat    CurrencyType = "FIAT"
+)
+
+var AllCurrencyType = []CurrencyType{
+	CurrencyTypeDigital,
+	CurrencyTypeFiat,
+}
+
+func (e CurrencyType) IsValid() bool {
+	switch e {
+	case CurrencyTypeDigital, CurrencyTypeFiat:
+		return true
+	}
+	return false
+}
+
+func (e CurrencyType) String() string {
+	return string(e)
+}
+
+func (e *CurrencyType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CurrencyType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CurrencyType", str)
+	}
+	return nil
+}
+
+func (e CurrencyType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type MarketType string
 
 const (
@@ -47,7 +88,7 @@ const (
 	MarketTypeFanToken        MarketType = "FAN_TOKEN"
 	MarketTypeEtf             MarketType = "ETF"
 	MarketTypeNft             MarketType = "NFT"
-	MarketTypeSwap            MarketType = "Swap"
+	MarketTypeSwap            MarketType = "SWAP"
 )
 
 var AllMarketType = []MarketType{

@@ -8,10 +8,10 @@ BEGIN
             INNER JOIN pg_catalog.pg_namespace nsp
                        ON nsp.oid = connamespace
        WHERE nsp.nspname = 'public'
-             AND rel.relname = 'coins'
-             AND con.conname = 'coins_symbol_key') THEN
-		ALTER TABLE public.coins 
-		ADD CONSTRAINT coins_symbol_key
+             AND rel.relname = 'currencies'
+             AND con.conname = 'currencies_symbol_key') THEN
+		ALTER TABLE public.currencies 
+		ADD CONSTRAINT currencies_symbol_key
 		UNIQUE (symbol); 
 	END IF;
 
