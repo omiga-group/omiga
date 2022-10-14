@@ -31,7 +31,7 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
-	Coin        []ent.Hook
+	Currency    []ent.Hook
 	Exchange    []ent.Hook
 	Market      []ent.Hook
 	Outbox      []ent.Hook

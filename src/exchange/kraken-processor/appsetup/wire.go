@@ -86,7 +86,7 @@ func NewKrakenOrderBookSubscriber(
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
 		subscribers.NewKrakenOrderBookSubscriber,
-		services.NewCoinHelper)
+		services.NewCurrencyHelper)
 
 	return nil, nil
 }
@@ -101,7 +101,7 @@ func NewKrakenTradingPairSubscriber(
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
-		repositories.NewCoinRepository,
+		repositories.NewCurrencyRepository,
 		repositories.NewExchangeRepository,
 		repositories.NewTradingPairRepository,
 		subscribers.NewKrakenTradingPairSubscriber)

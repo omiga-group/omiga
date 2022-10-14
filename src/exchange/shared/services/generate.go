@@ -1,3 +1,3 @@
 package services
 
-//go:generate mockgen -source=coin-helper.go -destination=mock/coin-helper_gen.go
+//go:generate mockgen -source=currency_helper.go -destination=mock/currency_helper_gen.go

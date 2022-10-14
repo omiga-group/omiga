@@ -9,26 +9,26 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 )
 
-// CoinDelete is the builder for deleting a Coin entity.
-type CoinDelete struct {
+// CurrencyDelete is the builder for deleting a Currency entity.
+type CurrencyDelete struct {
 	config
 	hooks    []Hook
-	mutation *CoinMutation
+	mutation *CurrencyMutation
 }
 
-// Where appends a list predicates to the CoinDelete builder.
-func (cd *CoinDelete) Where(ps ...predicate.Coin) *CoinDelete {
+// Where appends a list predicates to the CurrencyDelete builder.
+func (cd *CurrencyDelete) Where(ps ...predicate.Currency) *CurrencyDelete {
 	cd.mutation.Where(ps...)
 	return cd
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (cd *CoinDelete) Exec(ctx context.Context) (int, error) {
+func (cd *CurrencyDelete) Exec(ctx context.Context) (int, error) {
 	var (
 		err      error
 		affected int
@@ -37,7 +37,7 @@ func (cd *CoinDelete) Exec(ctx context.Context) (int, error) {
 		affected, err = cd.sqlExec(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*CoinMutation)
+			mutation, ok := m.(*CurrencyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -60,7 +60,7 @@ func (cd *CoinDelete) Exec(ctx context.Context) (int, error) {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cd *CoinDelete) ExecX(ctx context.Context) int {
+func (cd *CurrencyDelete) ExecX(ctx context.Context) int {
 	n, err := cd.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -68,17 +68,17 @@ func (cd *CoinDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (cd *CoinDelete) sqlExec(ctx context.Context) (int, error) {
+func (cd *CurrencyDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := &sqlgraph.DeleteSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table: coin.Table,
+			Table: currency.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: coin.FieldID,
+				Column: currency.FieldID,
 			},
 		},
 	}
-	_spec.Node.Schema = cd.schemaConfig.Coin
+	_spec.Node.Schema = cd.schemaConfig.Currency
 	ctx = internal.NewSchemaConfigContext(ctx, cd.schemaConfig)
 	if ps := cd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -94,25 +94,25 @@ func (cd *CoinDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// CoinDeleteOne is the builder for deleting a single Coin entity.
-type CoinDeleteOne struct {
-	cd *CoinDelete
+// CurrencyDeleteOne is the builder for deleting a single Currency entity.
+type CurrencyDeleteOne struct {
+	cd *CurrencyDelete
 }
 
 // Exec executes the deletion query.
-func (cdo *CoinDeleteOne) Exec(ctx context.Context) error {
+func (cdo *CurrencyDeleteOne) Exec(ctx context.Context) error {
 	n, err := cdo.cd.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{coin.Label}
+		return &NotFoundError{currency.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cdo *CoinDeleteOne) ExecX(ctx context.Context) {
+func (cdo *CurrencyDeleteOne) ExecX(ctx context.Context) {
 	cdo.cd.ExecX(ctx)
 }

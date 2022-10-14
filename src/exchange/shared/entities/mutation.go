@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
@@ -30,7 +30,7 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeCoin        = "Coin"
+	TypeCurrency    = "Currency"
 	TypeExchange    = "Exchange"
 	TypeMarket      = "Market"
 	TypeOutbox      = "Outbox"
@@ -38,37 +38,38 @@ const (
 	TypeTradingPair = "TradingPair"
 )
 
-// CoinMutation represents an operation that mutates the Coin nodes in the graph.
-type CoinMutation struct {
+// CurrencyMutation represents an operation that mutates the Currency nodes in the graph.
+type CurrencyMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int
-	symbol              *string
-	name                *string
-	clearedFields       map[string]struct{}
-	coin_base           map[int]struct{}
-	removedcoin_base    map[int]struct{}
-	clearedcoin_base    bool
-	coin_counter        map[int]struct{}
-	removedcoin_counter map[int]struct{}
-	clearedcoin_counter bool
-	done                bool
-	oldValue            func(context.Context) (*Coin, error)
-	predicates          []predicate.Coin
+	op                      Op
+	typ                     string
+	id                      *int
+	symbol                  *string
+	name                    *string
+	_type                   *currency.Type
+	clearedFields           map[string]struct{}
+	currency_base           map[int]struct{}
+	removedcurrency_base    map[int]struct{}
+	clearedcurrency_base    bool
+	currency_counter        map[int]struct{}
+	removedcurrency_counter map[int]struct{}
+	clearedcurrency_counter bool
+	done                    bool
+	oldValue                func(context.Context) (*Currency, error)
+	predicates              []predicate.Currency
 }
 
-var _ ent.Mutation = (*CoinMutation)(nil)
+var _ ent.Mutation = (*CurrencyMutation)(nil)
 
-// coinOption allows management of the mutation configuration using functional options.
-type coinOption func(*CoinMutation)
+// currencyOption allows management of the mutation configuration using functional options.
+type currencyOption func(*CurrencyMutation)
 
-// newCoinMutation creates new mutation for the Coin entity.
-func newCoinMutation(c config, op Op, opts ...coinOption) *CoinMutation {
-	m := &CoinMutation{
+// newCurrencyMutation creates new mutation for the Currency entity.
+func newCurrencyMutation(c config, op Op, opts ...currencyOption) *CurrencyMutation {
+	m := &CurrencyMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeCoin,
+		typ:           TypeCurrency,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -77,20 +78,20 @@ func newCoinMutation(c config, op Op, opts ...coinOption) *CoinMutation {
 	return m
 }
 
-// withCoinID sets the ID field of the mutation.
-func withCoinID(id int) coinOption {
-	return func(m *CoinMutation) {
+// withCurrencyID sets the ID field of the mutation.
+func withCurrencyID(id int) currencyOption {
+	return func(m *CurrencyMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *Coin
+			value *Currency
 		)
-		m.oldValue = func(ctx context.Context) (*Coin, error) {
+		m.oldValue = func(ctx context.Context) (*Currency, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().Coin.Get(ctx, id)
+					value, err = m.Client().Currency.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -99,10 +100,10 @@ func withCoinID(id int) coinOption {
 	}
 }
 
-// withCoin sets the old Coin of the mutation.
-func withCoin(node *Coin) coinOption {
-	return func(m *CoinMutation) {
-		m.oldValue = func(context.Context) (*Coin, error) {
+// withCurrency sets the old Currency of the mutation.
+func withCurrency(node *Currency) currencyOption {
+	return func(m *CurrencyMutation) {
+		m.oldValue = func(context.Context) (*Currency, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -111,7 +112,7 @@ func withCoin(node *Coin) coinOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m CoinMutation) Client() *Client {
+func (m CurrencyMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -119,7 +120,7 @@ func (m CoinMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m CoinMutation) Tx() (*Tx, error) {
+func (m CurrencyMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, errors.New("entities: mutation is not running in a transaction")
 	}
@@ -130,7 +131,7 @@ func (m CoinMutation) Tx() (*Tx, error) {
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *CoinMutation) ID() (id int, exists bool) {
+func (m *CurrencyMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -141,7 +142,7 @@ func (m *CoinMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *CoinMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *CurrencyMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
@@ -150,19 +151,19 @@ func (m *CoinMutation) IDs(ctx context.Context) ([]int, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().Coin.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().Currency.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
 }
 
 // SetSymbol sets the "symbol" field.
-func (m *CoinMutation) SetSymbol(s string) {
+func (m *CurrencyMutation) SetSymbol(s string) {
 	m.symbol = &s
 }
 
 // Symbol returns the value of the "symbol" field in the mutation.
-func (m *CoinMutation) Symbol() (r string, exists bool) {
+func (m *CurrencyMutation) Symbol() (r string, exists bool) {
 	v := m.symbol
 	if v == nil {
 		return
@@ -170,10 +171,10 @@ func (m *CoinMutation) Symbol() (r string, exists bool) {
 	return *v, true
 }
 
-// OldSymbol returns the old "symbol" field's value of the Coin entity.
-// If the Coin object wasn't provided to the builder, the object is fetched from the database.
+// OldSymbol returns the old "symbol" field's value of the Currency entity.
+// If the Currency object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CoinMutation) OldSymbol(ctx context.Context) (v string, err error) {
+func (m *CurrencyMutation) OldSymbol(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSymbol is only allowed on UpdateOne operations")
 	}
@@ -188,17 +189,17 @@ func (m *CoinMutation) OldSymbol(ctx context.Context) (v string, err error) {
 }
 
 // ResetSymbol resets all changes to the "symbol" field.
-func (m *CoinMutation) ResetSymbol() {
+func (m *CurrencyMutation) ResetSymbol() {
 	m.symbol = nil
 }
 
 // SetName sets the "name" field.
-func (m *CoinMutation) SetName(s string) {
+func (m *CurrencyMutation) SetName(s string) {
 	m.name = &s
 }
 
 // Name returns the value of the "name" field in the mutation.
-func (m *CoinMutation) Name() (r string, exists bool) {
+func (m *CurrencyMutation) Name() (r string, exists bool) {
 	v := m.name
 	if v == nil {
 		return
@@ -206,10 +207,10 @@ func (m *CoinMutation) Name() (r string, exists bool) {
 	return *v, true
 }
 
-// OldName returns the old "name" field's value of the Coin entity.
-// If the Coin object wasn't provided to the builder, the object is fetched from the database.
+// OldName returns the old "name" field's value of the Currency entity.
+// If the Currency object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CoinMutation) OldName(ctx context.Context) (v string, err error) {
+func (m *CurrencyMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldName is only allowed on UpdateOne operations")
 	}
@@ -224,156 +225,195 @@ func (m *CoinMutation) OldName(ctx context.Context) (v string, err error) {
 }
 
 // ClearName clears the value of the "name" field.
-func (m *CoinMutation) ClearName() {
+func (m *CurrencyMutation) ClearName() {
 	m.name = nil
-	m.clearedFields[coin.FieldName] = struct{}{}
+	m.clearedFields[currency.FieldName] = struct{}{}
 }
 
 // NameCleared returns if the "name" field was cleared in this mutation.
-func (m *CoinMutation) NameCleared() bool {
-	_, ok := m.clearedFields[coin.FieldName]
+func (m *CurrencyMutation) NameCleared() bool {
+	_, ok := m.clearedFields[currency.FieldName]
 	return ok
 }
 
 // ResetName resets all changes to the "name" field.
-func (m *CoinMutation) ResetName() {
+func (m *CurrencyMutation) ResetName() {
 	m.name = nil
-	delete(m.clearedFields, coin.FieldName)
+	delete(m.clearedFields, currency.FieldName)
 }
 
-// AddCoinBaseIDs adds the "coin_base" edge to the TradingPair entity by ids.
-func (m *CoinMutation) AddCoinBaseIDs(ids ...int) {
-	if m.coin_base == nil {
-		m.coin_base = make(map[int]struct{})
+// SetType sets the "type" field.
+func (m *CurrencyMutation) SetType(c currency.Type) {
+	m._type = &c
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *CurrencyMutation) GetType() (r currency.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Currency entity.
+// If the Currency object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CurrencyMutation) OldType(ctx context.Context) (v currency.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *CurrencyMutation) ResetType() {
+	m._type = nil
+}
+
+// AddCurrencyBaseIDs adds the "currency_base" edge to the TradingPair entity by ids.
+func (m *CurrencyMutation) AddCurrencyBaseIDs(ids ...int) {
+	if m.currency_base == nil {
+		m.currency_base = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.coin_base[ids[i]] = struct{}{}
+		m.currency_base[ids[i]] = struct{}{}
 	}
 }
 
-// ClearCoinBase clears the "coin_base" edge to the TradingPair entity.
-func (m *CoinMutation) ClearCoinBase() {
-	m.clearedcoin_base = true
+// ClearCurrencyBase clears the "currency_base" edge to the TradingPair entity.
+func (m *CurrencyMutation) ClearCurrencyBase() {
+	m.clearedcurrency_base = true
 }
 
-// CoinBaseCleared reports if the "coin_base" edge to the TradingPair entity was cleared.
-func (m *CoinMutation) CoinBaseCleared() bool {
-	return m.clearedcoin_base
+// CurrencyBaseCleared reports if the "currency_base" edge to the TradingPair entity was cleared.
+func (m *CurrencyMutation) CurrencyBaseCleared() bool {
+	return m.clearedcurrency_base
 }
 
-// RemoveCoinBaseIDs removes the "coin_base" edge to the TradingPair entity by IDs.
-func (m *CoinMutation) RemoveCoinBaseIDs(ids ...int) {
-	if m.removedcoin_base == nil {
-		m.removedcoin_base = make(map[int]struct{})
+// RemoveCurrencyBaseIDs removes the "currency_base" edge to the TradingPair entity by IDs.
+func (m *CurrencyMutation) RemoveCurrencyBaseIDs(ids ...int) {
+	if m.removedcurrency_base == nil {
+		m.removedcurrency_base = make(map[int]struct{})
 	}
 	for i := range ids {
-		delete(m.coin_base, ids[i])
-		m.removedcoin_base[ids[i]] = struct{}{}
+		delete(m.currency_base, ids[i])
+		m.removedcurrency_base[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedCoinBase returns the removed IDs of the "coin_base" edge to the TradingPair entity.
-func (m *CoinMutation) RemovedCoinBaseIDs() (ids []int) {
-	for id := range m.removedcoin_base {
+// RemovedCurrencyBase returns the removed IDs of the "currency_base" edge to the TradingPair entity.
+func (m *CurrencyMutation) RemovedCurrencyBaseIDs() (ids []int) {
+	for id := range m.removedcurrency_base {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// CoinBaseIDs returns the "coin_base" edge IDs in the mutation.
-func (m *CoinMutation) CoinBaseIDs() (ids []int) {
-	for id := range m.coin_base {
+// CurrencyBaseIDs returns the "currency_base" edge IDs in the mutation.
+func (m *CurrencyMutation) CurrencyBaseIDs() (ids []int) {
+	for id := range m.currency_base {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetCoinBase resets all changes to the "coin_base" edge.
-func (m *CoinMutation) ResetCoinBase() {
-	m.coin_base = nil
-	m.clearedcoin_base = false
-	m.removedcoin_base = nil
+// ResetCurrencyBase resets all changes to the "currency_base" edge.
+func (m *CurrencyMutation) ResetCurrencyBase() {
+	m.currency_base = nil
+	m.clearedcurrency_base = false
+	m.removedcurrency_base = nil
 }
 
-// AddCoinCounterIDs adds the "coin_counter" edge to the TradingPair entity by ids.
-func (m *CoinMutation) AddCoinCounterIDs(ids ...int) {
-	if m.coin_counter == nil {
-		m.coin_counter = make(map[int]struct{})
+// AddCurrencyCounterIDs adds the "currency_counter" edge to the TradingPair entity by ids.
+func (m *CurrencyMutation) AddCurrencyCounterIDs(ids ...int) {
+	if m.currency_counter == nil {
+		m.currency_counter = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.coin_counter[ids[i]] = struct{}{}
+		m.currency_counter[ids[i]] = struct{}{}
 	}
 }
 
-// ClearCoinCounter clears the "coin_counter" edge to the TradingPair entity.
-func (m *CoinMutation) ClearCoinCounter() {
-	m.clearedcoin_counter = true
+// ClearCurrencyCounter clears the "currency_counter" edge to the TradingPair entity.
+func (m *CurrencyMutation) ClearCurrencyCounter() {
+	m.clearedcurrency_counter = true
 }
 
-// CoinCounterCleared reports if the "coin_counter" edge to the TradingPair entity was cleared.
-func (m *CoinMutation) CoinCounterCleared() bool {
-	return m.clearedcoin_counter
+// CurrencyCounterCleared reports if the "currency_counter" edge to the TradingPair entity was cleared.
+func (m *CurrencyMutation) CurrencyCounterCleared() bool {
+	return m.clearedcurrency_counter
 }
 
-// RemoveCoinCounterIDs removes the "coin_counter" edge to the TradingPair entity by IDs.
-func (m *CoinMutation) RemoveCoinCounterIDs(ids ...int) {
-	if m.removedcoin_counter == nil {
-		m.removedcoin_counter = make(map[int]struct{})
+// RemoveCurrencyCounterIDs removes the "currency_counter" edge to the TradingPair entity by IDs.
+func (m *CurrencyMutation) RemoveCurrencyCounterIDs(ids ...int) {
+	if m.removedcurrency_counter == nil {
+		m.removedcurrency_counter = make(map[int]struct{})
 	}
 	for i := range ids {
-		delete(m.coin_counter, ids[i])
-		m.removedcoin_counter[ids[i]] = struct{}{}
+		delete(m.currency_counter, ids[i])
+		m.removedcurrency_counter[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedCoinCounter returns the removed IDs of the "coin_counter" edge to the TradingPair entity.
-func (m *CoinMutation) RemovedCoinCounterIDs() (ids []int) {
-	for id := range m.removedcoin_counter {
+// RemovedCurrencyCounter returns the removed IDs of the "currency_counter" edge to the TradingPair entity.
+func (m *CurrencyMutation) RemovedCurrencyCounterIDs() (ids []int) {
+	for id := range m.removedcurrency_counter {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// CoinCounterIDs returns the "coin_counter" edge IDs in the mutation.
-func (m *CoinMutation) CoinCounterIDs() (ids []int) {
-	for id := range m.coin_counter {
+// CurrencyCounterIDs returns the "currency_counter" edge IDs in the mutation.
+func (m *CurrencyMutation) CurrencyCounterIDs() (ids []int) {
+	for id := range m.currency_counter {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetCoinCounter resets all changes to the "coin_counter" edge.
-func (m *CoinMutation) ResetCoinCounter() {
-	m.coin_counter = nil
-	m.clearedcoin_counter = false
-	m.removedcoin_counter = nil
+// ResetCurrencyCounter resets all changes to the "currency_counter" edge.
+func (m *CurrencyMutation) ResetCurrencyCounter() {
+	m.currency_counter = nil
+	m.clearedcurrency_counter = false
+	m.removedcurrency_counter = nil
 }
 
-// Where appends a list predicates to the CoinMutation builder.
-func (m *CoinMutation) Where(ps ...predicate.Coin) {
+// Where appends a list predicates to the CurrencyMutation builder.
+func (m *CurrencyMutation) Where(ps ...predicate.Currency) {
 	m.predicates = append(m.predicates, ps...)
 }
 
 // Op returns the operation name.
-func (m *CoinMutation) Op() Op {
+func (m *CurrencyMutation) Op() Op {
 	return m.op
 }
 
-// Type returns the node type of this mutation (Coin).
-func (m *CoinMutation) Type() string {
+// Type returns the node type of this mutation (Currency).
+func (m *CurrencyMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *CoinMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+func (m *CurrencyMutation) Fields() []string {
+	fields := make([]string, 0, 3)
 	if m.symbol != nil {
-		fields = append(fields, coin.FieldSymbol)
+		fields = append(fields, currency.FieldSymbol)
 	}
 	if m.name != nil {
-		fields = append(fields, coin.FieldName)
+		fields = append(fields, currency.FieldName)
+	}
+	if m._type != nil {
+		fields = append(fields, currency.FieldType)
 	}
 	return fields
 }
@@ -381,12 +421,14 @@ func (m *CoinMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *CoinMutation) Field(name string) (ent.Value, bool) {
+func (m *CurrencyMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case coin.FieldSymbol:
+	case currency.FieldSymbol:
 		return m.Symbol()
-	case coin.FieldName:
+	case currency.FieldName:
 		return m.Name()
+	case currency.FieldType:
+		return m.GetType()
 	}
 	return nil, false
 }
@@ -394,128 +436,140 @@ func (m *CoinMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *CoinMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *CurrencyMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case coin.FieldSymbol:
+	case currency.FieldSymbol:
 		return m.OldSymbol(ctx)
-	case coin.FieldName:
+	case currency.FieldName:
 		return m.OldName(ctx)
+	case currency.FieldType:
+		return m.OldType(ctx)
 	}
-	return nil, fmt.Errorf("unknown Coin field %s", name)
+	return nil, fmt.Errorf("unknown Currency field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *CoinMutation) SetField(name string, value ent.Value) error {
+func (m *CurrencyMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case coin.FieldSymbol:
+	case currency.FieldSymbol:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSymbol(v)
 		return nil
-	case coin.FieldName:
+	case currency.FieldName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
 		return nil
+	case currency.FieldType:
+		v, ok := value.(currency.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
 	}
-	return fmt.Errorf("unknown Coin field %s", name)
+	return fmt.Errorf("unknown Currency field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *CoinMutation) AddedFields() []string {
+func (m *CurrencyMutation) AddedFields() []string {
 	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *CoinMutation) AddedField(name string) (ent.Value, bool) {
+func (m *CurrencyMutation) AddedField(name string) (ent.Value, bool) {
 	return nil, false
 }
 
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *CoinMutation) AddField(name string, value ent.Value) error {
+func (m *CurrencyMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	}
-	return fmt.Errorf("unknown Coin numeric field %s", name)
+	return fmt.Errorf("unknown Currency numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *CoinMutation) ClearedFields() []string {
+func (m *CurrencyMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(coin.FieldName) {
-		fields = append(fields, coin.FieldName)
+	if m.FieldCleared(currency.FieldName) {
+		fields = append(fields, currency.FieldName)
 	}
 	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *CoinMutation) FieldCleared(name string) bool {
+func (m *CurrencyMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *CoinMutation) ClearField(name string) error {
+func (m *CurrencyMutation) ClearField(name string) error {
 	switch name {
-	case coin.FieldName:
+	case currency.FieldName:
 		m.ClearName()
 		return nil
 	}
-	return fmt.Errorf("unknown Coin nullable field %s", name)
+	return fmt.Errorf("unknown Currency nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *CoinMutation) ResetField(name string) error {
+func (m *CurrencyMutation) ResetField(name string) error {
 	switch name {
-	case coin.FieldSymbol:
+	case currency.FieldSymbol:
 		m.ResetSymbol()
 		return nil
-	case coin.FieldName:
+	case currency.FieldName:
 		m.ResetName()
 		return nil
+	case currency.FieldType:
+		m.ResetType()
+		return nil
 	}
-	return fmt.Errorf("unknown Coin field %s", name)
+	return fmt.Errorf("unknown Currency field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *CoinMutation) AddedEdges() []string {
+func (m *CurrencyMutation) AddedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.coin_base != nil {
-		edges = append(edges, coin.EdgeCoinBase)
+	if m.currency_base != nil {
+		edges = append(edges, currency.EdgeCurrencyBase)
 	}
-	if m.coin_counter != nil {
-		edges = append(edges, coin.EdgeCoinCounter)
+	if m.currency_counter != nil {
+		edges = append(edges, currency.EdgeCurrencyCounter)
 	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *CoinMutation) AddedIDs(name string) []ent.Value {
+func (m *CurrencyMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case coin.EdgeCoinBase:
-		ids := make([]ent.Value, 0, len(m.coin_base))
-		for id := range m.coin_base {
+	case currency.EdgeCurrencyBase:
+		ids := make([]ent.Value, 0, len(m.currency_base))
+		for id := range m.currency_base {
 			ids = append(ids, id)
 		}
 		return ids
-	case coin.EdgeCoinCounter:
-		ids := make([]ent.Value, 0, len(m.coin_counter))
-		for id := range m.coin_counter {
+	case currency.EdgeCurrencyCounter:
+		ids := make([]ent.Value, 0, len(m.currency_counter))
+		for id := range m.currency_counter {
 			ids = append(ids, id)
 		}
 		return ids
@@ -524,30 +578,30 @@ func (m *CoinMutation) AddedIDs(name string) []ent.Value {
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *CoinMutation) RemovedEdges() []string {
+func (m *CurrencyMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.removedcoin_base != nil {
-		edges = append(edges, coin.EdgeCoinBase)
+	if m.removedcurrency_base != nil {
+		edges = append(edges, currency.EdgeCurrencyBase)
 	}
-	if m.removedcoin_counter != nil {
-		edges = append(edges, coin.EdgeCoinCounter)
+	if m.removedcurrency_counter != nil {
+		edges = append(edges, currency.EdgeCurrencyCounter)
 	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *CoinMutation) RemovedIDs(name string) []ent.Value {
+func (m *CurrencyMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case coin.EdgeCoinBase:
-		ids := make([]ent.Value, 0, len(m.removedcoin_base))
-		for id := range m.removedcoin_base {
+	case currency.EdgeCurrencyBase:
+		ids := make([]ent.Value, 0, len(m.removedcurrency_base))
+		for id := range m.removedcurrency_base {
 			ids = append(ids, id)
 		}
 		return ids
-	case coin.EdgeCoinCounter:
-		ids := make([]ent.Value, 0, len(m.removedcoin_counter))
-		for id := range m.removedcoin_counter {
+	case currency.EdgeCurrencyCounter:
+		ids := make([]ent.Value, 0, len(m.removedcurrency_counter))
+		for id := range m.removedcurrency_counter {
 			ids = append(ids, id)
 		}
 		return ids
@@ -556,49 +610,49 @@ func (m *CoinMutation) RemovedIDs(name string) []ent.Value {
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *CoinMutation) ClearedEdges() []string {
+func (m *CurrencyMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.clearedcoin_base {
-		edges = append(edges, coin.EdgeCoinBase)
+	if m.clearedcurrency_base {
+		edges = append(edges, currency.EdgeCurrencyBase)
 	}
-	if m.clearedcoin_counter {
-		edges = append(edges, coin.EdgeCoinCounter)
+	if m.clearedcurrency_counter {
+		edges = append(edges, currency.EdgeCurrencyCounter)
 	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *CoinMutation) EdgeCleared(name string) bool {
+func (m *CurrencyMutation) EdgeCleared(name string) bool {
 	switch name {
-	case coin.EdgeCoinBase:
-		return m.clearedcoin_base
-	case coin.EdgeCoinCounter:
-		return m.clearedcoin_counter
+	case currency.EdgeCurrencyBase:
+		return m.clearedcurrency_base
+	case currency.EdgeCurrencyCounter:
+		return m.clearedcurrency_counter
 	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *CoinMutation) ClearEdge(name string) error {
+func (m *CurrencyMutation) ClearEdge(name string) error {
 	switch name {
 	}
-	return fmt.Errorf("unknown Coin unique edge %s", name)
+	return fmt.Errorf("unknown Currency unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *CoinMutation) ResetEdge(name string) error {
+func (m *CurrencyMutation) ResetEdge(name string) error {
 	switch name {
-	case coin.EdgeCoinBase:
-		m.ResetCoinBase()
+	case currency.EdgeCurrencyBase:
+		m.ResetCurrencyBase()
 		return nil
-	case coin.EdgeCoinCounter:
-		m.ResetCoinCounter()
+	case currency.EdgeCurrencyCounter:
+		m.ResetCurrencyCounter()
 		return nil
 	}
-	return fmt.Errorf("unknown Coin edge %s", name)
+	return fmt.Errorf("unknown Currency edge %s", name)
 }
 
 // ExchangeMutation represents an operation that mutates the Exchange nodes in the graph.
@@ -6472,17 +6526,17 @@ func (m *TradingPairMutation) ResetExchange() {
 	m.clearedexchange = false
 }
 
-// SetBaseID sets the "base" edge to the Coin entity by id.
+// SetBaseID sets the "base" edge to the Currency entity by id.
 func (m *TradingPairMutation) SetBaseID(id int) {
 	m.base = &id
 }
 
-// ClearBase clears the "base" edge to the Coin entity.
+// ClearBase clears the "base" edge to the Currency entity.
 func (m *TradingPairMutation) ClearBase() {
 	m.clearedbase = true
 }
 
-// BaseCleared reports if the "base" edge to the Coin entity was cleared.
+// BaseCleared reports if the "base" edge to the Currency entity was cleared.
 func (m *TradingPairMutation) BaseCleared() bool {
 	return m.clearedbase
 }
@@ -6511,17 +6565,17 @@ func (m *TradingPairMutation) ResetBase() {
 	m.clearedbase = false
 }
 
-// SetCounterID sets the "counter" edge to the Coin entity by id.
+// SetCounterID sets the "counter" edge to the Currency entity by id.
 func (m *TradingPairMutation) SetCounterID(id int) {
 	m.counter = &id
 }
 
-// ClearCounter clears the "counter" edge to the Coin entity.
+// ClearCounter clears the "counter" edge to the Currency entity.
 func (m *TradingPairMutation) ClearCounter() {
 	m.clearedcounter = true
 }
 
-// CounterCleared reports if the "counter" edge to the Coin entity was cleared.
+// CounterCleared reports if the "counter" edge to the Currency entity was cleared.
 func (m *TradingPairMutation) CounterCleared() bool {
 	return m.clearedcounter
 }

@@ -74,7 +74,7 @@ func NewHuobiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
-	coinRepository, err := repositories.NewCoinRepository(logger, entgoClient)
+	currencyRepository, err := repositories.NewCurrencyRepository(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func NewHuobiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
-	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, coinRepository, exchangeRepository)
+	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, currencyRepository, exchangeRepository)
 	if err != nil {
 		return nil, err
 	}

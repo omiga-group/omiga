@@ -12,8 +12,8 @@ import (
 )
 
 func KrakenOrderBookToOrderBook(
-	baseCurrency exchangeModels.Currency,
-	counterCurrency exchangeModels.Currency,
+	baseCurrency exchangeModels.OrderCurrency,
+	counterCurrency exchangeModels.OrderCurrency,
 	orderBook []models.KrakenOrderBookEntry) exchangeModels.OrderBook {
 	asks := slices.Filter(orderBook, func(entry models.KrakenOrderBookEntry) bool {
 		return entry.Ask != nil

@@ -150,28 +150,28 @@ func DenyMutationOperationRule(op entities.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
-// The CoinQueryRuleFunc type is an adapter to allow the use of ordinary
+// The CurrencyQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type CoinQueryRuleFunc func(context.Context, *entities.CoinQuery) error
+type CurrencyQueryRuleFunc func(context.Context, *entities.CurrencyQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f CoinQueryRuleFunc) EvalQuery(ctx context.Context, q entities.Query) error {
-	if q, ok := q.(*entities.CoinQuery); ok {
+func (f CurrencyQueryRuleFunc) EvalQuery(ctx context.Context, q entities.Query) error {
+	if q, ok := q.(*entities.CurrencyQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("entities/privacy: unexpected query type %T, expect *entities.CoinQuery", q)
+	return Denyf("entities/privacy: unexpected query type %T, expect *entities.CurrencyQuery", q)
 }
 
-// The CoinMutationRuleFunc type is an adapter to allow the use of ordinary
+// The CurrencyMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type CoinMutationRuleFunc func(context.Context, *entities.CoinMutation) error
+type CurrencyMutationRuleFunc func(context.Context, *entities.CurrencyMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f CoinMutationRuleFunc) EvalMutation(ctx context.Context, m entities.Mutation) error {
-	if m, ok := m.(*entities.CoinMutation); ok {
+func (f CurrencyMutationRuleFunc) EvalMutation(ctx context.Context, m entities.Mutation) error {
+	if m, ok := m.(*entities.CurrencyMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("entities/privacy: unexpected mutation type %T, expect *entities.CoinMutation", m)
+	return Denyf("entities/privacy: unexpected mutation type %T, expect *entities.CurrencyMutation", m)
 }
 
 // The ExchangeQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -329,7 +329,7 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q entities.Query) (Filter, error) {
 	switch q := q.(type) {
-	case *entities.CoinQuery:
+	case *entities.CurrencyQuery:
 		return q.Filter(), nil
 	case *entities.ExchangeQuery:
 		return q.Filter(), nil
@@ -348,7 +348,7 @@ func queryFilter(q entities.Query) (Filter, error) {
 
 func mutationFilter(m entities.Mutation) (Filter, error) {
 	switch m := m.(type) {
-	case *entities.CoinMutation:
+	case *entities.CurrencyMutation:
 		return m.Filter(), nil
 	case *entities.ExchangeMutation:
 		return m.Filter(), nil

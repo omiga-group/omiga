@@ -8,18 +8,18 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
-func (c *Coin) CoinBase(ctx context.Context) ([]*TradingPair, error) {
-	result, err := c.NamedCoinBase(graphql.GetFieldContext(ctx).Field.Alias)
+func (c *Currency) CurrencyBase(ctx context.Context) ([]*TradingPair, error) {
+	result, err := c.NamedCurrencyBase(graphql.GetFieldContext(ctx).Field.Alias)
 	if IsNotLoaded(err) {
-		result, err = c.QueryCoinBase().All(ctx)
+		result, err = c.QueryCurrencyBase().All(ctx)
 	}
 	return result, err
 }
 
-func (c *Coin) CoinCounter(ctx context.Context) ([]*TradingPair, error) {
-	result, err := c.NamedCoinCounter(graphql.GetFieldContext(ctx).Field.Alias)
+func (c *Currency) CurrencyCounter(ctx context.Context) ([]*TradingPair, error) {
+	result, err := c.NamedCurrencyCounter(graphql.GetFieldContext(ctx).Field.Alias)
 	if IsNotLoaded(err) {
-		result, err = c.QueryCoinCounter().All(ctx)
+		result, err = c.QueryCurrencyCounter().All(ctx)
 	}
 	return result, err
 }
@@ -80,7 +80,7 @@ func (tp *TradingPair) Exchange(ctx context.Context) (*Exchange, error) {
 	return result, err
 }
 
-func (tp *TradingPair) Base(ctx context.Context) (*Coin, error) {
+func (tp *TradingPair) Base(ctx context.Context) (*Currency, error) {
 	result, err := tp.Edges.BaseOrErr()
 	if IsNotLoaded(err) {
 		result, err = tp.QueryBase().Only(ctx)
@@ -88,7 +88,7 @@ func (tp *TradingPair) Base(ctx context.Context) (*Coin, error) {
 	return result, err
 }
 
-func (tp *TradingPair) Counter(ctx context.Context) (*Coin, error) {
+func (tp *TradingPair) Counter(ctx context.Context) (*Currency, error) {
 	result, err := tp.Edges.CounterOrErr()
 	if IsNotLoaded(err) {
 		result, err = tp.QueryCounter().Only(ctx)

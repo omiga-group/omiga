@@ -13,6 +13,26 @@ import (
 )
 
 // Type is the resolver for the type field.
+func (r *currencyWhereInputResolver) Type(ctx context.Context, obj *entities.CurrencyWhereInput, data *models.CurrencyType) error {
+	panic(fmt.Errorf("not implemented: Type - type"))
+}
+
+// TypeNeq is the resolver for the typeNEQ field.
+func (r *currencyWhereInputResolver) TypeNeq(ctx context.Context, obj *entities.CurrencyWhereInput, data *models.CurrencyType) error {
+	panic(fmt.Errorf("not implemented: TypeNeq - typeNEQ"))
+}
+
+// TypeIn is the resolver for the typeIn field.
+func (r *currencyWhereInputResolver) TypeIn(ctx context.Context, obj *entities.CurrencyWhereInput, data []models.CurrencyType) error {
+	panic(fmt.Errorf("not implemented: TypeIn - typeIn"))
+}
+
+// TypeNotIn is the resolver for the typeNotIn field.
+func (r *currencyWhereInputResolver) TypeNotIn(ctx context.Context, obj *entities.CurrencyWhereInput, data []models.CurrencyType) error {
+	panic(fmt.Errorf("not implemented: TypeNotIn - typeNotIn"))
+}
+
+// Type is the resolver for the type field.
 func (r *marketWhereInputResolver) Type(ctx context.Context, obj *entities.MarketWhereInput, data *models.MarketType) error {
 	panic(fmt.Errorf("not implemented: Type - type"))
 }
@@ -52,6 +72,11 @@ func (r *outboxWhereInputResolver) StatusNotIn(ctx context.Context, obj *entitie
 	panic(fmt.Errorf("not implemented: StatusNotIn - statusNotIn"))
 }
 
+// CurrencyWhereInput returns generated.CurrencyWhereInputResolver implementation.
+func (r *Resolver) CurrencyWhereInput() generated.CurrencyWhereInputResolver {
+	return &currencyWhereInputResolver{r}
+}
+
 // MarketWhereInput returns generated.MarketWhereInputResolver implementation.
 func (r *Resolver) MarketWhereInput() generated.MarketWhereInputResolver {
 	return &marketWhereInputResolver{r}
@@ -62,5 +87,6 @@ func (r *Resolver) OutboxWhereInput() generated.OutboxWhereInputResolver {
 	return &outboxWhereInputResolver{r}
 }
 
+type currencyWhereInputResolver struct{ *Resolver }
 type marketWhereInputResolver struct{ *Resolver }
 type outboxWhereInputResolver struct{ *Resolver }

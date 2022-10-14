@@ -19,12 +19,12 @@ type CoingeckoCoinSubscriber interface {
 }
 
 type coingeckoCoinSubscriber struct {
-	ctx             context.Context
-	logger          *zap.SugaredLogger
-	coingeckoConfig configuration.CoingeckoConfig
-	exchanges       map[string]configuration.Exchange
-	entgoClient     entities.EntgoClient
-	coinRepository  repositories.CoinRepository
+	ctx                context.Context
+	logger             *zap.SugaredLogger
+	coingeckoConfig    configuration.CoingeckoConfig
+	exchanges          map[string]configuration.Exchange
+	entgoClient        entities.EntgoClient
+	currencyRepository repositories.CurrencyRepository
 }
 
 func NewCoingeckoCoinSubscriber(
@@ -34,14 +34,14 @@ func NewCoingeckoCoinSubscriber(
 	coingeckoConfig configuration.CoingeckoConfig,
 	exchanges map[string]configuration.Exchange,
 	entgoClient entities.EntgoClient,
-	coinRepository repositories.CoinRepository) (CoingeckoCoinSubscriber, error) {
+	currencyRepository repositories.CurrencyRepository) (CoingeckoCoinSubscriber, error) {
 	instance := &coingeckoCoinSubscriber{
-		ctx:             ctx,
-		logger:          logger,
-		coingeckoConfig: coingeckoConfig,
-		exchanges:       exchanges,
-		entgoClient:     entgoClient,
-		coinRepository:  coinRepository,
+		ctx:                ctx,
+		logger:             logger,
+		coingeckoConfig:    coingeckoConfig,
+		exchanges:          exchanges,
+		entgoClient:        entgoClient,
+		currencyRepository: currencyRepository,
 	}
 
 	// Run at every minute from 0 through 59.
@@ -66,7 +66,7 @@ func (ces *coingeckoCoinSubscriber) Run() {
 		ces.ctx,
 		&coingeckov3.GetCoinsListParams{})
 	if err != nil {
-		ces.logger.Errorf("Failed to get coins list list. Error: %v", err)
+		ces.logger.Errorf("Failed to get coins list. Error: %v", err)
 
 		return
 	}
@@ -83,13 +83,13 @@ func (ces *coingeckoCoinSubscriber) Run() {
 		return
 	}
 
-	coins := slices.Map(*coinListWithResponse.JSON200, func(coin coingeckov3.Coin) models.Coin {
+	currencies := slices.Map(*coinListWithResponse.JSON200, func(coin coingeckov3.Coin) models.Currency {
 		coin.Symbol = strings.ToLower(coin.Symbol)
 
-		return mappers.FromCoingeckoCoinToCoin(coin)
+		return mappers.FromCoingeckoCoinToCurrency(coin)
 	})
 
-	_, err = ces.coinRepository.CreateCoins(ces.ctx, coins)
+	_, err = ces.currencyRepository.CreateCurrencies(ces.ctx, currencies)
 	if err != nil {
 		ces.logger.Errorf("Failed to save coins. Error: %v", err)
 

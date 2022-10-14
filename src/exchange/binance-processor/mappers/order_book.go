@@ -8,8 +8,8 @@ import (
 )
 
 func BinanceOrderBookToOrderBook(
-	baseCurrency exchangeModels.Currency,
-	counterCurrency exchangeModels.Currency,
+	baseCurrency exchangeModels.OrderCurrency,
+	counterCurrency exchangeModels.OrderCurrency,
 	orderBook []models.BinanceOrderBookEntry) exchangeModels.OrderBook {
 	asks := slices.Filter(orderBook, func(entry models.BinanceOrderBookEntry) bool {
 		return entry.Ask != nil

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
 )
@@ -37,10 +37,10 @@ type TradingPair struct {
 	CounterQuantityMaxPrecision int `json:"counter_quantity_max_precision,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TradingPairQuery when eager-loading is set.
-	Edges                 TradingPairEdges `json:"edges"`
-	coin_coin_base        *int
-	coin_coin_counter     *int
-	exchange_trading_pair *int
+	Edges                     TradingPairEdges `json:"edges"`
+	currency_currency_base    *int
+	currency_currency_counter *int
+	exchange_trading_pair     *int
 }
 
 // TradingPairEdges holds the relations/edges for other nodes in the graph.
@@ -48,9 +48,9 @@ type TradingPairEdges struct {
 	// Exchange holds the value of the exchange edge.
 	Exchange *Exchange `json:"exchange,omitempty"`
 	// Base holds the value of the base edge.
-	Base *Coin `json:"base,omitempty"`
+	Base *Currency `json:"base,omitempty"`
 	// Counter holds the value of the counter edge.
-	Counter *Coin `json:"counter,omitempty"`
+	Counter *Currency `json:"counter,omitempty"`
 	// Market holds the value of the market edge.
 	Market []*Market `json:"market,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -77,11 +77,11 @@ func (e TradingPairEdges) ExchangeOrErr() (*Exchange, error) {
 
 // BaseOrErr returns the Base value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e TradingPairEdges) BaseOrErr() (*Coin, error) {
+func (e TradingPairEdges) BaseOrErr() (*Currency, error) {
 	if e.loadedTypes[1] {
 		if e.Base == nil {
 			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: coin.Label}
+			return nil, &NotFoundError{label: currency.Label}
 		}
 		return e.Base, nil
 	}
@@ -90,11 +90,11 @@ func (e TradingPairEdges) BaseOrErr() (*Coin, error) {
 
 // CounterOrErr returns the Counter value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e TradingPairEdges) CounterOrErr() (*Coin, error) {
+func (e TradingPairEdges) CounterOrErr() (*Currency, error) {
 	if e.loadedTypes[2] {
 		if e.Counter == nil {
 			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: coin.Label}
+			return nil, &NotFoundError{label: currency.Label}
 		}
 		return e.Counter, nil
 	}
@@ -119,9 +119,9 @@ func (*TradingPair) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case tradingpair.FieldSymbol:
 			values[i] = new(sql.NullString)
-		case tradingpair.ForeignKeys[0]: // coin_coin_base
+		case tradingpair.ForeignKeys[0]: // currency_currency_base
 			values[i] = new(sql.NullInt64)
-		case tradingpair.ForeignKeys[1]: // coin_coin_counter
+		case tradingpair.ForeignKeys[1]: // currency_currency_counter
 			values[i] = new(sql.NullInt64)
 		case tradingpair.ForeignKeys[2]: // exchange_trading_pair
 			values[i] = new(sql.NullInt64)
@@ -202,17 +202,17 @@ func (tp *TradingPair) assignValues(columns []string, values []any) error {
 			}
 		case tradingpair.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field coin_coin_base", value)
+				return fmt.Errorf("unexpected type %T for edge-field currency_currency_base", value)
 			} else if value.Valid {
-				tp.coin_coin_base = new(int)
-				*tp.coin_coin_base = int(value.Int64)
+				tp.currency_currency_base = new(int)
+				*tp.currency_currency_base = int(value.Int64)
 			}
 		case tradingpair.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field coin_coin_counter", value)
+				return fmt.Errorf("unexpected type %T for edge-field currency_currency_counter", value)
 			} else if value.Valid {
-				tp.coin_coin_counter = new(int)
-				*tp.coin_coin_counter = int(value.Int64)
+				tp.currency_currency_counter = new(int)
+				*tp.currency_currency_counter = int(value.Int64)
 			}
 		case tradingpair.ForeignKeys[2]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -232,12 +232,12 @@ func (tp *TradingPair) QueryExchange() *ExchangeQuery {
 }
 
 // QueryBase queries the "base" edge of the TradingPair entity.
-func (tp *TradingPair) QueryBase() *CoinQuery {
+func (tp *TradingPair) QueryBase() *CurrencyQuery {
 	return (&TradingPairClient{config: tp.config}).QueryBase(tp)
 }
 
 // QueryCounter queries the "counter" edge of the TradingPair entity.
-func (tp *TradingPair) QueryCounter() *CoinQuery {
+func (tp *TradingPair) QueryCounter() *CurrencyQuery {
 	return (&TradingPairClient{config: tp.config}).QueryCounter(tp)
 }
 

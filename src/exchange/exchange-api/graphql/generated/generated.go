@@ -39,11 +39,13 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Currency() CurrencyResolver
 	Exchange() ExchangeResolver
 	Market() MarketResolver
 	Query() QueryResolver
 	Ticker() TickerResolver
 	TradingPair() TradingPairResolver
+	CurrencyWhereInput() CurrencyWhereInputResolver
 	MarketWhereInput() MarketWhereInputResolver
 	OutboxWhereInput() OutboxWhereInputResolver
 }
@@ -52,27 +54,28 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	Coin struct {
+	ConvertedDetails struct {
+		Btc func(childComplexity int) int
+		Eth func(childComplexity int) int
+		Usd func(childComplexity int) int
+	}
+
+	Currency struct {
 		ID     func(childComplexity int) int
 		Name   func(childComplexity int) int
 		Symbol func(childComplexity int) int
+		Type   func(childComplexity int) int
 	}
 
-	CoinConnection struct {
+	CurrencyConnection struct {
 		Edges      func(childComplexity int) int
 		PageInfo   func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
-	CoinEdge struct {
+	CurrencyEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
-	}
-
-	ConvertedDetails struct {
-		Btc func(childComplexity int) int
-		Eth func(childComplexity int) int
-		Usd func(childComplexity int) int
 	}
 
 	Exchange struct {
@@ -134,8 +137,8 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Coin               func(childComplexity int, where *entities.CoinWhereInput) int
-		Coins              func(childComplexity int, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.CoinOrder, where *entities.CoinWhereInput) int
+		Currencies         func(childComplexity int, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.CurrencyOrder, where *entities.CurrencyWhereInput) int
+		Currency           func(childComplexity int, where *entities.CurrencyWhereInput) int
 		Exchange           func(childComplexity int, where *entities.ExchangeWhereInput) int
 		Exchanges          func(childComplexity int, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.ExchangeOrder, where *entities.ExchangeWhereInput) int
 		__resolve__service func(childComplexity int) int
@@ -190,6 +193,9 @@ type ComplexityRoot struct {
 	}
 }
 
+type CurrencyResolver interface {
+	Type(ctx context.Context, obj *entities.Currency) (models.CurrencyType, error)
+}
 type ExchangeResolver interface {
 	Links(ctx context.Context, obj *entities.Exchange) (*models.Links, error)
 
@@ -201,8 +207,8 @@ type MarketResolver interface {
 	Type(ctx context.Context, obj *entities.Market) (models.MarketType, error)
 }
 type QueryResolver interface {
-	Coin(ctx context.Context, where *entities.CoinWhereInput) (*entities.Coin, error)
-	Coins(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.CoinOrder, where *entities.CoinWhereInput) (*entities.CoinConnection, error)
+	Currency(ctx context.Context, where *entities.CurrencyWhereInput) (*entities.Currency, error)
+	Currencies(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.CurrencyOrder, where *entities.CurrencyWhereInput) (*entities.CurrencyConnection, error)
 	Exchange(ctx context.Context, where *entities.ExchangeWhereInput) (*entities.Exchange, error)
 	Exchanges(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.ExchangeOrder, where *entities.ExchangeWhereInput) (*entities.ExchangeConnection, error)
 }
@@ -216,6 +222,12 @@ type TradingPairResolver interface {
 	Markets(ctx context.Context, obj *entities.TradingPair) ([]*entities.Market, error)
 }
 
+type CurrencyWhereInputResolver interface {
+	Type(ctx context.Context, obj *entities.CurrencyWhereInput, data *models.CurrencyType) error
+	TypeNeq(ctx context.Context, obj *entities.CurrencyWhereInput, data *models.CurrencyType) error
+	TypeIn(ctx context.Context, obj *entities.CurrencyWhereInput, data []models.CurrencyType) error
+	TypeNotIn(ctx context.Context, obj *entities.CurrencyWhereInput, data []models.CurrencyType) error
+}
 type MarketWhereInputResolver interface {
 	Type(ctx context.Context, obj *entities.MarketWhereInput, data *models.MarketType) error
 	TypeNeq(ctx context.Context, obj *entities.MarketWhereInput, data *models.MarketType) error
@@ -244,62 +256,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Coin.id":
-		if e.complexity.Coin.ID == nil {
-			break
-		}
-
-		return e.complexity.Coin.ID(childComplexity), true
-
-	case "Coin.name":
-		if e.complexity.Coin.Name == nil {
-			break
-		}
-
-		return e.complexity.Coin.Name(childComplexity), true
-
-	case "Coin.symbol":
-		if e.complexity.Coin.Symbol == nil {
-			break
-		}
-
-		return e.complexity.Coin.Symbol(childComplexity), true
-
-	case "CoinConnection.edges":
-		if e.complexity.CoinConnection.Edges == nil {
-			break
-		}
-
-		return e.complexity.CoinConnection.Edges(childComplexity), true
-
-	case "CoinConnection.pageInfo":
-		if e.complexity.CoinConnection.PageInfo == nil {
-			break
-		}
-
-		return e.complexity.CoinConnection.PageInfo(childComplexity), true
-
-	case "CoinConnection.totalCount":
-		if e.complexity.CoinConnection.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.CoinConnection.TotalCount(childComplexity), true
-
-	case "CoinEdge.cursor":
-		if e.complexity.CoinEdge.Cursor == nil {
-			break
-		}
-
-		return e.complexity.CoinEdge.Cursor(childComplexity), true
-
-	case "CoinEdge.node":
-		if e.complexity.CoinEdge.Node == nil {
-			break
-		}
-
-		return e.complexity.CoinEdge.Node(childComplexity), true
-
 	case "ConvertedDetails.btc":
 		if e.complexity.ConvertedDetails.Btc == nil {
 			break
@@ -320,6 +276,69 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ConvertedDetails.Usd(childComplexity), true
+
+	case "Currency.id":
+		if e.complexity.Currency.ID == nil {
+			break
+		}
+
+		return e.complexity.Currency.ID(childComplexity), true
+
+	case "Currency.name":
+		if e.complexity.Currency.Name == nil {
+			break
+		}
+
+		return e.complexity.Currency.Name(childComplexity), true
+
+	case "Currency.symbol":
+		if e.complexity.Currency.Symbol == nil {
+			break
+		}
+
+		return e.complexity.Currency.Symbol(childComplexity), true
+
+	case "Currency.type":
+		if e.complexity.Currency.Type == nil {
+			break
+		}
+
+		return e.complexity.Currency.Type(childComplexity), true
+
+	case "CurrencyConnection.edges":
+		if e.complexity.CurrencyConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.CurrencyConnection.Edges(childComplexity), true
+
+	case "CurrencyConnection.pageInfo":
+		if e.complexity.CurrencyConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.CurrencyConnection.PageInfo(childComplexity), true
+
+	case "CurrencyConnection.totalCount":
+		if e.complexity.CurrencyConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.CurrencyConnection.TotalCount(childComplexity), true
+
+	case "CurrencyEdge.cursor":
+		if e.complexity.CurrencyEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.CurrencyEdge.Cursor(childComplexity), true
+
+	case "CurrencyEdge.node":
+		if e.complexity.CurrencyEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.CurrencyEdge.Node(childComplexity), true
 
 	case "Exchange.alertNotice":
 		if e.complexity.Exchange.AlertNotice == nil {
@@ -601,29 +620,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
 
-	case "Query.coin":
-		if e.complexity.Query.Coin == nil {
+	case "Query.currencies":
+		if e.complexity.Query.Currencies == nil {
 			break
 		}
 
-		args, err := ec.field_Query_coin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_currencies_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.Coin(childComplexity, args["where"].(*entities.CoinWhereInput)), true
+		return e.complexity.Query.Currencies(childComplexity, args["after"].(*entities.Cursor), args["first"].(*int), args["before"].(*entities.Cursor), args["last"].(*int), args["orderBy"].([]*entities.CurrencyOrder), args["where"].(*entities.CurrencyWhereInput)), true
 
-	case "Query.coins":
-		if e.complexity.Query.Coins == nil {
+	case "Query.currency":
+		if e.complexity.Query.Currency == nil {
 			break
 		}
 
-		args, err := ec.field_Query_coins_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_currency_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.Coins(childComplexity, args["after"].(*entities.Cursor), args["first"].(*int), args["before"].(*entities.Cursor), args["last"].(*int), args["orderBy"].([]*entities.CoinOrder), args["where"].(*entities.CoinWhereInput)), true
+		return e.complexity.Query.Currency(childComplexity, args["where"].(*entities.CurrencyWhereInput)), true
 
 	case "Query.exchange":
 		if e.complexity.Query.Exchange == nil {
@@ -916,8 +935,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputCoinOrder,
-		ec.unmarshalInputCoinWhereInput,
+		ec.unmarshalInputCurrencyOrder,
+		ec.unmarshalInputCurrencyWhereInput,
 		ec.unmarshalInputExchangeOrder,
 		ec.unmarshalInputExchangeWhereInput,
 		ec.unmarshalInputMarketWhereInput,
@@ -987,14 +1006,14 @@ interface Node {
 }
 
 extend type Query {
-  coin(
+  currency(
     """
     Ordering directions
     """
-    where: CoinWhereInput
-  ): Coin
+    where: CurrencyWhereInput
+  ): Currency
 
-  coins(
+  currencies(
     """
     Returns the items in the list that come after the specified cursor.
     """
@@ -1018,13 +1037,13 @@ extend type Query {
     """
     Ordering directions
     """
-    orderBy: [CoinOrder!]
+    orderBy: [CurrencyOrder!]
 
     """
     Ordering directions
     """
-    where: CoinWhereInput
-  ): CoinConnection
+    where: CurrencyWhereInput
+  ): CurrencyConnection
 
   exchange(
     """
@@ -1096,26 +1115,28 @@ type PageInfo {
   endCursor: Cursor
 }
 
-enum CoinOrderField {
+enum CurrencyOrderField {
   symbol
   name
+  type
 }
 
-input CoinOrder {
+input CurrencyOrder {
   direction: OrderDirection!
-  field: CoinOrderField
+  field: CurrencyOrderField
 }
 
-type Coin implements Node {
+type Currency implements Node {
   id: ID!
   symbol: String!
   name: String
+  type: CurrencyType!
 }
 
 """
 A connection to a list of items.
 """
-type CoinConnection {
+type CurrencyConnection {
   """
   Information to aid in pagination.
   """
@@ -1124,10 +1145,10 @@ type CoinConnection {
   """
   A list of edges.
   """
-  edges: [CoinEdge]
+  edges: [CurrencyEdge]
 
   """
-  Total number of coins
+  Total number of currencies
   """
   totalCount: Int
 }
@@ -1135,11 +1156,11 @@ type CoinConnection {
 """
 An edge in a connection.
 """
-type CoinEdge {
+type CurrencyEdge {
   """
   The item at the end of the edge
   """
-  node: Coin
+  node: Currency
 
   """
   A cursor for use in pagination
@@ -1227,12 +1248,12 @@ type Ticker implements Node {
 type TradingPair implements Node {
   id: ID!
   symbol: String!
-  base: Coin!
+  base: Currency!
   basePriceMinPrecision: Int
   basePriceMaxPrecision: Int
   baseQuantityMinPrecision: Int
   baseQuantityMaxPrecision: Int
-  counter: Coin!
+  counter: Currency!
   counterPriceMinPrecision: Int
   counterPriceMaxPrecision: Int
   counterQuantityMinPrecision: Int
@@ -1299,6 +1320,11 @@ type Market implements Node {
   type: MarketType!
 }
 
+enum CurrencyType {
+  DIGITAL
+  FIAT
+}
+
 enum MarketType {
   SPORT_TRADING
   MARGIN_TRADING
@@ -1315,17 +1341,17 @@ enum MarketType {
   FAN_TOKEN
   ETF
   NFT
-  Swap
+  SWAP
 }
 `, BuiltIn: false},
 	{Name: "../../../../../api-definitions/graphql/omiga/exchange/V1/ent.graphql", Input: `"""
-CoinWhereInput is used for filtering Coin objects.
+CurrencyWhereInput is used for filtering Currency objects.
 Input was generated by ent.
 """
-input CoinWhereInput {
-  not: CoinWhereInput
-  and: [CoinWhereInput!]
-  or: [CoinWhereInput!]
+input CurrencyWhereInput {
+  not: CurrencyWhereInput
+  and: [CurrencyWhereInput!]
+  or: [CurrencyWhereInput!]
   """id field predicates"""
   id: ID
   idNEQ: ID
@@ -1365,12 +1391,17 @@ input CoinWhereInput {
   nameNotNil: Boolean
   nameEqualFold: String
   nameContainsFold: String
-  """coin_base edge predicates"""
-  hasCoinBase: Boolean
-  hasCoinBaseWith: [TradingPairWhereInput!]
-  """coin_counter edge predicates"""
-  hasCoinCounter: Boolean
-  hasCoinCounterWith: [TradingPairWhereInput!]
+  """type field predicates"""
+  type: CurrencyType
+  typeNEQ: CurrencyType
+  typeIn: [CurrencyType!]
+  typeNotIn: [CurrencyType!]
+  """currency_base edge predicates"""
+  hasCurrencyBase: Boolean
+  hasCurrencyBaseWith: [TradingPairWhereInput!]
+  """currency_counter edge predicates"""
+  hasCurrencyCounter: Boolean
+  hasCurrencyCounterWith: [TradingPairWhereInput!]
 }
 """
 ExchangeWhereInput is used for filtering Exchange objects.
@@ -2042,10 +2073,10 @@ input TradingPairWhereInput {
   hasExchangeWith: [ExchangeWhereInput!]
   """base edge predicates"""
   hasBase: Boolean
-  hasBaseWith: [CoinWhereInput!]
+  hasBaseWith: [CurrencyWhereInput!]
   """counter edge predicates"""
   hasCounter: Boolean
-  hasCounterWith: [CoinWhereInput!]
+  hasCounterWith: [CurrencyWhereInput!]
   """market edge predicates"""
   hasMarket: Boolean
   hasMarketWith: [MarketWhereInput!]
@@ -2098,22 +2129,7 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_coin_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *entities.CoinWhereInput
-	if tmp, ok := rawArgs["where"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg0, err = ec.unmarshalOCoinWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinWhereInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["where"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_coins_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_currencies_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *entities.Cursor
@@ -2152,24 +2168,39 @@ func (ec *executionContext) field_Query_coins_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["last"] = arg3
-	var arg4 []*entities.CoinOrder
+	var arg4 []*entities.CurrencyOrder
 	if tmp, ok := rawArgs["orderBy"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
-		arg4, err = ec.unmarshalOCoinOrder2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinOrderᚄ(ctx, tmp)
+		arg4, err = ec.unmarshalOCurrencyOrder2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyOrderᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["orderBy"] = arg4
-	var arg5 *entities.CoinWhereInput
+	var arg5 *entities.CurrencyWhereInput
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg5, err = ec.unmarshalOCoinWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinWhereInput(ctx, tmp)
+		arg5, err = ec.unmarshalOCurrencyWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["where"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_currency_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entities.CurrencyWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg0, err = ec.unmarshalOCurrencyWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg0
 	return args, nil
 }
 
@@ -2285,370 +2316,6 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
-
-func (ec *executionContext) _Coin_id(ctx context.Context, field graphql.CollectedField, obj *entities.Coin) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Coin_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Coin_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Coin",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Coin_symbol(ctx context.Context, field graphql.CollectedField, obj *entities.Coin) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Coin_symbol(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Symbol, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Coin_symbol(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Coin",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Coin_name(ctx context.Context, field graphql.CollectedField, obj *entities.Coin) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Coin_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Coin_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Coin",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _CoinConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *entities.CoinConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CoinConnection_pageInfo(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(entities.PageInfo)
-	fc.Result = res
-	return ec.marshalNPageInfo2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐPageInfo(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_CoinConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "CoinConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "hasNextPage":
-				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
-			case "hasPreviousPage":
-				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
-			case "startCursor":
-				return ec.fieldContext_PageInfo_startCursor(ctx, field)
-			case "endCursor":
-				return ec.fieldContext_PageInfo_endCursor(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _CoinConnection_edges(ctx context.Context, field graphql.CollectedField, obj *entities.CoinConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CoinConnection_edges(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Edges, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*entities.CoinEdge)
-	fc.Result = res
-	return ec.marshalOCoinEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinEdge(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_CoinConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "CoinConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "node":
-				return ec.fieldContext_CoinEdge_node(ctx, field)
-			case "cursor":
-				return ec.fieldContext_CoinEdge_cursor(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type CoinEdge", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _CoinConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *entities.CoinConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CoinConnection_totalCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalOInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_CoinConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "CoinConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _CoinEdge_node(ctx context.Context, field graphql.CollectedField, obj *entities.CoinEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CoinEdge_node(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Node, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*entities.Coin)
-	fc.Result = res
-	return ec.marshalOCoin2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoin(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_CoinEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "CoinEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Coin_id(ctx, field)
-			case "symbol":
-				return ec.fieldContext_Coin_symbol(ctx, field)
-			case "name":
-				return ec.fieldContext_Coin_name(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Coin", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _CoinEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *entities.CoinEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CoinEdge_cursor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(entities.Cursor)
-	fc.Result = res
-	return ec.marshalNCursor2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCursor(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_CoinEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "CoinEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Cursor does not have child fields")
-		},
-	}
-	return fc, nil
-}
 
 func (ec *executionContext) _ConvertedDetails_btc(ctx context.Context, field graphql.CollectedField, obj *models.ConvertedDetails) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ConvertedDetails_btc(ctx, field)
@@ -2777,6 +2444,416 @@ func (ec *executionContext) fieldContext_ConvertedDetails_usd(ctx context.Contex
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Currency_id(ctx context.Context, field graphql.CollectedField, obj *entities.Currency) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Currency_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Currency_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Currency",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Currency_symbol(ctx context.Context, field graphql.CollectedField, obj *entities.Currency) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Currency_symbol(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Symbol, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Currency_symbol(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Currency",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Currency_name(ctx context.Context, field graphql.CollectedField, obj *entities.Currency) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Currency_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Currency_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Currency",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Currency_type(ctx context.Context, field graphql.CollectedField, obj *entities.Currency) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Currency_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Currency().Type(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(models.CurrencyType)
+	fc.Result = res
+	return ec.marshalNCurrencyType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Currency_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Currency",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type CurrencyType does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CurrencyConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *entities.CurrencyConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CurrencyConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entities.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CurrencyConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CurrencyConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CurrencyConnection_edges(ctx context.Context, field graphql.CollectedField, obj *entities.CurrencyConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CurrencyConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*entities.CurrencyEdge)
+	fc.Result = res
+	return ec.marshalOCurrencyEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CurrencyConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CurrencyConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_CurrencyEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_CurrencyEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CurrencyEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CurrencyConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *entities.CurrencyConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CurrencyConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CurrencyConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CurrencyConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CurrencyEdge_node(ctx context.Context, field graphql.CollectedField, obj *entities.CurrencyEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CurrencyEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*entities.Currency)
+	fc.Result = res
+	return ec.marshalOCurrency2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrency(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CurrencyEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CurrencyEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Currency_id(ctx, field)
+			case "symbol":
+				return ec.fieldContext_Currency_symbol(ctx, field)
+			case "name":
+				return ec.fieldContext_Currency_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Currency_type(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CurrencyEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *entities.CurrencyEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CurrencyEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entities.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CurrencyEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CurrencyEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4613,8 +4690,8 @@ func (ec *executionContext) fieldContext_PageInfo_endCursor(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_coin(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_coin(ctx, field)
+func (ec *executionContext) _Query_currency(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_currency(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4627,7 +4704,7 @@ func (ec *executionContext) _Query_coin(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Coin(rctx, fc.Args["where"].(*entities.CoinWhereInput))
+		return ec.resolvers.Query().Currency(rctx, fc.Args["where"].(*entities.CurrencyWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4636,12 +4713,12 @@ func (ec *executionContext) _Query_coin(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*entities.Coin)
+	res := resTmp.(*entities.Currency)
 	fc.Result = res
-	return ec.marshalOCoin2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoin(ctx, field.Selections, res)
+	return ec.marshalOCurrency2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrency(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_coin(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_currency(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -4650,13 +4727,15 @@ func (ec *executionContext) fieldContext_Query_coin(ctx context.Context, field g
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Coin_id(ctx, field)
+				return ec.fieldContext_Currency_id(ctx, field)
 			case "symbol":
-				return ec.fieldContext_Coin_symbol(ctx, field)
+				return ec.fieldContext_Currency_symbol(ctx, field)
 			case "name":
-				return ec.fieldContext_Coin_name(ctx, field)
+				return ec.fieldContext_Currency_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Currency_type(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Coin", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
 	}
 	defer func() {
@@ -4666,15 +4745,15 @@ func (ec *executionContext) fieldContext_Query_coin(ctx context.Context, field g
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_coin_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_currency_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_coins(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_coins(ctx, field)
+func (ec *executionContext) _Query_currencies(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_currencies(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4687,7 +4766,7 @@ func (ec *executionContext) _Query_coins(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Coins(rctx, fc.Args["after"].(*entities.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*entities.Cursor), fc.Args["last"].(*int), fc.Args["orderBy"].([]*entities.CoinOrder), fc.Args["where"].(*entities.CoinWhereInput))
+		return ec.resolvers.Query().Currencies(rctx, fc.Args["after"].(*entities.Cursor), fc.Args["first"].(*int), fc.Args["before"].(*entities.Cursor), fc.Args["last"].(*int), fc.Args["orderBy"].([]*entities.CurrencyOrder), fc.Args["where"].(*entities.CurrencyWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4696,12 +4775,12 @@ func (ec *executionContext) _Query_coins(ctx context.Context, field graphql.Coll
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*entities.CoinConnection)
+	res := resTmp.(*entities.CurrencyConnection)
 	fc.Result = res
-	return ec.marshalOCoinConnection2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinConnection(ctx, field.Selections, res)
+	return ec.marshalOCurrencyConnection2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_coins(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_currencies(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -4710,13 +4789,13 @@ func (ec *executionContext) fieldContext_Query_coins(ctx context.Context, field 
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "pageInfo":
-				return ec.fieldContext_CoinConnection_pageInfo(ctx, field)
+				return ec.fieldContext_CurrencyConnection_pageInfo(ctx, field)
 			case "edges":
-				return ec.fieldContext_CoinConnection_edges(ctx, field)
+				return ec.fieldContext_CurrencyConnection_edges(ctx, field)
 			case "totalCount":
-				return ec.fieldContext_CoinConnection_totalCount(ctx, field)
+				return ec.fieldContext_CurrencyConnection_totalCount(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type CoinConnection", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type CurrencyConnection", field.Name)
 		},
 	}
 	defer func() {
@@ -4726,7 +4805,7 @@ func (ec *executionContext) fieldContext_Query_coins(ctx context.Context, field 
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_coins_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_currencies_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -6123,9 +6202,9 @@ func (ec *executionContext) _TradingPair_base(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*entities.Coin)
+	res := resTmp.(*entities.Currency)
 	fc.Result = res
-	return ec.marshalNCoin2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoin(ctx, field.Selections, res)
+	return ec.marshalNCurrency2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrency(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_TradingPair_base(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -6137,13 +6216,15 @@ func (ec *executionContext) fieldContext_TradingPair_base(ctx context.Context, f
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Coin_id(ctx, field)
+				return ec.fieldContext_Currency_id(ctx, field)
 			case "symbol":
-				return ec.fieldContext_Coin_symbol(ctx, field)
+				return ec.fieldContext_Currency_symbol(ctx, field)
 			case "name":
-				return ec.fieldContext_Coin_name(ctx, field)
+				return ec.fieldContext_Currency_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Currency_type(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Coin", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
 	}
 	return fc, nil
@@ -6339,9 +6420,9 @@ func (ec *executionContext) _TradingPair_counter(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*entities.Coin)
+	res := resTmp.(*entities.Currency)
 	fc.Result = res
-	return ec.marshalNCoin2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoin(ctx, field.Selections, res)
+	return ec.marshalNCurrency2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrency(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_TradingPair_counter(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -6353,13 +6434,15 @@ func (ec *executionContext) fieldContext_TradingPair_counter(ctx context.Context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Coin_id(ctx, field)
+				return ec.fieldContext_Currency_id(ctx, field)
 			case "symbol":
-				return ec.fieldContext_Coin_symbol(ctx, field)
+				return ec.fieldContext_Currency_symbol(ctx, field)
 			case "name":
-				return ec.fieldContext_Coin_name(ctx, field)
+				return ec.fieldContext_Currency_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Currency_type(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Coin", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
 	}
 	return fc, nil
@@ -8395,8 +8478,8 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputCoinOrder(ctx context.Context, obj interface{}) (entities.CoinOrder, error) {
-	var it entities.CoinOrder
+func (ec *executionContext) unmarshalInputCurrencyOrder(ctx context.Context, obj interface{}) (entities.CurrencyOrder, error) {
+	var it entities.CurrencyOrder
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -8421,7 +8504,7 @@ func (ec *executionContext) unmarshalInputCoinOrder(ctx context.Context, obj int
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
-			it.Field, err = ec.unmarshalOCoinOrderField2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinOrderField(ctx, v)
+			it.Field, err = ec.unmarshalOCurrencyOrderField2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8431,14 +8514,14 @@ func (ec *executionContext) unmarshalInputCoinOrder(ctx context.Context, obj int
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCoinWhereInput(ctx context.Context, obj interface{}) (entities.CoinWhereInput, error) {
-	var it entities.CoinWhereInput
+func (ec *executionContext) unmarshalInputCurrencyWhereInput(ctx context.Context, obj interface{}) (entities.CurrencyWhereInput, error) {
+	var it entities.CurrencyWhereInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "symbol", "symbolNEQ", "symbolIn", "symbolNotIn", "symbolGT", "symbolGTE", "symbolLT", "symbolLTE", "symbolContains", "symbolHasPrefix", "symbolHasSuffix", "symbolEqualFold", "symbolContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "hasCoinBase", "hasCoinBaseWith", "hasCoinCounter", "hasCoinCounterWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "symbol", "symbolNEQ", "symbolIn", "symbolNotIn", "symbolGT", "symbolGTE", "symbolLT", "symbolLTE", "symbolContains", "symbolHasPrefix", "symbolHasSuffix", "symbolEqualFold", "symbolContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "hasCurrencyBase", "hasCurrencyBaseWith", "hasCurrencyCounter", "hasCurrencyCounterWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8449,7 +8532,7 @@ func (ec *executionContext) unmarshalInputCoinWhereInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
-			it.Not, err = ec.unmarshalOCoinWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinWhereInput(ctx, v)
+			it.Not, err = ec.unmarshalOCurrencyWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyWhereInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8457,7 +8540,7 @@ func (ec *executionContext) unmarshalInputCoinWhereInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
-			it.And, err = ec.unmarshalOCoinWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinWhereInputᚄ(ctx, v)
+			it.And, err = ec.unmarshalOCurrencyWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8465,7 +8548,7 @@ func (ec *executionContext) unmarshalInputCoinWhereInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
-			it.Or, err = ec.unmarshalOCoinWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinWhereInputᚄ(ctx, v)
+			it.Or, err = ec.unmarshalOCurrencyWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8757,35 +8840,79 @@ func (ec *executionContext) unmarshalInputCoinWhereInput(ctx context.Context, ob
 			if err != nil {
 				return it, err
 			}
-		case "hasCoinBase":
+		case "type":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCoinBase"))
-			it.HasCoinBase, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalOCurrencyType2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyType(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "hasCoinBaseWith":
+			if err = ec.resolvers.CurrencyWhereInput().Type(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "typeNEQ":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCoinBaseWith"))
-			it.HasCoinBaseWith, err = ec.unmarshalOTradingPairWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐTradingPairWhereInputᚄ(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeNEQ"))
+			data, err := ec.unmarshalOCurrencyType2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyType(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "hasCoinCounter":
+			if err = ec.resolvers.CurrencyWhereInput().TypeNeq(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "typeIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCoinCounter"))
-			it.HasCoinCounter, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeIn"))
+			data, err := ec.unmarshalOCurrencyType2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyTypeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "hasCoinCounterWith":
+			if err = ec.resolvers.CurrencyWhereInput().TypeIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "typeNotIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCoinCounterWith"))
-			it.HasCoinCounterWith, err = ec.unmarshalOTradingPairWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐTradingPairWhereInputᚄ(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeNotIn"))
+			data, err := ec.unmarshalOCurrencyType2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyTypeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CurrencyWhereInput().TypeNotIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "hasCurrencyBase":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCurrencyBase"))
+			it.HasCurrencyBase, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hasCurrencyBaseWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCurrencyBaseWith"))
+			it.HasCurrencyBaseWith, err = ec.unmarshalOTradingPairWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐTradingPairWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hasCurrencyCounter":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCurrencyCounter"))
+			it.HasCurrencyCounter, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hasCurrencyCounterWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCurrencyCounterWith"))
+			it.HasCurrencyCounterWith, err = ec.unmarshalOTradingPairWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐTradingPairWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -13585,7 +13712,7 @@ func (ec *executionContext) unmarshalInputTradingPairWhereInput(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasBaseWith"))
-			it.HasBaseWith, err = ec.unmarshalOCoinWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinWhereInputᚄ(ctx, v)
+			it.HasBaseWith, err = ec.unmarshalOCurrencyWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -13601,7 +13728,7 @@ func (ec *executionContext) unmarshalInputTradingPairWhereInput(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCounterWith"))
-			it.HasCounterWith, err = ec.unmarshalOCoinWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinWhereInputᚄ(ctx, v)
+			it.HasCounterWith, err = ec.unmarshalOCurrencyWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -13635,11 +13762,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case *entities.Coin:
+	case *entities.Currency:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._Coin(ctx, sel, obj)
+		return ec._Currency(ctx, sel, obj)
 	case *entities.Exchange:
 		if obj == nil {
 			return graphql.Null
@@ -13669,113 +13796,6 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 
 // region    **************************** object.gotpl ****************************
 
-var coinImplementors = []string{"Coin", "Node"}
-
-func (ec *executionContext) _Coin(ctx context.Context, sel ast.SelectionSet, obj *entities.Coin) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, coinImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Coin")
-		case "id":
-
-			out.Values[i] = ec._Coin_id(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "symbol":
-
-			out.Values[i] = ec._Coin_symbol(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "name":
-
-			out.Values[i] = ec._Coin_name(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var coinConnectionImplementors = []string{"CoinConnection"}
-
-func (ec *executionContext) _CoinConnection(ctx context.Context, sel ast.SelectionSet, obj *entities.CoinConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, coinConnectionImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("CoinConnection")
-		case "pageInfo":
-
-			out.Values[i] = ec._CoinConnection_pageInfo(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "edges":
-
-			out.Values[i] = ec._CoinConnection_edges(ctx, field, obj)
-
-		case "totalCount":
-
-			out.Values[i] = ec._CoinConnection_totalCount(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var coinEdgeImplementors = []string{"CoinEdge"}
-
-func (ec *executionContext) _CoinEdge(ctx context.Context, sel ast.SelectionSet, obj *entities.CoinEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, coinEdgeImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("CoinEdge")
-		case "node":
-
-			out.Values[i] = ec._CoinEdge_node(ctx, field, obj)
-
-		case "cursor":
-
-			out.Values[i] = ec._CoinEdge_cursor(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var convertedDetailsImplementors = []string{"ConvertedDetails"}
 
 func (ec *executionContext) _ConvertedDetails(ctx context.Context, sel ast.SelectionSet, obj *models.ConvertedDetails) graphql.Marshaler {
@@ -13803,6 +13823,133 @@ func (ec *executionContext) _ConvertedDetails(ctx context.Context, sel ast.Selec
 		case "usd":
 
 			out.Values[i] = ec._ConvertedDetails_usd(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var currencyImplementors = []string{"Currency", "Node"}
+
+func (ec *executionContext) _Currency(ctx context.Context, sel ast.SelectionSet, obj *entities.Currency) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, currencyImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Currency")
+		case "id":
+
+			out.Values[i] = ec._Currency_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "symbol":
+
+			out.Values[i] = ec._Currency_symbol(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "name":
+
+			out.Values[i] = ec._Currency_name(ctx, field, obj)
+
+		case "type":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Currency_type(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var currencyConnectionImplementors = []string{"CurrencyConnection"}
+
+func (ec *executionContext) _CurrencyConnection(ctx context.Context, sel ast.SelectionSet, obj *entities.CurrencyConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, currencyConnectionImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CurrencyConnection")
+		case "pageInfo":
+
+			out.Values[i] = ec._CurrencyConnection_pageInfo(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+
+			out.Values[i] = ec._CurrencyConnection_edges(ctx, field, obj)
+
+		case "totalCount":
+
+			out.Values[i] = ec._CurrencyConnection_totalCount(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var currencyEdgeImplementors = []string{"CurrencyEdge"}
+
+func (ec *executionContext) _CurrencyEdge(ctx context.Context, sel ast.SelectionSet, obj *entities.CurrencyEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, currencyEdgeImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CurrencyEdge")
+		case "node":
+
+			out.Values[i] = ec._CurrencyEdge_node(ctx, field, obj)
+
+		case "cursor":
+
+			out.Values[i] = ec._CurrencyEdge_cursor(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -14227,7 +14374,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "coin":
+		case "currency":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -14236,7 +14383,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_coin(ctx, field)
+				res = ec._Query_currency(ctx, field)
 				return res
 			}
 
@@ -14247,7 +14394,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "coins":
+		case "currencies":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -14256,7 +14403,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_coins(ctx, field)
+				res = ec._Query_currencies(ctx, field)
 				return res
 			}
 
@@ -15022,23 +15169,33 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNCoin2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoin(ctx context.Context, sel ast.SelectionSet, v *entities.Coin) graphql.Marshaler {
+func (ec *executionContext) marshalNCurrency2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrency(ctx context.Context, sel ast.SelectionSet, v *entities.Currency) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._Coin(ctx, sel, v)
+	return ec._Currency(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNCoinOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinOrder(ctx context.Context, v interface{}) (*entities.CoinOrder, error) {
-	res, err := ec.unmarshalInputCoinOrder(ctx, v)
+func (ec *executionContext) unmarshalNCurrencyOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyOrder(ctx context.Context, v interface{}) (*entities.CurrencyOrder, error) {
+	res, err := ec.unmarshalInputCurrencyOrder(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCoinWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinWhereInput(ctx context.Context, v interface{}) (*entities.CoinWhereInput, error) {
-	res, err := ec.unmarshalInputCoinWhereInput(ctx, v)
+func (ec *executionContext) unmarshalNCurrencyType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyType(ctx context.Context, v interface{}) (models.CurrencyType, error) {
+	var res models.CurrencyType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNCurrencyType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyType(ctx context.Context, sel ast.SelectionSet, v models.CurrencyType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNCurrencyWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyWhereInput(ctx context.Context, v interface{}) (*entities.CurrencyWhereInput, error) {
+	res, err := ec.unmarshalInputCurrencyWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -15665,21 +15822,28 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOCoin2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoin(ctx context.Context, sel ast.SelectionSet, v *entities.Coin) graphql.Marshaler {
+func (ec *executionContext) marshalOConvertedDetails2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐConvertedDetails(ctx context.Context, sel ast.SelectionSet, v *models.ConvertedDetails) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._Coin(ctx, sel, v)
+	return ec._ConvertedDetails(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOCoinConnection2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinConnection(ctx context.Context, sel ast.SelectionSet, v *entities.CoinConnection) graphql.Marshaler {
+func (ec *executionContext) marshalOCurrency2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrency(ctx context.Context, sel ast.SelectionSet, v *entities.Currency) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._CoinConnection(ctx, sel, v)
+	return ec._Currency(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOCoinEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinEdge(ctx context.Context, sel ast.SelectionSet, v []*entities.CoinEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOCurrencyConnection2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyConnection(ctx context.Context, sel ast.SelectionSet, v *entities.CurrencyConnection) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._CurrencyConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOCurrencyEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyEdge(ctx context.Context, sel ast.SelectionSet, v []*entities.CurrencyEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -15706,7 +15870,7 @@ func (ec *executionContext) marshalOCoinEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroup�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOCoinEdge2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinEdge(ctx, sel, v[i])
+			ret[i] = ec.marshalOCurrencyEdge2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -15720,14 +15884,14 @@ func (ec *executionContext) marshalOCoinEdge2ᚕᚖgithubᚗcomᚋomigaᚑgroup�
 	return ret
 }
 
-func (ec *executionContext) marshalOCoinEdge2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinEdge(ctx context.Context, sel ast.SelectionSet, v *entities.CoinEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOCurrencyEdge2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyEdge(ctx context.Context, sel ast.SelectionSet, v *entities.CurrencyEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._CoinEdge(ctx, sel, v)
+	return ec._CurrencyEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOCoinOrder2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinOrderᚄ(ctx context.Context, v interface{}) ([]*entities.CoinOrder, error) {
+func (ec *executionContext) unmarshalOCurrencyOrder2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyOrderᚄ(ctx context.Context, v interface{}) ([]*entities.CurrencyOrder, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -15736,10 +15900,10 @@ func (ec *executionContext) unmarshalOCoinOrder2ᚕᚖgithubᚗcomᚋomigaᚑgro
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]*entities.CoinOrder, len(vSlice))
+	res := make([]*entities.CurrencyOrder, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNCoinOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinOrder(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNCurrencyOrder2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyOrder(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -15747,23 +15911,23 @@ func (ec *executionContext) unmarshalOCoinOrder2ᚕᚖgithubᚗcomᚋomigaᚑgro
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOCoinOrderField2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinOrderField(ctx context.Context, v interface{}) (*entities.CoinOrderField, error) {
+func (ec *executionContext) unmarshalOCurrencyOrderField2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyOrderField(ctx context.Context, v interface{}) (*entities.CurrencyOrderField, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(entities.CoinOrderField)
+	var res = new(entities.CurrencyOrderField)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOCoinOrderField2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinOrderField(ctx context.Context, sel ast.SelectionSet, v *entities.CoinOrderField) graphql.Marshaler {
+func (ec *executionContext) marshalOCurrencyOrderField2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyOrderField(ctx context.Context, sel ast.SelectionSet, v *entities.CurrencyOrderField) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return v
 }
 
-func (ec *executionContext) unmarshalOCoinWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinWhereInputᚄ(ctx context.Context, v interface{}) ([]*entities.CoinWhereInput, error) {
+func (ec *executionContext) unmarshalOCurrencyType2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyTypeᚄ(ctx context.Context, v interface{}) ([]models.CurrencyType, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -15772,10 +15936,10 @@ func (ec *executionContext) unmarshalOCoinWhereInput2ᚕᚖgithubᚗcomᚋomiga�
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]*entities.CoinWhereInput, len(vSlice))
+	res := make([]models.CurrencyType, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNCoinWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinWhereInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNCurrencyType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyType(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -15783,19 +15947,95 @@ func (ec *executionContext) unmarshalOCoinWhereInput2ᚕᚖgithubᚗcomᚋomiga�
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOCoinWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCoinWhereInput(ctx context.Context, v interface{}) (*entities.CoinWhereInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputCoinWhereInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOConvertedDetails2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐConvertedDetails(ctx context.Context, sel ast.SelectionSet, v *models.ConvertedDetails) graphql.Marshaler {
+func (ec *executionContext) marshalOCurrencyType2ᚕgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyTypeᚄ(ctx context.Context, sel ast.SelectionSet, v []models.CurrencyType) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._ConvertedDetails(ctx, sel, v)
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCurrencyType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyType(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOCurrencyType2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyType(ctx context.Context, v interface{}) (*models.CurrencyType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(models.CurrencyType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOCurrencyType2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋexchangeᚑapiᚋgraphqlᚋmodelsᚐCurrencyType(ctx context.Context, sel ast.SelectionSet, v *models.CurrencyType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOCurrencyWhereInput2ᚕᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyWhereInputᚄ(ctx context.Context, v interface{}) ([]*entities.CurrencyWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*entities.CurrencyWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNCurrencyWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOCurrencyWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCurrencyWhereInput(ctx context.Context, v interface{}) (*entities.CurrencyWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCurrencyWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋexchangeᚋsharedᚋentitiesᚐCursor(ctx context.Context, v interface{}) (*entities.Cursor, error) {

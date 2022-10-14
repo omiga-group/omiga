@@ -146,13 +146,13 @@ func (fobs *ftxOrderBookSubscriber) publish(
 	asksBids := slices.Concat(asks, bids)
 
 	orderBook := mappers.ToModelOrderBook(
-		exchangeModels.Currency{
+		exchangeModels.OrderCurrency{
 			Name:         market.BaseCurrency,
 			Code:         market.BaseCurrency,
 			MaxPrecision: 1,    //WHY SEND PRECISION?
 			Digital:      true, //WHAT IS THIS?
 		},
-		exchangeModels.Currency{
+		exchangeModels.OrderCurrency{
 			Name:         market.QuoteCurrency,
 			Code:         market.QuoteCurrency,
 			MaxPrecision: 1,

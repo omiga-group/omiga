@@ -25,7 +25,7 @@ type binanceOrderBookSubscriber struct {
 	logger             *zap.SugaredLogger
 	pair               string
 	orderBookPublisher publishers.OrderBookPublisher
-	coinHelper         services.CoinHelper
+	coinHelper         services.CurrencyHelper
 	symbol1            string
 	symbol2            string
 }
@@ -35,7 +35,7 @@ func NewBinanceOrderBookSubscriber(
 	logger *zap.SugaredLogger,
 	pairConfig configuration.PairConfig,
 	orderBookPublisher publishers.OrderBookPublisher,
-	coinHelper services.CoinHelper) (BinanceOrderBookSubscriber, error) {
+	coinHelper services.CurrencyHelper) (BinanceOrderBookSubscriber, error) {
 
 	pairs := strings.Split(pairConfig.Pair, "/")
 	symbol1 := strings.ToLower(pairs[0])
@@ -134,13 +134,13 @@ func (bobs *binanceOrderBookSubscriber) wsDepthHandler(event *binance.WsDepthEve
 	counterCoinName := coins[bobs.symbol2]
 
 	orderBook := mappers.BinanceOrderBookToOrderBook(
-		exchangeModels.Currency{
+		exchangeModels.OrderCurrency{
 			Name:         baseCoinName,
 			Code:         bobs.symbol1,
 			MaxPrecision: 1,
 			Digital:      true,
 		},
-		exchangeModels.Currency{
+		exchangeModels.OrderCurrency{
 			Name:         counterCoinName,
 			Code:         bobs.symbol2,
 			MaxPrecision: 1,

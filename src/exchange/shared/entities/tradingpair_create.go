@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
@@ -153,25 +153,25 @@ func (tpc *TradingPairCreate) SetExchange(e *Exchange) *TradingPairCreate {
 	return tpc.SetExchangeID(e.ID)
 }
 
-// SetBaseID sets the "base" edge to the Coin entity by ID.
+// SetBaseID sets the "base" edge to the Currency entity by ID.
 func (tpc *TradingPairCreate) SetBaseID(id int) *TradingPairCreate {
 	tpc.mutation.SetBaseID(id)
 	return tpc
 }
 
-// SetBase sets the "base" edge to the Coin entity.
-func (tpc *TradingPairCreate) SetBase(c *Coin) *TradingPairCreate {
+// SetBase sets the "base" edge to the Currency entity.
+func (tpc *TradingPairCreate) SetBase(c *Currency) *TradingPairCreate {
 	return tpc.SetBaseID(c.ID)
 }
 
-// SetCounterID sets the "counter" edge to the Coin entity by ID.
+// SetCounterID sets the "counter" edge to the Currency entity by ID.
 func (tpc *TradingPairCreate) SetCounterID(id int) *TradingPairCreate {
 	tpc.mutation.SetCounterID(id)
 	return tpc
 }
 
-// SetCounter sets the "counter" edge to the Coin entity.
-func (tpc *TradingPairCreate) SetCounter(c *Coin) *TradingPairCreate {
+// SetCounter sets the "counter" edge to the Currency entity.
+func (tpc *TradingPairCreate) SetCounter(c *Currency) *TradingPairCreate {
 	return tpc.SetCounterID(c.ID)
 }
 
@@ -410,7 +410,7 @@ func (tpc *TradingPairCreate) createSpec() (*TradingPair, *sqlgraph.CreateSpec) 
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: coin.FieldID,
+					Column: currency.FieldID,
 				},
 			},
 		}
@@ -418,7 +418,7 @@ func (tpc *TradingPairCreate) createSpec() (*TradingPair, *sqlgraph.CreateSpec) 
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.coin_coin_base = &nodes[0]
+		_node.currency_currency_base = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := tpc.mutation.CounterIDs(); len(nodes) > 0 {
@@ -431,7 +431,7 @@ func (tpc *TradingPairCreate) createSpec() (*TradingPair, *sqlgraph.CreateSpec) 
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: coin.FieldID,
+					Column: currency.FieldID,
 				},
 			},
 		}
@@ -439,7 +439,7 @@ func (tpc *TradingPairCreate) createSpec() (*TradingPair, *sqlgraph.CreateSpec) 
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.coin_coin_counter = &nodes[0]
+		_node.currency_currency_counter = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := tpc.mutation.MarketIDs(); len(nodes) > 0 {

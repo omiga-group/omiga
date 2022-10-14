@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
@@ -265,25 +265,25 @@ func (tpu *TradingPairUpdate) SetExchange(e *Exchange) *TradingPairUpdate {
 	return tpu.SetExchangeID(e.ID)
 }
 
-// SetBaseID sets the "base" edge to the Coin entity by ID.
+// SetBaseID sets the "base" edge to the Currency entity by ID.
 func (tpu *TradingPairUpdate) SetBaseID(id int) *TradingPairUpdate {
 	tpu.mutation.SetBaseID(id)
 	return tpu
 }
 
-// SetBase sets the "base" edge to the Coin entity.
-func (tpu *TradingPairUpdate) SetBase(c *Coin) *TradingPairUpdate {
+// SetBase sets the "base" edge to the Currency entity.
+func (tpu *TradingPairUpdate) SetBase(c *Currency) *TradingPairUpdate {
 	return tpu.SetBaseID(c.ID)
 }
 
-// SetCounterID sets the "counter" edge to the Coin entity by ID.
+// SetCounterID sets the "counter" edge to the Currency entity by ID.
 func (tpu *TradingPairUpdate) SetCounterID(id int) *TradingPairUpdate {
 	tpu.mutation.SetCounterID(id)
 	return tpu
 }
 
-// SetCounter sets the "counter" edge to the Coin entity.
-func (tpu *TradingPairUpdate) SetCounter(c *Coin) *TradingPairUpdate {
+// SetCounter sets the "counter" edge to the Currency entity.
+func (tpu *TradingPairUpdate) SetCounter(c *Currency) *TradingPairUpdate {
 	return tpu.SetCounterID(c.ID)
 }
 
@@ -313,13 +313,13 @@ func (tpu *TradingPairUpdate) ClearExchange() *TradingPairUpdate {
 	return tpu
 }
 
-// ClearBase clears the "base" edge to the Coin entity.
+// ClearBase clears the "base" edge to the Currency entity.
 func (tpu *TradingPairUpdate) ClearBase() *TradingPairUpdate {
 	tpu.mutation.ClearBase()
 	return tpu
 }
 
-// ClearCounter clears the "counter" edge to the Coin entity.
+// ClearCounter clears the "counter" edge to the Currency entity.
 func (tpu *TradingPairUpdate) ClearCounter() *TradingPairUpdate {
 	tpu.mutation.ClearCounter()
 	return tpu
@@ -658,7 +658,7 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: coin.FieldID,
+					Column: currency.FieldID,
 				},
 			},
 		}
@@ -675,7 +675,7 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: coin.FieldID,
+					Column: currency.FieldID,
 				},
 			},
 		}
@@ -695,7 +695,7 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: coin.FieldID,
+					Column: currency.FieldID,
 				},
 			},
 		}
@@ -712,7 +712,7 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: coin.FieldID,
+					Column: currency.FieldID,
 				},
 			},
 		}
@@ -1035,25 +1035,25 @@ func (tpuo *TradingPairUpdateOne) SetExchange(e *Exchange) *TradingPairUpdateOne
 	return tpuo.SetExchangeID(e.ID)
 }
 
-// SetBaseID sets the "base" edge to the Coin entity by ID.
+// SetBaseID sets the "base" edge to the Currency entity by ID.
 func (tpuo *TradingPairUpdateOne) SetBaseID(id int) *TradingPairUpdateOne {
 	tpuo.mutation.SetBaseID(id)
 	return tpuo
 }
 
-// SetBase sets the "base" edge to the Coin entity.
-func (tpuo *TradingPairUpdateOne) SetBase(c *Coin) *TradingPairUpdateOne {
+// SetBase sets the "base" edge to the Currency entity.
+func (tpuo *TradingPairUpdateOne) SetBase(c *Currency) *TradingPairUpdateOne {
 	return tpuo.SetBaseID(c.ID)
 }
 
-// SetCounterID sets the "counter" edge to the Coin entity by ID.
+// SetCounterID sets the "counter" edge to the Currency entity by ID.
 func (tpuo *TradingPairUpdateOne) SetCounterID(id int) *TradingPairUpdateOne {
 	tpuo.mutation.SetCounterID(id)
 	return tpuo
 }
 
-// SetCounter sets the "counter" edge to the Coin entity.
-func (tpuo *TradingPairUpdateOne) SetCounter(c *Coin) *TradingPairUpdateOne {
+// SetCounter sets the "counter" edge to the Currency entity.
+func (tpuo *TradingPairUpdateOne) SetCounter(c *Currency) *TradingPairUpdateOne {
 	return tpuo.SetCounterID(c.ID)
 }
 
@@ -1083,13 +1083,13 @@ func (tpuo *TradingPairUpdateOne) ClearExchange() *TradingPairUpdateOne {
 	return tpuo
 }
 
-// ClearBase clears the "base" edge to the Coin entity.
+// ClearBase clears the "base" edge to the Currency entity.
 func (tpuo *TradingPairUpdateOne) ClearBase() *TradingPairUpdateOne {
 	tpuo.mutation.ClearBase()
 	return tpuo
 }
 
-// ClearCounter clears the "counter" edge to the Coin entity.
+// ClearCounter clears the "counter" edge to the Currency entity.
 func (tpuo *TradingPairUpdateOne) ClearCounter() *TradingPairUpdateOne {
 	tpuo.mutation.ClearCounter()
 	return tpuo
@@ -1458,7 +1458,7 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: coin.FieldID,
+					Column: currency.FieldID,
 				},
 			},
 		}
@@ -1475,7 +1475,7 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: coin.FieldID,
+					Column: currency.FieldID,
 				},
 			},
 		}
@@ -1495,7 +1495,7 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: coin.FieldID,
+					Column: currency.FieldID,
 				},
 			},
 		}
@@ -1512,7 +1512,7 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: coin.FieldID,
+					Column: currency.FieldID,
 				},
 			},
 		}

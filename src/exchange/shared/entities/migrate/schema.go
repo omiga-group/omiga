@@ -8,27 +8,33 @@ import (
 )
 
 var (
-	// CoinsColumns holds the columns for the "coins" table.
-	CoinsColumns = []*schema.Column{
+	// CurrenciesColumns holds the columns for the "currencies" table.
+	CurrenciesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "symbol", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"DIGITAL", "FIAT"}},
 	}
-	// CoinsTable holds the schema information for the "coins" table.
-	CoinsTable = &schema.Table{
-		Name:       "coins",
-		Columns:    CoinsColumns,
-		PrimaryKey: []*schema.Column{CoinsColumns[0]},
+	// CurrenciesTable holds the schema information for the "currencies" table.
+	CurrenciesTable = &schema.Table{
+		Name:       "currencies",
+		Columns:    CurrenciesColumns,
+		PrimaryKey: []*schema.Column{CurrenciesColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "coin_symbol",
+				Name:    "currency_symbol",
 				Unique:  false,
-				Columns: []*schema.Column{CoinsColumns[1]},
+				Columns: []*schema.Column{CurrenciesColumns[1]},
 			},
 			{
-				Name:    "coin_name",
+				Name:    "currency_name",
 				Unique:  false,
-				Columns: []*schema.Column{CoinsColumns[2]},
+				Columns: []*schema.Column{CurrenciesColumns[2]},
+			},
+			{
+				Name:    "currency_type",
+				Unique:  false,
+				Columns: []*schema.Column{CurrenciesColumns[3]},
 			},
 		},
 	}
@@ -337,8 +343,8 @@ var (
 		{Name: "counter_price_max_precision", Type: field.TypeInt, Nullable: true},
 		{Name: "counter_quantity_min_precision", Type: field.TypeInt, Nullable: true},
 		{Name: "counter_quantity_max_precision", Type: field.TypeInt, Nullable: true},
-		{Name: "coin_coin_base", Type: field.TypeInt},
-		{Name: "coin_coin_counter", Type: field.TypeInt},
+		{Name: "currency_currency_base", Type: field.TypeInt},
+		{Name: "currency_currency_counter", Type: field.TypeInt},
 		{Name: "exchange_trading_pair", Type: field.TypeInt},
 	}
 	// TradingPairsTable holds the schema information for the "trading_pairs" table.
@@ -348,15 +354,15 @@ var (
 		PrimaryKey: []*schema.Column{TradingPairsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "trading_pairs_coins_coin_base",
+				Symbol:     "trading_pairs_currencies_currency_base",
 				Columns:    []*schema.Column{TradingPairsColumns[10]},
-				RefColumns: []*schema.Column{CoinsColumns[0]},
+				RefColumns: []*schema.Column{CurrenciesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "trading_pairs_coins_coin_counter",
+				Symbol:     "trading_pairs_currencies_currency_counter",
 				Columns:    []*schema.Column{TradingPairsColumns[11]},
-				RefColumns: []*schema.Column{CoinsColumns[0]},
+				RefColumns: []*schema.Column{CurrenciesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
@@ -441,7 +447,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		CoinsTable,
+		CurrenciesTable,
 		ExchangesTable,
 		MarketsTable,
 		OutboxesTable,
@@ -454,8 +460,8 @@ var (
 func init() {
 	MarketsTable.ForeignKeys[0].RefTable = ExchangesTable
 	TickersTable.ForeignKeys[0].RefTable = ExchangesTable
-	TradingPairsTable.ForeignKeys[0].RefTable = CoinsTable
-	TradingPairsTable.ForeignKeys[1].RefTable = CoinsTable
+	TradingPairsTable.ForeignKeys[0].RefTable = CurrenciesTable
+	TradingPairsTable.ForeignKeys[1].RefTable = CurrenciesTable
 	TradingPairsTable.ForeignKeys[2].RefTable = ExchangesTable
 	MarketTradingPairTable.ForeignKeys[0].RefTable = MarketsTable
 	MarketTradingPairTable.ForeignKeys[1].RefTable = TradingPairsTable

@@ -14,7 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/errcode"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/coin"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
@@ -246,20 +246,20 @@ func paginateLimit(first, last *int) int {
 	return limit
 }
 
-// CoinEdge is the edge representation of Coin.
-type CoinEdge struct {
-	Node   *Coin  `json:"node"`
-	Cursor Cursor `json:"cursor"`
+// CurrencyEdge is the edge representation of Currency.
+type CurrencyEdge struct {
+	Node   *Currency `json:"node"`
+	Cursor Cursor    `json:"cursor"`
 }
 
-// CoinConnection is the connection containing edges to Coin.
-type CoinConnection struct {
-	Edges      []*CoinEdge `json:"edges"`
-	PageInfo   PageInfo    `json:"pageInfo"`
-	TotalCount int         `json:"totalCount"`
+// CurrencyConnection is the connection containing edges to Currency.
+type CurrencyConnection struct {
+	Edges      []*CurrencyEdge `json:"edges"`
+	PageInfo   PageInfo        `json:"pageInfo"`
+	TotalCount int             `json:"totalCount"`
 }
 
-func (c *CoinConnection) build(nodes []*Coin, pager *coinPager, after *Cursor, first *int, before *Cursor, last *int) {
+func (c *CurrencyConnection) build(nodes []*Currency, pager *currencyPager, after *Cursor, first *int, before *Cursor, last *int) {
 	c.PageInfo.HasNextPage = before != nil
 	c.PageInfo.HasPreviousPage = after != nil
 	if first != nil && *first+1 == len(nodes) {
@@ -269,21 +269,21 @@ func (c *CoinConnection) build(nodes []*Coin, pager *coinPager, after *Cursor, f
 		c.PageInfo.HasPreviousPage = true
 		nodes = nodes[:len(nodes)-1]
 	}
-	var nodeAt func(int) *Coin
+	var nodeAt func(int) *Currency
 	if last != nil {
 		n := len(nodes) - 1
-		nodeAt = func(i int) *Coin {
+		nodeAt = func(i int) *Currency {
 			return nodes[n-i]
 		}
 	} else {
-		nodeAt = func(i int) *Coin {
+		nodeAt = func(i int) *Currency {
 			return nodes[i]
 		}
 	}
-	c.Edges = make([]*CoinEdge, len(nodes))
+	c.Edges = make([]*CurrencyEdge, len(nodes))
 	for i := range nodes {
 		node := nodeAt(i)
-		c.Edges[i] = &CoinEdge{
+		c.Edges[i] = &CurrencyEdge{
 			Node:   node,
 			Cursor: pager.toCursor(node),
 		}
@@ -297,118 +297,118 @@ func (c *CoinConnection) build(nodes []*Coin, pager *coinPager, after *Cursor, f
 	}
 }
 
-// CoinPaginateOption enables pagination customization.
-type CoinPaginateOption func(*coinPager) error
+// CurrencyPaginateOption enables pagination customization.
+type CurrencyPaginateOption func(*currencyPager) error
 
-// WithCoinOrder configures pagination ordering.
-func WithCoinOrder(order *CoinOrder) CoinPaginateOption {
+// WithCurrencyOrder configures pagination ordering.
+func WithCurrencyOrder(order *CurrencyOrder) CurrencyPaginateOption {
 	if order == nil {
-		order = DefaultCoinOrder
+		order = DefaultCurrencyOrder
 	}
 	o := *order
-	return func(pager *coinPager) error {
+	return func(pager *currencyPager) error {
 		if err := o.Direction.Validate(); err != nil {
 			return err
 		}
 		if o.Field == nil {
-			o.Field = DefaultCoinOrder.Field
+			o.Field = DefaultCurrencyOrder.Field
 		}
 		pager.order = &o
 		return nil
 	}
 }
 
-// WithCoinFilter configures pagination filter.
-func WithCoinFilter(filter func(*CoinQuery) (*CoinQuery, error)) CoinPaginateOption {
-	return func(pager *coinPager) error {
+// WithCurrencyFilter configures pagination filter.
+func WithCurrencyFilter(filter func(*CurrencyQuery) (*CurrencyQuery, error)) CurrencyPaginateOption {
+	return func(pager *currencyPager) error {
 		if filter == nil {
-			return errors.New("CoinQuery filter cannot be nil")
+			return errors.New("CurrencyQuery filter cannot be nil")
 		}
 		pager.filter = filter
 		return nil
 	}
 }
 
-type coinPager struct {
-	order  *CoinOrder
-	filter func(*CoinQuery) (*CoinQuery, error)
+type currencyPager struct {
+	order  *CurrencyOrder
+	filter func(*CurrencyQuery) (*CurrencyQuery, error)
 }
 
-func newCoinPager(opts []CoinPaginateOption) (*coinPager, error) {
-	pager := &coinPager{}
+func newCurrencyPager(opts []CurrencyPaginateOption) (*currencyPager, error) {
+	pager := &currencyPager{}
 	for _, opt := range opts {
 		if err := opt(pager); err != nil {
 			return nil, err
 		}
 	}
 	if pager.order == nil {
-		pager.order = DefaultCoinOrder
+		pager.order = DefaultCurrencyOrder
 	}
 	return pager, nil
 }
 
-func (p *coinPager) applyFilter(query *CoinQuery) (*CoinQuery, error) {
+func (p *currencyPager) applyFilter(query *CurrencyQuery) (*CurrencyQuery, error) {
 	if p.filter != nil {
 		return p.filter(query)
 	}
 	return query, nil
 }
 
-func (p *coinPager) toCursor(c *Coin) Cursor {
+func (p *currencyPager) toCursor(c *Currency) Cursor {
 	return p.order.Field.toCursor(c)
 }
 
-func (p *coinPager) applyCursors(query *CoinQuery, after, before *Cursor) *CoinQuery {
+func (p *currencyPager) applyCursors(query *CurrencyQuery, after, before *Cursor) *CurrencyQuery {
 	for _, predicate := range cursorsToPredicates(
 		p.order.Direction, after, before,
-		p.order.Field.field, DefaultCoinOrder.Field.field,
+		p.order.Field.field, DefaultCurrencyOrder.Field.field,
 	) {
 		query = query.Where(predicate)
 	}
 	return query
 }
 
-func (p *coinPager) applyOrder(query *CoinQuery, reverse bool) *CoinQuery {
+func (p *currencyPager) applyOrder(query *CurrencyQuery, reverse bool) *CurrencyQuery {
 	direction := p.order.Direction
 	if reverse {
 		direction = direction.reverse()
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultCoinOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultCoinOrder.Field.field))
+	if p.order.Field != DefaultCurrencyOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultCurrencyOrder.Field.field))
 	}
 	return query
 }
 
-func (p *coinPager) orderExpr(reverse bool) sql.Querier {
+func (p *currencyPager) orderExpr(reverse bool) sql.Querier {
 	direction := p.order.Direction
 	if reverse {
 		direction = direction.reverse()
 	}
 	return sql.ExprFunc(func(b *sql.Builder) {
 		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
-		if p.order.Field != DefaultCoinOrder.Field {
-			b.Comma().Ident(DefaultCoinOrder.Field.field).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultCurrencyOrder.Field {
+			b.Comma().Ident(DefaultCurrencyOrder.Field.field).Pad().WriteString(string(direction))
 		}
 	})
 }
 
-// Paginate executes the query and returns a relay based cursor connection to Coin.
-func (c *CoinQuery) Paginate(
+// Paginate executes the query and returns a relay based cursor connection to Currency.
+func (c *CurrencyQuery) Paginate(
 	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...CoinPaginateOption,
-) (*CoinConnection, error) {
+	before *Cursor, last *int, opts ...CurrencyPaginateOption,
+) (*CurrencyConnection, error) {
 	if err := validateFirstLast(first, last); err != nil {
 		return nil, err
 	}
-	pager, err := newCoinPager(opts)
+	pager, err := newCurrencyPager(opts)
 	if err != nil {
 		return nil, err
 	}
 	if c, err = pager.applyFilter(c); err != nil {
 		return nil, err
 	}
-	conn := &CoinConnection{Edges: []*CoinEdge{}}
+	conn := &CurrencyConnection{Edges: []*CurrencyEdge{}}
 	ignoredEdges := !hasCollectedField(ctx, edgesField)
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
@@ -444,91 +444,105 @@ func (c *CoinQuery) Paginate(
 }
 
 var (
-	// CoinOrderFieldSymbol orders Coin by symbol.
-	CoinOrderFieldSymbol = &CoinOrderField{
-		field: coin.FieldSymbol,
-		toCursor: func(c *Coin) Cursor {
+	// CurrencyOrderFieldSymbol orders Currency by symbol.
+	CurrencyOrderFieldSymbol = &CurrencyOrderField{
+		field: currency.FieldSymbol,
+		toCursor: func(c *Currency) Cursor {
 			return Cursor{
 				ID:    c.ID,
 				Value: c.Symbol,
 			}
 		},
 	}
-	// CoinOrderFieldName orders Coin by name.
-	CoinOrderFieldName = &CoinOrderField{
-		field: coin.FieldName,
-		toCursor: func(c *Coin) Cursor {
+	// CurrencyOrderFieldName orders Currency by name.
+	CurrencyOrderFieldName = &CurrencyOrderField{
+		field: currency.FieldName,
+		toCursor: func(c *Currency) Cursor {
 			return Cursor{
 				ID:    c.ID,
 				Value: c.Name,
 			}
 		},
 	}
+	// CurrencyOrderFieldType orders Currency by type.
+	CurrencyOrderFieldType = &CurrencyOrderField{
+		field: currency.FieldType,
+		toCursor: func(c *Currency) Cursor {
+			return Cursor{
+				ID:    c.ID,
+				Value: c.Type,
+			}
+		},
+	}
 )
 
 // String implement fmt.Stringer interface.
-func (f CoinOrderField) String() string {
+func (f CurrencyOrderField) String() string {
 	var str string
 	switch f.field {
-	case coin.FieldSymbol:
+	case currency.FieldSymbol:
 		str = "symbol"
-	case coin.FieldName:
+	case currency.FieldName:
 		str = "name"
+	case currency.FieldType:
+		str = "type"
 	}
 	return str
 }
 
 // MarshalGQL implements graphql.Marshaler interface.
-func (f CoinOrderField) MarshalGQL(w io.Writer) {
+func (f CurrencyOrderField) MarshalGQL(w io.Writer) {
 	io.WriteString(w, strconv.Quote(f.String()))
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (f *CoinOrderField) UnmarshalGQL(v interface{}) error {
+func (f *CurrencyOrderField) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("CoinOrderField %T must be a string", v)
+		return fmt.Errorf("CurrencyOrderField %T must be a string", v)
 	}
 	switch str {
 	case "symbol":
-		*f = *CoinOrderFieldSymbol
+		*f = *CurrencyOrderFieldSymbol
 	case "name":
-		*f = *CoinOrderFieldName
+		*f = *CurrencyOrderFieldName
+	case "type":
+		*f = *CurrencyOrderFieldType
 	default:
-		return fmt.Errorf("%s is not a valid CoinOrderField", str)
+		return fmt.Errorf("%s is not a valid CurrencyOrderField", str)
 	}
 	return nil
 }
 
-// CoinOrderField defines the ordering field of Coin.
-type CoinOrderField struct {
+// CurrencyOrderField defines the ordering field of Currency.
+type CurrencyOrderField struct {
 	field    string
-	toCursor func(*Coin) Cursor
+	toCursor func(*Currency) Cursor
 }
 
-// CoinOrder defines the ordering of Coin.
-type CoinOrder struct {
-	Direction OrderDirection  `json:"direction"`
-	Field     *CoinOrderField `json:"field"`
+// CurrencyOrder defines the ordering of Currency.
+type CurrencyOrder struct {
+	Direction OrderDirection      `json:"direction"`
+	Field     *CurrencyOrderField `json:"field"`
 }
 
-// DefaultCoinOrder is the default ordering of Coin.
-var DefaultCoinOrder = &CoinOrder{
+// DefaultCurrencyOrder is the default ordering of Currency.
+var DefaultCurrencyOrder = &CurrencyOrder{
 	Direction: OrderDirectionAsc,
-	Field: &CoinOrderField{
-		field: coin.FieldID,
-		toCursor: func(c *Coin) Cursor {
+	Field: &CurrencyOrderField{
+		field: currency.FieldID,
+		toCursor: func(c *Currency) Cursor {
 			return Cursor{ID: c.ID}
 		},
 	},
 }
 
-// ToEdge converts Coin into CoinEdge.
-func (c *Coin) ToEdge(order *CoinOrder) *CoinEdge {
+// ToEdge converts Currency into CurrencyEdge.
+func (c *Currency) ToEdge(order *CurrencyOrder) *CurrencyEdge {
 	if order == nil {
-		order = DefaultCoinOrder
+		order = DefaultCurrencyOrder
 	}
-	return &CoinEdge{
+	return &CurrencyEdge{
 		Node:   c,
 		Cursor: order.Field.toCursor(c),
 	}
