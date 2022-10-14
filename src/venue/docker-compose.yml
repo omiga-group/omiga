@@ -1,0 +1,318 @@
+﻿version: "3.9"
+
+services:
+  venue-database-migration:
+    image: ${DOCKER_REGISTRY-}venuedatabasemigration
+    build:
+      context: .
+      dockerfile: venue/shared/cli/Dockerfile
+      target: local
+    restart: on-failure
+    environment:
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    depends_on:
+      - postgres
+    profiles:
+      - core
+      - venue
+      - all
+    networks:
+      - omiga_network
+
+  venue-api:
+    image: ${DOCKER_REGISTRY-}venueapi
+    build:
+      context: .
+      dockerfile: venue/venue-api/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_APP_LISTENINGINTERFACE: ":80"
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    ports:
+      - "11000:80"
+    depends_on:
+      - postgres
+      - venue-database-migration
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network
+
+  coingecko-processor:
+    image: ${DOCKER_REGISTRY-}coingeckoprocessor
+    build:
+      context: .
+      dockerfile: venue/coingecko-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    depends_on:
+      - postgres
+      - venue-database-migration
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network
+
+  binance-processor:
+    image: ${DOCKER_REGISTRY-}binanceprocessor
+    build:
+      context: .
+      dockerfile: venue/binance-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_ISSUERURL: ${OMIGA_PULSAR_AUTHENTICATION_ISSUERURL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    depends_on:
+      - postgres
+      - venue-database-migration
+      - pulsar
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network
+
+  bitmart-processor:
+    image: ${DOCKER_REGISTRY-}bitmartprocessor
+    build:
+      context: .
+      dockerfile: venue/bitmart-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_ISSUERURL: ${OMIGA_PULSAR_AUTHENTICATION_ISSUERURL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    depends_on:
+      - postgres
+      - venue-database-migration
+      - pulsar
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network
+
+  bittrex-processor:
+    image: ${DOCKER_REGISTRY-}bittrexprocessor
+    build:
+      context: .
+      dockerfile: venue/bittrex-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_ISSUERURL: ${OMIGA_PULSAR_AUTHENTICATION_ISSUERURL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    depends_on:
+      - postgres
+      - venue-database-migration
+      - pulsar
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network
+
+  coinbase-processor:
+    image: ${DOCKER_REGISTRY-}coinbaseprocessor
+    build:
+      context: .
+      dockerfile: venue/coinbase-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_ISSUERURL: ${OMIGA_PULSAR_AUTHENTICATION_ISSUERURL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    depends_on:
+      - postgres
+      - venue-database-migration
+      - pulsar
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network
+
+  crypto-processor:
+    image: ${DOCKER_REGISTRY-}cryptoprocessor
+    build:
+      context: .
+      dockerfile: venue/crypto-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_ISSUERURL: ${OMIGA_PULSAR_AUTHENTICATION_ISSUERURL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    depends_on:
+      - postgres
+      - venue-database-migration
+      - pulsar
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network
+
+  ftx-processor:
+    image: ${DOCKER_REGISTRY-}ftxprocessor
+    build:
+      context: .
+      dockerfile: venue/ftx-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_ISSUERURL: ${OMIGA_PULSAR_AUTHENTICATION_ISSUERURL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
+    depends_on:
+      - postgres
+      - venue-database-migration
+      - pulsar
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network
+
+  gemini-processor:
+    image: ${DOCKER_REGISTRY-}geminiprocessor
+    build:
+      context: .
+      dockerfile: venue/gemini-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_ISSUERURL: ${OMIGA_PULSAR_AUTHENTICATION_ISSUERURL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    depends_on:
+      - postgres
+      - venue-database-migration
+      - pulsar
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network
+
+  huobi-processor:
+    image: ${DOCKER_REGISTRY-}huobiprocessor
+    build:
+      context: .
+      dockerfile: venue/huobi-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_ISSUERURL: ${OMIGA_PULSAR_AUTHENTICATION_ISSUERURL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    depends_on:
+      - postgres
+      - venue-database-migration
+      - pulsar
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network
+
+  kraken-processor:
+    image: ${DOCKER_REGISTRY-}krakenprocessor
+    build:
+      context: .
+      dockerfile: venue/kraken-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_ISSUERURL: ${OMIGA_PULSAR_AUTHENTICATION_ISSUERURL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    depends_on:
+      - postgres
+      - venue-database-migration
+      - pulsar
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network
+
+  kucoin-processor:
+    image: ${DOCKER_REGISTRY-}kucoinprocessor
+    build:
+      context: .
+      dockerfile: venue/kucoin-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_ISSUERURL: ${OMIGA_PULSAR_AUTHENTICATION_ISSUERURL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    depends_on:
+      - postgres
+      - venue-database-migration
+      - pulsar
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network

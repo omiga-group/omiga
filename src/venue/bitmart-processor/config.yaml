@@ -1,0 +1,19 @@
+app:
+  source: "urn::omiga::bitmart-processor"
+
+exchange:
+  id: "bitmart"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "bitmart-processor"
+  producerName: "bitmart-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+bitmart:
+  baseUrl: "https://api-cloud.bitmart.com/spot/v1"

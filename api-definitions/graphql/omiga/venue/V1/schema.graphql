@@ -1,0 +1,362 @@
+scalar Time
+scalar Cursor
+
+schema {
+  query: Query
+}
+
+"""
+An object with an ID
+"""
+interface Node {
+  """
+  The id of the object.
+  """
+  id: ID
+}
+
+extend type Query {
+  currency(
+    """
+    Ordering directions
+    """
+    where: CurrencyWhereInput
+  ): Currency
+
+  currencies(
+    """
+    Returns the items in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first n items from the list.
+    """
+    first: Int
+
+    """
+    Returns the items in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last n items from the list.
+    """
+    last: Int
+
+    """
+    Ordering directions
+    """
+    orderBy: [CurrencyOrder!]
+
+    """
+    Ordering directions
+    """
+    where: CurrencyWhereInput
+  ): CurrencyConnection
+
+  venue(
+    """
+    Ordering directions
+    """
+    where: VenueWhereInput
+  ): Venue
+
+  venues(
+    """
+    Returns the items in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first n items from the list.
+    """
+    first: Int
+
+    """
+    Returns the items in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last n items from the list.
+    """
+    last: Int
+
+    """
+    Ordering directions
+    """
+    orderBy: [VenueOrder!]
+
+    """
+    Ordering directions
+    """
+    where: VenueWhereInput
+  ): VenueConnection
+}
+
+enum OrderDirection {
+  ASC
+  DESC
+}
+
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: Cursor
+
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: Cursor
+}
+
+enum CurrencyOrderField {
+  symbol
+  name
+  type
+}
+
+input CurrencyOrder {
+  direction: OrderDirection!
+  field: CurrencyOrderField
+}
+
+type Currency implements Node {
+  id: ID!
+  symbol: String!
+  name: String
+  type: CurrencyType!
+}
+
+"""
+A connection to a list of items.
+"""
+type CurrencyConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [CurrencyEdge]
+
+  """
+  Total number of currencies
+  """
+  totalCount: Int
+}
+
+"""
+An edge in a connection.
+"""
+type CurrencyEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Currency
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: Cursor!
+}
+
+enum VenueOrderField {
+  venueId
+  name
+  yearEstablished
+  country
+  image
+  hasTradingIncentive
+  centralized
+  publicNotice
+  alertNotice
+  trustScore
+  trustScoreRank
+  tradeVolume24hBtc
+  tradeVolume24hBtcNormalized
+}
+
+input VenueOrder {
+  direction: OrderDirection!
+  field: VenueOrderField
+}
+
+type Venue implements Node {
+  id: ID!
+  venueId: String!
+  type: VenueType!
+
+  name: String
+  yearEstablished: Int
+  country: String
+  image: String
+  links: Links!
+  hasTradingIncentive: Boolean
+  centralized: Boolean
+  publicNotice: String
+  alertNotice: String
+  trustScore: Int
+  trustScoreRank: Int
+  tradeVolume24hBtc: Float
+  tradeVolume24hBtcNormalized: Float
+  tickers: [Ticker!]!
+  tradingPairs: [TradingPair!]!
+  markets: [Market!]!
+  makerFee: Float
+  takerFee: Float
+  spreadFee: Boolean
+  supportAPI: Boolean
+}
+
+type Links {
+  website: String
+  facebook: String
+  reddit: String
+  twitter: String
+  slack: String
+  telegram: String
+}
+
+type Ticker implements Node {
+  id: ID!
+  base: String!
+  baseCoinId: String
+  counter: String!
+  counterCoinId: String
+  market: TickerMarket
+  last: Float
+  volume: Float
+  convertedLast: ConvertedDetails
+  convertedVolume: ConvertedDetails
+  trustScore: String
+  bidAskSpreadPercentage: Float
+  timestamp: Time
+  lastTradedAt: Time
+  lastFetchAt: Time
+  isAnomaly: Boolean
+  isStale: Boolean
+  tradeUrl: String
+  tokenInfoUrl: String
+}
+
+type TradingPair implements Node {
+  id: ID!
+  symbol: String!
+  base: Currency!
+  basePriceMinPrecision: Int
+  basePriceMaxPrecision: Int
+  baseQuantityMinPrecision: Int
+  baseQuantityMaxPrecision: Int
+  counter: Currency!
+  counterPriceMinPrecision: Int
+  counterPriceMaxPrecision: Int
+  counterQuantityMinPrecision: Int
+  counterQuantityMaxPrecision: Int
+  markets: [Market!]!
+}
+
+type TickerMarket {
+  hasTradingIncentive: Boolean!
+  identifier: String!
+  name: String
+}
+
+type ConvertedDetails {
+  btc: Float!
+  eth: Float!
+  usd: Float!
+}
+
+"""
+A connection to a list of items.
+"""
+type VenueConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [VenueEdge]
+
+  """
+  Total number of venues
+  """
+  totalCount: Int
+}
+
+"""
+An edge in a connection.
+"""
+type VenueEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Venue
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: Cursor!
+}
+
+enum OutboxStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
+type Market implements Node {
+  id: ID!
+  name: String!
+  type: MarketType!
+}
+
+enum VenueType {
+  EXCHANGE
+}
+
+enum CurrencyType {
+  DIGITAL
+  FIAT
+}
+
+enum MarketType {
+  SPORT_TRADING
+  MARGIN_TRADING
+  DERIVATIVES
+  EARN
+  PERPETUAL
+  FUTURES
+  WARRANT
+  OTC
+  YIELD
+  P2P
+  STRATEGY_TRADING
+  SWAP_FARMING
+  FAN_TOKEN
+  ETF
+  NFT
+  SWAP
+  LIQUIDITY
+}

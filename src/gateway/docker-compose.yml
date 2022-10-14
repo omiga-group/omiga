@@ -12,7 +12,7 @@ services:
     environment:
       PORT: 80
       ORDER_GRAPHQL_API: http://order-api/graphql
-      EXCHANGE_GRAPHQL_API: http://exchange-api/graphql
+      EXCHANGE_GRAPHQL_API: http://venue-api/graphql
     profiles:
       - gateway
       - all

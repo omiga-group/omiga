@@ -1,0 +1,35 @@
+# Copyright (c) 2004-present Facebook All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+schema:
+  - ../../../../api-definitions/graphql/omiga/venue/V1/schema.graphql
+  - ../../../../api-definitions/graphql/omiga/venue/V1/ent.graphql
+
+exec:
+  filename: ../../venue-api/graphql/generated/generated.go
+  package: generated
+
+federation:
+  filename: ../../venue-api/graphql/generated/federation.go
+  package: generated
+  version: 2
+
+model:
+  filename: ../../venue-api/graphql/models/models_gen.go
+  package: models
+
+resolver:
+  layout: follow-schema
+  dir: ../../venue-api/graphql
+  package: graphql
+
+autobind:
+  - github.com/omiga-group/omiga/src/venue/shared/entities
+
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.IntID
+  Node:
+    model: github.com/omiga-group/omiga/src/venue/shared/entities.Noder
