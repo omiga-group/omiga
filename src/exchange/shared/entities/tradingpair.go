@@ -8,8 +8,8 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 )
 
 // TradingPair is the model entity for the TradingPair schema.
@@ -40,13 +40,13 @@ type TradingPair struct {
 	Edges                     TradingPairEdges `json:"edges"`
 	currency_currency_base    *int
 	currency_currency_counter *int
-	exchange_trading_pair     *int
+	venue_trading_pair        *int
 }
 
 // TradingPairEdges holds the relations/edges for other nodes in the graph.
 type TradingPairEdges struct {
-	// Exchange holds the value of the exchange edge.
-	Exchange *Exchange `json:"exchange,omitempty"`
+	// Venue holds the value of the venue edge.
+	Venue *Venue `json:"venue,omitempty"`
 	// Base holds the value of the base edge.
 	Base *Currency `json:"base,omitempty"`
 	// Counter holds the value of the counter edge.
@@ -62,17 +62,17 @@ type TradingPairEdges struct {
 	namedMarket map[string][]*Market
 }
 
-// ExchangeOrErr returns the Exchange value or an error if the edge
+// VenueOrErr returns the Venue value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e TradingPairEdges) ExchangeOrErr() (*Exchange, error) {
+func (e TradingPairEdges) VenueOrErr() (*Venue, error) {
 	if e.loadedTypes[0] {
-		if e.Exchange == nil {
+		if e.Venue == nil {
 			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: exchange.Label}
+			return nil, &NotFoundError{label: venue.Label}
 		}
-		return e.Exchange, nil
+		return e.Venue, nil
 	}
-	return nil, &NotLoadedError{edge: "exchange"}
+	return nil, &NotLoadedError{edge: "venue"}
 }
 
 // BaseOrErr returns the Base value or an error if the edge
@@ -123,7 +123,7 @@ func (*TradingPair) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case tradingpair.ForeignKeys[1]: // currency_currency_counter
 			values[i] = new(sql.NullInt64)
-		case tradingpair.ForeignKeys[2]: // exchange_trading_pair
+		case tradingpair.ForeignKeys[2]: // venue_trading_pair
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type TradingPair", columns[i])
@@ -216,19 +216,19 @@ func (tp *TradingPair) assignValues(columns []string, values []any) error {
 			}
 		case tradingpair.ForeignKeys[2]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field exchange_trading_pair", value)
+				return fmt.Errorf("unexpected type %T for edge-field venue_trading_pair", value)
 			} else if value.Valid {
-				tp.exchange_trading_pair = new(int)
-				*tp.exchange_trading_pair = int(value.Int64)
+				tp.venue_trading_pair = new(int)
+				*tp.venue_trading_pair = int(value.Int64)
 			}
 		}
 	}
 	return nil
 }
 
-// QueryExchange queries the "exchange" edge of the TradingPair entity.
-func (tp *TradingPair) QueryExchange() *ExchangeQuery {
-	return (&TradingPairClient{config: tp.config}).QueryExchange(tp)
+// QueryVenue queries the "venue" edge of the TradingPair entity.
+func (tp *TradingPair) QueryVenue() *VenueQuery {
+	return (&TradingPairClient{config: tp.config}).QueryVenue(tp)
 }
 
 // QueryBase queries the "base" edge of the TradingPair entity.

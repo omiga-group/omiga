@@ -8,8 +8,8 @@ import (
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
 	currencyrepo "github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	tradingpairrepo "github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	venuerepo "github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	"go.uber.org/zap"
 )
@@ -17,7 +17,7 @@ import (
 type TradingPairRepository interface {
 	CreateTradingPairs(
 		ctx context.Context,
-		exchangeId string,
+		venueId string,
 		tradingPairs []models.TradingPair) error
 }
 
@@ -25,33 +25,34 @@ type tradingPairRepository struct {
 	logger             *zap.SugaredLogger
 	entgoClient        entities.EntgoClient
 	currencyRepository CurrencyRepository
-	exchangeRepository ExchangeRepository
+	venueRepository    VenueRepository
 }
 
 func NewTradingPairRepository(
 	logger *zap.SugaredLogger,
 	entgoClient entities.EntgoClient,
 	currencyRepository CurrencyRepository,
-	exchangeRepository ExchangeRepository) (TradingPairRepository, error) {
+	venueRepository VenueRepository) (TradingPairRepository, error) {
 	return &tradingPairRepository{
 		logger:             logger,
 		entgoClient:        entgoClient,
 		currencyRepository: currencyRepository,
-		exchangeRepository: exchangeRepository,
+		venueRepository:    venueRepository,
 	}, nil
 }
 
 func (tpr *tradingPairRepository) CreateTradingPairs(
 	ctx context.Context,
-	exchangeId string,
+	venueId string,
 	tradingPairs []models.TradingPair) error {
-	savedExchangeId, err := tpr.exchangeRepository.CreateExchange(
+	savedVenueId, err := tpr.venueRepository.CreateVenue(
 		ctx,
-		models.Exchange{
-			ExchangeId: exchangeId,
+		models.Venue{
+			VenueId: venueId,
+			Type:    venuerepo.TypeEXCHANGE,
 		})
 	if err != nil {
-		tpr.logger.Errorf("Failed to create exchange for exchange Id: %s. Error: %v", exchangeId, err)
+		tpr.logger.Errorf("Failed to create venue for venue Id: %s. Error: %v", venueId, err)
 
 		return err
 	}
@@ -87,7 +88,7 @@ func (tpr *tradingPairRepository) CreateTradingPairs(
 		func(tradingPair models.TradingPair) *entities.TradingPairCreate {
 			return client.TradingPair.
 				Create().
-				SetExchangeID(savedExchangeId).
+				SetVenueID(savedVenueId).
 				SetSymbol(tradingPair.Symbol).
 				SetBaseID(savedCurrenciesIds[strings.ToUpper(tradingPair.Base)]).
 				SetNillableBasePriceMinPrecision(tradingPair.BasePriceMinPrecision).
@@ -103,20 +104,20 @@ func (tpr *tradingPairRepository) CreateTradingPairs(
 
 	if err = client.TradingPair.
 		CreateBulk(tradingpairsToCreate...).
-		OnConflictColumns(tradingpairrepo.FieldSymbol, tradingpairrepo.ExchangeColumn).
+		OnConflictColumns(tradingpairrepo.FieldSymbol, tradingpairrepo.VenueColumn).
 		UpdateNewValues().
 		Exec(ctx); err != nil {
-		tpr.logger.Errorf("Failed to save trading pairs for exchange Id: %s. Error: %v", exchangeId, err)
+		tpr.logger.Errorf("Failed to save trading pairs for venue Id: %s. Error: %v", venueId, err)
 
 		return err
 	}
 
 	existingTradingPairs, err := client.TradingPair.
 		Query().
-		Where(tradingpairrepo.HasExchangeWith(exchange.ExchangeID(exchangeId))).
+		Where(tradingpairrepo.HasVenueWith(venuerepo.VenueID(venueId))).
 		All(ctx)
 	if err != nil {
-		tpr.logger.Errorf("Failed to fetch existing trading pairs for exchange Id: %s. Error: %v", exchangeId, err)
+		tpr.logger.Errorf("Failed to fetch existing trading pairs for venue Id: %s. Error: %v", venueId, err)
 
 		return err
 	}
@@ -137,7 +138,7 @@ func (tpr *tradingPairRepository) CreateTradingPairs(
 		Delete().
 		Where(tradingpairrepo.IDIn(tradingPairIdsToDelete...)).
 		Exec(ctx); err != nil {
-		tpr.logger.Errorf("Failed to delete old trading pairs for exchange Id: %s. Error: %v", exchangeId, err)
+		tpr.logger.Errorf("Failed to delete old trading pairs for venue Id: %s. Error: %v", venueId, err)
 
 		return err
 	}

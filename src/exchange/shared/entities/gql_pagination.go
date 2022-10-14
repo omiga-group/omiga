@@ -15,11 +15,11 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"github.com/vmihailenco/msgpack/v5"
 )
@@ -545,504 +545,6 @@ func (c *Currency) ToEdge(order *CurrencyOrder) *CurrencyEdge {
 	return &CurrencyEdge{
 		Node:   c,
 		Cursor: order.Field.toCursor(c),
-	}
-}
-
-// ExchangeEdge is the edge representation of Exchange.
-type ExchangeEdge struct {
-	Node   *Exchange `json:"node"`
-	Cursor Cursor    `json:"cursor"`
-}
-
-// ExchangeConnection is the connection containing edges to Exchange.
-type ExchangeConnection struct {
-	Edges      []*ExchangeEdge `json:"edges"`
-	PageInfo   PageInfo        `json:"pageInfo"`
-	TotalCount int             `json:"totalCount"`
-}
-
-func (c *ExchangeConnection) build(nodes []*Exchange, pager *exchangePager, after *Cursor, first *int, before *Cursor, last *int) {
-	c.PageInfo.HasNextPage = before != nil
-	c.PageInfo.HasPreviousPage = after != nil
-	if first != nil && *first+1 == len(nodes) {
-		c.PageInfo.HasNextPage = true
-		nodes = nodes[:len(nodes)-1]
-	} else if last != nil && *last+1 == len(nodes) {
-		c.PageInfo.HasPreviousPage = true
-		nodes = nodes[:len(nodes)-1]
-	}
-	var nodeAt func(int) *Exchange
-	if last != nil {
-		n := len(nodes) - 1
-		nodeAt = func(i int) *Exchange {
-			return nodes[n-i]
-		}
-	} else {
-		nodeAt = func(i int) *Exchange {
-			return nodes[i]
-		}
-	}
-	c.Edges = make([]*ExchangeEdge, len(nodes))
-	for i := range nodes {
-		node := nodeAt(i)
-		c.Edges[i] = &ExchangeEdge{
-			Node:   node,
-			Cursor: pager.toCursor(node),
-		}
-	}
-	if l := len(c.Edges); l > 0 {
-		c.PageInfo.StartCursor = &c.Edges[0].Cursor
-		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
-	}
-	if c.TotalCount == 0 {
-		c.TotalCount = len(nodes)
-	}
-}
-
-// ExchangePaginateOption enables pagination customization.
-type ExchangePaginateOption func(*exchangePager) error
-
-// WithExchangeOrder configures pagination ordering.
-func WithExchangeOrder(order *ExchangeOrder) ExchangePaginateOption {
-	if order == nil {
-		order = DefaultExchangeOrder
-	}
-	o := *order
-	return func(pager *exchangePager) error {
-		if err := o.Direction.Validate(); err != nil {
-			return err
-		}
-		if o.Field == nil {
-			o.Field = DefaultExchangeOrder.Field
-		}
-		pager.order = &o
-		return nil
-	}
-}
-
-// WithExchangeFilter configures pagination filter.
-func WithExchangeFilter(filter func(*ExchangeQuery) (*ExchangeQuery, error)) ExchangePaginateOption {
-	return func(pager *exchangePager) error {
-		if filter == nil {
-			return errors.New("ExchangeQuery filter cannot be nil")
-		}
-		pager.filter = filter
-		return nil
-	}
-}
-
-type exchangePager struct {
-	order  *ExchangeOrder
-	filter func(*ExchangeQuery) (*ExchangeQuery, error)
-}
-
-func newExchangePager(opts []ExchangePaginateOption) (*exchangePager, error) {
-	pager := &exchangePager{}
-	for _, opt := range opts {
-		if err := opt(pager); err != nil {
-			return nil, err
-		}
-	}
-	if pager.order == nil {
-		pager.order = DefaultExchangeOrder
-	}
-	return pager, nil
-}
-
-func (p *exchangePager) applyFilter(query *ExchangeQuery) (*ExchangeQuery, error) {
-	if p.filter != nil {
-		return p.filter(query)
-	}
-	return query, nil
-}
-
-func (p *exchangePager) toCursor(e *Exchange) Cursor {
-	return p.order.Field.toCursor(e)
-}
-
-func (p *exchangePager) applyCursors(query *ExchangeQuery, after, before *Cursor) *ExchangeQuery {
-	for _, predicate := range cursorsToPredicates(
-		p.order.Direction, after, before,
-		p.order.Field.field, DefaultExchangeOrder.Field.field,
-	) {
-		query = query.Where(predicate)
-	}
-	return query
-}
-
-func (p *exchangePager) applyOrder(query *ExchangeQuery, reverse bool) *ExchangeQuery {
-	direction := p.order.Direction
-	if reverse {
-		direction = direction.reverse()
-	}
-	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultExchangeOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultExchangeOrder.Field.field))
-	}
-	return query
-}
-
-func (p *exchangePager) orderExpr(reverse bool) sql.Querier {
-	direction := p.order.Direction
-	if reverse {
-		direction = direction.reverse()
-	}
-	return sql.ExprFunc(func(b *sql.Builder) {
-		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
-		if p.order.Field != DefaultExchangeOrder.Field {
-			b.Comma().Ident(DefaultExchangeOrder.Field.field).Pad().WriteString(string(direction))
-		}
-	})
-}
-
-// Paginate executes the query and returns a relay based cursor connection to Exchange.
-func (e *ExchangeQuery) Paginate(
-	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...ExchangePaginateOption,
-) (*ExchangeConnection, error) {
-	if err := validateFirstLast(first, last); err != nil {
-		return nil, err
-	}
-	pager, err := newExchangePager(opts)
-	if err != nil {
-		return nil, err
-	}
-	if e, err = pager.applyFilter(e); err != nil {
-		return nil, err
-	}
-	conn := &ExchangeConnection{Edges: []*ExchangeEdge{}}
-	ignoredEdges := !hasCollectedField(ctx, edgesField)
-	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
-		hasPagination := after != nil || first != nil || before != nil || last != nil
-		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = e.Count(ctx); err != nil {
-				return nil, err
-			}
-			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
-			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
-		}
-	}
-	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
-		return conn, nil
-	}
-
-	e = pager.applyCursors(e, after, before)
-	e = pager.applyOrder(e, last != nil)
-	if limit := paginateLimit(first, last); limit != 0 {
-		e.Limit(limit)
-	}
-	if field := collectedField(ctx, edgesField, nodeField); field != nil {
-		if err := e.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
-			return nil, err
-		}
-	}
-
-	nodes, err := e.All(ctx)
-	if err != nil {
-		return nil, err
-	}
-	conn.build(nodes, pager, after, first, before, last)
-	return conn, nil
-}
-
-var (
-	// ExchangeOrderFieldExchangeID orders Exchange by exchange_id.
-	ExchangeOrderFieldExchangeID = &ExchangeOrderField{
-		field: exchange.FieldExchangeID,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.ExchangeID,
-			}
-		},
-	}
-	// ExchangeOrderFieldName orders Exchange by name.
-	ExchangeOrderFieldName = &ExchangeOrderField{
-		field: exchange.FieldName,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.Name,
-			}
-		},
-	}
-	// ExchangeOrderFieldYearEstablished orders Exchange by year_established.
-	ExchangeOrderFieldYearEstablished = &ExchangeOrderField{
-		field: exchange.FieldYearEstablished,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.YearEstablished,
-			}
-		},
-	}
-	// ExchangeOrderFieldCountry orders Exchange by country.
-	ExchangeOrderFieldCountry = &ExchangeOrderField{
-		field: exchange.FieldCountry,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.Country,
-			}
-		},
-	}
-	// ExchangeOrderFieldImage orders Exchange by image.
-	ExchangeOrderFieldImage = &ExchangeOrderField{
-		field: exchange.FieldImage,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.Image,
-			}
-		},
-	}
-	// ExchangeOrderFieldHasTradingIncentive orders Exchange by has_trading_incentive.
-	ExchangeOrderFieldHasTradingIncentive = &ExchangeOrderField{
-		field: exchange.FieldHasTradingIncentive,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.HasTradingIncentive,
-			}
-		},
-	}
-	// ExchangeOrderFieldCentralized orders Exchange by centralized.
-	ExchangeOrderFieldCentralized = &ExchangeOrderField{
-		field: exchange.FieldCentralized,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.Centralized,
-			}
-		},
-	}
-	// ExchangeOrderFieldPublicNotice orders Exchange by public_notice.
-	ExchangeOrderFieldPublicNotice = &ExchangeOrderField{
-		field: exchange.FieldPublicNotice,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.PublicNotice,
-			}
-		},
-	}
-	// ExchangeOrderFieldAlertNotice orders Exchange by alert_notice.
-	ExchangeOrderFieldAlertNotice = &ExchangeOrderField{
-		field: exchange.FieldAlertNotice,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.AlertNotice,
-			}
-		},
-	}
-	// ExchangeOrderFieldTrustScore orders Exchange by trust_score.
-	ExchangeOrderFieldTrustScore = &ExchangeOrderField{
-		field: exchange.FieldTrustScore,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.TrustScore,
-			}
-		},
-	}
-	// ExchangeOrderFieldTrustScoreRank orders Exchange by trust_score_rank.
-	ExchangeOrderFieldTrustScoreRank = &ExchangeOrderField{
-		field: exchange.FieldTrustScoreRank,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.TrustScoreRank,
-			}
-		},
-	}
-	// ExchangeOrderFieldTradeVolume24hBtc orders Exchange by trade_volume_24h_btc.
-	ExchangeOrderFieldTradeVolume24hBtc = &ExchangeOrderField{
-		field: exchange.FieldTradeVolume24hBtc,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.TradeVolume24hBtc,
-			}
-		},
-	}
-	// ExchangeOrderFieldTradeVolume24hBtcNormalized orders Exchange by trade_volume_24h_btc_normalized.
-	ExchangeOrderFieldTradeVolume24hBtcNormalized = &ExchangeOrderField{
-		field: exchange.FieldTradeVolume24hBtcNormalized,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.TradeVolume24hBtcNormalized,
-			}
-		},
-	}
-	// ExchangeOrderFieldMakerFee orders Exchange by maker_fee.
-	ExchangeOrderFieldMakerFee = &ExchangeOrderField{
-		field: exchange.FieldMakerFee,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.MakerFee,
-			}
-		},
-	}
-	// ExchangeOrderFieldTakerFee orders Exchange by taker_fee.
-	ExchangeOrderFieldTakerFee = &ExchangeOrderField{
-		field: exchange.FieldTakerFee,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.TakerFee,
-			}
-		},
-	}
-	// ExchangeOrderFieldSpreadFee orders Exchange by spread_fee.
-	ExchangeOrderFieldSpreadFee = &ExchangeOrderField{
-		field: exchange.FieldSpreadFee,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.SpreadFee,
-			}
-		},
-	}
-	// ExchangeOrderFieldSupportAPI orders Exchange by support_api.
-	ExchangeOrderFieldSupportAPI = &ExchangeOrderField{
-		field: exchange.FieldSupportAPI,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{
-				ID:    e.ID,
-				Value: e.SupportAPI,
-			}
-		},
-	}
-)
-
-// String implement fmt.Stringer interface.
-func (f ExchangeOrderField) String() string {
-	var str string
-	switch f.field {
-	case exchange.FieldExchangeID:
-		str = "exchangeId"
-	case exchange.FieldName:
-		str = "name"
-	case exchange.FieldYearEstablished:
-		str = "yearEstablished"
-	case exchange.FieldCountry:
-		str = "country"
-	case exchange.FieldImage:
-		str = "image"
-	case exchange.FieldHasTradingIncentive:
-		str = "hasTradingIncentive"
-	case exchange.FieldCentralized:
-		str = "centralized"
-	case exchange.FieldPublicNotice:
-		str = "publicNotice"
-	case exchange.FieldAlertNotice:
-		str = "alertNotice"
-	case exchange.FieldTrustScore:
-		str = "trustScore"
-	case exchange.FieldTrustScoreRank:
-		str = "trustScoreRank"
-	case exchange.FieldTradeVolume24hBtc:
-		str = "tradeVolume24hBtc"
-	case exchange.FieldTradeVolume24hBtcNormalized:
-		str = "tradeVolume24hBtcNormalized"
-	case exchange.FieldMakerFee:
-		str = "makerFee"
-	case exchange.FieldTakerFee:
-		str = "takerFee"
-	case exchange.FieldSpreadFee:
-		str = "spreadFee"
-	case exchange.FieldSupportAPI:
-		str = "supportAPI"
-	}
-	return str
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (f ExchangeOrderField) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(f.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (f *ExchangeOrderField) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("ExchangeOrderField %T must be a string", v)
-	}
-	switch str {
-	case "exchangeId":
-		*f = *ExchangeOrderFieldExchangeID
-	case "name":
-		*f = *ExchangeOrderFieldName
-	case "yearEstablished":
-		*f = *ExchangeOrderFieldYearEstablished
-	case "country":
-		*f = *ExchangeOrderFieldCountry
-	case "image":
-		*f = *ExchangeOrderFieldImage
-	case "hasTradingIncentive":
-		*f = *ExchangeOrderFieldHasTradingIncentive
-	case "centralized":
-		*f = *ExchangeOrderFieldCentralized
-	case "publicNotice":
-		*f = *ExchangeOrderFieldPublicNotice
-	case "alertNotice":
-		*f = *ExchangeOrderFieldAlertNotice
-	case "trustScore":
-		*f = *ExchangeOrderFieldTrustScore
-	case "trustScoreRank":
-		*f = *ExchangeOrderFieldTrustScoreRank
-	case "tradeVolume24hBtc":
-		*f = *ExchangeOrderFieldTradeVolume24hBtc
-	case "tradeVolume24hBtcNormalized":
-		*f = *ExchangeOrderFieldTradeVolume24hBtcNormalized
-	case "makerFee":
-		*f = *ExchangeOrderFieldMakerFee
-	case "takerFee":
-		*f = *ExchangeOrderFieldTakerFee
-	case "spreadFee":
-		*f = *ExchangeOrderFieldSpreadFee
-	case "supportAPI":
-		*f = *ExchangeOrderFieldSupportAPI
-	default:
-		return fmt.Errorf("%s is not a valid ExchangeOrderField", str)
-	}
-	return nil
-}
-
-// ExchangeOrderField defines the ordering field of Exchange.
-type ExchangeOrderField struct {
-	field    string
-	toCursor func(*Exchange) Cursor
-}
-
-// ExchangeOrder defines the ordering of Exchange.
-type ExchangeOrder struct {
-	Direction OrderDirection      `json:"direction"`
-	Field     *ExchangeOrderField `json:"field"`
-}
-
-// DefaultExchangeOrder is the default ordering of Exchange.
-var DefaultExchangeOrder = &ExchangeOrder{
-	Direction: OrderDirectionAsc,
-	Field: &ExchangeOrderField{
-		field: exchange.FieldID,
-		toCursor: func(e *Exchange) Cursor {
-			return Cursor{ID: e.ID}
-		},
-	},
-}
-
-// ToEdge converts Exchange into ExchangeEdge.
-func (e *Exchange) ToEdge(order *ExchangeOrder) *ExchangeEdge {
-	if order == nil {
-		order = DefaultExchangeOrder
-	}
-	return &ExchangeEdge{
-		Node:   e,
-		Cursor: order.Field.toCursor(e),
 	}
 }
 
@@ -2418,5 +1920,517 @@ func (tp *TradingPair) ToEdge(order *TradingPairOrder) *TradingPairEdge {
 	return &TradingPairEdge{
 		Node:   tp,
 		Cursor: order.Field.toCursor(tp),
+	}
+}
+
+// VenueEdge is the edge representation of Venue.
+type VenueEdge struct {
+	Node   *Venue `json:"node"`
+	Cursor Cursor `json:"cursor"`
+}
+
+// VenueConnection is the connection containing edges to Venue.
+type VenueConnection struct {
+	Edges      []*VenueEdge `json:"edges"`
+	PageInfo   PageInfo     `json:"pageInfo"`
+	TotalCount int          `json:"totalCount"`
+}
+
+func (c *VenueConnection) build(nodes []*Venue, pager *venuePager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Venue
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Venue {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Venue {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*VenueEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &VenueEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// VenuePaginateOption enables pagination customization.
+type VenuePaginateOption func(*venuePager) error
+
+// WithVenueOrder configures pagination ordering.
+func WithVenueOrder(order *VenueOrder) VenuePaginateOption {
+	if order == nil {
+		order = DefaultVenueOrder
+	}
+	o := *order
+	return func(pager *venuePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultVenueOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithVenueFilter configures pagination filter.
+func WithVenueFilter(filter func(*VenueQuery) (*VenueQuery, error)) VenuePaginateOption {
+	return func(pager *venuePager) error {
+		if filter == nil {
+			return errors.New("VenueQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type venuePager struct {
+	order  *VenueOrder
+	filter func(*VenueQuery) (*VenueQuery, error)
+}
+
+func newVenuePager(opts []VenuePaginateOption) (*venuePager, error) {
+	pager := &venuePager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultVenueOrder
+	}
+	return pager, nil
+}
+
+func (p *venuePager) applyFilter(query *VenueQuery) (*VenueQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *venuePager) toCursor(v *Venue) Cursor {
+	return p.order.Field.toCursor(v)
+}
+
+func (p *venuePager) applyCursors(query *VenueQuery, after, before *Cursor) *VenueQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultVenueOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *venuePager) applyOrder(query *VenueQuery, reverse bool) *VenueQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultVenueOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultVenueOrder.Field.field))
+	}
+	return query
+}
+
+func (p *venuePager) orderExpr(reverse bool) sql.Querier {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.field).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultVenueOrder.Field {
+			b.Comma().Ident(DefaultVenueOrder.Field.field).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Venue.
+func (v *VenueQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...VenuePaginateOption,
+) (*VenueConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newVenuePager(opts)
+	if err != nil {
+		return nil, err
+	}
+	if v, err = pager.applyFilter(v); err != nil {
+		return nil, err
+	}
+	conn := &VenueConnection{Edges: []*VenueEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = v.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+
+	v = pager.applyCursors(v, after, before)
+	v = pager.applyOrder(v, last != nil)
+	if limit := paginateLimit(first, last); limit != 0 {
+		v.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := v.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+
+	nodes, err := v.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// VenueOrderFieldVenueID orders Venue by venue_id.
+	VenueOrderFieldVenueID = &VenueOrderField{
+		field: venue.FieldVenueID,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.VenueID,
+			}
+		},
+	}
+	// VenueOrderFieldType orders Venue by type.
+	VenueOrderFieldType = &VenueOrderField{
+		field: venue.FieldType,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.Type,
+			}
+		},
+	}
+	// VenueOrderFieldName orders Venue by name.
+	VenueOrderFieldName = &VenueOrderField{
+		field: venue.FieldName,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.Name,
+			}
+		},
+	}
+	// VenueOrderFieldYearEstablished orders Venue by year_established.
+	VenueOrderFieldYearEstablished = &VenueOrderField{
+		field: venue.FieldYearEstablished,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.YearEstablished,
+			}
+		},
+	}
+	// VenueOrderFieldCountry orders Venue by country.
+	VenueOrderFieldCountry = &VenueOrderField{
+		field: venue.FieldCountry,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.Country,
+			}
+		},
+	}
+	// VenueOrderFieldImage orders Venue by image.
+	VenueOrderFieldImage = &VenueOrderField{
+		field: venue.FieldImage,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.Image,
+			}
+		},
+	}
+	// VenueOrderFieldHasTradingIncentive orders Venue by has_trading_incentive.
+	VenueOrderFieldHasTradingIncentive = &VenueOrderField{
+		field: venue.FieldHasTradingIncentive,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.HasTradingIncentive,
+			}
+		},
+	}
+	// VenueOrderFieldCentralized orders Venue by centralized.
+	VenueOrderFieldCentralized = &VenueOrderField{
+		field: venue.FieldCentralized,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.Centralized,
+			}
+		},
+	}
+	// VenueOrderFieldPublicNotice orders Venue by public_notice.
+	VenueOrderFieldPublicNotice = &VenueOrderField{
+		field: venue.FieldPublicNotice,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.PublicNotice,
+			}
+		},
+	}
+	// VenueOrderFieldAlertNotice orders Venue by alert_notice.
+	VenueOrderFieldAlertNotice = &VenueOrderField{
+		field: venue.FieldAlertNotice,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.AlertNotice,
+			}
+		},
+	}
+	// VenueOrderFieldTrustScore orders Venue by trust_score.
+	VenueOrderFieldTrustScore = &VenueOrderField{
+		field: venue.FieldTrustScore,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.TrustScore,
+			}
+		},
+	}
+	// VenueOrderFieldTrustScoreRank orders Venue by trust_score_rank.
+	VenueOrderFieldTrustScoreRank = &VenueOrderField{
+		field: venue.FieldTrustScoreRank,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.TrustScoreRank,
+			}
+		},
+	}
+	// VenueOrderFieldTradeVolume24hBtc orders Venue by trade_volume_24h_btc.
+	VenueOrderFieldTradeVolume24hBtc = &VenueOrderField{
+		field: venue.FieldTradeVolume24hBtc,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.TradeVolume24hBtc,
+			}
+		},
+	}
+	// VenueOrderFieldTradeVolume24hBtcNormalized orders Venue by trade_volume_24h_btc_normalized.
+	VenueOrderFieldTradeVolume24hBtcNormalized = &VenueOrderField{
+		field: venue.FieldTradeVolume24hBtcNormalized,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.TradeVolume24hBtcNormalized,
+			}
+		},
+	}
+	// VenueOrderFieldMakerFee orders Venue by maker_fee.
+	VenueOrderFieldMakerFee = &VenueOrderField{
+		field: venue.FieldMakerFee,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.MakerFee,
+			}
+		},
+	}
+	// VenueOrderFieldTakerFee orders Venue by taker_fee.
+	VenueOrderFieldTakerFee = &VenueOrderField{
+		field: venue.FieldTakerFee,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.TakerFee,
+			}
+		},
+	}
+	// VenueOrderFieldSpreadFee orders Venue by spread_fee.
+	VenueOrderFieldSpreadFee = &VenueOrderField{
+		field: venue.FieldSpreadFee,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.SpreadFee,
+			}
+		},
+	}
+	// VenueOrderFieldSupportAPI orders Venue by support_api.
+	VenueOrderFieldSupportAPI = &VenueOrderField{
+		field: venue.FieldSupportAPI,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.SupportAPI,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f VenueOrderField) String() string {
+	var str string
+	switch f.field {
+	case venue.FieldVenueID:
+		str = "venueId"
+	case venue.FieldType:
+		str = "type"
+	case venue.FieldName:
+		str = "name"
+	case venue.FieldYearEstablished:
+		str = "yearEstablished"
+	case venue.FieldCountry:
+		str = "country"
+	case venue.FieldImage:
+		str = "image"
+	case venue.FieldHasTradingIncentive:
+		str = "hasTradingIncentive"
+	case venue.FieldCentralized:
+		str = "centralized"
+	case venue.FieldPublicNotice:
+		str = "publicNotice"
+	case venue.FieldAlertNotice:
+		str = "alertNotice"
+	case venue.FieldTrustScore:
+		str = "trustScore"
+	case venue.FieldTrustScoreRank:
+		str = "trustScoreRank"
+	case venue.FieldTradeVolume24hBtc:
+		str = "tradeVolume24hBtc"
+	case venue.FieldTradeVolume24hBtcNormalized:
+		str = "tradeVolume24hBtcNormalized"
+	case venue.FieldMakerFee:
+		str = "makerFee"
+	case venue.FieldTakerFee:
+		str = "takerFee"
+	case venue.FieldSpreadFee:
+		str = "spreadFee"
+	case venue.FieldSupportAPI:
+		str = "supportAPI"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f VenueOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *VenueOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("VenueOrderField %T must be a string", v)
+	}
+	switch str {
+	case "venueId":
+		*f = *VenueOrderFieldVenueID
+	case "type":
+		*f = *VenueOrderFieldType
+	case "name":
+		*f = *VenueOrderFieldName
+	case "yearEstablished":
+		*f = *VenueOrderFieldYearEstablished
+	case "country":
+		*f = *VenueOrderFieldCountry
+	case "image":
+		*f = *VenueOrderFieldImage
+	case "hasTradingIncentive":
+		*f = *VenueOrderFieldHasTradingIncentive
+	case "centralized":
+		*f = *VenueOrderFieldCentralized
+	case "publicNotice":
+		*f = *VenueOrderFieldPublicNotice
+	case "alertNotice":
+		*f = *VenueOrderFieldAlertNotice
+	case "trustScore":
+		*f = *VenueOrderFieldTrustScore
+	case "trustScoreRank":
+		*f = *VenueOrderFieldTrustScoreRank
+	case "tradeVolume24hBtc":
+		*f = *VenueOrderFieldTradeVolume24hBtc
+	case "tradeVolume24hBtcNormalized":
+		*f = *VenueOrderFieldTradeVolume24hBtcNormalized
+	case "makerFee":
+		*f = *VenueOrderFieldMakerFee
+	case "takerFee":
+		*f = *VenueOrderFieldTakerFee
+	case "spreadFee":
+		*f = *VenueOrderFieldSpreadFee
+	case "supportAPI":
+		*f = *VenueOrderFieldSupportAPI
+	default:
+		return fmt.Errorf("%s is not a valid VenueOrderField", str)
+	}
+	return nil
+}
+
+// VenueOrderField defines the ordering field of Venue.
+type VenueOrderField struct {
+	field    string
+	toCursor func(*Venue) Cursor
+}
+
+// VenueOrder defines the ordering of Venue.
+type VenueOrder struct {
+	Direction OrderDirection   `json:"direction"`
+	Field     *VenueOrderField `json:"field"`
+}
+
+// DefaultVenueOrder is the default ordering of Venue.
+var DefaultVenueOrder = &VenueOrder{
+	Direction: OrderDirectionAsc,
+	Field: &VenueOrderField{
+		field: venue.FieldID,
+		toCursor: func(v *Venue) Cursor {
+			return Cursor{ID: v.ID}
+		},
+	},
+}
+
+// ToEdge converts Venue into VenueEdge.
+func (v *Venue) ToEdge(order *VenueOrder) *VenueEdge {
+	if order == nil {
+		order = DefaultVenueOrder
+	}
+	return &VenueEdge{
+		Node:   v,
+		Cursor: order.Field.toCursor(v),
 	}
 }

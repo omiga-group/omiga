@@ -21,13 +21,13 @@ type CoingeckoExchangeSubscriber interface {
 }
 
 type coingeckoExchangeSubscriber struct {
-	ctx                context.Context
-	logger             *zap.SugaredLogger
-	coingeckoConfig    configuration.CoingeckoConfig
-	exchanges          map[string]configuration.Exchange
-	entgoClient        entities.EntgoClient
-	timeHelper         timeex.TimeHelper
-	exchangeRepository repositories.ExchangeRepository
+	ctx             context.Context
+	logger          *zap.SugaredLogger
+	coingeckoConfig configuration.CoingeckoConfig
+	exchanges       map[string]configuration.Exchange
+	entgoClient     entities.EntgoClient
+	timeHelper      timeex.TimeHelper
+	venueRepository repositories.VenueRepository
 }
 
 func NewCoingeckoExchangeSubscriber(
@@ -38,15 +38,15 @@ func NewCoingeckoExchangeSubscriber(
 	exchanges map[string]configuration.Exchange,
 	entgoClient entities.EntgoClient,
 	timeHelper timeex.TimeHelper,
-	exchangeRepository repositories.ExchangeRepository) (CoingeckoExchangeSubscriber, error) {
+	venueRepository repositories.VenueRepository) (CoingeckoExchangeSubscriber, error) {
 	instance := &coingeckoExchangeSubscriber{
-		ctx:                ctx,
-		logger:             logger,
-		coingeckoConfig:    coingeckoConfig,
-		exchanges:          exchanges,
-		entgoClient:        entgoClient,
-		timeHelper:         timeHelper,
-		exchangeRepository: exchangeRepository,
+		ctx:             ctx,
+		logger:          logger,
+		coingeckoConfig: coingeckoConfig,
+		exchanges:       exchanges,
+		entgoClient:     entgoClient,
+		timeHelper:      timeHelper,
+		venueRepository: venueRepository,
 	}
 
 	// Run at every second from 0 through 59.
@@ -58,13 +58,13 @@ func NewCoingeckoExchangeSubscriber(
 }
 
 func (ces *coingeckoExchangeSubscriber) Run() {
-	exchangesWithManualFeesOnlyMap := maps.Map(ces.exchanges, func(id string, exchange configuration.Exchange) (string, models.Exchange) {
+	venuesWithManualFeesOnlyMap := maps.Map(ces.exchanges, func(id string, exchange configuration.Exchange) (string, models.Venue) {
 		return id, mappers.FromConfigurationExchangeToExchange(exchange)
 	})
-	exchangesWithManualFeesOnly := maps.Values(exchangesWithManualFeesOnlyMap)
+	venuesWithManualFeesOnly := maps.Values(venuesWithManualFeesOnlyMap)
 
-	if _, err := ces.exchangeRepository.CreateExchanges(ces.ctx, exchangesWithManualFeesOnly); err != nil {
-		ces.logger.Errorf("Failed to create exchanges. Error: %v", err)
+	if _, err := ces.venueRepository.CreateVenues(ces.ctx, venuesWithManualFeesOnly); err != nil {
+		ces.logger.Errorf("Failed to create venues. Error: %v", err)
 
 		return
 	}
@@ -76,7 +76,7 @@ func (ces *coingeckoExchangeSubscriber) Run() {
 	}
 
 	perPage := 250
-	exchanges := make([]coingeckov3.Exchange, 0)
+	venues := make([]coingeckov3.Exchange, 0)
 
 	for page := 1; ; page++ {
 		ces.timeHelper.SleepOrWaitForContextGetCancelled(ces.ctx, 2*time.Second)
@@ -86,14 +86,14 @@ func (ces *coingeckoExchangeSubscriber) Run() {
 			Page:    &page,
 		})
 		if err != nil {
-			ces.logger.Errorf("Failed to get exchanges list. Error: %v", err)
+			ces.logger.Errorf("Failed to get venues list. Error: %v", err)
 
 			return
 		}
 
 		if exchangesWithResponse.HTTPResponse.StatusCode != 200 {
 			ces.logger.Errorf(
-				"Failed to get exchanges list. Return status code is %d",
+				"Failed to get venues list. Return status code is %d",
 				exchangesWithResponse.HTTPResponse.StatusCode)
 
 			return
@@ -103,69 +103,69 @@ func (ces *coingeckoExchangeSubscriber) Run() {
 			break
 		}
 
-		exchanges = append(exchanges, *exchangesWithResponse.JSON200...)
+		venues = append(venues, *exchangesWithResponse.JSON200...)
 	}
 
-	if _, err := ces.exchangeRepository.CreateExchanges(
+	if _, err := ces.venueRepository.CreateVenues(
 		ces.ctx,
-		slices.Map(exchanges, func(exchange coingeckov3.Exchange) models.Exchange {
+		slices.Map(venues, func(exchange coingeckov3.Exchange) models.Venue {
 			if extraDetails, ok := ces.exchanges[exchange.Id]; ok {
 				return mappers.FromCoingeckoExchangeToExchange(exchange, &extraDetails)
 			}
 
 			return mappers.FromCoingeckoExchangeToExchange(exchange, nil)
 		})); err != nil {
-		ces.logger.Errorf("Failed to create exchanges. Error: %v", err)
+		ces.logger.Errorf("Failed to create venues. Error: %v", err)
 
 		return
 	}
 
-	for _, exchange := range exchanges {
-		exchangeId := exchange.Id
+	for _, venue := range venues {
+		venueId := venue.Id
 
-		// This is to avoid coingecko rate limiter blocking us from querying exchanges details
+		// This is to avoid coingecko rate limiter blocking us from querying venues details
 		ces.timeHelper.SleepOrWaitForContextGetCancelled(ces.ctx, 2*time.Second)
 
 		if ces.ctx.Err() == context.Canceled {
 			break
 		}
 
-		exchangeIdResponse, err := coingeckoClient.GetExchangeWithResponse(
+		venueIdResponse, err := coingeckoClient.GetExchangeWithResponse(
 			ces.ctx,
-			exchangeId)
+			venueId)
 		if err != nil {
-			ces.logger.Errorf("Failed to get exchange details. Error: %v", err)
+			ces.logger.Errorf("Failed to get venue details. Error: %v", err)
 
 			continue
 		}
 
-		if exchangeIdResponse.HTTPResponse.StatusCode != 200 {
+		if venueIdResponse.HTTPResponse.StatusCode != 200 {
 			ces.logger.Errorf(
-				"Failed to get exchange details. Return status code is %d",
-				exchangeIdResponse.HTTPResponse.StatusCode)
+				"Failed to get venue details. Return status code is %d",
+				venueIdResponse.HTTPResponse.StatusCode)
 
 			continue
 		}
 
-		var mappedExchange models.Exchange
+		var mappedVenue models.Venue
 
-		if extraDetails, ok := ces.exchanges[mappedExchange.ExchangeId]; ok {
-			mappedExchange = mappers.FromCoingeckoExchangeDetailsToExchange(
-				exchangeId,
-				*exchangeIdResponse.JSON200,
+		if extraDetails, ok := ces.exchanges[mappedVenue.VenueId]; ok {
+			mappedVenue = mappers.FromCoingeckoExchangeDetailsToExchange(
+				venueId,
+				*venueIdResponse.JSON200,
 				&extraDetails)
 		} else {
-			mappedExchange = mappers.FromCoingeckoExchangeDetailsToExchange(
-				exchangeId,
-				*exchangeIdResponse.JSON200,
+			mappedVenue = mappers.FromCoingeckoExchangeDetailsToExchange(
+				venueId,
+				*venueIdResponse.JSON200,
 				nil)
 		}
 
-		if _, err := ces.exchangeRepository.CreateExchange(
+		if _, err := ces.venueRepository.CreateVenue(
 			ces.ctx,
-			mappedExchange); err != nil {
+			mappedVenue); err != nil {
 
-			ces.logger.Errorf("Failed to create exchange. Error: %v", err)
+			ces.logger.Errorf("Failed to create venue. Error: %v", err)
 
 			return
 		}

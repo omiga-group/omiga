@@ -43,17 +43,17 @@ const (
 	FieldTradeURL = "trade_url"
 	// FieldTokenInfoURL holds the string denoting the token_info_url field in the database.
 	FieldTokenInfoURL = "token_info_url"
-	// EdgeExchange holds the string denoting the exchange edge name in mutations.
-	EdgeExchange = "exchange"
+	// EdgeVenue holds the string denoting the venue edge name in mutations.
+	EdgeVenue = "venue"
 	// Table holds the table name of the ticker in the database.
 	Table = "tickers"
-	// ExchangeTable is the table that holds the exchange relation/edge.
-	ExchangeTable = "tickers"
-	// ExchangeInverseTable is the table name for the Exchange entity.
-	// It exists in this package in order to avoid circular dependency with the "exchange" package.
-	ExchangeInverseTable = "exchanges"
-	// ExchangeColumn is the table column denoting the exchange relation/edge.
-	ExchangeColumn = "exchange_ticker"
+	// VenueTable is the table that holds the venue relation/edge.
+	VenueTable = "tickers"
+	// VenueInverseTable is the table name for the Venue entity.
+	// It exists in this package in order to avoid circular dependency with the "venue" package.
+	VenueInverseTable = "venues"
+	// VenueColumn is the table column denoting the venue relation/edge.
+	VenueColumn = "venue_ticker"
 )
 
 // Columns holds all SQL columns for ticker fields.
@@ -82,7 +82,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "tickers"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"exchange_ticker",
+	"venue_ticker",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

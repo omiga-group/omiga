@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 )
 
 // TradingPairCreate is the builder for creating a TradingPair entity.
@@ -142,15 +142,15 @@ func (tpc *TradingPairCreate) SetNillableCounterQuantityMaxPrecision(i *int) *Tr
 	return tpc
 }
 
-// SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
-func (tpc *TradingPairCreate) SetExchangeID(id int) *TradingPairCreate {
-	tpc.mutation.SetExchangeID(id)
+// SetVenueID sets the "venue" edge to the Venue entity by ID.
+func (tpc *TradingPairCreate) SetVenueID(id int) *TradingPairCreate {
+	tpc.mutation.SetVenueID(id)
 	return tpc
 }
 
-// SetExchange sets the "exchange" edge to the Exchange entity.
-func (tpc *TradingPairCreate) SetExchange(e *Exchange) *TradingPairCreate {
-	return tpc.SetExchangeID(e.ID)
+// SetVenue sets the "venue" edge to the Venue entity.
+func (tpc *TradingPairCreate) SetVenue(v *Venue) *TradingPairCreate {
+	return tpc.SetVenueID(v.ID)
 }
 
 // SetBaseID sets the "base" edge to the Currency entity by ID.
@@ -269,8 +269,8 @@ func (tpc *TradingPairCreate) check() error {
 	if _, ok := tpc.mutation.Symbol(); !ok {
 		return &ValidationError{Name: "symbol", err: errors.New(`entities: missing required field "TradingPair.symbol"`)}
 	}
-	if _, ok := tpc.mutation.ExchangeID(); !ok {
-		return &ValidationError{Name: "exchange", err: errors.New(`entities: missing required edge "TradingPair.exchange"`)}
+	if _, ok := tpc.mutation.VenueID(); !ok {
+		return &ValidationError{Name: "venue", err: errors.New(`entities: missing required edge "TradingPair.venue"`)}
 	}
 	if _, ok := tpc.mutation.BaseID(); !ok {
 		return &ValidationError{Name: "base", err: errors.New(`entities: missing required edge "TradingPair.base"`)}
@@ -379,17 +379,17 @@ func (tpc *TradingPairCreate) createSpec() (*TradingPair, *sqlgraph.CreateSpec) 
 		})
 		_node.CounterQuantityMaxPrecision = value
 	}
-	if nodes := tpc.mutation.ExchangeIDs(); len(nodes) > 0 {
+	if nodes := tpc.mutation.VenueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tradingpair.ExchangeTable,
-			Columns: []string{tradingpair.ExchangeColumn},
+			Table:   tradingpair.VenueTable,
+			Columns: []string{tradingpair.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}
@@ -397,7 +397,7 @@ func (tpc *TradingPairCreate) createSpec() (*TradingPair, *sqlgraph.CreateSpec) 
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.exchange_trading_pair = &nodes[0]
+		_node.venue_trading_pair = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := tpc.mutation.BaseIDs(); len(nodes) > 0 {

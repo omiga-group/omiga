@@ -53,11 +53,11 @@ func NewCoingeckoExchangeSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	exchangeRepository, err := repositories.NewExchangeRepository(logger, entgoClient)
+	venueRepository, err := repositories.NewVenueRepository(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}
-	coingeckoExchangeSubscriber, err := subscribers.NewCoingeckoExchangeSubscriber(ctx, logger, cronService, coingeckoConfig, exchanges, entgoClient, timeHelper, exchangeRepository)
+	coingeckoExchangeSubscriber, err := subscribers.NewCoingeckoExchangeSubscriber(ctx, logger, cronService, coingeckoConfig, exchanges, entgoClient, timeHelper, venueRepository)
 	if err != nil {
 		return nil, err
 	}

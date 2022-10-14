@@ -106,114 +106,6 @@ func newCurrencyPaginateArgs(rv map[string]interface{}) *currencyPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (e *ExchangeQuery) CollectFields(ctx context.Context, satisfies ...string) (*ExchangeQuery, error) {
-	fc := graphql.GetFieldContext(ctx)
-	if fc == nil {
-		return e, nil
-	}
-	if err := e.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
-		return nil, err
-	}
-	return e, nil
-}
-
-func (e *ExchangeQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
-	path = append([]string(nil), path...)
-	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
-		switch field.Name {
-		case "ticker":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = &TickerQuery{config: e.config}
-			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
-				return err
-			}
-			e.WithNamedTicker(alias, func(wq *TickerQuery) {
-				*wq = *query
-			})
-		case "tradingPair", "trading_pair":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = &TradingPairQuery{config: e.config}
-			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
-				return err
-			}
-			e.WithNamedTradingPair(alias, func(wq *TradingPairQuery) {
-				*wq = *query
-			})
-		case "market":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = &MarketQuery{config: e.config}
-			)
-			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
-				return err
-			}
-			e.WithNamedMarket(alias, func(wq *MarketQuery) {
-				*wq = *query
-			})
-		}
-	}
-	return nil
-}
-
-type exchangePaginateArgs struct {
-	first, last   *int
-	after, before *Cursor
-	opts          []ExchangePaginateOption
-}
-
-func newExchangePaginateArgs(rv map[string]interface{}) *exchangePaginateArgs {
-	args := &exchangePaginateArgs{}
-	if rv == nil {
-		return args
-	}
-	if v := rv[firstField]; v != nil {
-		args.first = v.(*int)
-	}
-	if v := rv[lastField]; v != nil {
-		args.last = v.(*int)
-	}
-	if v := rv[afterField]; v != nil {
-		args.after = v.(*Cursor)
-	}
-	if v := rv[beforeField]; v != nil {
-		args.before = v.(*Cursor)
-	}
-	if v, ok := rv[orderByField]; ok {
-		switch v := v.(type) {
-		case map[string]interface{}:
-			var (
-				err1, err2 error
-				order      = &ExchangeOrder{Field: &ExchangeOrderField{}}
-			)
-			if d, ok := v[directionField]; ok {
-				err1 = order.Direction.UnmarshalGQL(d)
-			}
-			if f, ok := v[fieldField]; ok {
-				err2 = order.Field.UnmarshalGQL(f)
-			}
-			if err1 == nil && err2 == nil {
-				args.opts = append(args.opts, WithExchangeOrder(order))
-			}
-		case *ExchangeOrder:
-			if v != nil {
-				args.opts = append(args.opts, WithExchangeOrder(v))
-			}
-		}
-	}
-	if v, ok := rv[whereField].(*ExchangeWhereInput); ok {
-		args.opts = append(args.opts, WithExchangeFilter(v.Filter))
-	}
-	return args
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (m *MarketQuery) CollectFields(ctx context.Context, satisfies ...string) (*MarketQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -229,16 +121,16 @@ func (m *MarketQuery) collectField(ctx context.Context, op *graphql.OperationCon
 	path = append([]string(nil), path...)
 	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
 		switch field.Name {
-		case "exchange":
+		case "venue":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &ExchangeQuery{config: m.config}
+				query = &VenueQuery{config: m.config}
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
-			m.withExchange = query
+			m.withVenue = query
 		case "tradingPair", "trading_pair":
 			var (
 				alias = field.Alias
@@ -369,16 +261,16 @@ func (t *TickerQuery) collectField(ctx context.Context, op *graphql.OperationCon
 	path = append([]string(nil), path...)
 	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
 		switch field.Name {
-		case "exchange":
+		case "venue":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &ExchangeQuery{config: t.config}
+				query = &VenueQuery{config: t.config}
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
-			t.withExchange = query
+			t.withVenue = query
 		}
 	}
 	return nil
@@ -451,16 +343,16 @@ func (tp *TradingPairQuery) collectField(ctx context.Context, op *graphql.Operat
 	path = append([]string(nil), path...)
 	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
 		switch field.Name {
-		case "exchange":
+		case "venue":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &ExchangeQuery{config: tp.config}
+				query = &VenueQuery{config: tp.config}
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
-			tp.withExchange = query
+			tp.withVenue = query
 		case "base":
 			var (
 				alias = field.Alias
@@ -545,6 +437,114 @@ func newTradingPairPaginateArgs(rv map[string]interface{}) *tradingpairPaginateA
 	}
 	if v, ok := rv[whereField].(*TradingPairWhereInput); ok {
 		args.opts = append(args.opts, WithTradingPairFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (v *VenueQuery) CollectFields(ctx context.Context, satisfies ...string) (*VenueQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return v, nil
+	}
+	if err := v.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return v, nil
+}
+
+func (v *VenueQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+		switch field.Name {
+		case "ticker":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &TickerQuery{config: v.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			v.WithNamedTicker(alias, func(wq *TickerQuery) {
+				*wq = *query
+			})
+		case "tradingPair", "trading_pair":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &TradingPairQuery{config: v.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			v.WithNamedTradingPair(alias, func(wq *TradingPairQuery) {
+				*wq = *query
+			})
+		case "market":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = &MarketQuery{config: v.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			v.WithNamedMarket(alias, func(wq *MarketQuery) {
+				*wq = *query
+			})
+		}
+	}
+	return nil
+}
+
+type venuePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []VenuePaginateOption
+}
+
+func newVenuePaginateArgs(rv map[string]interface{}) *venuePaginateArgs {
+	args := &venuePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]interface{}:
+			var (
+				err1, err2 error
+				order      = &VenueOrder{Field: &VenueOrderField{}}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithVenueOrder(order))
+			}
+		case *VenueOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithVenueOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*VenueWhereInput); ok {
+		args.opts = append(args.opts, WithVenueFilter(v.Filter))
 	}
 	return args
 }

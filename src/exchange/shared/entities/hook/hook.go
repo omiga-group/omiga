@@ -22,19 +22,6 @@ func (f CurrencyFunc) Mutate(ctx context.Context, m entities.Mutation) (entities
 	return f(ctx, mv)
 }
 
-// The ExchangeFunc type is an adapter to allow the use of ordinary
-// function as Exchange mutator.
-type ExchangeFunc func(context.Context, *entities.ExchangeMutation) (entities.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ExchangeFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
-	mv, ok := m.(*entities.ExchangeMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.ExchangeMutation", m)
-	}
-	return f(ctx, mv)
-}
-
 // The MarketFunc type is an adapter to allow the use of ordinary
 // function as Market mutator.
 type MarketFunc func(context.Context, *entities.MarketMutation) (entities.Value, error)
@@ -83,6 +70,19 @@ func (f TradingPairFunc) Mutate(ctx context.Context, m entities.Mutation) (entit
 	mv, ok := m.(*entities.TradingPairMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.TradingPairMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The VenueFunc type is an adapter to allow the use of ordinary
+// function as Venue mutator.
+type VenueFunc func(context.Context, *entities.VenueMutation) (entities.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VenueFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
+	mv, ok := m.(*entities.VenueMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.VenueMutation", m)
 	}
 	return f(ctx, mv)
 }

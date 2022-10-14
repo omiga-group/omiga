@@ -8,12 +8,12 @@ import "context"
 // that can be passed at runtime.
 type SchemaConfig struct {
 	Currency          string // Currency table.
-	Exchange          string // Exchange table.
 	Market            string // Market table.
 	MarketTradingPair string // Market-trading_pair->TradingPair table.
 	Outbox            string // Outbox table.
 	Ticker            string // Ticker table.
 	TradingPair       string // TradingPair table.
+	Venue             string // Venue table.
 }
 
 type schemaCtxKey struct{}

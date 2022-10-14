@@ -10,70 +10,15 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/exchange-api/graphql/generated"
 	"github.com/omiga-group/omiga/src/exchange/exchange-api/graphql/models"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	marketrepo "github.com/omiga-group/omiga/src/exchange/shared/entities/market"
+	tickerrepo "github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
+	tradingpairrepo "github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	venuerepo "github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 )
 
 // Type is the resolver for the type field.
 func (r *currencyResolver) Type(ctx context.Context, obj *entities.Currency) (models.CurrencyType, error) {
 	return models.CurrencyType(obj.Type), nil
-}
-
-// Links is the resolver for the links field.
-func (r *exchangeResolver) Links(ctx context.Context, obj *entities.Exchange) (*models.Links, error) {
-	links := models.Links{}
-
-	if link, ok := obj.Links["website"]; ok {
-		links.Website = &link
-	}
-
-	if link, ok := obj.Links["facebook"]; ok {
-		links.Facebook = &link
-	}
-
-	if link, ok := obj.Links["reddit"]; ok {
-		links.Reddit = &link
-	}
-
-	if link, ok := obj.Links["twitter"]; ok {
-		links.Twitter = &link
-	}
-
-	if link, ok := obj.Links["slack"]; ok {
-		links.Slack = &link
-	}
-
-	if link, ok := obj.Links["telegram"]; ok {
-		links.Telegram = &link
-	}
-
-	return &links, nil
-}
-
-// Tickers is the resolver for the tickers field.
-func (r *exchangeResolver) Tickers(ctx context.Context, obj *entities.Exchange) ([]*entities.Ticker, error) {
-	return r.client.Ticker.
-		Query().
-		Where(ticker.HasExchangeWith(exchange.IDEQ(obj.ID))).
-		All(ctx)
-}
-
-// TradingPairs is the resolver for the tradingPairs field.
-func (r *exchangeResolver) TradingPairs(ctx context.Context, obj *entities.Exchange) ([]*entities.TradingPair, error) {
-	return r.client.TradingPair.
-		Query().
-		Where(tradingpair.HasExchangeWith(exchange.IDEQ(obj.ID))).
-		All(ctx)
-}
-
-// Markets is the resolver for the markets field.
-func (r *exchangeResolver) Markets(ctx context.Context, obj *entities.Exchange) ([]*entities.Market, error) {
-	return r.client.Market.
-		Query().
-		Where(market.HasExchangeWith(exchange.IDEQ(obj.ID))).
-		All(ctx)
 }
 
 // Type is the resolver for the type field.
@@ -119,9 +64,9 @@ func (r *queryResolver) Currencies(ctx context.Context, after *entities.Cursor, 
 			pageOrderAndFilter...)
 }
 
-// Exchange is the resolver for the exchange field.
-func (r *queryResolver) Exchange(ctx context.Context, where *entities.ExchangeWhereInput) (*entities.Exchange, error) {
-	query, err := where.Filter(r.client.Exchange.Query())
+// Venue is the resolver for the exchange field.
+func (r *queryResolver) Venue(ctx context.Context, where *entities.VenueWhereInput) (*entities.Venue, error) {
+	query, err := where.Filter(r.client.Venue.Query())
 	if err != nil {
 		return nil, err
 	}
@@ -136,17 +81,17 @@ func (r *queryResolver) Exchange(ctx context.Context, where *entities.ExchangeWh
 	return result, nil
 }
 
-// Exchanges is the resolver for the exchanges field.
-func (r *queryResolver) Exchanges(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.ExchangeOrder, where *entities.ExchangeWhereInput) (*entities.ExchangeConnection, error) {
+// Venues is the resolver for the exchanges field.
+func (r *queryResolver) Venues(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.VenueOrder, where *entities.VenueWhereInput) (*entities.VenueConnection, error) {
 	orderBy = slices.Reverse(orderBy)
 
-	pageOrder := slices.Map(orderBy, func(item *entities.ExchangeOrder) entities.ExchangePaginateOption {
-		return entities.WithExchangeOrder(item)
+	pageOrder := slices.Map(orderBy, func(item *entities.VenueOrder) entities.VenuePaginateOption {
+		return entities.WithVenueOrder(item)
 	})
 
-	pageOrderAndFilter := append(pageOrder, entities.WithExchangeFilter(where.Filter))
+	pageOrderAndFilter := append(pageOrder, entities.WithVenueFilter(where.Filter))
 
-	return r.client.Exchange.
+	return r.client.Venue.
 		Query().
 		Paginate(
 			ctx,
@@ -189,11 +134,68 @@ func (r *tradingPairResolver) Markets(ctx context.Context, obj *entities.Trading
 	return obj.Market(ctx)
 }
 
+// Type is the resolver for the type field.
+func (r *venueResolver) Type(ctx context.Context, obj *entities.Venue) (models.VenueType, error) {
+	return models.VenueType(obj.Type), nil
+}
+
+// Links is the resolver for the links field.
+func (r *venueResolver) Links(ctx context.Context, obj *entities.Venue) (*models.Links, error) {
+	links := models.Links{}
+
+	if link, ok := obj.Links["website"]; ok {
+		links.Website = &link
+	}
+
+	if link, ok := obj.Links["facebook"]; ok {
+		links.Facebook = &link
+	}
+
+	if link, ok := obj.Links["reddit"]; ok {
+		links.Reddit = &link
+	}
+
+	if link, ok := obj.Links["twitter"]; ok {
+		links.Twitter = &link
+	}
+
+	if link, ok := obj.Links["slack"]; ok {
+		links.Slack = &link
+	}
+
+	if link, ok := obj.Links["telegram"]; ok {
+		links.Telegram = &link
+	}
+
+	return &links, nil
+}
+
+// Tickers is the resolver for the tickers field.
+func (r *venueResolver) Tickers(ctx context.Context, obj *entities.Venue) ([]*entities.Ticker, error) {
+	return r.client.Ticker.
+		Query().
+		Where(tickerrepo.HasVenueWith(venuerepo.IDEQ(obj.ID))).
+		All(ctx)
+}
+
+// TradingPairs is the resolver for the tradingPairs field.
+func (r *venueResolver) TradingPairs(ctx context.Context, obj *entities.Venue) ([]*entities.TradingPair, error) {
+	return r.client.TradingPair.
+		Query().
+		Where(tradingpairrepo.HasVenueWith(venuerepo.IDEQ(obj.ID))).
+		All(ctx)
+}
+
+// Markets is the resolver for the markets field.
+func (r *venueResolver) Markets(ctx context.Context, obj *entities.Venue) ([]*entities.Market, error) {
+	return r.client.Market.
+		Query().
+		Where(marketrepo.HasVenueWith(venuerepo.IDEQ(obj.ID))).
+		All(ctx)
+}
+
 // Currency returns generated.CurrencyResolver implementation.
 func (r *Resolver) Currency() generated.CurrencyResolver { return &currencyResolver{r} }
-
-// Exchange returns generated.ExchangeResolver implementation.
-func (r *Resolver) Exchange() generated.ExchangeResolver { return &exchangeResolver{r} }
 
 // Market returns generated.MarketResolver implementation.
 func (r *Resolver) Market() generated.MarketResolver { return &marketResolver{r} }
@@ -207,9 +209,12 @@ func (r *Resolver) Ticker() generated.TickerResolver { return &tickerResolver{r}
 // TradingPair returns generated.TradingPairResolver implementation.
 func (r *Resolver) TradingPair() generated.TradingPairResolver { return &tradingPairResolver{r} }
 
+// Venue returns generated.VenueResolver implementation.
+func (r *Resolver) Venue() generated.VenueResolver { return &venueResolver{r} }
+
 type currencyResolver struct{ *Resolver }
-type exchangeResolver struct{ *Resolver }
 type marketResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type tickerResolver struct{ *Resolver }
 type tradingPairResolver struct{ *Resolver }
+type venueResolver struct{ *Resolver }

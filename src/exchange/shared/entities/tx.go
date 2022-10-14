@@ -16,8 +16,6 @@ type Tx struct {
 	config
 	// Currency is the client for interacting with the Currency builders.
 	Currency *CurrencyClient
-	// Exchange is the client for interacting with the Exchange builders.
-	Exchange *ExchangeClient
 	// Market is the client for interacting with the Market builders.
 	Market *MarketClient
 	// Outbox is the client for interacting with the Outbox builders.
@@ -26,6 +24,8 @@ type Tx struct {
 	Ticker *TickerClient
 	// TradingPair is the client for interacting with the TradingPair builders.
 	TradingPair *TradingPairClient
+	// Venue is the client for interacting with the Venue builders.
+	Venue *VenueClient
 
 	// lazily loaded.
 	client     *Client
@@ -162,11 +162,11 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Currency = NewCurrencyClient(tx.config)
-	tx.Exchange = NewExchangeClient(tx.config)
 	tx.Market = NewMarketClient(tx.config)
 	tx.Outbox = NewOutboxClient(tx.config)
 	tx.Ticker = NewTickerClient(tx.config)
 	tx.TradingPair = NewTradingPairClient(tx.config)
+	tx.Venue = NewVenueClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

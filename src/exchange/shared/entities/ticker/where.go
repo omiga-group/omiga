@@ -1516,31 +1516,31 @@ func TokenInfoURLContainsFold(v string) predicate.Ticker {
 	})
 }
 
-// HasExchange applies the HasEdge predicate on the "exchange" edge.
-func HasExchange() predicate.Ticker {
+// HasVenue applies the HasEdge predicate on the "venue" edge.
+func HasVenue() predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ExchangeTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ExchangeTable, ExchangeColumn),
+			sqlgraph.To(VenueTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, VenueTable, VenueColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Exchange
+		step.To.Schema = schemaConfig.Venue
 		step.Edge.Schema = schemaConfig.Ticker
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasExchangeWith applies the HasEdge predicate on the "exchange" edge with a given conditions (other predicates).
-func HasExchangeWith(preds ...predicate.Exchange) predicate.Ticker {
+// HasVenueWith applies the HasEdge predicate on the "venue" edge with a given conditions (other predicates).
+func HasVenueWith(preds ...predicate.Venue) predicate.Ticker {
 	return predicate.Ticker(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ExchangeInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ExchangeTable, ExchangeColumn),
+			sqlgraph.To(VenueInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, VenueTable, VenueColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Exchange
+		step.To.Schema = schemaConfig.Venue
 		step.Edge.Schema = schemaConfig.Ticker
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

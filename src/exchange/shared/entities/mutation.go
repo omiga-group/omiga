@@ -10,12 +10,12 @@ import (
 	"time"
 
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 
 	"entgo.io/ent"
@@ -31,11 +31,11 @@ const (
 
 	// Node types.
 	TypeCurrency    = "Currency"
-	TypeExchange    = "Exchange"
 	TypeMarket      = "Market"
 	TypeOutbox      = "Outbox"
 	TypeTicker      = "Ticker"
 	TypeTradingPair = "TradingPair"
+	TypeVenue       = "Venue"
 )
 
 // CurrencyMutation represents an operation that mutates the Currency nodes in the graph.
@@ -655,2061 +655,6 @@ func (m *CurrencyMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Currency edge %s", name)
 }
 
-// ExchangeMutation represents an operation that mutates the Exchange nodes in the graph.
-type ExchangeMutation struct {
-	config
-	op                                 Op
-	typ                                string
-	id                                 *int
-	exchange_id                        *string
-	name                               *string
-	year_established                   *int
-	addyear_established                *int
-	country                            *string
-	image                              *string
-	links                              *map[string]string
-	has_trading_incentive              *bool
-	centralized                        *bool
-	public_notice                      *string
-	alert_notice                       *string
-	trust_score                        *int
-	addtrust_score                     *int
-	trust_score_rank                   *int
-	addtrust_score_rank                *int
-	trade_volume_24h_btc               *float64
-	addtrade_volume_24h_btc            *float64
-	trade_volume_24h_btc_normalized    *float64
-	addtrade_volume_24h_btc_normalized *float64
-	maker_fee                          *float64
-	addmaker_fee                       *float64
-	taker_fee                          *float64
-	addtaker_fee                       *float64
-	spread_fee                         *bool
-	support_api                        *bool
-	clearedFields                      map[string]struct{}
-	ticker                             map[int]struct{}
-	removedticker                      map[int]struct{}
-	clearedticker                      bool
-	trading_pair                       map[int]struct{}
-	removedtrading_pair                map[int]struct{}
-	clearedtrading_pair                bool
-	market                             map[int]struct{}
-	removedmarket                      map[int]struct{}
-	clearedmarket                      bool
-	done                               bool
-	oldValue                           func(context.Context) (*Exchange, error)
-	predicates                         []predicate.Exchange
-}
-
-var _ ent.Mutation = (*ExchangeMutation)(nil)
-
-// exchangeOption allows management of the mutation configuration using functional options.
-type exchangeOption func(*ExchangeMutation)
-
-// newExchangeMutation creates new mutation for the Exchange entity.
-func newExchangeMutation(c config, op Op, opts ...exchangeOption) *ExchangeMutation {
-	m := &ExchangeMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeExchange,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withExchangeID sets the ID field of the mutation.
-func withExchangeID(id int) exchangeOption {
-	return func(m *ExchangeMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *Exchange
-		)
-		m.oldValue = func(ctx context.Context) (*Exchange, error) {
-			once.Do(func() {
-				if m.done {
-					err = errors.New("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().Exchange.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withExchange sets the old Exchange of the mutation.
-func withExchange(node *Exchange) exchangeOption {
-	return func(m *ExchangeMutation) {
-		m.oldValue = func(context.Context) (*Exchange, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m ExchangeMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m ExchangeMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, errors.New("entities: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// ID returns the ID value in the mutation. Note that the ID is only available
-// if it was provided to the builder or after it was returned from the database.
-func (m *ExchangeMutation) ID() (id int, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// IDs queries the database and returns the entity ids that match the mutation's predicate.
-// That means, if the mutation is applied within a transaction with an isolation level such
-// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
-// or updated by the mutation.
-func (m *ExchangeMutation) IDs(ctx context.Context) ([]int, error) {
-	switch {
-	case m.op.Is(OpUpdateOne | OpDeleteOne):
-		id, exists := m.ID()
-		if exists {
-			return []int{id}, nil
-		}
-		fallthrough
-	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().Exchange.Query().Where(m.predicates...).IDs(ctx)
-	default:
-		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
-	}
-}
-
-// SetExchangeID sets the "exchange_id" field.
-func (m *ExchangeMutation) SetExchangeID(s string) {
-	m.exchange_id = &s
-}
-
-// ExchangeID returns the value of the "exchange_id" field in the mutation.
-func (m *ExchangeMutation) ExchangeID() (r string, exists bool) {
-	v := m.exchange_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldExchangeID returns the old "exchange_id" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldExchangeID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldExchangeID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldExchangeID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldExchangeID: %w", err)
-	}
-	return oldValue.ExchangeID, nil
-}
-
-// ResetExchangeID resets all changes to the "exchange_id" field.
-func (m *ExchangeMutation) ResetExchangeID() {
-	m.exchange_id = nil
-}
-
-// SetName sets the "name" field.
-func (m *ExchangeMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the value of the "name" field in the mutation.
-func (m *ExchangeMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old "name" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldName is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ClearName clears the value of the "name" field.
-func (m *ExchangeMutation) ClearName() {
-	m.name = nil
-	m.clearedFields[exchange.FieldName] = struct{}{}
-}
-
-// NameCleared returns if the "name" field was cleared in this mutation.
-func (m *ExchangeMutation) NameCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldName]
-	return ok
-}
-
-// ResetName resets all changes to the "name" field.
-func (m *ExchangeMutation) ResetName() {
-	m.name = nil
-	delete(m.clearedFields, exchange.FieldName)
-}
-
-// SetYearEstablished sets the "year_established" field.
-func (m *ExchangeMutation) SetYearEstablished(i int) {
-	m.year_established = &i
-	m.addyear_established = nil
-}
-
-// YearEstablished returns the value of the "year_established" field in the mutation.
-func (m *ExchangeMutation) YearEstablished() (r int, exists bool) {
-	v := m.year_established
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldYearEstablished returns the old "year_established" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldYearEstablished(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldYearEstablished is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldYearEstablished requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldYearEstablished: %w", err)
-	}
-	return oldValue.YearEstablished, nil
-}
-
-// AddYearEstablished adds i to the "year_established" field.
-func (m *ExchangeMutation) AddYearEstablished(i int) {
-	if m.addyear_established != nil {
-		*m.addyear_established += i
-	} else {
-		m.addyear_established = &i
-	}
-}
-
-// AddedYearEstablished returns the value that was added to the "year_established" field in this mutation.
-func (m *ExchangeMutation) AddedYearEstablished() (r int, exists bool) {
-	v := m.addyear_established
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearYearEstablished clears the value of the "year_established" field.
-func (m *ExchangeMutation) ClearYearEstablished() {
-	m.year_established = nil
-	m.addyear_established = nil
-	m.clearedFields[exchange.FieldYearEstablished] = struct{}{}
-}
-
-// YearEstablishedCleared returns if the "year_established" field was cleared in this mutation.
-func (m *ExchangeMutation) YearEstablishedCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldYearEstablished]
-	return ok
-}
-
-// ResetYearEstablished resets all changes to the "year_established" field.
-func (m *ExchangeMutation) ResetYearEstablished() {
-	m.year_established = nil
-	m.addyear_established = nil
-	delete(m.clearedFields, exchange.FieldYearEstablished)
-}
-
-// SetCountry sets the "country" field.
-func (m *ExchangeMutation) SetCountry(s string) {
-	m.country = &s
-}
-
-// Country returns the value of the "country" field in the mutation.
-func (m *ExchangeMutation) Country() (r string, exists bool) {
-	v := m.country
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCountry returns the old "country" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldCountry(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCountry is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCountry requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCountry: %w", err)
-	}
-	return oldValue.Country, nil
-}
-
-// ClearCountry clears the value of the "country" field.
-func (m *ExchangeMutation) ClearCountry() {
-	m.country = nil
-	m.clearedFields[exchange.FieldCountry] = struct{}{}
-}
-
-// CountryCleared returns if the "country" field was cleared in this mutation.
-func (m *ExchangeMutation) CountryCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldCountry]
-	return ok
-}
-
-// ResetCountry resets all changes to the "country" field.
-func (m *ExchangeMutation) ResetCountry() {
-	m.country = nil
-	delete(m.clearedFields, exchange.FieldCountry)
-}
-
-// SetImage sets the "image" field.
-func (m *ExchangeMutation) SetImage(s string) {
-	m.image = &s
-}
-
-// Image returns the value of the "image" field in the mutation.
-func (m *ExchangeMutation) Image() (r string, exists bool) {
-	v := m.image
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldImage returns the old "image" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldImage(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldImage is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldImage requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldImage: %w", err)
-	}
-	return oldValue.Image, nil
-}
-
-// ClearImage clears the value of the "image" field.
-func (m *ExchangeMutation) ClearImage() {
-	m.image = nil
-	m.clearedFields[exchange.FieldImage] = struct{}{}
-}
-
-// ImageCleared returns if the "image" field was cleared in this mutation.
-func (m *ExchangeMutation) ImageCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldImage]
-	return ok
-}
-
-// ResetImage resets all changes to the "image" field.
-func (m *ExchangeMutation) ResetImage() {
-	m.image = nil
-	delete(m.clearedFields, exchange.FieldImage)
-}
-
-// SetLinks sets the "links" field.
-func (m *ExchangeMutation) SetLinks(value map[string]string) {
-	m.links = &value
-}
-
-// Links returns the value of the "links" field in the mutation.
-func (m *ExchangeMutation) Links() (r map[string]string, exists bool) {
-	v := m.links
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldLinks returns the old "links" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldLinks(ctx context.Context) (v map[string]string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLinks is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLinks requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLinks: %w", err)
-	}
-	return oldValue.Links, nil
-}
-
-// ClearLinks clears the value of the "links" field.
-func (m *ExchangeMutation) ClearLinks() {
-	m.links = nil
-	m.clearedFields[exchange.FieldLinks] = struct{}{}
-}
-
-// LinksCleared returns if the "links" field was cleared in this mutation.
-func (m *ExchangeMutation) LinksCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldLinks]
-	return ok
-}
-
-// ResetLinks resets all changes to the "links" field.
-func (m *ExchangeMutation) ResetLinks() {
-	m.links = nil
-	delete(m.clearedFields, exchange.FieldLinks)
-}
-
-// SetHasTradingIncentive sets the "has_trading_incentive" field.
-func (m *ExchangeMutation) SetHasTradingIncentive(b bool) {
-	m.has_trading_incentive = &b
-}
-
-// HasTradingIncentive returns the value of the "has_trading_incentive" field in the mutation.
-func (m *ExchangeMutation) HasTradingIncentive() (r bool, exists bool) {
-	v := m.has_trading_incentive
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldHasTradingIncentive returns the old "has_trading_incentive" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldHasTradingIncentive(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldHasTradingIncentive is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldHasTradingIncentive requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldHasTradingIncentive: %w", err)
-	}
-	return oldValue.HasTradingIncentive, nil
-}
-
-// ClearHasTradingIncentive clears the value of the "has_trading_incentive" field.
-func (m *ExchangeMutation) ClearHasTradingIncentive() {
-	m.has_trading_incentive = nil
-	m.clearedFields[exchange.FieldHasTradingIncentive] = struct{}{}
-}
-
-// HasTradingIncentiveCleared returns if the "has_trading_incentive" field was cleared in this mutation.
-func (m *ExchangeMutation) HasTradingIncentiveCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldHasTradingIncentive]
-	return ok
-}
-
-// ResetHasTradingIncentive resets all changes to the "has_trading_incentive" field.
-func (m *ExchangeMutation) ResetHasTradingIncentive() {
-	m.has_trading_incentive = nil
-	delete(m.clearedFields, exchange.FieldHasTradingIncentive)
-}
-
-// SetCentralized sets the "centralized" field.
-func (m *ExchangeMutation) SetCentralized(b bool) {
-	m.centralized = &b
-}
-
-// Centralized returns the value of the "centralized" field in the mutation.
-func (m *ExchangeMutation) Centralized() (r bool, exists bool) {
-	v := m.centralized
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCentralized returns the old "centralized" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldCentralized(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCentralized is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCentralized requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCentralized: %w", err)
-	}
-	return oldValue.Centralized, nil
-}
-
-// ClearCentralized clears the value of the "centralized" field.
-func (m *ExchangeMutation) ClearCentralized() {
-	m.centralized = nil
-	m.clearedFields[exchange.FieldCentralized] = struct{}{}
-}
-
-// CentralizedCleared returns if the "centralized" field was cleared in this mutation.
-func (m *ExchangeMutation) CentralizedCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldCentralized]
-	return ok
-}
-
-// ResetCentralized resets all changes to the "centralized" field.
-func (m *ExchangeMutation) ResetCentralized() {
-	m.centralized = nil
-	delete(m.clearedFields, exchange.FieldCentralized)
-}
-
-// SetPublicNotice sets the "public_notice" field.
-func (m *ExchangeMutation) SetPublicNotice(s string) {
-	m.public_notice = &s
-}
-
-// PublicNotice returns the value of the "public_notice" field in the mutation.
-func (m *ExchangeMutation) PublicNotice() (r string, exists bool) {
-	v := m.public_notice
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldPublicNotice returns the old "public_notice" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldPublicNotice(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPublicNotice is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPublicNotice requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPublicNotice: %w", err)
-	}
-	return oldValue.PublicNotice, nil
-}
-
-// ClearPublicNotice clears the value of the "public_notice" field.
-func (m *ExchangeMutation) ClearPublicNotice() {
-	m.public_notice = nil
-	m.clearedFields[exchange.FieldPublicNotice] = struct{}{}
-}
-
-// PublicNoticeCleared returns if the "public_notice" field was cleared in this mutation.
-func (m *ExchangeMutation) PublicNoticeCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldPublicNotice]
-	return ok
-}
-
-// ResetPublicNotice resets all changes to the "public_notice" field.
-func (m *ExchangeMutation) ResetPublicNotice() {
-	m.public_notice = nil
-	delete(m.clearedFields, exchange.FieldPublicNotice)
-}
-
-// SetAlertNotice sets the "alert_notice" field.
-func (m *ExchangeMutation) SetAlertNotice(s string) {
-	m.alert_notice = &s
-}
-
-// AlertNotice returns the value of the "alert_notice" field in the mutation.
-func (m *ExchangeMutation) AlertNotice() (r string, exists bool) {
-	v := m.alert_notice
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAlertNotice returns the old "alert_notice" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldAlertNotice(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAlertNotice is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAlertNotice requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAlertNotice: %w", err)
-	}
-	return oldValue.AlertNotice, nil
-}
-
-// ClearAlertNotice clears the value of the "alert_notice" field.
-func (m *ExchangeMutation) ClearAlertNotice() {
-	m.alert_notice = nil
-	m.clearedFields[exchange.FieldAlertNotice] = struct{}{}
-}
-
-// AlertNoticeCleared returns if the "alert_notice" field was cleared in this mutation.
-func (m *ExchangeMutation) AlertNoticeCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldAlertNotice]
-	return ok
-}
-
-// ResetAlertNotice resets all changes to the "alert_notice" field.
-func (m *ExchangeMutation) ResetAlertNotice() {
-	m.alert_notice = nil
-	delete(m.clearedFields, exchange.FieldAlertNotice)
-}
-
-// SetTrustScore sets the "trust_score" field.
-func (m *ExchangeMutation) SetTrustScore(i int) {
-	m.trust_score = &i
-	m.addtrust_score = nil
-}
-
-// TrustScore returns the value of the "trust_score" field in the mutation.
-func (m *ExchangeMutation) TrustScore() (r int, exists bool) {
-	v := m.trust_score
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTrustScore returns the old "trust_score" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldTrustScore(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTrustScore is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTrustScore requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTrustScore: %w", err)
-	}
-	return oldValue.TrustScore, nil
-}
-
-// AddTrustScore adds i to the "trust_score" field.
-func (m *ExchangeMutation) AddTrustScore(i int) {
-	if m.addtrust_score != nil {
-		*m.addtrust_score += i
-	} else {
-		m.addtrust_score = &i
-	}
-}
-
-// AddedTrustScore returns the value that was added to the "trust_score" field in this mutation.
-func (m *ExchangeMutation) AddedTrustScore() (r int, exists bool) {
-	v := m.addtrust_score
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearTrustScore clears the value of the "trust_score" field.
-func (m *ExchangeMutation) ClearTrustScore() {
-	m.trust_score = nil
-	m.addtrust_score = nil
-	m.clearedFields[exchange.FieldTrustScore] = struct{}{}
-}
-
-// TrustScoreCleared returns if the "trust_score" field was cleared in this mutation.
-func (m *ExchangeMutation) TrustScoreCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldTrustScore]
-	return ok
-}
-
-// ResetTrustScore resets all changes to the "trust_score" field.
-func (m *ExchangeMutation) ResetTrustScore() {
-	m.trust_score = nil
-	m.addtrust_score = nil
-	delete(m.clearedFields, exchange.FieldTrustScore)
-}
-
-// SetTrustScoreRank sets the "trust_score_rank" field.
-func (m *ExchangeMutation) SetTrustScoreRank(i int) {
-	m.trust_score_rank = &i
-	m.addtrust_score_rank = nil
-}
-
-// TrustScoreRank returns the value of the "trust_score_rank" field in the mutation.
-func (m *ExchangeMutation) TrustScoreRank() (r int, exists bool) {
-	v := m.trust_score_rank
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTrustScoreRank returns the old "trust_score_rank" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldTrustScoreRank(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTrustScoreRank is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTrustScoreRank requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTrustScoreRank: %w", err)
-	}
-	return oldValue.TrustScoreRank, nil
-}
-
-// AddTrustScoreRank adds i to the "trust_score_rank" field.
-func (m *ExchangeMutation) AddTrustScoreRank(i int) {
-	if m.addtrust_score_rank != nil {
-		*m.addtrust_score_rank += i
-	} else {
-		m.addtrust_score_rank = &i
-	}
-}
-
-// AddedTrustScoreRank returns the value that was added to the "trust_score_rank" field in this mutation.
-func (m *ExchangeMutation) AddedTrustScoreRank() (r int, exists bool) {
-	v := m.addtrust_score_rank
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearTrustScoreRank clears the value of the "trust_score_rank" field.
-func (m *ExchangeMutation) ClearTrustScoreRank() {
-	m.trust_score_rank = nil
-	m.addtrust_score_rank = nil
-	m.clearedFields[exchange.FieldTrustScoreRank] = struct{}{}
-}
-
-// TrustScoreRankCleared returns if the "trust_score_rank" field was cleared in this mutation.
-func (m *ExchangeMutation) TrustScoreRankCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldTrustScoreRank]
-	return ok
-}
-
-// ResetTrustScoreRank resets all changes to the "trust_score_rank" field.
-func (m *ExchangeMutation) ResetTrustScoreRank() {
-	m.trust_score_rank = nil
-	m.addtrust_score_rank = nil
-	delete(m.clearedFields, exchange.FieldTrustScoreRank)
-}
-
-// SetTradeVolume24hBtc sets the "trade_volume_24h_btc" field.
-func (m *ExchangeMutation) SetTradeVolume24hBtc(f float64) {
-	m.trade_volume_24h_btc = &f
-	m.addtrade_volume_24h_btc = nil
-}
-
-// TradeVolume24hBtc returns the value of the "trade_volume_24h_btc" field in the mutation.
-func (m *ExchangeMutation) TradeVolume24hBtc() (r float64, exists bool) {
-	v := m.trade_volume_24h_btc
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTradeVolume24hBtc returns the old "trade_volume_24h_btc" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldTradeVolume24hBtc(ctx context.Context) (v float64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTradeVolume24hBtc is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTradeVolume24hBtc requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTradeVolume24hBtc: %w", err)
-	}
-	return oldValue.TradeVolume24hBtc, nil
-}
-
-// AddTradeVolume24hBtc adds f to the "trade_volume_24h_btc" field.
-func (m *ExchangeMutation) AddTradeVolume24hBtc(f float64) {
-	if m.addtrade_volume_24h_btc != nil {
-		*m.addtrade_volume_24h_btc += f
-	} else {
-		m.addtrade_volume_24h_btc = &f
-	}
-}
-
-// AddedTradeVolume24hBtc returns the value that was added to the "trade_volume_24h_btc" field in this mutation.
-func (m *ExchangeMutation) AddedTradeVolume24hBtc() (r float64, exists bool) {
-	v := m.addtrade_volume_24h_btc
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearTradeVolume24hBtc clears the value of the "trade_volume_24h_btc" field.
-func (m *ExchangeMutation) ClearTradeVolume24hBtc() {
-	m.trade_volume_24h_btc = nil
-	m.addtrade_volume_24h_btc = nil
-	m.clearedFields[exchange.FieldTradeVolume24hBtc] = struct{}{}
-}
-
-// TradeVolume24hBtcCleared returns if the "trade_volume_24h_btc" field was cleared in this mutation.
-func (m *ExchangeMutation) TradeVolume24hBtcCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldTradeVolume24hBtc]
-	return ok
-}
-
-// ResetTradeVolume24hBtc resets all changes to the "trade_volume_24h_btc" field.
-func (m *ExchangeMutation) ResetTradeVolume24hBtc() {
-	m.trade_volume_24h_btc = nil
-	m.addtrade_volume_24h_btc = nil
-	delete(m.clearedFields, exchange.FieldTradeVolume24hBtc)
-}
-
-// SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
-func (m *ExchangeMutation) SetTradeVolume24hBtcNormalized(f float64) {
-	m.trade_volume_24h_btc_normalized = &f
-	m.addtrade_volume_24h_btc_normalized = nil
-}
-
-// TradeVolume24hBtcNormalized returns the value of the "trade_volume_24h_btc_normalized" field in the mutation.
-func (m *ExchangeMutation) TradeVolume24hBtcNormalized() (r float64, exists bool) {
-	v := m.trade_volume_24h_btc_normalized
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTradeVolume24hBtcNormalized returns the old "trade_volume_24h_btc_normalized" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldTradeVolume24hBtcNormalized(ctx context.Context) (v float64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTradeVolume24hBtcNormalized is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTradeVolume24hBtcNormalized requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTradeVolume24hBtcNormalized: %w", err)
-	}
-	return oldValue.TradeVolume24hBtcNormalized, nil
-}
-
-// AddTradeVolume24hBtcNormalized adds f to the "trade_volume_24h_btc_normalized" field.
-func (m *ExchangeMutation) AddTradeVolume24hBtcNormalized(f float64) {
-	if m.addtrade_volume_24h_btc_normalized != nil {
-		*m.addtrade_volume_24h_btc_normalized += f
-	} else {
-		m.addtrade_volume_24h_btc_normalized = &f
-	}
-}
-
-// AddedTradeVolume24hBtcNormalized returns the value that was added to the "trade_volume_24h_btc_normalized" field in this mutation.
-func (m *ExchangeMutation) AddedTradeVolume24hBtcNormalized() (r float64, exists bool) {
-	v := m.addtrade_volume_24h_btc_normalized
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearTradeVolume24hBtcNormalized clears the value of the "trade_volume_24h_btc_normalized" field.
-func (m *ExchangeMutation) ClearTradeVolume24hBtcNormalized() {
-	m.trade_volume_24h_btc_normalized = nil
-	m.addtrade_volume_24h_btc_normalized = nil
-	m.clearedFields[exchange.FieldTradeVolume24hBtcNormalized] = struct{}{}
-}
-
-// TradeVolume24hBtcNormalizedCleared returns if the "trade_volume_24h_btc_normalized" field was cleared in this mutation.
-func (m *ExchangeMutation) TradeVolume24hBtcNormalizedCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldTradeVolume24hBtcNormalized]
-	return ok
-}
-
-// ResetTradeVolume24hBtcNormalized resets all changes to the "trade_volume_24h_btc_normalized" field.
-func (m *ExchangeMutation) ResetTradeVolume24hBtcNormalized() {
-	m.trade_volume_24h_btc_normalized = nil
-	m.addtrade_volume_24h_btc_normalized = nil
-	delete(m.clearedFields, exchange.FieldTradeVolume24hBtcNormalized)
-}
-
-// SetMakerFee sets the "maker_fee" field.
-func (m *ExchangeMutation) SetMakerFee(f float64) {
-	m.maker_fee = &f
-	m.addmaker_fee = nil
-}
-
-// MakerFee returns the value of the "maker_fee" field in the mutation.
-func (m *ExchangeMutation) MakerFee() (r float64, exists bool) {
-	v := m.maker_fee
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldMakerFee returns the old "maker_fee" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldMakerFee(ctx context.Context) (v float64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMakerFee is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMakerFee requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMakerFee: %w", err)
-	}
-	return oldValue.MakerFee, nil
-}
-
-// AddMakerFee adds f to the "maker_fee" field.
-func (m *ExchangeMutation) AddMakerFee(f float64) {
-	if m.addmaker_fee != nil {
-		*m.addmaker_fee += f
-	} else {
-		m.addmaker_fee = &f
-	}
-}
-
-// AddedMakerFee returns the value that was added to the "maker_fee" field in this mutation.
-func (m *ExchangeMutation) AddedMakerFee() (r float64, exists bool) {
-	v := m.addmaker_fee
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearMakerFee clears the value of the "maker_fee" field.
-func (m *ExchangeMutation) ClearMakerFee() {
-	m.maker_fee = nil
-	m.addmaker_fee = nil
-	m.clearedFields[exchange.FieldMakerFee] = struct{}{}
-}
-
-// MakerFeeCleared returns if the "maker_fee" field was cleared in this mutation.
-func (m *ExchangeMutation) MakerFeeCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldMakerFee]
-	return ok
-}
-
-// ResetMakerFee resets all changes to the "maker_fee" field.
-func (m *ExchangeMutation) ResetMakerFee() {
-	m.maker_fee = nil
-	m.addmaker_fee = nil
-	delete(m.clearedFields, exchange.FieldMakerFee)
-}
-
-// SetTakerFee sets the "taker_fee" field.
-func (m *ExchangeMutation) SetTakerFee(f float64) {
-	m.taker_fee = &f
-	m.addtaker_fee = nil
-}
-
-// TakerFee returns the value of the "taker_fee" field in the mutation.
-func (m *ExchangeMutation) TakerFee() (r float64, exists bool) {
-	v := m.taker_fee
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTakerFee returns the old "taker_fee" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldTakerFee(ctx context.Context) (v float64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTakerFee is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTakerFee requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTakerFee: %w", err)
-	}
-	return oldValue.TakerFee, nil
-}
-
-// AddTakerFee adds f to the "taker_fee" field.
-func (m *ExchangeMutation) AddTakerFee(f float64) {
-	if m.addtaker_fee != nil {
-		*m.addtaker_fee += f
-	} else {
-		m.addtaker_fee = &f
-	}
-}
-
-// AddedTakerFee returns the value that was added to the "taker_fee" field in this mutation.
-func (m *ExchangeMutation) AddedTakerFee() (r float64, exists bool) {
-	v := m.addtaker_fee
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearTakerFee clears the value of the "taker_fee" field.
-func (m *ExchangeMutation) ClearTakerFee() {
-	m.taker_fee = nil
-	m.addtaker_fee = nil
-	m.clearedFields[exchange.FieldTakerFee] = struct{}{}
-}
-
-// TakerFeeCleared returns if the "taker_fee" field was cleared in this mutation.
-func (m *ExchangeMutation) TakerFeeCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldTakerFee]
-	return ok
-}
-
-// ResetTakerFee resets all changes to the "taker_fee" field.
-func (m *ExchangeMutation) ResetTakerFee() {
-	m.taker_fee = nil
-	m.addtaker_fee = nil
-	delete(m.clearedFields, exchange.FieldTakerFee)
-}
-
-// SetSpreadFee sets the "spread_fee" field.
-func (m *ExchangeMutation) SetSpreadFee(b bool) {
-	m.spread_fee = &b
-}
-
-// SpreadFee returns the value of the "spread_fee" field in the mutation.
-func (m *ExchangeMutation) SpreadFee() (r bool, exists bool) {
-	v := m.spread_fee
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSpreadFee returns the old "spread_fee" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldSpreadFee(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSpreadFee is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSpreadFee requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSpreadFee: %w", err)
-	}
-	return oldValue.SpreadFee, nil
-}
-
-// ClearSpreadFee clears the value of the "spread_fee" field.
-func (m *ExchangeMutation) ClearSpreadFee() {
-	m.spread_fee = nil
-	m.clearedFields[exchange.FieldSpreadFee] = struct{}{}
-}
-
-// SpreadFeeCleared returns if the "spread_fee" field was cleared in this mutation.
-func (m *ExchangeMutation) SpreadFeeCleared() bool {
-	_, ok := m.clearedFields[exchange.FieldSpreadFee]
-	return ok
-}
-
-// ResetSpreadFee resets all changes to the "spread_fee" field.
-func (m *ExchangeMutation) ResetSpreadFee() {
-	m.spread_fee = nil
-	delete(m.clearedFields, exchange.FieldSpreadFee)
-}
-
-// SetSupportAPI sets the "support_api" field.
-func (m *ExchangeMutation) SetSupportAPI(b bool) {
-	m.support_api = &b
-}
-
-// SupportAPI returns the value of the "support_api" field in the mutation.
-func (m *ExchangeMutation) SupportAPI() (r bool, exists bool) {
-	v := m.support_api
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSupportAPI returns the old "support_api" field's value of the Exchange entity.
-// If the Exchange object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ExchangeMutation) OldSupportAPI(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSupportAPI is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSupportAPI requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSupportAPI: %w", err)
-	}
-	return oldValue.SupportAPI, nil
-}
-
-// ClearSupportAPI clears the value of the "support_api" field.
-func (m *ExchangeMutation) ClearSupportAPI() {
-	m.support_api = nil
-	m.clearedFields[exchange.FieldSupportAPI] = struct{}{}
-}
-
-// SupportAPICleared returns if the "support_api" field was cleared in this mutation.
-func (m *ExchangeMutation) SupportAPICleared() bool {
-	_, ok := m.clearedFields[exchange.FieldSupportAPI]
-	return ok
-}
-
-// ResetSupportAPI resets all changes to the "support_api" field.
-func (m *ExchangeMutation) ResetSupportAPI() {
-	m.support_api = nil
-	delete(m.clearedFields, exchange.FieldSupportAPI)
-}
-
-// AddTickerIDs adds the "ticker" edge to the Ticker entity by ids.
-func (m *ExchangeMutation) AddTickerIDs(ids ...int) {
-	if m.ticker == nil {
-		m.ticker = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.ticker[ids[i]] = struct{}{}
-	}
-}
-
-// ClearTicker clears the "ticker" edge to the Ticker entity.
-func (m *ExchangeMutation) ClearTicker() {
-	m.clearedticker = true
-}
-
-// TickerCleared reports if the "ticker" edge to the Ticker entity was cleared.
-func (m *ExchangeMutation) TickerCleared() bool {
-	return m.clearedticker
-}
-
-// RemoveTickerIDs removes the "ticker" edge to the Ticker entity by IDs.
-func (m *ExchangeMutation) RemoveTickerIDs(ids ...int) {
-	if m.removedticker == nil {
-		m.removedticker = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.ticker, ids[i])
-		m.removedticker[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedTicker returns the removed IDs of the "ticker" edge to the Ticker entity.
-func (m *ExchangeMutation) RemovedTickerIDs() (ids []int) {
-	for id := range m.removedticker {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// TickerIDs returns the "ticker" edge IDs in the mutation.
-func (m *ExchangeMutation) TickerIDs() (ids []int) {
-	for id := range m.ticker {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetTicker resets all changes to the "ticker" edge.
-func (m *ExchangeMutation) ResetTicker() {
-	m.ticker = nil
-	m.clearedticker = false
-	m.removedticker = nil
-}
-
-// AddTradingPairIDs adds the "trading_pair" edge to the TradingPair entity by ids.
-func (m *ExchangeMutation) AddTradingPairIDs(ids ...int) {
-	if m.trading_pair == nil {
-		m.trading_pair = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.trading_pair[ids[i]] = struct{}{}
-	}
-}
-
-// ClearTradingPair clears the "trading_pair" edge to the TradingPair entity.
-func (m *ExchangeMutation) ClearTradingPair() {
-	m.clearedtrading_pair = true
-}
-
-// TradingPairCleared reports if the "trading_pair" edge to the TradingPair entity was cleared.
-func (m *ExchangeMutation) TradingPairCleared() bool {
-	return m.clearedtrading_pair
-}
-
-// RemoveTradingPairIDs removes the "trading_pair" edge to the TradingPair entity by IDs.
-func (m *ExchangeMutation) RemoveTradingPairIDs(ids ...int) {
-	if m.removedtrading_pair == nil {
-		m.removedtrading_pair = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.trading_pair, ids[i])
-		m.removedtrading_pair[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedTradingPair returns the removed IDs of the "trading_pair" edge to the TradingPair entity.
-func (m *ExchangeMutation) RemovedTradingPairIDs() (ids []int) {
-	for id := range m.removedtrading_pair {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// TradingPairIDs returns the "trading_pair" edge IDs in the mutation.
-func (m *ExchangeMutation) TradingPairIDs() (ids []int) {
-	for id := range m.trading_pair {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetTradingPair resets all changes to the "trading_pair" edge.
-func (m *ExchangeMutation) ResetTradingPair() {
-	m.trading_pair = nil
-	m.clearedtrading_pair = false
-	m.removedtrading_pair = nil
-}
-
-// AddMarketIDs adds the "market" edge to the Market entity by ids.
-func (m *ExchangeMutation) AddMarketIDs(ids ...int) {
-	if m.market == nil {
-		m.market = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.market[ids[i]] = struct{}{}
-	}
-}
-
-// ClearMarket clears the "market" edge to the Market entity.
-func (m *ExchangeMutation) ClearMarket() {
-	m.clearedmarket = true
-}
-
-// MarketCleared reports if the "market" edge to the Market entity was cleared.
-func (m *ExchangeMutation) MarketCleared() bool {
-	return m.clearedmarket
-}
-
-// RemoveMarketIDs removes the "market" edge to the Market entity by IDs.
-func (m *ExchangeMutation) RemoveMarketIDs(ids ...int) {
-	if m.removedmarket == nil {
-		m.removedmarket = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.market, ids[i])
-		m.removedmarket[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedMarket returns the removed IDs of the "market" edge to the Market entity.
-func (m *ExchangeMutation) RemovedMarketIDs() (ids []int) {
-	for id := range m.removedmarket {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// MarketIDs returns the "market" edge IDs in the mutation.
-func (m *ExchangeMutation) MarketIDs() (ids []int) {
-	for id := range m.market {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetMarket resets all changes to the "market" edge.
-func (m *ExchangeMutation) ResetMarket() {
-	m.market = nil
-	m.clearedmarket = false
-	m.removedmarket = nil
-}
-
-// Where appends a list predicates to the ExchangeMutation builder.
-func (m *ExchangeMutation) Where(ps ...predicate.Exchange) {
-	m.predicates = append(m.predicates, ps...)
-}
-
-// Op returns the operation name.
-func (m *ExchangeMutation) Op() Op {
-	return m.op
-}
-
-// Type returns the node type of this mutation (Exchange).
-func (m *ExchangeMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during this mutation. Note that in
-// order to get all numeric fields that were incremented/decremented, call
-// AddedFields().
-func (m *ExchangeMutation) Fields() []string {
-	fields := make([]string, 0, 18)
-	if m.exchange_id != nil {
-		fields = append(fields, exchange.FieldExchangeID)
-	}
-	if m.name != nil {
-		fields = append(fields, exchange.FieldName)
-	}
-	if m.year_established != nil {
-		fields = append(fields, exchange.FieldYearEstablished)
-	}
-	if m.country != nil {
-		fields = append(fields, exchange.FieldCountry)
-	}
-	if m.image != nil {
-		fields = append(fields, exchange.FieldImage)
-	}
-	if m.links != nil {
-		fields = append(fields, exchange.FieldLinks)
-	}
-	if m.has_trading_incentive != nil {
-		fields = append(fields, exchange.FieldHasTradingIncentive)
-	}
-	if m.centralized != nil {
-		fields = append(fields, exchange.FieldCentralized)
-	}
-	if m.public_notice != nil {
-		fields = append(fields, exchange.FieldPublicNotice)
-	}
-	if m.alert_notice != nil {
-		fields = append(fields, exchange.FieldAlertNotice)
-	}
-	if m.trust_score != nil {
-		fields = append(fields, exchange.FieldTrustScore)
-	}
-	if m.trust_score_rank != nil {
-		fields = append(fields, exchange.FieldTrustScoreRank)
-	}
-	if m.trade_volume_24h_btc != nil {
-		fields = append(fields, exchange.FieldTradeVolume24hBtc)
-	}
-	if m.trade_volume_24h_btc_normalized != nil {
-		fields = append(fields, exchange.FieldTradeVolume24hBtcNormalized)
-	}
-	if m.maker_fee != nil {
-		fields = append(fields, exchange.FieldMakerFee)
-	}
-	if m.taker_fee != nil {
-		fields = append(fields, exchange.FieldTakerFee)
-	}
-	if m.spread_fee != nil {
-		fields = append(fields, exchange.FieldSpreadFee)
-	}
-	if m.support_api != nil {
-		fields = append(fields, exchange.FieldSupportAPI)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name. The second boolean
-// return value indicates that this field was not set, or was not defined in the
-// schema.
-func (m *ExchangeMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case exchange.FieldExchangeID:
-		return m.ExchangeID()
-	case exchange.FieldName:
-		return m.Name()
-	case exchange.FieldYearEstablished:
-		return m.YearEstablished()
-	case exchange.FieldCountry:
-		return m.Country()
-	case exchange.FieldImage:
-		return m.Image()
-	case exchange.FieldLinks:
-		return m.Links()
-	case exchange.FieldHasTradingIncentive:
-		return m.HasTradingIncentive()
-	case exchange.FieldCentralized:
-		return m.Centralized()
-	case exchange.FieldPublicNotice:
-		return m.PublicNotice()
-	case exchange.FieldAlertNotice:
-		return m.AlertNotice()
-	case exchange.FieldTrustScore:
-		return m.TrustScore()
-	case exchange.FieldTrustScoreRank:
-		return m.TrustScoreRank()
-	case exchange.FieldTradeVolume24hBtc:
-		return m.TradeVolume24hBtc()
-	case exchange.FieldTradeVolume24hBtcNormalized:
-		return m.TradeVolume24hBtcNormalized()
-	case exchange.FieldMakerFee:
-		return m.MakerFee()
-	case exchange.FieldTakerFee:
-		return m.TakerFee()
-	case exchange.FieldSpreadFee:
-		return m.SpreadFee()
-	case exchange.FieldSupportAPI:
-		return m.SupportAPI()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database. An error is
-// returned if the mutation operation is not UpdateOne, or the query to the
-// database failed.
-func (m *ExchangeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case exchange.FieldExchangeID:
-		return m.OldExchangeID(ctx)
-	case exchange.FieldName:
-		return m.OldName(ctx)
-	case exchange.FieldYearEstablished:
-		return m.OldYearEstablished(ctx)
-	case exchange.FieldCountry:
-		return m.OldCountry(ctx)
-	case exchange.FieldImage:
-		return m.OldImage(ctx)
-	case exchange.FieldLinks:
-		return m.OldLinks(ctx)
-	case exchange.FieldHasTradingIncentive:
-		return m.OldHasTradingIncentive(ctx)
-	case exchange.FieldCentralized:
-		return m.OldCentralized(ctx)
-	case exchange.FieldPublicNotice:
-		return m.OldPublicNotice(ctx)
-	case exchange.FieldAlertNotice:
-		return m.OldAlertNotice(ctx)
-	case exchange.FieldTrustScore:
-		return m.OldTrustScore(ctx)
-	case exchange.FieldTrustScoreRank:
-		return m.OldTrustScoreRank(ctx)
-	case exchange.FieldTradeVolume24hBtc:
-		return m.OldTradeVolume24hBtc(ctx)
-	case exchange.FieldTradeVolume24hBtcNormalized:
-		return m.OldTradeVolume24hBtcNormalized(ctx)
-	case exchange.FieldMakerFee:
-		return m.OldMakerFee(ctx)
-	case exchange.FieldTakerFee:
-		return m.OldTakerFee(ctx)
-	case exchange.FieldSpreadFee:
-		return m.OldSpreadFee(ctx)
-	case exchange.FieldSupportAPI:
-		return m.OldSupportAPI(ctx)
-	}
-	return nil, fmt.Errorf("unknown Exchange field %s", name)
-}
-
-// SetField sets the value of a field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *ExchangeMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case exchange.FieldExchangeID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetExchangeID(v)
-		return nil
-	case exchange.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
-		return nil
-	case exchange.FieldYearEstablished:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetYearEstablished(v)
-		return nil
-	case exchange.FieldCountry:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCountry(v)
-		return nil
-	case exchange.FieldImage:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetImage(v)
-		return nil
-	case exchange.FieldLinks:
-		v, ok := value.(map[string]string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetLinks(v)
-		return nil
-	case exchange.FieldHasTradingIncentive:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetHasTradingIncentive(v)
-		return nil
-	case exchange.FieldCentralized:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCentralized(v)
-		return nil
-	case exchange.FieldPublicNotice:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPublicNotice(v)
-		return nil
-	case exchange.FieldAlertNotice:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAlertNotice(v)
-		return nil
-	case exchange.FieldTrustScore:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTrustScore(v)
-		return nil
-	case exchange.FieldTrustScoreRank:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTrustScoreRank(v)
-		return nil
-	case exchange.FieldTradeVolume24hBtc:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTradeVolume24hBtc(v)
-		return nil
-	case exchange.FieldTradeVolume24hBtcNormalized:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTradeVolume24hBtcNormalized(v)
-		return nil
-	case exchange.FieldMakerFee:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetMakerFee(v)
-		return nil
-	case exchange.FieldTakerFee:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTakerFee(v)
-		return nil
-	case exchange.FieldSpreadFee:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSpreadFee(v)
-		return nil
-	case exchange.FieldSupportAPI:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSupportAPI(v)
-		return nil
-	}
-	return fmt.Errorf("unknown Exchange field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented/decremented during
-// this mutation.
-func (m *ExchangeMutation) AddedFields() []string {
-	var fields []string
-	if m.addyear_established != nil {
-		fields = append(fields, exchange.FieldYearEstablished)
-	}
-	if m.addtrust_score != nil {
-		fields = append(fields, exchange.FieldTrustScore)
-	}
-	if m.addtrust_score_rank != nil {
-		fields = append(fields, exchange.FieldTrustScoreRank)
-	}
-	if m.addtrade_volume_24h_btc != nil {
-		fields = append(fields, exchange.FieldTradeVolume24hBtc)
-	}
-	if m.addtrade_volume_24h_btc_normalized != nil {
-		fields = append(fields, exchange.FieldTradeVolume24hBtcNormalized)
-	}
-	if m.addmaker_fee != nil {
-		fields = append(fields, exchange.FieldMakerFee)
-	}
-	if m.addtaker_fee != nil {
-		fields = append(fields, exchange.FieldTakerFee)
-	}
-	return fields
-}
-
-// AddedField returns the numeric value that was incremented/decremented on a field
-// with the given name. The second boolean return value indicates that this field
-// was not set, or was not defined in the schema.
-func (m *ExchangeMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case exchange.FieldYearEstablished:
-		return m.AddedYearEstablished()
-	case exchange.FieldTrustScore:
-		return m.AddedTrustScore()
-	case exchange.FieldTrustScoreRank:
-		return m.AddedTrustScoreRank()
-	case exchange.FieldTradeVolume24hBtc:
-		return m.AddedTradeVolume24hBtc()
-	case exchange.FieldTradeVolume24hBtcNormalized:
-		return m.AddedTradeVolume24hBtcNormalized()
-	case exchange.FieldMakerFee:
-		return m.AddedMakerFee()
-	case exchange.FieldTakerFee:
-		return m.AddedTakerFee()
-	}
-	return nil, false
-}
-
-// AddField adds the value to the field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *ExchangeMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	case exchange.FieldYearEstablished:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddYearEstablished(v)
-		return nil
-	case exchange.FieldTrustScore:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddTrustScore(v)
-		return nil
-	case exchange.FieldTrustScoreRank:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddTrustScoreRank(v)
-		return nil
-	case exchange.FieldTradeVolume24hBtc:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddTradeVolume24hBtc(v)
-		return nil
-	case exchange.FieldTradeVolume24hBtcNormalized:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddTradeVolume24hBtcNormalized(v)
-		return nil
-	case exchange.FieldMakerFee:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddMakerFee(v)
-		return nil
-	case exchange.FieldTakerFee:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddTakerFee(v)
-		return nil
-	}
-	return fmt.Errorf("unknown Exchange numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared during this
-// mutation.
-func (m *ExchangeMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(exchange.FieldName) {
-		fields = append(fields, exchange.FieldName)
-	}
-	if m.FieldCleared(exchange.FieldYearEstablished) {
-		fields = append(fields, exchange.FieldYearEstablished)
-	}
-	if m.FieldCleared(exchange.FieldCountry) {
-		fields = append(fields, exchange.FieldCountry)
-	}
-	if m.FieldCleared(exchange.FieldImage) {
-		fields = append(fields, exchange.FieldImage)
-	}
-	if m.FieldCleared(exchange.FieldLinks) {
-		fields = append(fields, exchange.FieldLinks)
-	}
-	if m.FieldCleared(exchange.FieldHasTradingIncentive) {
-		fields = append(fields, exchange.FieldHasTradingIncentive)
-	}
-	if m.FieldCleared(exchange.FieldCentralized) {
-		fields = append(fields, exchange.FieldCentralized)
-	}
-	if m.FieldCleared(exchange.FieldPublicNotice) {
-		fields = append(fields, exchange.FieldPublicNotice)
-	}
-	if m.FieldCleared(exchange.FieldAlertNotice) {
-		fields = append(fields, exchange.FieldAlertNotice)
-	}
-	if m.FieldCleared(exchange.FieldTrustScore) {
-		fields = append(fields, exchange.FieldTrustScore)
-	}
-	if m.FieldCleared(exchange.FieldTrustScoreRank) {
-		fields = append(fields, exchange.FieldTrustScoreRank)
-	}
-	if m.FieldCleared(exchange.FieldTradeVolume24hBtc) {
-		fields = append(fields, exchange.FieldTradeVolume24hBtc)
-	}
-	if m.FieldCleared(exchange.FieldTradeVolume24hBtcNormalized) {
-		fields = append(fields, exchange.FieldTradeVolume24hBtcNormalized)
-	}
-	if m.FieldCleared(exchange.FieldMakerFee) {
-		fields = append(fields, exchange.FieldMakerFee)
-	}
-	if m.FieldCleared(exchange.FieldTakerFee) {
-		fields = append(fields, exchange.FieldTakerFee)
-	}
-	if m.FieldCleared(exchange.FieldSpreadFee) {
-		fields = append(fields, exchange.FieldSpreadFee)
-	}
-	if m.FieldCleared(exchange.FieldSupportAPI) {
-		fields = append(fields, exchange.FieldSupportAPI)
-	}
-	return fields
-}
-
-// FieldCleared returns a boolean indicating if a field with the given name was
-// cleared in this mutation.
-func (m *ExchangeMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value of the field with the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *ExchangeMutation) ClearField(name string) error {
-	switch name {
-	case exchange.FieldName:
-		m.ClearName()
-		return nil
-	case exchange.FieldYearEstablished:
-		m.ClearYearEstablished()
-		return nil
-	case exchange.FieldCountry:
-		m.ClearCountry()
-		return nil
-	case exchange.FieldImage:
-		m.ClearImage()
-		return nil
-	case exchange.FieldLinks:
-		m.ClearLinks()
-		return nil
-	case exchange.FieldHasTradingIncentive:
-		m.ClearHasTradingIncentive()
-		return nil
-	case exchange.FieldCentralized:
-		m.ClearCentralized()
-		return nil
-	case exchange.FieldPublicNotice:
-		m.ClearPublicNotice()
-		return nil
-	case exchange.FieldAlertNotice:
-		m.ClearAlertNotice()
-		return nil
-	case exchange.FieldTrustScore:
-		m.ClearTrustScore()
-		return nil
-	case exchange.FieldTrustScoreRank:
-		m.ClearTrustScoreRank()
-		return nil
-	case exchange.FieldTradeVolume24hBtc:
-		m.ClearTradeVolume24hBtc()
-		return nil
-	case exchange.FieldTradeVolume24hBtcNormalized:
-		m.ClearTradeVolume24hBtcNormalized()
-		return nil
-	case exchange.FieldMakerFee:
-		m.ClearMakerFee()
-		return nil
-	case exchange.FieldTakerFee:
-		m.ClearTakerFee()
-		return nil
-	case exchange.FieldSpreadFee:
-		m.ClearSpreadFee()
-		return nil
-	case exchange.FieldSupportAPI:
-		m.ClearSupportAPI()
-		return nil
-	}
-	return fmt.Errorf("unknown Exchange nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation for the field with the given name.
-// It returns an error if the field is not defined in the schema.
-func (m *ExchangeMutation) ResetField(name string) error {
-	switch name {
-	case exchange.FieldExchangeID:
-		m.ResetExchangeID()
-		return nil
-	case exchange.FieldName:
-		m.ResetName()
-		return nil
-	case exchange.FieldYearEstablished:
-		m.ResetYearEstablished()
-		return nil
-	case exchange.FieldCountry:
-		m.ResetCountry()
-		return nil
-	case exchange.FieldImage:
-		m.ResetImage()
-		return nil
-	case exchange.FieldLinks:
-		m.ResetLinks()
-		return nil
-	case exchange.FieldHasTradingIncentive:
-		m.ResetHasTradingIncentive()
-		return nil
-	case exchange.FieldCentralized:
-		m.ResetCentralized()
-		return nil
-	case exchange.FieldPublicNotice:
-		m.ResetPublicNotice()
-		return nil
-	case exchange.FieldAlertNotice:
-		m.ResetAlertNotice()
-		return nil
-	case exchange.FieldTrustScore:
-		m.ResetTrustScore()
-		return nil
-	case exchange.FieldTrustScoreRank:
-		m.ResetTrustScoreRank()
-		return nil
-	case exchange.FieldTradeVolume24hBtc:
-		m.ResetTradeVolume24hBtc()
-		return nil
-	case exchange.FieldTradeVolume24hBtcNormalized:
-		m.ResetTradeVolume24hBtcNormalized()
-		return nil
-	case exchange.FieldMakerFee:
-		m.ResetMakerFee()
-		return nil
-	case exchange.FieldTakerFee:
-		m.ResetTakerFee()
-		return nil
-	case exchange.FieldSpreadFee:
-		m.ResetSpreadFee()
-		return nil
-	case exchange.FieldSupportAPI:
-		m.ResetSupportAPI()
-		return nil
-	}
-	return fmt.Errorf("unknown Exchange field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this mutation.
-func (m *ExchangeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
-	if m.ticker != nil {
-		edges = append(edges, exchange.EdgeTicker)
-	}
-	if m.trading_pair != nil {
-		edges = append(edges, exchange.EdgeTradingPair)
-	}
-	if m.market != nil {
-		edges = append(edges, exchange.EdgeMarket)
-	}
-	return edges
-}
-
-// AddedIDs returns all IDs (to other nodes) that were added for the given edge
-// name in this mutation.
-func (m *ExchangeMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case exchange.EdgeTicker:
-		ids := make([]ent.Value, 0, len(m.ticker))
-		for id := range m.ticker {
-			ids = append(ids, id)
-		}
-		return ids
-	case exchange.EdgeTradingPair:
-		ids := make([]ent.Value, 0, len(m.trading_pair))
-		for id := range m.trading_pair {
-			ids = append(ids, id)
-		}
-		return ids
-	case exchange.EdgeMarket:
-		ids := make([]ent.Value, 0, len(m.market))
-		for id := range m.market {
-			ids = append(ids, id)
-		}
-		return ids
-	}
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this mutation.
-func (m *ExchangeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
-	if m.removedticker != nil {
-		edges = append(edges, exchange.EdgeTicker)
-	}
-	if m.removedtrading_pair != nil {
-		edges = append(edges, exchange.EdgeTradingPair)
-	}
-	if m.removedmarket != nil {
-		edges = append(edges, exchange.EdgeMarket)
-	}
-	return edges
-}
-
-// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
-// the given name in this mutation.
-func (m *ExchangeMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case exchange.EdgeTicker:
-		ids := make([]ent.Value, 0, len(m.removedticker))
-		for id := range m.removedticker {
-			ids = append(ids, id)
-		}
-		return ids
-	case exchange.EdgeTradingPair:
-		ids := make([]ent.Value, 0, len(m.removedtrading_pair))
-		for id := range m.removedtrading_pair {
-			ids = append(ids, id)
-		}
-		return ids
-	case exchange.EdgeMarket:
-		ids := make([]ent.Value, 0, len(m.removedmarket))
-		for id := range m.removedmarket {
-			ids = append(ids, id)
-		}
-		return ids
-	}
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *ExchangeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
-	if m.clearedticker {
-		edges = append(edges, exchange.EdgeTicker)
-	}
-	if m.clearedtrading_pair {
-		edges = append(edges, exchange.EdgeTradingPair)
-	}
-	if m.clearedmarket {
-		edges = append(edges, exchange.EdgeMarket)
-	}
-	return edges
-}
-
-// EdgeCleared returns a boolean which indicates if the edge with the given name
-// was cleared in this mutation.
-func (m *ExchangeMutation) EdgeCleared(name string) bool {
-	switch name {
-	case exchange.EdgeTicker:
-		return m.clearedticker
-	case exchange.EdgeTradingPair:
-		return m.clearedtrading_pair
-	case exchange.EdgeMarket:
-		return m.clearedmarket
-	}
-	return false
-}
-
-// ClearEdge clears the value of the edge with the given name. It returns an error
-// if that edge is not defined in the schema.
-func (m *ExchangeMutation) ClearEdge(name string) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown Exchange unique edge %s", name)
-}
-
-// ResetEdge resets all changes to the edge with the given name in this mutation.
-// It returns an error if the edge is not defined in the schema.
-func (m *ExchangeMutation) ResetEdge(name string) error {
-	switch name {
-	case exchange.EdgeTicker:
-		m.ResetTicker()
-		return nil
-	case exchange.EdgeTradingPair:
-		m.ResetTradingPair()
-		return nil
-	case exchange.EdgeMarket:
-		m.ResetMarket()
-		return nil
-	}
-	return fmt.Errorf("unknown Exchange edge %s", name)
-}
-
 // MarketMutation represents an operation that mutates the Market nodes in the graph.
 type MarketMutation struct {
 	config
@@ -2719,8 +664,8 @@ type MarketMutation struct {
 	name                *string
 	_type               *market.Type
 	clearedFields       map[string]struct{}
-	exchange            *int
-	clearedexchange     bool
+	venue               *int
+	clearedvenue        bool
 	trading_pair        map[int]struct{}
 	removedtrading_pair map[int]struct{}
 	clearedtrading_pair bool
@@ -2899,43 +844,43 @@ func (m *MarketMutation) ResetType() {
 	m._type = nil
 }
 
-// SetExchangeID sets the "exchange" edge to the Exchange entity by id.
-func (m *MarketMutation) SetExchangeID(id int) {
-	m.exchange = &id
+// SetVenueID sets the "venue" edge to the Venue entity by id.
+func (m *MarketMutation) SetVenueID(id int) {
+	m.venue = &id
 }
 
-// ClearExchange clears the "exchange" edge to the Exchange entity.
-func (m *MarketMutation) ClearExchange() {
-	m.clearedexchange = true
+// ClearVenue clears the "venue" edge to the Venue entity.
+func (m *MarketMutation) ClearVenue() {
+	m.clearedvenue = true
 }
 
-// ExchangeCleared reports if the "exchange" edge to the Exchange entity was cleared.
-func (m *MarketMutation) ExchangeCleared() bool {
-	return m.clearedexchange
+// VenueCleared reports if the "venue" edge to the Venue entity was cleared.
+func (m *MarketMutation) VenueCleared() bool {
+	return m.clearedvenue
 }
 
-// ExchangeID returns the "exchange" edge ID in the mutation.
-func (m *MarketMutation) ExchangeID() (id int, exists bool) {
-	if m.exchange != nil {
-		return *m.exchange, true
+// VenueID returns the "venue" edge ID in the mutation.
+func (m *MarketMutation) VenueID() (id int, exists bool) {
+	if m.venue != nil {
+		return *m.venue, true
 	}
 	return
 }
 
-// ExchangeIDs returns the "exchange" edge IDs in the mutation.
+// VenueIDs returns the "venue" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// ExchangeID instead. It exists only for internal usage by the builders.
-func (m *MarketMutation) ExchangeIDs() (ids []int) {
-	if id := m.exchange; id != nil {
+// VenueID instead. It exists only for internal usage by the builders.
+func (m *MarketMutation) VenueIDs() (ids []int) {
+	if id := m.venue; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetExchange resets all changes to the "exchange" edge.
-func (m *MarketMutation) ResetExchange() {
-	m.exchange = nil
-	m.clearedexchange = false
+// ResetVenue resets all changes to the "venue" edge.
+func (m *MarketMutation) ResetVenue() {
+	m.venue = nil
+	m.clearedvenue = false
 }
 
 // AddTradingPairIDs adds the "trading_pair" edge to the TradingPair entity by ids.
@@ -3128,8 +1073,8 @@ func (m *MarketMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MarketMutation) AddedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.exchange != nil {
-		edges = append(edges, market.EdgeExchange)
+	if m.venue != nil {
+		edges = append(edges, market.EdgeVenue)
 	}
 	if m.trading_pair != nil {
 		edges = append(edges, market.EdgeTradingPair)
@@ -3141,8 +1086,8 @@ func (m *MarketMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *MarketMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case market.EdgeExchange:
-		if id := m.exchange; id != nil {
+	case market.EdgeVenue:
+		if id := m.venue; id != nil {
 			return []ent.Value{*id}
 		}
 	case market.EdgeTradingPair:
@@ -3181,8 +1126,8 @@ func (m *MarketMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MarketMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.clearedexchange {
-		edges = append(edges, market.EdgeExchange)
+	if m.clearedvenue {
+		edges = append(edges, market.EdgeVenue)
 	}
 	if m.clearedtrading_pair {
 		edges = append(edges, market.EdgeTradingPair)
@@ -3194,8 +1139,8 @@ func (m *MarketMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *MarketMutation) EdgeCleared(name string) bool {
 	switch name {
-	case market.EdgeExchange:
-		return m.clearedexchange
+	case market.EdgeVenue:
+		return m.clearedvenue
 	case market.EdgeTradingPair:
 		return m.clearedtrading_pair
 	}
@@ -3206,8 +1151,8 @@ func (m *MarketMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *MarketMutation) ClearEdge(name string) error {
 	switch name {
-	case market.EdgeExchange:
-		m.ClearExchange()
+	case market.EdgeVenue:
+		m.ClearVenue()
 		return nil
 	}
 	return fmt.Errorf("unknown Market unique edge %s", name)
@@ -3217,8 +1162,8 @@ func (m *MarketMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *MarketMutation) ResetEdge(name string) error {
 	switch name {
-	case market.EdgeExchange:
-		m.ResetExchange()
+	case market.EdgeVenue:
+		m.ResetVenue()
 		return nil
 	case market.EdgeTradingPair:
 		m.ResetTradingPair()
@@ -4075,8 +2020,8 @@ type TickerMutation struct {
 	trade_url                    *string
 	token_info_url               *string
 	clearedFields                map[string]struct{}
-	exchange                     *int
-	clearedexchange              bool
+	venue                        *int
+	clearedvenue                 bool
 	done                         bool
 	oldValue                     func(context.Context) (*Ticker, error)
 	predicates                   []predicate.Ticker
@@ -5099,43 +3044,43 @@ func (m *TickerMutation) ResetTokenInfoURL() {
 	delete(m.clearedFields, ticker.FieldTokenInfoURL)
 }
 
-// SetExchangeID sets the "exchange" edge to the Exchange entity by id.
-func (m *TickerMutation) SetExchangeID(id int) {
-	m.exchange = &id
+// SetVenueID sets the "venue" edge to the Venue entity by id.
+func (m *TickerMutation) SetVenueID(id int) {
+	m.venue = &id
 }
 
-// ClearExchange clears the "exchange" edge to the Exchange entity.
-func (m *TickerMutation) ClearExchange() {
-	m.clearedexchange = true
+// ClearVenue clears the "venue" edge to the Venue entity.
+func (m *TickerMutation) ClearVenue() {
+	m.clearedvenue = true
 }
 
-// ExchangeCleared reports if the "exchange" edge to the Exchange entity was cleared.
-func (m *TickerMutation) ExchangeCleared() bool {
-	return m.clearedexchange
+// VenueCleared reports if the "venue" edge to the Venue entity was cleared.
+func (m *TickerMutation) VenueCleared() bool {
+	return m.clearedvenue
 }
 
-// ExchangeID returns the "exchange" edge ID in the mutation.
-func (m *TickerMutation) ExchangeID() (id int, exists bool) {
-	if m.exchange != nil {
-		return *m.exchange, true
+// VenueID returns the "venue" edge ID in the mutation.
+func (m *TickerMutation) VenueID() (id int, exists bool) {
+	if m.venue != nil {
+		return *m.venue, true
 	}
 	return
 }
 
-// ExchangeIDs returns the "exchange" edge IDs in the mutation.
+// VenueIDs returns the "venue" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// ExchangeID instead. It exists only for internal usage by the builders.
-func (m *TickerMutation) ExchangeIDs() (ids []int) {
-	if id := m.exchange; id != nil {
+// VenueID instead. It exists only for internal usage by the builders.
+func (m *TickerMutation) VenueIDs() (ids []int) {
+	if id := m.venue; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetExchange resets all changes to the "exchange" edge.
-func (m *TickerMutation) ResetExchange() {
-	m.exchange = nil
-	m.clearedexchange = false
+// ResetVenue resets all changes to the "venue" edge.
+func (m *TickerMutation) ResetVenue() {
+	m.venue = nil
+	m.clearedvenue = false
 }
 
 // Where appends a list predicates to the TickerMutation builder.
@@ -5684,8 +3629,8 @@ func (m *TickerMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TickerMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.exchange != nil {
-		edges = append(edges, ticker.EdgeExchange)
+	if m.venue != nil {
+		edges = append(edges, ticker.EdgeVenue)
 	}
 	return edges
 }
@@ -5694,8 +3639,8 @@ func (m *TickerMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *TickerMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case ticker.EdgeExchange:
-		if id := m.exchange; id != nil {
+	case ticker.EdgeVenue:
+		if id := m.venue; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -5717,8 +3662,8 @@ func (m *TickerMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TickerMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.clearedexchange {
-		edges = append(edges, ticker.EdgeExchange)
+	if m.clearedvenue {
+		edges = append(edges, ticker.EdgeVenue)
 	}
 	return edges
 }
@@ -5727,8 +3672,8 @@ func (m *TickerMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *TickerMutation) EdgeCleared(name string) bool {
 	switch name {
-	case ticker.EdgeExchange:
-		return m.clearedexchange
+	case ticker.EdgeVenue:
+		return m.clearedvenue
 	}
 	return false
 }
@@ -5737,8 +3682,8 @@ func (m *TickerMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *TickerMutation) ClearEdge(name string) error {
 	switch name {
-	case ticker.EdgeExchange:
-		m.ClearExchange()
+	case ticker.EdgeVenue:
+		m.ClearVenue()
 		return nil
 	}
 	return fmt.Errorf("unknown Ticker unique edge %s", name)
@@ -5748,8 +3693,8 @@ func (m *TickerMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *TickerMutation) ResetEdge(name string) error {
 	switch name {
-	case ticker.EdgeExchange:
-		m.ResetExchange()
+	case ticker.EdgeVenue:
+		m.ResetVenue()
 		return nil
 	}
 	return fmt.Errorf("unknown Ticker edge %s", name)
@@ -5779,8 +3724,8 @@ type TradingPairMutation struct {
 	counter_quantity_max_precision    *int
 	addcounter_quantity_max_precision *int
 	clearedFields                     map[string]struct{}
-	exchange                          *int
-	clearedexchange                   bool
+	venue                             *int
+	clearedvenue                      bool
 	base                              *int
 	clearedbase                       bool
 	counter                           *int
@@ -6487,43 +4432,43 @@ func (m *TradingPairMutation) ResetCounterQuantityMaxPrecision() {
 	delete(m.clearedFields, tradingpair.FieldCounterQuantityMaxPrecision)
 }
 
-// SetExchangeID sets the "exchange" edge to the Exchange entity by id.
-func (m *TradingPairMutation) SetExchangeID(id int) {
-	m.exchange = &id
+// SetVenueID sets the "venue" edge to the Venue entity by id.
+func (m *TradingPairMutation) SetVenueID(id int) {
+	m.venue = &id
 }
 
-// ClearExchange clears the "exchange" edge to the Exchange entity.
-func (m *TradingPairMutation) ClearExchange() {
-	m.clearedexchange = true
+// ClearVenue clears the "venue" edge to the Venue entity.
+func (m *TradingPairMutation) ClearVenue() {
+	m.clearedvenue = true
 }
 
-// ExchangeCleared reports if the "exchange" edge to the Exchange entity was cleared.
-func (m *TradingPairMutation) ExchangeCleared() bool {
-	return m.clearedexchange
+// VenueCleared reports if the "venue" edge to the Venue entity was cleared.
+func (m *TradingPairMutation) VenueCleared() bool {
+	return m.clearedvenue
 }
 
-// ExchangeID returns the "exchange" edge ID in the mutation.
-func (m *TradingPairMutation) ExchangeID() (id int, exists bool) {
-	if m.exchange != nil {
-		return *m.exchange, true
+// VenueID returns the "venue" edge ID in the mutation.
+func (m *TradingPairMutation) VenueID() (id int, exists bool) {
+	if m.venue != nil {
+		return *m.venue, true
 	}
 	return
 }
 
-// ExchangeIDs returns the "exchange" edge IDs in the mutation.
+// VenueIDs returns the "venue" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// ExchangeID instead. It exists only for internal usage by the builders.
-func (m *TradingPairMutation) ExchangeIDs() (ids []int) {
-	if id := m.exchange; id != nil {
+// VenueID instead. It exists only for internal usage by the builders.
+func (m *TradingPairMutation) VenueIDs() (ids []int) {
+	if id := m.venue; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetExchange resets all changes to the "exchange" edge.
-func (m *TradingPairMutation) ResetExchange() {
-	m.exchange = nil
-	m.clearedexchange = false
+// ResetVenue resets all changes to the "venue" edge.
+func (m *TradingPairMutation) ResetVenue() {
+	m.venue = nil
+	m.clearedvenue = false
 }
 
 // SetBaseID sets the "base" edge to the Currency entity by id.
@@ -7063,8 +5008,8 @@ func (m *TradingPairMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TradingPairMutation) AddedEdges() []string {
 	edges := make([]string, 0, 4)
-	if m.exchange != nil {
-		edges = append(edges, tradingpair.EdgeExchange)
+	if m.venue != nil {
+		edges = append(edges, tradingpair.EdgeVenue)
 	}
 	if m.base != nil {
 		edges = append(edges, tradingpair.EdgeBase)
@@ -7082,8 +5027,8 @@ func (m *TradingPairMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *TradingPairMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case tradingpair.EdgeExchange:
-		if id := m.exchange; id != nil {
+	case tradingpair.EdgeVenue:
+		if id := m.venue; id != nil {
 			return []ent.Value{*id}
 		}
 	case tradingpair.EdgeBase:
@@ -7130,8 +5075,8 @@ func (m *TradingPairMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TradingPairMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 4)
-	if m.clearedexchange {
-		edges = append(edges, tradingpair.EdgeExchange)
+	if m.clearedvenue {
+		edges = append(edges, tradingpair.EdgeVenue)
 	}
 	if m.clearedbase {
 		edges = append(edges, tradingpair.EdgeBase)
@@ -7149,8 +5094,8 @@ func (m *TradingPairMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *TradingPairMutation) EdgeCleared(name string) bool {
 	switch name {
-	case tradingpair.EdgeExchange:
-		return m.clearedexchange
+	case tradingpair.EdgeVenue:
+		return m.clearedvenue
 	case tradingpair.EdgeBase:
 		return m.clearedbase
 	case tradingpair.EdgeCounter:
@@ -7165,8 +5110,8 @@ func (m *TradingPairMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *TradingPairMutation) ClearEdge(name string) error {
 	switch name {
-	case tradingpair.EdgeExchange:
-		m.ClearExchange()
+	case tradingpair.EdgeVenue:
+		m.ClearVenue()
 		return nil
 	case tradingpair.EdgeBase:
 		m.ClearBase()
@@ -7182,8 +5127,8 @@ func (m *TradingPairMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *TradingPairMutation) ResetEdge(name string) error {
 	switch name {
-	case tradingpair.EdgeExchange:
-		m.ResetExchange()
+	case tradingpair.EdgeVenue:
+		m.ResetVenue()
 		return nil
 	case tradingpair.EdgeBase:
 		m.ResetBase()
@@ -7196,4 +5141,2113 @@ func (m *TradingPairMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown TradingPair edge %s", name)
+}
+
+// VenueMutation represents an operation that mutates the Venue nodes in the graph.
+type VenueMutation struct {
+	config
+	op                                 Op
+	typ                                string
+	id                                 *int
+	venue_id                           *string
+	_type                              *venue.Type
+	name                               *string
+	year_established                   *int
+	addyear_established                *int
+	country                            *string
+	image                              *string
+	links                              *map[string]string
+	has_trading_incentive              *bool
+	centralized                        *bool
+	public_notice                      *string
+	alert_notice                       *string
+	trust_score                        *int
+	addtrust_score                     *int
+	trust_score_rank                   *int
+	addtrust_score_rank                *int
+	trade_volume_24h_btc               *float64
+	addtrade_volume_24h_btc            *float64
+	trade_volume_24h_btc_normalized    *float64
+	addtrade_volume_24h_btc_normalized *float64
+	maker_fee                          *float64
+	addmaker_fee                       *float64
+	taker_fee                          *float64
+	addtaker_fee                       *float64
+	spread_fee                         *bool
+	support_api                        *bool
+	clearedFields                      map[string]struct{}
+	ticker                             map[int]struct{}
+	removedticker                      map[int]struct{}
+	clearedticker                      bool
+	trading_pair                       map[int]struct{}
+	removedtrading_pair                map[int]struct{}
+	clearedtrading_pair                bool
+	market                             map[int]struct{}
+	removedmarket                      map[int]struct{}
+	clearedmarket                      bool
+	done                               bool
+	oldValue                           func(context.Context) (*Venue, error)
+	predicates                         []predicate.Venue
+}
+
+var _ ent.Mutation = (*VenueMutation)(nil)
+
+// venueOption allows management of the mutation configuration using functional options.
+type venueOption func(*VenueMutation)
+
+// newVenueMutation creates new mutation for the Venue entity.
+func newVenueMutation(c config, op Op, opts ...venueOption) *VenueMutation {
+	m := &VenueMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeVenue,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withVenueID sets the ID field of the mutation.
+func withVenueID(id int) venueOption {
+	return func(m *VenueMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Venue
+		)
+		m.oldValue = func(ctx context.Context) (*Venue, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Venue.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withVenue sets the old Venue of the mutation.
+func withVenue(node *Venue) venueOption {
+	return func(m *VenueMutation) {
+		m.oldValue = func(context.Context) (*Venue, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m VenueMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m VenueMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("entities: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *VenueMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *VenueMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Venue.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetVenueID sets the "venue_id" field.
+func (m *VenueMutation) SetVenueID(s string) {
+	m.venue_id = &s
+}
+
+// VenueID returns the value of the "venue_id" field in the mutation.
+func (m *VenueMutation) VenueID() (r string, exists bool) {
+	v := m.venue_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVenueID returns the old "venue_id" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldVenueID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVenueID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVenueID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVenueID: %w", err)
+	}
+	return oldValue.VenueID, nil
+}
+
+// ResetVenueID resets all changes to the "venue_id" field.
+func (m *VenueMutation) ResetVenueID() {
+	m.venue_id = nil
+}
+
+// SetType sets the "type" field.
+func (m *VenueMutation) SetType(v venue.Type) {
+	m._type = &v
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *VenueMutation) GetType() (r venue.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldType(ctx context.Context) (v venue.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *VenueMutation) ResetType() {
+	m._type = nil
+}
+
+// SetName sets the "name" field.
+func (m *VenueMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *VenueMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *VenueMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[venue.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *VenueMutation) NameCleared() bool {
+	_, ok := m.clearedFields[venue.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *VenueMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, venue.FieldName)
+}
+
+// SetYearEstablished sets the "year_established" field.
+func (m *VenueMutation) SetYearEstablished(i int) {
+	m.year_established = &i
+	m.addyear_established = nil
+}
+
+// YearEstablished returns the value of the "year_established" field in the mutation.
+func (m *VenueMutation) YearEstablished() (r int, exists bool) {
+	v := m.year_established
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldYearEstablished returns the old "year_established" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldYearEstablished(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldYearEstablished is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldYearEstablished requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldYearEstablished: %w", err)
+	}
+	return oldValue.YearEstablished, nil
+}
+
+// AddYearEstablished adds i to the "year_established" field.
+func (m *VenueMutation) AddYearEstablished(i int) {
+	if m.addyear_established != nil {
+		*m.addyear_established += i
+	} else {
+		m.addyear_established = &i
+	}
+}
+
+// AddedYearEstablished returns the value that was added to the "year_established" field in this mutation.
+func (m *VenueMutation) AddedYearEstablished() (r int, exists bool) {
+	v := m.addyear_established
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearYearEstablished clears the value of the "year_established" field.
+func (m *VenueMutation) ClearYearEstablished() {
+	m.year_established = nil
+	m.addyear_established = nil
+	m.clearedFields[venue.FieldYearEstablished] = struct{}{}
+}
+
+// YearEstablishedCleared returns if the "year_established" field was cleared in this mutation.
+func (m *VenueMutation) YearEstablishedCleared() bool {
+	_, ok := m.clearedFields[venue.FieldYearEstablished]
+	return ok
+}
+
+// ResetYearEstablished resets all changes to the "year_established" field.
+func (m *VenueMutation) ResetYearEstablished() {
+	m.year_established = nil
+	m.addyear_established = nil
+	delete(m.clearedFields, venue.FieldYearEstablished)
+}
+
+// SetCountry sets the "country" field.
+func (m *VenueMutation) SetCountry(s string) {
+	m.country = &s
+}
+
+// Country returns the value of the "country" field in the mutation.
+func (m *VenueMutation) Country() (r string, exists bool) {
+	v := m.country
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCountry returns the old "country" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldCountry(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCountry is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCountry requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCountry: %w", err)
+	}
+	return oldValue.Country, nil
+}
+
+// ClearCountry clears the value of the "country" field.
+func (m *VenueMutation) ClearCountry() {
+	m.country = nil
+	m.clearedFields[venue.FieldCountry] = struct{}{}
+}
+
+// CountryCleared returns if the "country" field was cleared in this mutation.
+func (m *VenueMutation) CountryCleared() bool {
+	_, ok := m.clearedFields[venue.FieldCountry]
+	return ok
+}
+
+// ResetCountry resets all changes to the "country" field.
+func (m *VenueMutation) ResetCountry() {
+	m.country = nil
+	delete(m.clearedFields, venue.FieldCountry)
+}
+
+// SetImage sets the "image" field.
+func (m *VenueMutation) SetImage(s string) {
+	m.image = &s
+}
+
+// Image returns the value of the "image" field in the mutation.
+func (m *VenueMutation) Image() (r string, exists bool) {
+	v := m.image
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldImage returns the old "image" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldImage(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldImage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldImage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldImage: %w", err)
+	}
+	return oldValue.Image, nil
+}
+
+// ClearImage clears the value of the "image" field.
+func (m *VenueMutation) ClearImage() {
+	m.image = nil
+	m.clearedFields[venue.FieldImage] = struct{}{}
+}
+
+// ImageCleared returns if the "image" field was cleared in this mutation.
+func (m *VenueMutation) ImageCleared() bool {
+	_, ok := m.clearedFields[venue.FieldImage]
+	return ok
+}
+
+// ResetImage resets all changes to the "image" field.
+func (m *VenueMutation) ResetImage() {
+	m.image = nil
+	delete(m.clearedFields, venue.FieldImage)
+}
+
+// SetLinks sets the "links" field.
+func (m *VenueMutation) SetLinks(value map[string]string) {
+	m.links = &value
+}
+
+// Links returns the value of the "links" field in the mutation.
+func (m *VenueMutation) Links() (r map[string]string, exists bool) {
+	v := m.links
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLinks returns the old "links" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldLinks(ctx context.Context) (v map[string]string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLinks is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLinks requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLinks: %w", err)
+	}
+	return oldValue.Links, nil
+}
+
+// ClearLinks clears the value of the "links" field.
+func (m *VenueMutation) ClearLinks() {
+	m.links = nil
+	m.clearedFields[venue.FieldLinks] = struct{}{}
+}
+
+// LinksCleared returns if the "links" field was cleared in this mutation.
+func (m *VenueMutation) LinksCleared() bool {
+	_, ok := m.clearedFields[venue.FieldLinks]
+	return ok
+}
+
+// ResetLinks resets all changes to the "links" field.
+func (m *VenueMutation) ResetLinks() {
+	m.links = nil
+	delete(m.clearedFields, venue.FieldLinks)
+}
+
+// SetHasTradingIncentive sets the "has_trading_incentive" field.
+func (m *VenueMutation) SetHasTradingIncentive(b bool) {
+	m.has_trading_incentive = &b
+}
+
+// HasTradingIncentive returns the value of the "has_trading_incentive" field in the mutation.
+func (m *VenueMutation) HasTradingIncentive() (r bool, exists bool) {
+	v := m.has_trading_incentive
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHasTradingIncentive returns the old "has_trading_incentive" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldHasTradingIncentive(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHasTradingIncentive is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHasTradingIncentive requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHasTradingIncentive: %w", err)
+	}
+	return oldValue.HasTradingIncentive, nil
+}
+
+// ClearHasTradingIncentive clears the value of the "has_trading_incentive" field.
+func (m *VenueMutation) ClearHasTradingIncentive() {
+	m.has_trading_incentive = nil
+	m.clearedFields[venue.FieldHasTradingIncentive] = struct{}{}
+}
+
+// HasTradingIncentiveCleared returns if the "has_trading_incentive" field was cleared in this mutation.
+func (m *VenueMutation) HasTradingIncentiveCleared() bool {
+	_, ok := m.clearedFields[venue.FieldHasTradingIncentive]
+	return ok
+}
+
+// ResetHasTradingIncentive resets all changes to the "has_trading_incentive" field.
+func (m *VenueMutation) ResetHasTradingIncentive() {
+	m.has_trading_incentive = nil
+	delete(m.clearedFields, venue.FieldHasTradingIncentive)
+}
+
+// SetCentralized sets the "centralized" field.
+func (m *VenueMutation) SetCentralized(b bool) {
+	m.centralized = &b
+}
+
+// Centralized returns the value of the "centralized" field in the mutation.
+func (m *VenueMutation) Centralized() (r bool, exists bool) {
+	v := m.centralized
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCentralized returns the old "centralized" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldCentralized(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCentralized is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCentralized requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCentralized: %w", err)
+	}
+	return oldValue.Centralized, nil
+}
+
+// ClearCentralized clears the value of the "centralized" field.
+func (m *VenueMutation) ClearCentralized() {
+	m.centralized = nil
+	m.clearedFields[venue.FieldCentralized] = struct{}{}
+}
+
+// CentralizedCleared returns if the "centralized" field was cleared in this mutation.
+func (m *VenueMutation) CentralizedCleared() bool {
+	_, ok := m.clearedFields[venue.FieldCentralized]
+	return ok
+}
+
+// ResetCentralized resets all changes to the "centralized" field.
+func (m *VenueMutation) ResetCentralized() {
+	m.centralized = nil
+	delete(m.clearedFields, venue.FieldCentralized)
+}
+
+// SetPublicNotice sets the "public_notice" field.
+func (m *VenueMutation) SetPublicNotice(s string) {
+	m.public_notice = &s
+}
+
+// PublicNotice returns the value of the "public_notice" field in the mutation.
+func (m *VenueMutation) PublicNotice() (r string, exists bool) {
+	v := m.public_notice
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPublicNotice returns the old "public_notice" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldPublicNotice(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPublicNotice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPublicNotice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPublicNotice: %w", err)
+	}
+	return oldValue.PublicNotice, nil
+}
+
+// ClearPublicNotice clears the value of the "public_notice" field.
+func (m *VenueMutation) ClearPublicNotice() {
+	m.public_notice = nil
+	m.clearedFields[venue.FieldPublicNotice] = struct{}{}
+}
+
+// PublicNoticeCleared returns if the "public_notice" field was cleared in this mutation.
+func (m *VenueMutation) PublicNoticeCleared() bool {
+	_, ok := m.clearedFields[venue.FieldPublicNotice]
+	return ok
+}
+
+// ResetPublicNotice resets all changes to the "public_notice" field.
+func (m *VenueMutation) ResetPublicNotice() {
+	m.public_notice = nil
+	delete(m.clearedFields, venue.FieldPublicNotice)
+}
+
+// SetAlertNotice sets the "alert_notice" field.
+func (m *VenueMutation) SetAlertNotice(s string) {
+	m.alert_notice = &s
+}
+
+// AlertNotice returns the value of the "alert_notice" field in the mutation.
+func (m *VenueMutation) AlertNotice() (r string, exists bool) {
+	v := m.alert_notice
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAlertNotice returns the old "alert_notice" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldAlertNotice(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAlertNotice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAlertNotice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAlertNotice: %w", err)
+	}
+	return oldValue.AlertNotice, nil
+}
+
+// ClearAlertNotice clears the value of the "alert_notice" field.
+func (m *VenueMutation) ClearAlertNotice() {
+	m.alert_notice = nil
+	m.clearedFields[venue.FieldAlertNotice] = struct{}{}
+}
+
+// AlertNoticeCleared returns if the "alert_notice" field was cleared in this mutation.
+func (m *VenueMutation) AlertNoticeCleared() bool {
+	_, ok := m.clearedFields[venue.FieldAlertNotice]
+	return ok
+}
+
+// ResetAlertNotice resets all changes to the "alert_notice" field.
+func (m *VenueMutation) ResetAlertNotice() {
+	m.alert_notice = nil
+	delete(m.clearedFields, venue.FieldAlertNotice)
+}
+
+// SetTrustScore sets the "trust_score" field.
+func (m *VenueMutation) SetTrustScore(i int) {
+	m.trust_score = &i
+	m.addtrust_score = nil
+}
+
+// TrustScore returns the value of the "trust_score" field in the mutation.
+func (m *VenueMutation) TrustScore() (r int, exists bool) {
+	v := m.trust_score
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTrustScore returns the old "trust_score" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldTrustScore(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTrustScore is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTrustScore requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTrustScore: %w", err)
+	}
+	return oldValue.TrustScore, nil
+}
+
+// AddTrustScore adds i to the "trust_score" field.
+func (m *VenueMutation) AddTrustScore(i int) {
+	if m.addtrust_score != nil {
+		*m.addtrust_score += i
+	} else {
+		m.addtrust_score = &i
+	}
+}
+
+// AddedTrustScore returns the value that was added to the "trust_score" field in this mutation.
+func (m *VenueMutation) AddedTrustScore() (r int, exists bool) {
+	v := m.addtrust_score
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTrustScore clears the value of the "trust_score" field.
+func (m *VenueMutation) ClearTrustScore() {
+	m.trust_score = nil
+	m.addtrust_score = nil
+	m.clearedFields[venue.FieldTrustScore] = struct{}{}
+}
+
+// TrustScoreCleared returns if the "trust_score" field was cleared in this mutation.
+func (m *VenueMutation) TrustScoreCleared() bool {
+	_, ok := m.clearedFields[venue.FieldTrustScore]
+	return ok
+}
+
+// ResetTrustScore resets all changes to the "trust_score" field.
+func (m *VenueMutation) ResetTrustScore() {
+	m.trust_score = nil
+	m.addtrust_score = nil
+	delete(m.clearedFields, venue.FieldTrustScore)
+}
+
+// SetTrustScoreRank sets the "trust_score_rank" field.
+func (m *VenueMutation) SetTrustScoreRank(i int) {
+	m.trust_score_rank = &i
+	m.addtrust_score_rank = nil
+}
+
+// TrustScoreRank returns the value of the "trust_score_rank" field in the mutation.
+func (m *VenueMutation) TrustScoreRank() (r int, exists bool) {
+	v := m.trust_score_rank
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTrustScoreRank returns the old "trust_score_rank" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldTrustScoreRank(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTrustScoreRank is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTrustScoreRank requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTrustScoreRank: %w", err)
+	}
+	return oldValue.TrustScoreRank, nil
+}
+
+// AddTrustScoreRank adds i to the "trust_score_rank" field.
+func (m *VenueMutation) AddTrustScoreRank(i int) {
+	if m.addtrust_score_rank != nil {
+		*m.addtrust_score_rank += i
+	} else {
+		m.addtrust_score_rank = &i
+	}
+}
+
+// AddedTrustScoreRank returns the value that was added to the "trust_score_rank" field in this mutation.
+func (m *VenueMutation) AddedTrustScoreRank() (r int, exists bool) {
+	v := m.addtrust_score_rank
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTrustScoreRank clears the value of the "trust_score_rank" field.
+func (m *VenueMutation) ClearTrustScoreRank() {
+	m.trust_score_rank = nil
+	m.addtrust_score_rank = nil
+	m.clearedFields[venue.FieldTrustScoreRank] = struct{}{}
+}
+
+// TrustScoreRankCleared returns if the "trust_score_rank" field was cleared in this mutation.
+func (m *VenueMutation) TrustScoreRankCleared() bool {
+	_, ok := m.clearedFields[venue.FieldTrustScoreRank]
+	return ok
+}
+
+// ResetTrustScoreRank resets all changes to the "trust_score_rank" field.
+func (m *VenueMutation) ResetTrustScoreRank() {
+	m.trust_score_rank = nil
+	m.addtrust_score_rank = nil
+	delete(m.clearedFields, venue.FieldTrustScoreRank)
+}
+
+// SetTradeVolume24hBtc sets the "trade_volume_24h_btc" field.
+func (m *VenueMutation) SetTradeVolume24hBtc(f float64) {
+	m.trade_volume_24h_btc = &f
+	m.addtrade_volume_24h_btc = nil
+}
+
+// TradeVolume24hBtc returns the value of the "trade_volume_24h_btc" field in the mutation.
+func (m *VenueMutation) TradeVolume24hBtc() (r float64, exists bool) {
+	v := m.trade_volume_24h_btc
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTradeVolume24hBtc returns the old "trade_volume_24h_btc" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldTradeVolume24hBtc(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTradeVolume24hBtc is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTradeVolume24hBtc requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTradeVolume24hBtc: %w", err)
+	}
+	return oldValue.TradeVolume24hBtc, nil
+}
+
+// AddTradeVolume24hBtc adds f to the "trade_volume_24h_btc" field.
+func (m *VenueMutation) AddTradeVolume24hBtc(f float64) {
+	if m.addtrade_volume_24h_btc != nil {
+		*m.addtrade_volume_24h_btc += f
+	} else {
+		m.addtrade_volume_24h_btc = &f
+	}
+}
+
+// AddedTradeVolume24hBtc returns the value that was added to the "trade_volume_24h_btc" field in this mutation.
+func (m *VenueMutation) AddedTradeVolume24hBtc() (r float64, exists bool) {
+	v := m.addtrade_volume_24h_btc
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTradeVolume24hBtc clears the value of the "trade_volume_24h_btc" field.
+func (m *VenueMutation) ClearTradeVolume24hBtc() {
+	m.trade_volume_24h_btc = nil
+	m.addtrade_volume_24h_btc = nil
+	m.clearedFields[venue.FieldTradeVolume24hBtc] = struct{}{}
+}
+
+// TradeVolume24hBtcCleared returns if the "trade_volume_24h_btc" field was cleared in this mutation.
+func (m *VenueMutation) TradeVolume24hBtcCleared() bool {
+	_, ok := m.clearedFields[venue.FieldTradeVolume24hBtc]
+	return ok
+}
+
+// ResetTradeVolume24hBtc resets all changes to the "trade_volume_24h_btc" field.
+func (m *VenueMutation) ResetTradeVolume24hBtc() {
+	m.trade_volume_24h_btc = nil
+	m.addtrade_volume_24h_btc = nil
+	delete(m.clearedFields, venue.FieldTradeVolume24hBtc)
+}
+
+// SetTradeVolume24hBtcNormalized sets the "trade_volume_24h_btc_normalized" field.
+func (m *VenueMutation) SetTradeVolume24hBtcNormalized(f float64) {
+	m.trade_volume_24h_btc_normalized = &f
+	m.addtrade_volume_24h_btc_normalized = nil
+}
+
+// TradeVolume24hBtcNormalized returns the value of the "trade_volume_24h_btc_normalized" field in the mutation.
+func (m *VenueMutation) TradeVolume24hBtcNormalized() (r float64, exists bool) {
+	v := m.trade_volume_24h_btc_normalized
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTradeVolume24hBtcNormalized returns the old "trade_volume_24h_btc_normalized" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldTradeVolume24hBtcNormalized(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTradeVolume24hBtcNormalized is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTradeVolume24hBtcNormalized requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTradeVolume24hBtcNormalized: %w", err)
+	}
+	return oldValue.TradeVolume24hBtcNormalized, nil
+}
+
+// AddTradeVolume24hBtcNormalized adds f to the "trade_volume_24h_btc_normalized" field.
+func (m *VenueMutation) AddTradeVolume24hBtcNormalized(f float64) {
+	if m.addtrade_volume_24h_btc_normalized != nil {
+		*m.addtrade_volume_24h_btc_normalized += f
+	} else {
+		m.addtrade_volume_24h_btc_normalized = &f
+	}
+}
+
+// AddedTradeVolume24hBtcNormalized returns the value that was added to the "trade_volume_24h_btc_normalized" field in this mutation.
+func (m *VenueMutation) AddedTradeVolume24hBtcNormalized() (r float64, exists bool) {
+	v := m.addtrade_volume_24h_btc_normalized
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTradeVolume24hBtcNormalized clears the value of the "trade_volume_24h_btc_normalized" field.
+func (m *VenueMutation) ClearTradeVolume24hBtcNormalized() {
+	m.trade_volume_24h_btc_normalized = nil
+	m.addtrade_volume_24h_btc_normalized = nil
+	m.clearedFields[venue.FieldTradeVolume24hBtcNormalized] = struct{}{}
+}
+
+// TradeVolume24hBtcNormalizedCleared returns if the "trade_volume_24h_btc_normalized" field was cleared in this mutation.
+func (m *VenueMutation) TradeVolume24hBtcNormalizedCleared() bool {
+	_, ok := m.clearedFields[venue.FieldTradeVolume24hBtcNormalized]
+	return ok
+}
+
+// ResetTradeVolume24hBtcNormalized resets all changes to the "trade_volume_24h_btc_normalized" field.
+func (m *VenueMutation) ResetTradeVolume24hBtcNormalized() {
+	m.trade_volume_24h_btc_normalized = nil
+	m.addtrade_volume_24h_btc_normalized = nil
+	delete(m.clearedFields, venue.FieldTradeVolume24hBtcNormalized)
+}
+
+// SetMakerFee sets the "maker_fee" field.
+func (m *VenueMutation) SetMakerFee(f float64) {
+	m.maker_fee = &f
+	m.addmaker_fee = nil
+}
+
+// MakerFee returns the value of the "maker_fee" field in the mutation.
+func (m *VenueMutation) MakerFee() (r float64, exists bool) {
+	v := m.maker_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMakerFee returns the old "maker_fee" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldMakerFee(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMakerFee is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMakerFee requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMakerFee: %w", err)
+	}
+	return oldValue.MakerFee, nil
+}
+
+// AddMakerFee adds f to the "maker_fee" field.
+func (m *VenueMutation) AddMakerFee(f float64) {
+	if m.addmaker_fee != nil {
+		*m.addmaker_fee += f
+	} else {
+		m.addmaker_fee = &f
+	}
+}
+
+// AddedMakerFee returns the value that was added to the "maker_fee" field in this mutation.
+func (m *VenueMutation) AddedMakerFee() (r float64, exists bool) {
+	v := m.addmaker_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMakerFee clears the value of the "maker_fee" field.
+func (m *VenueMutation) ClearMakerFee() {
+	m.maker_fee = nil
+	m.addmaker_fee = nil
+	m.clearedFields[venue.FieldMakerFee] = struct{}{}
+}
+
+// MakerFeeCleared returns if the "maker_fee" field was cleared in this mutation.
+func (m *VenueMutation) MakerFeeCleared() bool {
+	_, ok := m.clearedFields[venue.FieldMakerFee]
+	return ok
+}
+
+// ResetMakerFee resets all changes to the "maker_fee" field.
+func (m *VenueMutation) ResetMakerFee() {
+	m.maker_fee = nil
+	m.addmaker_fee = nil
+	delete(m.clearedFields, venue.FieldMakerFee)
+}
+
+// SetTakerFee sets the "taker_fee" field.
+func (m *VenueMutation) SetTakerFee(f float64) {
+	m.taker_fee = &f
+	m.addtaker_fee = nil
+}
+
+// TakerFee returns the value of the "taker_fee" field in the mutation.
+func (m *VenueMutation) TakerFee() (r float64, exists bool) {
+	v := m.taker_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTakerFee returns the old "taker_fee" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldTakerFee(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTakerFee is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTakerFee requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTakerFee: %w", err)
+	}
+	return oldValue.TakerFee, nil
+}
+
+// AddTakerFee adds f to the "taker_fee" field.
+func (m *VenueMutation) AddTakerFee(f float64) {
+	if m.addtaker_fee != nil {
+		*m.addtaker_fee += f
+	} else {
+		m.addtaker_fee = &f
+	}
+}
+
+// AddedTakerFee returns the value that was added to the "taker_fee" field in this mutation.
+func (m *VenueMutation) AddedTakerFee() (r float64, exists bool) {
+	v := m.addtaker_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTakerFee clears the value of the "taker_fee" field.
+func (m *VenueMutation) ClearTakerFee() {
+	m.taker_fee = nil
+	m.addtaker_fee = nil
+	m.clearedFields[venue.FieldTakerFee] = struct{}{}
+}
+
+// TakerFeeCleared returns if the "taker_fee" field was cleared in this mutation.
+func (m *VenueMutation) TakerFeeCleared() bool {
+	_, ok := m.clearedFields[venue.FieldTakerFee]
+	return ok
+}
+
+// ResetTakerFee resets all changes to the "taker_fee" field.
+func (m *VenueMutation) ResetTakerFee() {
+	m.taker_fee = nil
+	m.addtaker_fee = nil
+	delete(m.clearedFields, venue.FieldTakerFee)
+}
+
+// SetSpreadFee sets the "spread_fee" field.
+func (m *VenueMutation) SetSpreadFee(b bool) {
+	m.spread_fee = &b
+}
+
+// SpreadFee returns the value of the "spread_fee" field in the mutation.
+func (m *VenueMutation) SpreadFee() (r bool, exists bool) {
+	v := m.spread_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSpreadFee returns the old "spread_fee" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldSpreadFee(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSpreadFee is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSpreadFee requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSpreadFee: %w", err)
+	}
+	return oldValue.SpreadFee, nil
+}
+
+// ClearSpreadFee clears the value of the "spread_fee" field.
+func (m *VenueMutation) ClearSpreadFee() {
+	m.spread_fee = nil
+	m.clearedFields[venue.FieldSpreadFee] = struct{}{}
+}
+
+// SpreadFeeCleared returns if the "spread_fee" field was cleared in this mutation.
+func (m *VenueMutation) SpreadFeeCleared() bool {
+	_, ok := m.clearedFields[venue.FieldSpreadFee]
+	return ok
+}
+
+// ResetSpreadFee resets all changes to the "spread_fee" field.
+func (m *VenueMutation) ResetSpreadFee() {
+	m.spread_fee = nil
+	delete(m.clearedFields, venue.FieldSpreadFee)
+}
+
+// SetSupportAPI sets the "support_api" field.
+func (m *VenueMutation) SetSupportAPI(b bool) {
+	m.support_api = &b
+}
+
+// SupportAPI returns the value of the "support_api" field in the mutation.
+func (m *VenueMutation) SupportAPI() (r bool, exists bool) {
+	v := m.support_api
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSupportAPI returns the old "support_api" field's value of the Venue entity.
+// If the Venue object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VenueMutation) OldSupportAPI(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSupportAPI is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSupportAPI requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSupportAPI: %w", err)
+	}
+	return oldValue.SupportAPI, nil
+}
+
+// ClearSupportAPI clears the value of the "support_api" field.
+func (m *VenueMutation) ClearSupportAPI() {
+	m.support_api = nil
+	m.clearedFields[venue.FieldSupportAPI] = struct{}{}
+}
+
+// SupportAPICleared returns if the "support_api" field was cleared in this mutation.
+func (m *VenueMutation) SupportAPICleared() bool {
+	_, ok := m.clearedFields[venue.FieldSupportAPI]
+	return ok
+}
+
+// ResetSupportAPI resets all changes to the "support_api" field.
+func (m *VenueMutation) ResetSupportAPI() {
+	m.support_api = nil
+	delete(m.clearedFields, venue.FieldSupportAPI)
+}
+
+// AddTickerIDs adds the "ticker" edge to the Ticker entity by ids.
+func (m *VenueMutation) AddTickerIDs(ids ...int) {
+	if m.ticker == nil {
+		m.ticker = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.ticker[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTicker clears the "ticker" edge to the Ticker entity.
+func (m *VenueMutation) ClearTicker() {
+	m.clearedticker = true
+}
+
+// TickerCleared reports if the "ticker" edge to the Ticker entity was cleared.
+func (m *VenueMutation) TickerCleared() bool {
+	return m.clearedticker
+}
+
+// RemoveTickerIDs removes the "ticker" edge to the Ticker entity by IDs.
+func (m *VenueMutation) RemoveTickerIDs(ids ...int) {
+	if m.removedticker == nil {
+		m.removedticker = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.ticker, ids[i])
+		m.removedticker[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTicker returns the removed IDs of the "ticker" edge to the Ticker entity.
+func (m *VenueMutation) RemovedTickerIDs() (ids []int) {
+	for id := range m.removedticker {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TickerIDs returns the "ticker" edge IDs in the mutation.
+func (m *VenueMutation) TickerIDs() (ids []int) {
+	for id := range m.ticker {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTicker resets all changes to the "ticker" edge.
+func (m *VenueMutation) ResetTicker() {
+	m.ticker = nil
+	m.clearedticker = false
+	m.removedticker = nil
+}
+
+// AddTradingPairIDs adds the "trading_pair" edge to the TradingPair entity by ids.
+func (m *VenueMutation) AddTradingPairIDs(ids ...int) {
+	if m.trading_pair == nil {
+		m.trading_pair = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.trading_pair[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTradingPair clears the "trading_pair" edge to the TradingPair entity.
+func (m *VenueMutation) ClearTradingPair() {
+	m.clearedtrading_pair = true
+}
+
+// TradingPairCleared reports if the "trading_pair" edge to the TradingPair entity was cleared.
+func (m *VenueMutation) TradingPairCleared() bool {
+	return m.clearedtrading_pair
+}
+
+// RemoveTradingPairIDs removes the "trading_pair" edge to the TradingPair entity by IDs.
+func (m *VenueMutation) RemoveTradingPairIDs(ids ...int) {
+	if m.removedtrading_pair == nil {
+		m.removedtrading_pair = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.trading_pair, ids[i])
+		m.removedtrading_pair[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTradingPair returns the removed IDs of the "trading_pair" edge to the TradingPair entity.
+func (m *VenueMutation) RemovedTradingPairIDs() (ids []int) {
+	for id := range m.removedtrading_pair {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TradingPairIDs returns the "trading_pair" edge IDs in the mutation.
+func (m *VenueMutation) TradingPairIDs() (ids []int) {
+	for id := range m.trading_pair {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTradingPair resets all changes to the "trading_pair" edge.
+func (m *VenueMutation) ResetTradingPair() {
+	m.trading_pair = nil
+	m.clearedtrading_pair = false
+	m.removedtrading_pair = nil
+}
+
+// AddMarketIDs adds the "market" edge to the Market entity by ids.
+func (m *VenueMutation) AddMarketIDs(ids ...int) {
+	if m.market == nil {
+		m.market = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.market[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMarket clears the "market" edge to the Market entity.
+func (m *VenueMutation) ClearMarket() {
+	m.clearedmarket = true
+}
+
+// MarketCleared reports if the "market" edge to the Market entity was cleared.
+func (m *VenueMutation) MarketCleared() bool {
+	return m.clearedmarket
+}
+
+// RemoveMarketIDs removes the "market" edge to the Market entity by IDs.
+func (m *VenueMutation) RemoveMarketIDs(ids ...int) {
+	if m.removedmarket == nil {
+		m.removedmarket = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.market, ids[i])
+		m.removedmarket[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMarket returns the removed IDs of the "market" edge to the Market entity.
+func (m *VenueMutation) RemovedMarketIDs() (ids []int) {
+	for id := range m.removedmarket {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MarketIDs returns the "market" edge IDs in the mutation.
+func (m *VenueMutation) MarketIDs() (ids []int) {
+	for id := range m.market {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMarket resets all changes to the "market" edge.
+func (m *VenueMutation) ResetMarket() {
+	m.market = nil
+	m.clearedmarket = false
+	m.removedmarket = nil
+}
+
+// Where appends a list predicates to the VenueMutation builder.
+func (m *VenueMutation) Where(ps ...predicate.Venue) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *VenueMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Venue).
+func (m *VenueMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *VenueMutation) Fields() []string {
+	fields := make([]string, 0, 19)
+	if m.venue_id != nil {
+		fields = append(fields, venue.FieldVenueID)
+	}
+	if m._type != nil {
+		fields = append(fields, venue.FieldType)
+	}
+	if m.name != nil {
+		fields = append(fields, venue.FieldName)
+	}
+	if m.year_established != nil {
+		fields = append(fields, venue.FieldYearEstablished)
+	}
+	if m.country != nil {
+		fields = append(fields, venue.FieldCountry)
+	}
+	if m.image != nil {
+		fields = append(fields, venue.FieldImage)
+	}
+	if m.links != nil {
+		fields = append(fields, venue.FieldLinks)
+	}
+	if m.has_trading_incentive != nil {
+		fields = append(fields, venue.FieldHasTradingIncentive)
+	}
+	if m.centralized != nil {
+		fields = append(fields, venue.FieldCentralized)
+	}
+	if m.public_notice != nil {
+		fields = append(fields, venue.FieldPublicNotice)
+	}
+	if m.alert_notice != nil {
+		fields = append(fields, venue.FieldAlertNotice)
+	}
+	if m.trust_score != nil {
+		fields = append(fields, venue.FieldTrustScore)
+	}
+	if m.trust_score_rank != nil {
+		fields = append(fields, venue.FieldTrustScoreRank)
+	}
+	if m.trade_volume_24h_btc != nil {
+		fields = append(fields, venue.FieldTradeVolume24hBtc)
+	}
+	if m.trade_volume_24h_btc_normalized != nil {
+		fields = append(fields, venue.FieldTradeVolume24hBtcNormalized)
+	}
+	if m.maker_fee != nil {
+		fields = append(fields, venue.FieldMakerFee)
+	}
+	if m.taker_fee != nil {
+		fields = append(fields, venue.FieldTakerFee)
+	}
+	if m.spread_fee != nil {
+		fields = append(fields, venue.FieldSpreadFee)
+	}
+	if m.support_api != nil {
+		fields = append(fields, venue.FieldSupportAPI)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *VenueMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case venue.FieldVenueID:
+		return m.VenueID()
+	case venue.FieldType:
+		return m.GetType()
+	case venue.FieldName:
+		return m.Name()
+	case venue.FieldYearEstablished:
+		return m.YearEstablished()
+	case venue.FieldCountry:
+		return m.Country()
+	case venue.FieldImage:
+		return m.Image()
+	case venue.FieldLinks:
+		return m.Links()
+	case venue.FieldHasTradingIncentive:
+		return m.HasTradingIncentive()
+	case venue.FieldCentralized:
+		return m.Centralized()
+	case venue.FieldPublicNotice:
+		return m.PublicNotice()
+	case venue.FieldAlertNotice:
+		return m.AlertNotice()
+	case venue.FieldTrustScore:
+		return m.TrustScore()
+	case venue.FieldTrustScoreRank:
+		return m.TrustScoreRank()
+	case venue.FieldTradeVolume24hBtc:
+		return m.TradeVolume24hBtc()
+	case venue.FieldTradeVolume24hBtcNormalized:
+		return m.TradeVolume24hBtcNormalized()
+	case venue.FieldMakerFee:
+		return m.MakerFee()
+	case venue.FieldTakerFee:
+		return m.TakerFee()
+	case venue.FieldSpreadFee:
+		return m.SpreadFee()
+	case venue.FieldSupportAPI:
+		return m.SupportAPI()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *VenueMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case venue.FieldVenueID:
+		return m.OldVenueID(ctx)
+	case venue.FieldType:
+		return m.OldType(ctx)
+	case venue.FieldName:
+		return m.OldName(ctx)
+	case venue.FieldYearEstablished:
+		return m.OldYearEstablished(ctx)
+	case venue.FieldCountry:
+		return m.OldCountry(ctx)
+	case venue.FieldImage:
+		return m.OldImage(ctx)
+	case venue.FieldLinks:
+		return m.OldLinks(ctx)
+	case venue.FieldHasTradingIncentive:
+		return m.OldHasTradingIncentive(ctx)
+	case venue.FieldCentralized:
+		return m.OldCentralized(ctx)
+	case venue.FieldPublicNotice:
+		return m.OldPublicNotice(ctx)
+	case venue.FieldAlertNotice:
+		return m.OldAlertNotice(ctx)
+	case venue.FieldTrustScore:
+		return m.OldTrustScore(ctx)
+	case venue.FieldTrustScoreRank:
+		return m.OldTrustScoreRank(ctx)
+	case venue.FieldTradeVolume24hBtc:
+		return m.OldTradeVolume24hBtc(ctx)
+	case venue.FieldTradeVolume24hBtcNormalized:
+		return m.OldTradeVolume24hBtcNormalized(ctx)
+	case venue.FieldMakerFee:
+		return m.OldMakerFee(ctx)
+	case venue.FieldTakerFee:
+		return m.OldTakerFee(ctx)
+	case venue.FieldSpreadFee:
+		return m.OldSpreadFee(ctx)
+	case venue.FieldSupportAPI:
+		return m.OldSupportAPI(ctx)
+	}
+	return nil, fmt.Errorf("unknown Venue field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *VenueMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case venue.FieldVenueID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVenueID(v)
+		return nil
+	case venue.FieldType:
+		v, ok := value.(venue.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case venue.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case venue.FieldYearEstablished:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetYearEstablished(v)
+		return nil
+	case venue.FieldCountry:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCountry(v)
+		return nil
+	case venue.FieldImage:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetImage(v)
+		return nil
+	case venue.FieldLinks:
+		v, ok := value.(map[string]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLinks(v)
+		return nil
+	case venue.FieldHasTradingIncentive:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHasTradingIncentive(v)
+		return nil
+	case venue.FieldCentralized:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCentralized(v)
+		return nil
+	case venue.FieldPublicNotice:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPublicNotice(v)
+		return nil
+	case venue.FieldAlertNotice:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAlertNotice(v)
+		return nil
+	case venue.FieldTrustScore:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTrustScore(v)
+		return nil
+	case venue.FieldTrustScoreRank:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTrustScoreRank(v)
+		return nil
+	case venue.FieldTradeVolume24hBtc:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTradeVolume24hBtc(v)
+		return nil
+	case venue.FieldTradeVolume24hBtcNormalized:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTradeVolume24hBtcNormalized(v)
+		return nil
+	case venue.FieldMakerFee:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMakerFee(v)
+		return nil
+	case venue.FieldTakerFee:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTakerFee(v)
+		return nil
+	case venue.FieldSpreadFee:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSpreadFee(v)
+		return nil
+	case venue.FieldSupportAPI:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSupportAPI(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Venue field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *VenueMutation) AddedFields() []string {
+	var fields []string
+	if m.addyear_established != nil {
+		fields = append(fields, venue.FieldYearEstablished)
+	}
+	if m.addtrust_score != nil {
+		fields = append(fields, venue.FieldTrustScore)
+	}
+	if m.addtrust_score_rank != nil {
+		fields = append(fields, venue.FieldTrustScoreRank)
+	}
+	if m.addtrade_volume_24h_btc != nil {
+		fields = append(fields, venue.FieldTradeVolume24hBtc)
+	}
+	if m.addtrade_volume_24h_btc_normalized != nil {
+		fields = append(fields, venue.FieldTradeVolume24hBtcNormalized)
+	}
+	if m.addmaker_fee != nil {
+		fields = append(fields, venue.FieldMakerFee)
+	}
+	if m.addtaker_fee != nil {
+		fields = append(fields, venue.FieldTakerFee)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *VenueMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case venue.FieldYearEstablished:
+		return m.AddedYearEstablished()
+	case venue.FieldTrustScore:
+		return m.AddedTrustScore()
+	case venue.FieldTrustScoreRank:
+		return m.AddedTrustScoreRank()
+	case venue.FieldTradeVolume24hBtc:
+		return m.AddedTradeVolume24hBtc()
+	case venue.FieldTradeVolume24hBtcNormalized:
+		return m.AddedTradeVolume24hBtcNormalized()
+	case venue.FieldMakerFee:
+		return m.AddedMakerFee()
+	case venue.FieldTakerFee:
+		return m.AddedTakerFee()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *VenueMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case venue.FieldYearEstablished:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddYearEstablished(v)
+		return nil
+	case venue.FieldTrustScore:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTrustScore(v)
+		return nil
+	case venue.FieldTrustScoreRank:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTrustScoreRank(v)
+		return nil
+	case venue.FieldTradeVolume24hBtc:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTradeVolume24hBtc(v)
+		return nil
+	case venue.FieldTradeVolume24hBtcNormalized:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTradeVolume24hBtcNormalized(v)
+		return nil
+	case venue.FieldMakerFee:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMakerFee(v)
+		return nil
+	case venue.FieldTakerFee:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTakerFee(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Venue numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *VenueMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(venue.FieldName) {
+		fields = append(fields, venue.FieldName)
+	}
+	if m.FieldCleared(venue.FieldYearEstablished) {
+		fields = append(fields, venue.FieldYearEstablished)
+	}
+	if m.FieldCleared(venue.FieldCountry) {
+		fields = append(fields, venue.FieldCountry)
+	}
+	if m.FieldCleared(venue.FieldImage) {
+		fields = append(fields, venue.FieldImage)
+	}
+	if m.FieldCleared(venue.FieldLinks) {
+		fields = append(fields, venue.FieldLinks)
+	}
+	if m.FieldCleared(venue.FieldHasTradingIncentive) {
+		fields = append(fields, venue.FieldHasTradingIncentive)
+	}
+	if m.FieldCleared(venue.FieldCentralized) {
+		fields = append(fields, venue.FieldCentralized)
+	}
+	if m.FieldCleared(venue.FieldPublicNotice) {
+		fields = append(fields, venue.FieldPublicNotice)
+	}
+	if m.FieldCleared(venue.FieldAlertNotice) {
+		fields = append(fields, venue.FieldAlertNotice)
+	}
+	if m.FieldCleared(venue.FieldTrustScore) {
+		fields = append(fields, venue.FieldTrustScore)
+	}
+	if m.FieldCleared(venue.FieldTrustScoreRank) {
+		fields = append(fields, venue.FieldTrustScoreRank)
+	}
+	if m.FieldCleared(venue.FieldTradeVolume24hBtc) {
+		fields = append(fields, venue.FieldTradeVolume24hBtc)
+	}
+	if m.FieldCleared(venue.FieldTradeVolume24hBtcNormalized) {
+		fields = append(fields, venue.FieldTradeVolume24hBtcNormalized)
+	}
+	if m.FieldCleared(venue.FieldMakerFee) {
+		fields = append(fields, venue.FieldMakerFee)
+	}
+	if m.FieldCleared(venue.FieldTakerFee) {
+		fields = append(fields, venue.FieldTakerFee)
+	}
+	if m.FieldCleared(venue.FieldSpreadFee) {
+		fields = append(fields, venue.FieldSpreadFee)
+	}
+	if m.FieldCleared(venue.FieldSupportAPI) {
+		fields = append(fields, venue.FieldSupportAPI)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *VenueMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *VenueMutation) ClearField(name string) error {
+	switch name {
+	case venue.FieldName:
+		m.ClearName()
+		return nil
+	case venue.FieldYearEstablished:
+		m.ClearYearEstablished()
+		return nil
+	case venue.FieldCountry:
+		m.ClearCountry()
+		return nil
+	case venue.FieldImage:
+		m.ClearImage()
+		return nil
+	case venue.FieldLinks:
+		m.ClearLinks()
+		return nil
+	case venue.FieldHasTradingIncentive:
+		m.ClearHasTradingIncentive()
+		return nil
+	case venue.FieldCentralized:
+		m.ClearCentralized()
+		return nil
+	case venue.FieldPublicNotice:
+		m.ClearPublicNotice()
+		return nil
+	case venue.FieldAlertNotice:
+		m.ClearAlertNotice()
+		return nil
+	case venue.FieldTrustScore:
+		m.ClearTrustScore()
+		return nil
+	case venue.FieldTrustScoreRank:
+		m.ClearTrustScoreRank()
+		return nil
+	case venue.FieldTradeVolume24hBtc:
+		m.ClearTradeVolume24hBtc()
+		return nil
+	case venue.FieldTradeVolume24hBtcNormalized:
+		m.ClearTradeVolume24hBtcNormalized()
+		return nil
+	case venue.FieldMakerFee:
+		m.ClearMakerFee()
+		return nil
+	case venue.FieldTakerFee:
+		m.ClearTakerFee()
+		return nil
+	case venue.FieldSpreadFee:
+		m.ClearSpreadFee()
+		return nil
+	case venue.FieldSupportAPI:
+		m.ClearSupportAPI()
+		return nil
+	}
+	return fmt.Errorf("unknown Venue nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *VenueMutation) ResetField(name string) error {
+	switch name {
+	case venue.FieldVenueID:
+		m.ResetVenueID()
+		return nil
+	case venue.FieldType:
+		m.ResetType()
+		return nil
+	case venue.FieldName:
+		m.ResetName()
+		return nil
+	case venue.FieldYearEstablished:
+		m.ResetYearEstablished()
+		return nil
+	case venue.FieldCountry:
+		m.ResetCountry()
+		return nil
+	case venue.FieldImage:
+		m.ResetImage()
+		return nil
+	case venue.FieldLinks:
+		m.ResetLinks()
+		return nil
+	case venue.FieldHasTradingIncentive:
+		m.ResetHasTradingIncentive()
+		return nil
+	case venue.FieldCentralized:
+		m.ResetCentralized()
+		return nil
+	case venue.FieldPublicNotice:
+		m.ResetPublicNotice()
+		return nil
+	case venue.FieldAlertNotice:
+		m.ResetAlertNotice()
+		return nil
+	case venue.FieldTrustScore:
+		m.ResetTrustScore()
+		return nil
+	case venue.FieldTrustScoreRank:
+		m.ResetTrustScoreRank()
+		return nil
+	case venue.FieldTradeVolume24hBtc:
+		m.ResetTradeVolume24hBtc()
+		return nil
+	case venue.FieldTradeVolume24hBtcNormalized:
+		m.ResetTradeVolume24hBtcNormalized()
+		return nil
+	case venue.FieldMakerFee:
+		m.ResetMakerFee()
+		return nil
+	case venue.FieldTakerFee:
+		m.ResetTakerFee()
+		return nil
+	case venue.FieldSpreadFee:
+		m.ResetSpreadFee()
+		return nil
+	case venue.FieldSupportAPI:
+		m.ResetSupportAPI()
+		return nil
+	}
+	return fmt.Errorf("unknown Venue field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *VenueMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.ticker != nil {
+		edges = append(edges, venue.EdgeTicker)
+	}
+	if m.trading_pair != nil {
+		edges = append(edges, venue.EdgeTradingPair)
+	}
+	if m.market != nil {
+		edges = append(edges, venue.EdgeMarket)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *VenueMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case venue.EdgeTicker:
+		ids := make([]ent.Value, 0, len(m.ticker))
+		for id := range m.ticker {
+			ids = append(ids, id)
+		}
+		return ids
+	case venue.EdgeTradingPair:
+		ids := make([]ent.Value, 0, len(m.trading_pair))
+		for id := range m.trading_pair {
+			ids = append(ids, id)
+		}
+		return ids
+	case venue.EdgeMarket:
+		ids := make([]ent.Value, 0, len(m.market))
+		for id := range m.market {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *VenueMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.removedticker != nil {
+		edges = append(edges, venue.EdgeTicker)
+	}
+	if m.removedtrading_pair != nil {
+		edges = append(edges, venue.EdgeTradingPair)
+	}
+	if m.removedmarket != nil {
+		edges = append(edges, venue.EdgeMarket)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *VenueMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case venue.EdgeTicker:
+		ids := make([]ent.Value, 0, len(m.removedticker))
+		for id := range m.removedticker {
+			ids = append(ids, id)
+		}
+		return ids
+	case venue.EdgeTradingPair:
+		ids := make([]ent.Value, 0, len(m.removedtrading_pair))
+		for id := range m.removedtrading_pair {
+			ids = append(ids, id)
+		}
+		return ids
+	case venue.EdgeMarket:
+		ids := make([]ent.Value, 0, len(m.removedmarket))
+		for id := range m.removedmarket {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *VenueMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedticker {
+		edges = append(edges, venue.EdgeTicker)
+	}
+	if m.clearedtrading_pair {
+		edges = append(edges, venue.EdgeTradingPair)
+	}
+	if m.clearedmarket {
+		edges = append(edges, venue.EdgeMarket)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *VenueMutation) EdgeCleared(name string) bool {
+	switch name {
+	case venue.EdgeTicker:
+		return m.clearedticker
+	case venue.EdgeTradingPair:
+		return m.clearedtrading_pair
+	case venue.EdgeMarket:
+		return m.clearedmarket
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *VenueMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Venue unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *VenueMutation) ResetEdge(name string) error {
+	switch name {
+	case venue.EdgeTicker:
+		m.ResetTicker()
+		return nil
+	case venue.EdgeTradingPair:
+		m.ResetTradingPair()
+		return nil
+	case venue.EdgeMarket:
+		m.ResetMarket()
+		return nil
+	}
+	return fmt.Errorf("unknown Venue edge %s", name)
 }

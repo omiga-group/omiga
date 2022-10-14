@@ -78,11 +78,11 @@ func NewCryptoTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	exchangeRepository, err := repositories.NewExchangeRepository(logger, entgoClient)
+	venueRepository, err := repositories.NewVenueRepository(logger, entgoClient)
 	if err != nil {
 		return nil, err
 	}
-	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, currencyRepository, exchangeRepository)
+	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, currencyRepository, venueRepository)
 	if err != nil {
 		return nil, err
 	}

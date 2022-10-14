@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+
+	venuerepo "github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 )
 
 type Market struct {
@@ -37,9 +39,10 @@ type Ticker struct {
 	Volume                 float64
 }
 
-type Exchange struct {
+type Venue struct {
 	Id                          int
-	ExchangeId                  string
+	VenueId                     string
+	Type                        venuerepo.Type
 	Name                        string
 	YearEstablished             int
 	Country                     string

@@ -33,7 +33,7 @@ func (TradingPair) Fields() []ent.Field {
 // Edges of the TradingPair.
 func (TradingPair) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("exchange", Exchange.Type).
+		edge.From("venue", Venue.Type).
 			Ref("trading_pair").
 			Unique().
 			Required(),

@@ -72,6 +72,26 @@ func (r *outboxWhereInputResolver) StatusNotIn(ctx context.Context, obj *entitie
 	panic(fmt.Errorf("not implemented: StatusNotIn - statusNotIn"))
 }
 
+// Type is the resolver for the type field.
+func (r *venueWhereInputResolver) Type(ctx context.Context, obj *entities.VenueWhereInput, data *models.VenueType) error {
+	panic(fmt.Errorf("not implemented: Type - type"))
+}
+
+// TypeNeq is the resolver for the typeNEQ field.
+func (r *venueWhereInputResolver) TypeNeq(ctx context.Context, obj *entities.VenueWhereInput, data *models.VenueType) error {
+	panic(fmt.Errorf("not implemented: TypeNeq - typeNEQ"))
+}
+
+// TypeIn is the resolver for the typeIn field.
+func (r *venueWhereInputResolver) TypeIn(ctx context.Context, obj *entities.VenueWhereInput, data []models.VenueType) error {
+	panic(fmt.Errorf("not implemented: TypeIn - typeIn"))
+}
+
+// TypeNotIn is the resolver for the typeNotIn field.
+func (r *venueWhereInputResolver) TypeNotIn(ctx context.Context, obj *entities.VenueWhereInput, data []models.VenueType) error {
+	panic(fmt.Errorf("not implemented: TypeNotIn - typeNotIn"))
+}
+
 // CurrencyWhereInput returns generated.CurrencyWhereInputResolver implementation.
 func (r *Resolver) CurrencyWhereInput() generated.CurrencyWhereInputResolver {
 	return &currencyWhereInputResolver{r}
@@ -87,6 +107,12 @@ func (r *Resolver) OutboxWhereInput() generated.OutboxWhereInputResolver {
 	return &outboxWhereInputResolver{r}
 }
 
+// VenueWhereInput returns generated.VenueWhereInputResolver implementation.
+func (r *Resolver) VenueWhereInput() generated.VenueWhereInputResolver {
+	return &venueWhereInputResolver{r}
+}
+
 type currencyWhereInputResolver struct{ *Resolver }
 type marketWhereInputResolver struct{ *Resolver }
 type outboxWhereInputResolver struct{ *Resolver }
+type venueWhereInputResolver struct{ *Resolver }

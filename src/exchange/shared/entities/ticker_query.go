@@ -11,25 +11,25 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 )
 
 // TickerQuery is the builder for querying Ticker entities.
 type TickerQuery struct {
 	config
-	limit        *int
-	offset       *int
-	unique       *bool
-	order        []OrderFunc
-	fields       []string
-	predicates   []predicate.Ticker
-	withExchange *ExchangeQuery
-	withFKs      bool
-	loadTotal    []func(context.Context, []*Ticker) error
-	modifiers    []func(*sql.Selector)
+	limit      *int
+	offset     *int
+	unique     *bool
+	order      []OrderFunc
+	fields     []string
+	predicates []predicate.Ticker
+	withVenue  *VenueQuery
+	withFKs    bool
+	loadTotal  []func(context.Context, []*Ticker) error
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -66,9 +66,9 @@ func (tq *TickerQuery) Order(o ...OrderFunc) *TickerQuery {
 	return tq
 }
 
-// QueryExchange chains the current query on the "exchange" edge.
-func (tq *TickerQuery) QueryExchange() *ExchangeQuery {
-	query := &ExchangeQuery{config: tq.config}
+// QueryVenue chains the current query on the "venue" edge.
+func (tq *TickerQuery) QueryVenue() *VenueQuery {
+	query := &VenueQuery{config: tq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -79,11 +79,11 @@ func (tq *TickerQuery) QueryExchange() *ExchangeQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(ticker.Table, ticker.FieldID, selector),
-			sqlgraph.To(exchange.Table, exchange.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ticker.ExchangeTable, ticker.ExchangeColumn),
+			sqlgraph.To(venue.Table, venue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ticker.VenueTable, ticker.VenueColumn),
 		)
 		schemaConfig := tq.schemaConfig
-		step.To.Schema = schemaConfig.Exchange
+		step.To.Schema = schemaConfig.Venue
 		step.Edge.Schema = schemaConfig.Ticker
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -267,12 +267,12 @@ func (tq *TickerQuery) Clone() *TickerQuery {
 		return nil
 	}
 	return &TickerQuery{
-		config:       tq.config,
-		limit:        tq.limit,
-		offset:       tq.offset,
-		order:        append([]OrderFunc{}, tq.order...),
-		predicates:   append([]predicate.Ticker{}, tq.predicates...),
-		withExchange: tq.withExchange.Clone(),
+		config:     tq.config,
+		limit:      tq.limit,
+		offset:     tq.offset,
+		order:      append([]OrderFunc{}, tq.order...),
+		predicates: append([]predicate.Ticker{}, tq.predicates...),
+		withVenue:  tq.withVenue.Clone(),
 		// clone intermediate query.
 		sql:    tq.sql.Clone(),
 		path:   tq.path,
@@ -280,14 +280,14 @@ func (tq *TickerQuery) Clone() *TickerQuery {
 	}
 }
 
-// WithExchange tells the query-builder to eager-load the nodes that are connected to
-// the "exchange" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TickerQuery) WithExchange(opts ...func(*ExchangeQuery)) *TickerQuery {
-	query := &ExchangeQuery{config: tq.config}
+// WithVenue tells the query-builder to eager-load the nodes that are connected to
+// the "venue" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TickerQuery) WithVenue(opts ...func(*VenueQuery)) *TickerQuery {
+	query := &VenueQuery{config: tq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	tq.withExchange = query
+	tq.withVenue = query
 	return tq
 }
 
@@ -361,10 +361,10 @@ func (tq *TickerQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 		withFKs     = tq.withFKs
 		_spec       = tq.querySpec()
 		loadedTypes = [1]bool{
-			tq.withExchange != nil,
+			tq.withVenue != nil,
 		}
 	)
-	if tq.withExchange != nil {
+	if tq.withVenue != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -393,9 +393,9 @@ func (tq *TickerQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := tq.withExchange; query != nil {
-		if err := tq.loadExchange(ctx, query, nodes, nil,
-			func(n *Ticker, e *Exchange) { n.Edges.Exchange = e }); err != nil {
+	if query := tq.withVenue; query != nil {
+		if err := tq.loadVenue(ctx, query, nodes, nil,
+			func(n *Ticker, e *Venue) { n.Edges.Venue = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -407,20 +407,20 @@ func (tq *TickerQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 	return nodes, nil
 }
 
-func (tq *TickerQuery) loadExchange(ctx context.Context, query *ExchangeQuery, nodes []*Ticker, init func(*Ticker), assign func(*Ticker, *Exchange)) error {
+func (tq *TickerQuery) loadVenue(ctx context.Context, query *VenueQuery, nodes []*Ticker, init func(*Ticker), assign func(*Ticker, *Venue)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Ticker)
 	for i := range nodes {
-		if nodes[i].exchange_ticker == nil {
+		if nodes[i].venue_ticker == nil {
 			continue
 		}
-		fk := *nodes[i].exchange_ticker
+		fk := *nodes[i].venue_ticker
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.Where(exchange.IDIn(ids...))
+	query.Where(venue.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -428,7 +428,7 @@ func (tq *TickerQuery) loadExchange(ctx context.Context, query *ExchangeQuery, n
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "exchange_ticker" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "venue_ticker" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
