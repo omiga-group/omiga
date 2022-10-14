@@ -4,6 +4,15 @@ on:
   push:
     branches:
       - "main"
+    paths:
+      - ".github/workflows/codeql-analysis.yml"
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/binance-processor.yml"
+      - "src/go.mod"
+      - "src/go.sum"
+      - "src/shared/**"
+      - "src/venue/shared/**"
+      - "src/venue/binance-processor/**"
   pull_request:
     branches:
       - "main"
