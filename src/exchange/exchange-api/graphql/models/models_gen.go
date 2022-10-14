@@ -181,3 +181,42 @@ func (e *OutboxStatus) UnmarshalGQL(v interface{}) error {
 func (e OutboxStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
+
+type VenueType string
+
+const (
+	VenueTypeExchange VenueType = "EXCHANGE"
+)
+
+var AllVenueType = []VenueType{
+	VenueTypeExchange,
+}
+
+func (e VenueType) IsValid() bool {
+	switch e {
+	case VenueTypeExchange:
+		return true
+	}
+	return false
+}
+
+func (e VenueType) String() string {
+	return string(e)
+}
+
+func (e *VenueType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = VenueType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid VenueType", str)
+	}
+	return nil
+}
+
+func (e VenueType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}

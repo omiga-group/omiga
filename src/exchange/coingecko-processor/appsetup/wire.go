@@ -60,7 +60,7 @@ func NewCoingeckoExchangeSubscriber(
 		entities.NewEntgoClient,
 		time.NewTimeHelper,
 		subscribers.NewCoingeckoExchangeSubscriber,
-		repositories.NewExchangeRepository)
+		repositories.NewVenueRepository)
 
 	return nil, nil
 }

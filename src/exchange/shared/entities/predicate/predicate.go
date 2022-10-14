@@ -9,9 +9,6 @@ import (
 // Currency is the predicate function for currency builders.
 type Currency func(*sql.Selector)
 
-// Exchange is the predicate function for exchange builders.
-type Exchange func(*sql.Selector)
-
 // Market is the predicate function for market builders.
 type Market func(*sql.Selector)
 
@@ -23,3 +20,6 @@ type Ticker func(*sql.Selector)
 
 // TradingPair is the predicate function for tradingpair builders.
 type TradingPair func(*sql.Selector)
+
+// Venue is the predicate function for venue builders.
+type Venue func(*sql.Selector)

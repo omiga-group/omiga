@@ -41,7 +41,7 @@ func (Ticker) Fields() []ent.Field {
 // Edges of the Ticker.
 func (Ticker) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("exchange", Exchange.Type).
+		edge.From("venue", Venue.Type).
 			Ref("ticker").
 			Unique().
 			Required(),

@@ -9,15 +9,21 @@ import (
 	"entgo.io/ent/schema/index"
 )
 
-// Exchange holds the schema definition for the Exchange entity.
-type Exchange struct {
+// Venue holds the schema definition for the Venue entity.
+type Venue struct {
 	ent.Schema
 }
 
-// Fields of the Exchange.
-func (Exchange) Fields() []ent.Field {
+// Fields of the Venue.
+func (Venue) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("exchange_id").Annotations(entgql.OrderField("exchangeId")),
+		field.String("venue_id").Annotations(entgql.OrderField("venueId")),
+
+		field.Enum("type").
+			NamedValues(
+				"EXCHANGE", "EXCHANGE").
+			Annotations(entgql.OrderField("type")),
+
 		field.String("name").Optional().Annotations(entgql.OrderField("name")),
 		field.Int("year_established").Optional().Annotations(entgql.OrderField("yearEstablished")),
 		field.String("country").Optional().Annotations(entgql.OrderField("country")),
@@ -38,8 +44,8 @@ func (Exchange) Fields() []ent.Field {
 	}
 }
 
-// Edges of the Exchange.
-func (Exchange) Edges() []ent.Edge {
+// Edges of the Venue.
+func (Venue) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("ticker", Ticker.Type).
 			Annotations(entsql.Annotation{
@@ -56,9 +62,11 @@ func (Exchange) Edges() []ent.Edge {
 	}
 }
 
-func (Exchange) Indexes() []ent.Index {
+func (Venue) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("exchange_id"),
+		index.Fields("venue_id"),
+		index.Fields("type"),
+
 		index.Fields("name"),
 		index.Fields("year_established"),
 		index.Fields("country"),

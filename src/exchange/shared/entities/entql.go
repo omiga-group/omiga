@@ -4,12 +4,12 @@ package entities
 
 import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -38,37 +38,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   exchange.Table,
-			Columns: exchange.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
-				Column: exchange.FieldID,
-			},
-		},
-		Type: "Exchange",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			exchange.FieldExchangeID:                  {Type: field.TypeString, Column: exchange.FieldExchangeID},
-			exchange.FieldName:                        {Type: field.TypeString, Column: exchange.FieldName},
-			exchange.FieldYearEstablished:             {Type: field.TypeInt, Column: exchange.FieldYearEstablished},
-			exchange.FieldCountry:                     {Type: field.TypeString, Column: exchange.FieldCountry},
-			exchange.FieldImage:                       {Type: field.TypeString, Column: exchange.FieldImage},
-			exchange.FieldLinks:                       {Type: field.TypeJSON, Column: exchange.FieldLinks},
-			exchange.FieldHasTradingIncentive:         {Type: field.TypeBool, Column: exchange.FieldHasTradingIncentive},
-			exchange.FieldCentralized:                 {Type: field.TypeBool, Column: exchange.FieldCentralized},
-			exchange.FieldPublicNotice:                {Type: field.TypeString, Column: exchange.FieldPublicNotice},
-			exchange.FieldAlertNotice:                 {Type: field.TypeString, Column: exchange.FieldAlertNotice},
-			exchange.FieldTrustScore:                  {Type: field.TypeInt, Column: exchange.FieldTrustScore},
-			exchange.FieldTrustScoreRank:              {Type: field.TypeInt, Column: exchange.FieldTrustScoreRank},
-			exchange.FieldTradeVolume24hBtc:           {Type: field.TypeFloat64, Column: exchange.FieldTradeVolume24hBtc},
-			exchange.FieldTradeVolume24hBtcNormalized: {Type: field.TypeFloat64, Column: exchange.FieldTradeVolume24hBtcNormalized},
-			exchange.FieldMakerFee:                    {Type: field.TypeFloat64, Column: exchange.FieldMakerFee},
-			exchange.FieldTakerFee:                    {Type: field.TypeFloat64, Column: exchange.FieldTakerFee},
-			exchange.FieldSpreadFee:                   {Type: field.TypeBool, Column: exchange.FieldSpreadFee},
-			exchange.FieldSupportAPI:                  {Type: field.TypeBool, Column: exchange.FieldSupportAPI},
-		},
-	}
-	graph.Nodes[2] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
 			Table:   market.Table,
 			Columns: market.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -82,7 +51,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			market.FieldType: {Type: field.TypeEnum, Column: market.FieldType},
 		},
 	}
-	graph.Nodes[3] = &sqlgraph.Node{
+	graph.Nodes[2] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   outbox.Table,
 			Columns: outbox.Columns,
@@ -104,7 +73,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			outbox.FieldProcessingErrors: {Type: field.TypeJSON, Column: outbox.FieldProcessingErrors},
 		},
 	}
-	graph.Nodes[4] = &sqlgraph.Node{
+	graph.Nodes[3] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   ticker.Table,
 			Columns: ticker.Columns,
@@ -135,7 +104,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			ticker.FieldTokenInfoURL:           {Type: field.TypeString, Column: ticker.FieldTokenInfoURL},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   tradingpair.Table,
 			Columns: tradingpair.Columns,
@@ -155,6 +124,38 @@ var schemaGraph = func() *sqlgraph.Schema {
 			tradingpair.FieldCounterPriceMaxPrecision:    {Type: field.TypeInt, Column: tradingpair.FieldCounterPriceMaxPrecision},
 			tradingpair.FieldCounterQuantityMinPrecision: {Type: field.TypeInt, Column: tradingpair.FieldCounterQuantityMinPrecision},
 			tradingpair.FieldCounterQuantityMaxPrecision: {Type: field.TypeInt, Column: tradingpair.FieldCounterQuantityMaxPrecision},
+		},
+	}
+	graph.Nodes[5] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   venue.Table,
+			Columns: venue.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt,
+				Column: venue.FieldID,
+			},
+		},
+		Type: "Venue",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			venue.FieldVenueID:                     {Type: field.TypeString, Column: venue.FieldVenueID},
+			venue.FieldType:                        {Type: field.TypeEnum, Column: venue.FieldType},
+			venue.FieldName:                        {Type: field.TypeString, Column: venue.FieldName},
+			venue.FieldYearEstablished:             {Type: field.TypeInt, Column: venue.FieldYearEstablished},
+			venue.FieldCountry:                     {Type: field.TypeString, Column: venue.FieldCountry},
+			venue.FieldImage:                       {Type: field.TypeString, Column: venue.FieldImage},
+			venue.FieldLinks:                       {Type: field.TypeJSON, Column: venue.FieldLinks},
+			venue.FieldHasTradingIncentive:         {Type: field.TypeBool, Column: venue.FieldHasTradingIncentive},
+			venue.FieldCentralized:                 {Type: field.TypeBool, Column: venue.FieldCentralized},
+			venue.FieldPublicNotice:                {Type: field.TypeString, Column: venue.FieldPublicNotice},
+			venue.FieldAlertNotice:                 {Type: field.TypeString, Column: venue.FieldAlertNotice},
+			venue.FieldTrustScore:                  {Type: field.TypeInt, Column: venue.FieldTrustScore},
+			venue.FieldTrustScoreRank:              {Type: field.TypeInt, Column: venue.FieldTrustScoreRank},
+			venue.FieldTradeVolume24hBtc:           {Type: field.TypeFloat64, Column: venue.FieldTradeVolume24hBtc},
+			venue.FieldTradeVolume24hBtcNormalized: {Type: field.TypeFloat64, Column: venue.FieldTradeVolume24hBtcNormalized},
+			venue.FieldMakerFee:                    {Type: field.TypeFloat64, Column: venue.FieldMakerFee},
+			venue.FieldTakerFee:                    {Type: field.TypeFloat64, Column: venue.FieldTakerFee},
+			venue.FieldSpreadFee:                   {Type: field.TypeBool, Column: venue.FieldSpreadFee},
+			venue.FieldSupportAPI:                  {Type: field.TypeBool, Column: venue.FieldSupportAPI},
 		},
 	}
 	graph.MustAddE(
@@ -182,52 +183,16 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"TradingPair",
 	)
 	graph.MustAddE(
-		"ticker",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   exchange.TickerTable,
-			Columns: []string{exchange.TickerColumn},
-			Bidi:    false,
-		},
-		"Exchange",
-		"Ticker",
-	)
-	graph.MustAddE(
-		"trading_pair",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   exchange.TradingPairTable,
-			Columns: []string{exchange.TradingPairColumn},
-			Bidi:    false,
-		},
-		"Exchange",
-		"TradingPair",
-	)
-	graph.MustAddE(
-		"market",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   exchange.MarketTable,
-			Columns: []string{exchange.MarketColumn},
-			Bidi:    false,
-		},
-		"Exchange",
-		"Market",
-	)
-	graph.MustAddE(
-		"exchange",
+		"venue",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   market.ExchangeTable,
-			Columns: []string{market.ExchangeColumn},
+			Table:   market.VenueTable,
+			Columns: []string{market.VenueColumn},
 			Bidi:    false,
 		},
 		"Market",
-		"Exchange",
+		"Venue",
 	)
 	graph.MustAddE(
 		"trading_pair",
@@ -242,28 +207,28 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"TradingPair",
 	)
 	graph.MustAddE(
-		"exchange",
+		"venue",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   ticker.ExchangeTable,
-			Columns: []string{ticker.ExchangeColumn},
+			Table:   ticker.VenueTable,
+			Columns: []string{ticker.VenueColumn},
 			Bidi:    false,
 		},
 		"Ticker",
-		"Exchange",
+		"Venue",
 	)
 	graph.MustAddE(
-		"exchange",
+		"venue",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tradingpair.ExchangeTable,
-			Columns: []string{tradingpair.ExchangeColumn},
+			Table:   tradingpair.VenueTable,
+			Columns: []string{tradingpair.VenueColumn},
 			Bidi:    false,
 		},
 		"TradingPair",
-		"Exchange",
+		"Venue",
 	)
 	graph.MustAddE(
 		"base",
@@ -299,6 +264,42 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Bidi:    false,
 		},
 		"TradingPair",
+		"Market",
+	)
+	graph.MustAddE(
+		"ticker",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   venue.TickerTable,
+			Columns: []string{venue.TickerColumn},
+			Bidi:    false,
+		},
+		"Venue",
+		"Ticker",
+	)
+	graph.MustAddE(
+		"trading_pair",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   venue.TradingPairTable,
+			Columns: []string{venue.TradingPairColumn},
+			Bidi:    false,
+		},
+		"Venue",
+		"TradingPair",
+	)
+	graph.MustAddE(
+		"market",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   venue.MarketTable,
+			Columns: []string{venue.MarketColumn},
+			Bidi:    false,
+		},
+		"Venue",
 		"Market",
 	)
 	return graph
@@ -394,178 +395,6 @@ func (f *CurrencyFilter) WhereHasCurrencyCounterWith(preds ...predicate.TradingP
 }
 
 // addPredicate implements the predicateAdder interface.
-func (eq *ExchangeQuery) addPredicate(pred func(s *sql.Selector)) {
-	eq.predicates = append(eq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the ExchangeQuery builder.
-func (eq *ExchangeQuery) Filter() *ExchangeFilter {
-	return &ExchangeFilter{config: eq.config, predicateAdder: eq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *ExchangeMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the ExchangeMutation builder.
-func (m *ExchangeMutation) Filter() *ExchangeFilter {
-	return &ExchangeFilter{config: m.config, predicateAdder: m}
-}
-
-// ExchangeFilter provides a generic filtering capability at runtime for ExchangeQuery.
-type ExchangeFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *ExchangeFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql int predicate on the id field.
-func (f *ExchangeFilter) WhereID(p entql.IntP) {
-	f.Where(p.Field(exchange.FieldID))
-}
-
-// WhereExchangeID applies the entql string predicate on the exchange_id field.
-func (f *ExchangeFilter) WhereExchangeID(p entql.StringP) {
-	f.Where(p.Field(exchange.FieldExchangeID))
-}
-
-// WhereName applies the entql string predicate on the name field.
-func (f *ExchangeFilter) WhereName(p entql.StringP) {
-	f.Where(p.Field(exchange.FieldName))
-}
-
-// WhereYearEstablished applies the entql int predicate on the year_established field.
-func (f *ExchangeFilter) WhereYearEstablished(p entql.IntP) {
-	f.Where(p.Field(exchange.FieldYearEstablished))
-}
-
-// WhereCountry applies the entql string predicate on the country field.
-func (f *ExchangeFilter) WhereCountry(p entql.StringP) {
-	f.Where(p.Field(exchange.FieldCountry))
-}
-
-// WhereImage applies the entql string predicate on the image field.
-func (f *ExchangeFilter) WhereImage(p entql.StringP) {
-	f.Where(p.Field(exchange.FieldImage))
-}
-
-// WhereLinks applies the entql json.RawMessage predicate on the links field.
-func (f *ExchangeFilter) WhereLinks(p entql.BytesP) {
-	f.Where(p.Field(exchange.FieldLinks))
-}
-
-// WhereHasTradingIncentive applies the entql bool predicate on the has_trading_incentive field.
-func (f *ExchangeFilter) WhereHasTradingIncentive(p entql.BoolP) {
-	f.Where(p.Field(exchange.FieldHasTradingIncentive))
-}
-
-// WhereCentralized applies the entql bool predicate on the centralized field.
-func (f *ExchangeFilter) WhereCentralized(p entql.BoolP) {
-	f.Where(p.Field(exchange.FieldCentralized))
-}
-
-// WherePublicNotice applies the entql string predicate on the public_notice field.
-func (f *ExchangeFilter) WherePublicNotice(p entql.StringP) {
-	f.Where(p.Field(exchange.FieldPublicNotice))
-}
-
-// WhereAlertNotice applies the entql string predicate on the alert_notice field.
-func (f *ExchangeFilter) WhereAlertNotice(p entql.StringP) {
-	f.Where(p.Field(exchange.FieldAlertNotice))
-}
-
-// WhereTrustScore applies the entql int predicate on the trust_score field.
-func (f *ExchangeFilter) WhereTrustScore(p entql.IntP) {
-	f.Where(p.Field(exchange.FieldTrustScore))
-}
-
-// WhereTrustScoreRank applies the entql int predicate on the trust_score_rank field.
-func (f *ExchangeFilter) WhereTrustScoreRank(p entql.IntP) {
-	f.Where(p.Field(exchange.FieldTrustScoreRank))
-}
-
-// WhereTradeVolume24hBtc applies the entql float64 predicate on the trade_volume_24h_btc field.
-func (f *ExchangeFilter) WhereTradeVolume24hBtc(p entql.Float64P) {
-	f.Where(p.Field(exchange.FieldTradeVolume24hBtc))
-}
-
-// WhereTradeVolume24hBtcNormalized applies the entql float64 predicate on the trade_volume_24h_btc_normalized field.
-func (f *ExchangeFilter) WhereTradeVolume24hBtcNormalized(p entql.Float64P) {
-	f.Where(p.Field(exchange.FieldTradeVolume24hBtcNormalized))
-}
-
-// WhereMakerFee applies the entql float64 predicate on the maker_fee field.
-func (f *ExchangeFilter) WhereMakerFee(p entql.Float64P) {
-	f.Where(p.Field(exchange.FieldMakerFee))
-}
-
-// WhereTakerFee applies the entql float64 predicate on the taker_fee field.
-func (f *ExchangeFilter) WhereTakerFee(p entql.Float64P) {
-	f.Where(p.Field(exchange.FieldTakerFee))
-}
-
-// WhereSpreadFee applies the entql bool predicate on the spread_fee field.
-func (f *ExchangeFilter) WhereSpreadFee(p entql.BoolP) {
-	f.Where(p.Field(exchange.FieldSpreadFee))
-}
-
-// WhereSupportAPI applies the entql bool predicate on the support_api field.
-func (f *ExchangeFilter) WhereSupportAPI(p entql.BoolP) {
-	f.Where(p.Field(exchange.FieldSupportAPI))
-}
-
-// WhereHasTicker applies a predicate to check if query has an edge ticker.
-func (f *ExchangeFilter) WhereHasTicker() {
-	f.Where(entql.HasEdge("ticker"))
-}
-
-// WhereHasTickerWith applies a predicate to check if query has an edge ticker with a given conditions (other predicates).
-func (f *ExchangeFilter) WhereHasTickerWith(preds ...predicate.Ticker) {
-	f.Where(entql.HasEdgeWith("ticker", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
-// WhereHasTradingPair applies a predicate to check if query has an edge trading_pair.
-func (f *ExchangeFilter) WhereHasTradingPair() {
-	f.Where(entql.HasEdge("trading_pair"))
-}
-
-// WhereHasTradingPairWith applies a predicate to check if query has an edge trading_pair with a given conditions (other predicates).
-func (f *ExchangeFilter) WhereHasTradingPairWith(preds ...predicate.TradingPair) {
-	f.Where(entql.HasEdgeWith("trading_pair", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
-// WhereHasMarket applies a predicate to check if query has an edge market.
-func (f *ExchangeFilter) WhereHasMarket() {
-	f.Where(entql.HasEdge("market"))
-}
-
-// WhereHasMarketWith applies a predicate to check if query has an edge market with a given conditions (other predicates).
-func (f *ExchangeFilter) WhereHasMarketWith(preds ...predicate.Market) {
-	f.Where(entql.HasEdgeWith("market", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
-// addPredicate implements the predicateAdder interface.
 func (mq *MarketQuery) addPredicate(pred func(s *sql.Selector)) {
 	mq.predicates = append(mq.predicates, pred)
 }
@@ -594,7 +423,7 @@ type MarketFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *MarketFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -615,14 +444,14 @@ func (f *MarketFilter) WhereType(p entql.StringP) {
 	f.Where(p.Field(market.FieldType))
 }
 
-// WhereHasExchange applies a predicate to check if query has an edge exchange.
-func (f *MarketFilter) WhereHasExchange() {
-	f.Where(entql.HasEdge("exchange"))
+// WhereHasVenue applies a predicate to check if query has an edge venue.
+func (f *MarketFilter) WhereHasVenue() {
+	f.Where(entql.HasEdge("venue"))
 }
 
-// WhereHasExchangeWith applies a predicate to check if query has an edge exchange with a given conditions (other predicates).
-func (f *MarketFilter) WhereHasExchangeWith(preds ...predicate.Exchange) {
-	f.Where(entql.HasEdgeWith("exchange", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasVenueWith applies a predicate to check if query has an edge venue with a given conditions (other predicates).
+func (f *MarketFilter) WhereHasVenueWith(preds ...predicate.Venue) {
+	f.Where(entql.HasEdgeWith("venue", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -672,7 +501,7 @@ type OutboxFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OutboxFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -757,7 +586,7 @@ type TickerFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TickerFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -858,14 +687,14 @@ func (f *TickerFilter) WhereTokenInfoURL(p entql.StringP) {
 	f.Where(p.Field(ticker.FieldTokenInfoURL))
 }
 
-// WhereHasExchange applies a predicate to check if query has an edge exchange.
-func (f *TickerFilter) WhereHasExchange() {
-	f.Where(entql.HasEdge("exchange"))
+// WhereHasVenue applies a predicate to check if query has an edge venue.
+func (f *TickerFilter) WhereHasVenue() {
+	f.Where(entql.HasEdge("venue"))
 }
 
-// WhereHasExchangeWith applies a predicate to check if query has an edge exchange with a given conditions (other predicates).
-func (f *TickerFilter) WhereHasExchangeWith(preds ...predicate.Exchange) {
-	f.Where(entql.HasEdgeWith("exchange", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasVenueWith applies a predicate to check if query has an edge venue with a given conditions (other predicates).
+func (f *TickerFilter) WhereHasVenueWith(preds ...predicate.Venue) {
+	f.Where(entql.HasEdgeWith("venue", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -901,7 +730,7 @@ type TradingPairFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TradingPairFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -957,14 +786,14 @@ func (f *TradingPairFilter) WhereCounterQuantityMaxPrecision(p entql.IntP) {
 	f.Where(p.Field(tradingpair.FieldCounterQuantityMaxPrecision))
 }
 
-// WhereHasExchange applies a predicate to check if query has an edge exchange.
-func (f *TradingPairFilter) WhereHasExchange() {
-	f.Where(entql.HasEdge("exchange"))
+// WhereHasVenue applies a predicate to check if query has an edge venue.
+func (f *TradingPairFilter) WhereHasVenue() {
+	f.Where(entql.HasEdge("venue"))
 }
 
-// WhereHasExchangeWith applies a predicate to check if query has an edge exchange with a given conditions (other predicates).
-func (f *TradingPairFilter) WhereHasExchangeWith(preds ...predicate.Exchange) {
-	f.Where(entql.HasEdgeWith("exchange", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasVenueWith applies a predicate to check if query has an edge venue with a given conditions (other predicates).
+func (f *TradingPairFilter) WhereHasVenueWith(preds ...predicate.Venue) {
+	f.Where(entql.HasEdgeWith("venue", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -1006,6 +835,183 @@ func (f *TradingPairFilter) WhereHasMarket() {
 
 // WhereHasMarketWith applies a predicate to check if query has an edge market with a given conditions (other predicates).
 func (f *TradingPairFilter) WhereHasMarketWith(preds ...predicate.Market) {
+	f.Where(entql.HasEdgeWith("market", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (vq *VenueQuery) addPredicate(pred func(s *sql.Selector)) {
+	vq.predicates = append(vq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the VenueQuery builder.
+func (vq *VenueQuery) Filter() *VenueFilter {
+	return &VenueFilter{config: vq.config, predicateAdder: vq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *VenueMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the VenueMutation builder.
+func (m *VenueMutation) Filter() *VenueFilter {
+	return &VenueFilter{config: m.config, predicateAdder: m}
+}
+
+// VenueFilter provides a generic filtering capability at runtime for VenueQuery.
+type VenueFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *VenueFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int predicate on the id field.
+func (f *VenueFilter) WhereID(p entql.IntP) {
+	f.Where(p.Field(venue.FieldID))
+}
+
+// WhereVenueID applies the entql string predicate on the venue_id field.
+func (f *VenueFilter) WhereVenueID(p entql.StringP) {
+	f.Where(p.Field(venue.FieldVenueID))
+}
+
+// WhereType applies the entql string predicate on the type field.
+func (f *VenueFilter) WhereType(p entql.StringP) {
+	f.Where(p.Field(venue.FieldType))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *VenueFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(venue.FieldName))
+}
+
+// WhereYearEstablished applies the entql int predicate on the year_established field.
+func (f *VenueFilter) WhereYearEstablished(p entql.IntP) {
+	f.Where(p.Field(venue.FieldYearEstablished))
+}
+
+// WhereCountry applies the entql string predicate on the country field.
+func (f *VenueFilter) WhereCountry(p entql.StringP) {
+	f.Where(p.Field(venue.FieldCountry))
+}
+
+// WhereImage applies the entql string predicate on the image field.
+func (f *VenueFilter) WhereImage(p entql.StringP) {
+	f.Where(p.Field(venue.FieldImage))
+}
+
+// WhereLinks applies the entql json.RawMessage predicate on the links field.
+func (f *VenueFilter) WhereLinks(p entql.BytesP) {
+	f.Where(p.Field(venue.FieldLinks))
+}
+
+// WhereHasTradingIncentive applies the entql bool predicate on the has_trading_incentive field.
+func (f *VenueFilter) WhereHasTradingIncentive(p entql.BoolP) {
+	f.Where(p.Field(venue.FieldHasTradingIncentive))
+}
+
+// WhereCentralized applies the entql bool predicate on the centralized field.
+func (f *VenueFilter) WhereCentralized(p entql.BoolP) {
+	f.Where(p.Field(venue.FieldCentralized))
+}
+
+// WherePublicNotice applies the entql string predicate on the public_notice field.
+func (f *VenueFilter) WherePublicNotice(p entql.StringP) {
+	f.Where(p.Field(venue.FieldPublicNotice))
+}
+
+// WhereAlertNotice applies the entql string predicate on the alert_notice field.
+func (f *VenueFilter) WhereAlertNotice(p entql.StringP) {
+	f.Where(p.Field(venue.FieldAlertNotice))
+}
+
+// WhereTrustScore applies the entql int predicate on the trust_score field.
+func (f *VenueFilter) WhereTrustScore(p entql.IntP) {
+	f.Where(p.Field(venue.FieldTrustScore))
+}
+
+// WhereTrustScoreRank applies the entql int predicate on the trust_score_rank field.
+func (f *VenueFilter) WhereTrustScoreRank(p entql.IntP) {
+	f.Where(p.Field(venue.FieldTrustScoreRank))
+}
+
+// WhereTradeVolume24hBtc applies the entql float64 predicate on the trade_volume_24h_btc field.
+func (f *VenueFilter) WhereTradeVolume24hBtc(p entql.Float64P) {
+	f.Where(p.Field(venue.FieldTradeVolume24hBtc))
+}
+
+// WhereTradeVolume24hBtcNormalized applies the entql float64 predicate on the trade_volume_24h_btc_normalized field.
+func (f *VenueFilter) WhereTradeVolume24hBtcNormalized(p entql.Float64P) {
+	f.Where(p.Field(venue.FieldTradeVolume24hBtcNormalized))
+}
+
+// WhereMakerFee applies the entql float64 predicate on the maker_fee field.
+func (f *VenueFilter) WhereMakerFee(p entql.Float64P) {
+	f.Where(p.Field(venue.FieldMakerFee))
+}
+
+// WhereTakerFee applies the entql float64 predicate on the taker_fee field.
+func (f *VenueFilter) WhereTakerFee(p entql.Float64P) {
+	f.Where(p.Field(venue.FieldTakerFee))
+}
+
+// WhereSpreadFee applies the entql bool predicate on the spread_fee field.
+func (f *VenueFilter) WhereSpreadFee(p entql.BoolP) {
+	f.Where(p.Field(venue.FieldSpreadFee))
+}
+
+// WhereSupportAPI applies the entql bool predicate on the support_api field.
+func (f *VenueFilter) WhereSupportAPI(p entql.BoolP) {
+	f.Where(p.Field(venue.FieldSupportAPI))
+}
+
+// WhereHasTicker applies a predicate to check if query has an edge ticker.
+func (f *VenueFilter) WhereHasTicker() {
+	f.Where(entql.HasEdge("ticker"))
+}
+
+// WhereHasTickerWith applies a predicate to check if query has an edge ticker with a given conditions (other predicates).
+func (f *VenueFilter) WhereHasTickerWith(preds ...predicate.Ticker) {
+	f.Where(entql.HasEdgeWith("ticker", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasTradingPair applies a predicate to check if query has an edge trading_pair.
+func (f *VenueFilter) WhereHasTradingPair() {
+	f.Where(entql.HasEdge("trading_pair"))
+}
+
+// WhereHasTradingPairWith applies a predicate to check if query has an edge trading_pair with a given conditions (other predicates).
+func (f *VenueFilter) WhereHasTradingPairWith(preds ...predicate.TradingPair) {
+	f.Where(entql.HasEdgeWith("trading_pair", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasMarket applies a predicate to check if query has an edge market.
+func (f *VenueFilter) WhereHasMarket() {
+	f.Where(entql.HasEdge("market"))
+}
+
+// WhereHasMarketWith applies a predicate to check if query has an edge market with a given conditions (other predicates).
+func (f *VenueFilter) WhereHasMarketWith(preds ...predicate.Market) {
 	f.Where(entql.HasEdgeWith("market", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)

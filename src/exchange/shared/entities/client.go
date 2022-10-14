@@ -11,11 +11,11 @@ import (
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/migrate"
 
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/outbox"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -29,8 +29,6 @@ type Client struct {
 	Schema *migrate.Schema
 	// Currency is the client for interacting with the Currency builders.
 	Currency *CurrencyClient
-	// Exchange is the client for interacting with the Exchange builders.
-	Exchange *ExchangeClient
 	// Market is the client for interacting with the Market builders.
 	Market *MarketClient
 	// Outbox is the client for interacting with the Outbox builders.
@@ -39,6 +37,8 @@ type Client struct {
 	Ticker *TickerClient
 	// TradingPair is the client for interacting with the TradingPair builders.
 	TradingPair *TradingPairClient
+	// Venue is the client for interacting with the Venue builders.
+	Venue *VenueClient
 	// additional fields for node api
 	tables tables
 }
@@ -55,11 +55,11 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Currency = NewCurrencyClient(c.config)
-	c.Exchange = NewExchangeClient(c.config)
 	c.Market = NewMarketClient(c.config)
 	c.Outbox = NewOutboxClient(c.config)
 	c.Ticker = NewTickerClient(c.config)
 	c.TradingPair = NewTradingPairClient(c.config)
+	c.Venue = NewVenueClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -94,11 +94,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:         ctx,
 		config:      cfg,
 		Currency:    NewCurrencyClient(cfg),
-		Exchange:    NewExchangeClient(cfg),
 		Market:      NewMarketClient(cfg),
 		Outbox:      NewOutboxClient(cfg),
 		Ticker:      NewTickerClient(cfg),
 		TradingPair: NewTradingPairClient(cfg),
+		Venue:       NewVenueClient(cfg),
 	}, nil
 }
 
@@ -119,11 +119,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:         ctx,
 		config:      cfg,
 		Currency:    NewCurrencyClient(cfg),
-		Exchange:    NewExchangeClient(cfg),
 		Market:      NewMarketClient(cfg),
 		Outbox:      NewOutboxClient(cfg),
 		Ticker:      NewTickerClient(cfg),
 		TradingPair: NewTradingPairClient(cfg),
+		Venue:       NewVenueClient(cfg),
 	}, nil
 }
 
@@ -153,11 +153,11 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Currency.Use(hooks...)
-	c.Exchange.Use(hooks...)
 	c.Market.Use(hooks...)
 	c.Outbox.Use(hooks...)
 	c.Ticker.Use(hooks...)
 	c.TradingPair.Use(hooks...)
+	c.Venue.Use(hooks...)
 }
 
 // CurrencyClient is a client for the Currency schema.
@@ -288,153 +288,6 @@ func (c *CurrencyClient) Hooks() []Hook {
 	return c.hooks.Currency
 }
 
-// ExchangeClient is a client for the Exchange schema.
-type ExchangeClient struct {
-	config
-}
-
-// NewExchangeClient returns a client for the Exchange from the given config.
-func NewExchangeClient(c config) *ExchangeClient {
-	return &ExchangeClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `exchange.Hooks(f(g(h())))`.
-func (c *ExchangeClient) Use(hooks ...Hook) {
-	c.hooks.Exchange = append(c.hooks.Exchange, hooks...)
-}
-
-// Create returns a builder for creating a Exchange entity.
-func (c *ExchangeClient) Create() *ExchangeCreate {
-	mutation := newExchangeMutation(c.config, OpCreate)
-	return &ExchangeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Exchange entities.
-func (c *ExchangeClient) CreateBulk(builders ...*ExchangeCreate) *ExchangeCreateBulk {
-	return &ExchangeCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Exchange.
-func (c *ExchangeClient) Update() *ExchangeUpdate {
-	mutation := newExchangeMutation(c.config, OpUpdate)
-	return &ExchangeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ExchangeClient) UpdateOne(e *Exchange) *ExchangeUpdateOne {
-	mutation := newExchangeMutation(c.config, OpUpdateOne, withExchange(e))
-	return &ExchangeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ExchangeClient) UpdateOneID(id int) *ExchangeUpdateOne {
-	mutation := newExchangeMutation(c.config, OpUpdateOne, withExchangeID(id))
-	return &ExchangeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Exchange.
-func (c *ExchangeClient) Delete() *ExchangeDelete {
-	mutation := newExchangeMutation(c.config, OpDelete)
-	return &ExchangeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *ExchangeClient) DeleteOne(e *Exchange) *ExchangeDeleteOne {
-	return c.DeleteOneID(e.ID)
-}
-
-// DeleteOne returns a builder for deleting the given entity by its id.
-func (c *ExchangeClient) DeleteOneID(id int) *ExchangeDeleteOne {
-	builder := c.Delete().Where(exchange.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ExchangeDeleteOne{builder}
-}
-
-// Query returns a query builder for Exchange.
-func (c *ExchangeClient) Query() *ExchangeQuery {
-	return &ExchangeQuery{
-		config: c.config,
-	}
-}
-
-// Get returns a Exchange entity by its id.
-func (c *ExchangeClient) Get(ctx context.Context, id int) (*Exchange, error) {
-	return c.Query().Where(exchange.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ExchangeClient) GetX(ctx context.Context, id int) *Exchange {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryTicker queries the ticker edge of a Exchange.
-func (c *ExchangeClient) QueryTicker(e *Exchange) *TickerQuery {
-	query := &TickerQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := e.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(exchange.Table, exchange.FieldID, id),
-			sqlgraph.To(ticker.Table, ticker.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, exchange.TickerTable, exchange.TickerColumn),
-		)
-		schemaConfig := e.schemaConfig
-		step.To.Schema = schemaConfig.Ticker
-		step.Edge.Schema = schemaConfig.Ticker
-		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryTradingPair queries the trading_pair edge of a Exchange.
-func (c *ExchangeClient) QueryTradingPair(e *Exchange) *TradingPairQuery {
-	query := &TradingPairQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := e.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(exchange.Table, exchange.FieldID, id),
-			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, exchange.TradingPairTable, exchange.TradingPairColumn),
-		)
-		schemaConfig := e.schemaConfig
-		step.To.Schema = schemaConfig.TradingPair
-		step.Edge.Schema = schemaConfig.TradingPair
-		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMarket queries the market edge of a Exchange.
-func (c *ExchangeClient) QueryMarket(e *Exchange) *MarketQuery {
-	query := &MarketQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := e.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(exchange.Table, exchange.FieldID, id),
-			sqlgraph.To(market.Table, market.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, exchange.MarketTable, exchange.MarketColumn),
-		)
-		schemaConfig := e.schemaConfig
-		step.To.Schema = schemaConfig.Market
-		step.Edge.Schema = schemaConfig.Market
-		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ExchangeClient) Hooks() []Hook {
-	return c.hooks.Exchange
-}
-
 // MarketClient is a client for the Market schema.
 type MarketClient struct {
 	config
@@ -520,18 +373,18 @@ func (c *MarketClient) GetX(ctx context.Context, id int) *Market {
 	return obj
 }
 
-// QueryExchange queries the exchange edge of a Market.
-func (c *MarketClient) QueryExchange(m *Market) *ExchangeQuery {
-	query := &ExchangeQuery{config: c.config}
+// QueryVenue queries the venue edge of a Market.
+func (c *MarketClient) QueryVenue(m *Market) *VenueQuery {
+	query := &VenueQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(market.Table, market.FieldID, id),
-			sqlgraph.To(exchange.Table, exchange.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, market.ExchangeTable, market.ExchangeColumn),
+			sqlgraph.To(venue.Table, venue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, market.VenueTable, market.VenueColumn),
 		)
 		schemaConfig := m.schemaConfig
-		step.To.Schema = schemaConfig.Exchange
+		step.To.Schema = schemaConfig.Venue
 		step.Edge.Schema = schemaConfig.Market
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
@@ -738,18 +591,18 @@ func (c *TickerClient) GetX(ctx context.Context, id int) *Ticker {
 	return obj
 }
 
-// QueryExchange queries the exchange edge of a Ticker.
-func (c *TickerClient) QueryExchange(t *Ticker) *ExchangeQuery {
-	query := &ExchangeQuery{config: c.config}
+// QueryVenue queries the venue edge of a Ticker.
+func (c *TickerClient) QueryVenue(t *Ticker) *VenueQuery {
+	query := &VenueQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(ticker.Table, ticker.FieldID, id),
-			sqlgraph.To(exchange.Table, exchange.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ticker.ExchangeTable, ticker.ExchangeColumn),
+			sqlgraph.To(venue.Table, venue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ticker.VenueTable, ticker.VenueColumn),
 		)
 		schemaConfig := t.schemaConfig
-		step.To.Schema = schemaConfig.Exchange
+		step.To.Schema = schemaConfig.Venue
 		step.Edge.Schema = schemaConfig.Ticker
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -847,18 +700,18 @@ func (c *TradingPairClient) GetX(ctx context.Context, id int) *TradingPair {
 	return obj
 }
 
-// QueryExchange queries the exchange edge of a TradingPair.
-func (c *TradingPairClient) QueryExchange(tp *TradingPair) *ExchangeQuery {
-	query := &ExchangeQuery{config: c.config}
+// QueryVenue queries the venue edge of a TradingPair.
+func (c *TradingPairClient) QueryVenue(tp *TradingPair) *VenueQuery {
+	query := &VenueQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := tp.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, id),
-			sqlgraph.To(exchange.Table, exchange.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, tradingpair.ExchangeTable, tradingpair.ExchangeColumn),
+			sqlgraph.To(venue.Table, venue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tradingpair.VenueTable, tradingpair.VenueColumn),
 		)
 		schemaConfig := tp.schemaConfig
-		step.To.Schema = schemaConfig.Exchange
+		step.To.Schema = schemaConfig.Venue
 		step.Edge.Schema = schemaConfig.TradingPair
 		fromV = sqlgraph.Neighbors(tp.driver.Dialect(), step)
 		return fromV, nil
@@ -926,4 +779,151 @@ func (c *TradingPairClient) QueryMarket(tp *TradingPair) *MarketQuery {
 // Hooks returns the client hooks.
 func (c *TradingPairClient) Hooks() []Hook {
 	return c.hooks.TradingPair
+}
+
+// VenueClient is a client for the Venue schema.
+type VenueClient struct {
+	config
+}
+
+// NewVenueClient returns a client for the Venue from the given config.
+func NewVenueClient(c config) *VenueClient {
+	return &VenueClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `venue.Hooks(f(g(h())))`.
+func (c *VenueClient) Use(hooks ...Hook) {
+	c.hooks.Venue = append(c.hooks.Venue, hooks...)
+}
+
+// Create returns a builder for creating a Venue entity.
+func (c *VenueClient) Create() *VenueCreate {
+	mutation := newVenueMutation(c.config, OpCreate)
+	return &VenueCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Venue entities.
+func (c *VenueClient) CreateBulk(builders ...*VenueCreate) *VenueCreateBulk {
+	return &VenueCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Venue.
+func (c *VenueClient) Update() *VenueUpdate {
+	mutation := newVenueMutation(c.config, OpUpdate)
+	return &VenueUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VenueClient) UpdateOne(v *Venue) *VenueUpdateOne {
+	mutation := newVenueMutation(c.config, OpUpdateOne, withVenue(v))
+	return &VenueUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VenueClient) UpdateOneID(id int) *VenueUpdateOne {
+	mutation := newVenueMutation(c.config, OpUpdateOne, withVenueID(id))
+	return &VenueUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Venue.
+func (c *VenueClient) Delete() *VenueDelete {
+	mutation := newVenueMutation(c.config, OpDelete)
+	return &VenueDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VenueClient) DeleteOne(v *Venue) *VenueDeleteOne {
+	return c.DeleteOneID(v.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *VenueClient) DeleteOneID(id int) *VenueDeleteOne {
+	builder := c.Delete().Where(venue.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VenueDeleteOne{builder}
+}
+
+// Query returns a query builder for Venue.
+func (c *VenueClient) Query() *VenueQuery {
+	return &VenueQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Venue entity by its id.
+func (c *VenueClient) Get(ctx context.Context, id int) (*Venue, error) {
+	return c.Query().Where(venue.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VenueClient) GetX(ctx context.Context, id int) *Venue {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTicker queries the ticker edge of a Venue.
+func (c *VenueClient) QueryTicker(v *Venue) *TickerQuery {
+	query := &TickerQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := v.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(venue.Table, venue.FieldID, id),
+			sqlgraph.To(ticker.Table, ticker.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, venue.TickerTable, venue.TickerColumn),
+		)
+		schemaConfig := v.schemaConfig
+		step.To.Schema = schemaConfig.Ticker
+		step.Edge.Schema = schemaConfig.Ticker
+		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTradingPair queries the trading_pair edge of a Venue.
+func (c *VenueClient) QueryTradingPair(v *Venue) *TradingPairQuery {
+	query := &TradingPairQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := v.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(venue.Table, venue.FieldID, id),
+			sqlgraph.To(tradingpair.Table, tradingpair.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, venue.TradingPairTable, venue.TradingPairColumn),
+		)
+		schemaConfig := v.schemaConfig
+		step.To.Schema = schemaConfig.TradingPair
+		step.Edge.Schema = schemaConfig.TradingPair
+		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMarket queries the market edge of a Venue.
+func (c *VenueClient) QueryMarket(v *Venue) *MarketQuery {
+	query := &MarketQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := v.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(venue.Table, venue.FieldID, id),
+			sqlgraph.To(market.Table, market.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, venue.MarketTable, venue.MarketColumn),
+		)
+		schemaConfig := v.schemaConfig
+		step.To.Schema = schemaConfig.Market
+		step.Edge.Schema = schemaConfig.Market
+		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VenueClient) Hooks() []Hook {
+	return c.hooks.Venue
 }

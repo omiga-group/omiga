@@ -12,11 +12,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 )
 
 // MarketQuery is the builder for querying Market entities.
@@ -28,7 +28,7 @@ type MarketQuery struct {
 	order                []OrderFunc
 	fields               []string
 	predicates           []predicate.Market
-	withExchange         *ExchangeQuery
+	withVenue            *VenueQuery
 	withTradingPair      *TradingPairQuery
 	withFKs              bool
 	loadTotal            []func(context.Context, []*Market) error
@@ -70,9 +70,9 @@ func (mq *MarketQuery) Order(o ...OrderFunc) *MarketQuery {
 	return mq
 }
 
-// QueryExchange chains the current query on the "exchange" edge.
-func (mq *MarketQuery) QueryExchange() *ExchangeQuery {
-	query := &ExchangeQuery{config: mq.config}
+// QueryVenue chains the current query on the "venue" edge.
+func (mq *MarketQuery) QueryVenue() *VenueQuery {
+	query := &VenueQuery{config: mq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := mq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -83,11 +83,11 @@ func (mq *MarketQuery) QueryExchange() *ExchangeQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(market.Table, market.FieldID, selector),
-			sqlgraph.To(exchange.Table, exchange.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, market.ExchangeTable, market.ExchangeColumn),
+			sqlgraph.To(venue.Table, venue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, market.VenueTable, market.VenueColumn),
 		)
 		schemaConfig := mq.schemaConfig
-		step.To.Schema = schemaConfig.Exchange
+		step.To.Schema = schemaConfig.Venue
 		step.Edge.Schema = schemaConfig.Market
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
@@ -301,7 +301,7 @@ func (mq *MarketQuery) Clone() *MarketQuery {
 		offset:          mq.offset,
 		order:           append([]OrderFunc{}, mq.order...),
 		predicates:      append([]predicate.Market{}, mq.predicates...),
-		withExchange:    mq.withExchange.Clone(),
+		withVenue:       mq.withVenue.Clone(),
 		withTradingPair: mq.withTradingPair.Clone(),
 		// clone intermediate query.
 		sql:    mq.sql.Clone(),
@@ -310,14 +310,14 @@ func (mq *MarketQuery) Clone() *MarketQuery {
 	}
 }
 
-// WithExchange tells the query-builder to eager-load the nodes that are connected to
-// the "exchange" edge. The optional arguments are used to configure the query builder of the edge.
-func (mq *MarketQuery) WithExchange(opts ...func(*ExchangeQuery)) *MarketQuery {
-	query := &ExchangeQuery{config: mq.config}
+// WithVenue tells the query-builder to eager-load the nodes that are connected to
+// the "venue" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MarketQuery) WithVenue(opts ...func(*VenueQuery)) *MarketQuery {
+	query := &VenueQuery{config: mq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	mq.withExchange = query
+	mq.withVenue = query
 	return mq
 }
 
@@ -402,11 +402,11 @@ func (mq *MarketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Marke
 		withFKs     = mq.withFKs
 		_spec       = mq.querySpec()
 		loadedTypes = [2]bool{
-			mq.withExchange != nil,
+			mq.withVenue != nil,
 			mq.withTradingPair != nil,
 		}
 	)
-	if mq.withExchange != nil {
+	if mq.withVenue != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -435,9 +435,9 @@ func (mq *MarketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Marke
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := mq.withExchange; query != nil {
-		if err := mq.loadExchange(ctx, query, nodes, nil,
-			func(n *Market, e *Exchange) { n.Edges.Exchange = e }); err != nil {
+	if query := mq.withVenue; query != nil {
+		if err := mq.loadVenue(ctx, query, nodes, nil,
+			func(n *Market, e *Venue) { n.Edges.Venue = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -463,20 +463,20 @@ func (mq *MarketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Marke
 	return nodes, nil
 }
 
-func (mq *MarketQuery) loadExchange(ctx context.Context, query *ExchangeQuery, nodes []*Market, init func(*Market), assign func(*Market, *Exchange)) error {
+func (mq *MarketQuery) loadVenue(ctx context.Context, query *VenueQuery, nodes []*Market, init func(*Market), assign func(*Market, *Venue)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Market)
 	for i := range nodes {
-		if nodes[i].exchange_market == nil {
+		if nodes[i].venue_market == nil {
 			continue
 		}
-		fk := *nodes[i].exchange_market
+		fk := *nodes[i].venue_market
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.Where(exchange.IDIn(ids...))
+	query.Where(venue.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -484,7 +484,7 @@ func (mq *MarketQuery) loadExchange(ctx context.Context, query *ExchangeQuery, n
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "exchange_market" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "venue_market" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

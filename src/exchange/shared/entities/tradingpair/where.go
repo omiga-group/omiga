@@ -866,31 +866,31 @@ func CounterQuantityMaxPrecisionNotNil() predicate.TradingPair {
 	})
 }
 
-// HasExchange applies the HasEdge predicate on the "exchange" edge.
-func HasExchange() predicate.TradingPair {
+// HasVenue applies the HasEdge predicate on the "venue" edge.
+func HasVenue() predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ExchangeTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ExchangeTable, ExchangeColumn),
+			sqlgraph.To(VenueTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, VenueTable, VenueColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Exchange
+		step.To.Schema = schemaConfig.Venue
 		step.Edge.Schema = schemaConfig.TradingPair
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasExchangeWith applies the HasEdge predicate on the "exchange" edge with a given conditions (other predicates).
-func HasExchangeWith(preds ...predicate.Exchange) predicate.TradingPair {
+// HasVenueWith applies the HasEdge predicate on the "venue" edge with a given conditions (other predicates).
+func HasVenueWith(preds ...predicate.Venue) predicate.TradingPair {
 	return predicate.TradingPair(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ExchangeInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ExchangeTable, ExchangeColumn),
+			sqlgraph.To(VenueInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, VenueTable, VenueColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Exchange
+		step.To.Schema = schemaConfig.Venue
 		step.Edge.Schema = schemaConfig.TradingPair
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 )
 
@@ -57,14 +57,14 @@ type Ticker struct {
 	TokenInfoURL string `json:"token_info_url,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TickerQuery when eager-loading is set.
-	Edges           TickerEdges `json:"edges"`
-	exchange_ticker *int
+	Edges        TickerEdges `json:"edges"`
+	venue_ticker *int
 }
 
 // TickerEdges holds the relations/edges for other nodes in the graph.
 type TickerEdges struct {
-	// Exchange holds the value of the exchange edge.
-	Exchange *Exchange `json:"exchange,omitempty"`
+	// Venue holds the value of the venue edge.
+	Venue *Venue `json:"venue,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
@@ -72,17 +72,17 @@ type TickerEdges struct {
 	totalCount [1]map[string]int
 }
 
-// ExchangeOrErr returns the Exchange value or an error if the edge
+// VenueOrErr returns the Venue value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e TickerEdges) ExchangeOrErr() (*Exchange, error) {
+func (e TickerEdges) VenueOrErr() (*Venue, error) {
 	if e.loadedTypes[0] {
-		if e.Exchange == nil {
+		if e.Venue == nil {
 			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: exchange.Label}
+			return nil, &NotFoundError{label: venue.Label}
 		}
-		return e.Exchange, nil
+		return e.Venue, nil
 	}
-	return nil, &NotLoadedError{edge: "exchange"}
+	return nil, &NotLoadedError{edge: "venue"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -102,7 +102,7 @@ func (*Ticker) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case ticker.FieldTimestamp, ticker.FieldLastTradedAt, ticker.FieldLastFetchAt:
 			values[i] = new(sql.NullTime)
-		case ticker.ForeignKeys[0]: // exchange_ticker
+		case ticker.ForeignKeys[0]: // venue_ticker
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Ticker", columns[i])
@@ -241,19 +241,19 @@ func (t *Ticker) assignValues(columns []string, values []any) error {
 			}
 		case ticker.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field exchange_ticker", value)
+				return fmt.Errorf("unexpected type %T for edge-field venue_ticker", value)
 			} else if value.Valid {
-				t.exchange_ticker = new(int)
-				*t.exchange_ticker = int(value.Int64)
+				t.venue_ticker = new(int)
+				*t.venue_ticker = int(value.Int64)
 			}
 		}
 	}
 	return nil
 }
 
-// QueryExchange queries the "exchange" edge of the Ticker entity.
-func (t *Ticker) QueryExchange() *ExchangeQuery {
-	return (&TickerClient{config: t.config}).QueryExchange(t)
+// QueryVenue queries the "venue" edge of the Ticker entity.
+func (t *Ticker) QueryVenue() *VenueQuery {
+	return (&TickerClient{config: t.config}).QueryVenue(t)
 }
 
 // Update returns a builder for updating this Ticker.

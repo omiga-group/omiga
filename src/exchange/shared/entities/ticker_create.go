@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 )
 
@@ -260,15 +260,15 @@ func (tc *TickerCreate) SetNillableTokenInfoURL(s *string) *TickerCreate {
 	return tc
 }
 
-// SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
-func (tc *TickerCreate) SetExchangeID(id int) *TickerCreate {
-	tc.mutation.SetExchangeID(id)
+// SetVenueID sets the "venue" edge to the Venue entity by ID.
+func (tc *TickerCreate) SetVenueID(id int) *TickerCreate {
+	tc.mutation.SetVenueID(id)
 	return tc
 }
 
-// SetExchange sets the "exchange" edge to the Exchange entity.
-func (tc *TickerCreate) SetExchange(e *Exchange) *TickerCreate {
-	return tc.SetExchangeID(e.ID)
+// SetVenue sets the "venue" edge to the Venue entity.
+func (tc *TickerCreate) SetVenue(v *Venue) *TickerCreate {
+	return tc.SetVenueID(v.ID)
 }
 
 // Mutation returns the TickerMutation object of the builder.
@@ -353,8 +353,8 @@ func (tc *TickerCreate) check() error {
 	if _, ok := tc.mutation.Counter(); !ok {
 		return &ValidationError{Name: "counter", err: errors.New(`entities: missing required field "Ticker.counter"`)}
 	}
-	if _, ok := tc.mutation.ExchangeID(); !ok {
-		return &ValidationError{Name: "exchange", err: errors.New(`entities: missing required edge "Ticker.exchange"`)}
+	if _, ok := tc.mutation.VenueID(); !ok {
+		return &ValidationError{Name: "venue", err: errors.New(`entities: missing required edge "Ticker.venue"`)}
 	}
 	return nil
 }
@@ -529,17 +529,17 @@ func (tc *TickerCreate) createSpec() (*Ticker, *sqlgraph.CreateSpec) {
 		})
 		_node.TokenInfoURL = value
 	}
-	if nodes := tc.mutation.ExchangeIDs(); len(nodes) > 0 {
+	if nodes := tc.mutation.VenueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   ticker.ExchangeTable,
-			Columns: []string{ticker.ExchangeColumn},
+			Table:   ticker.VenueTable,
+			Columns: []string{ticker.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}
@@ -547,7 +547,7 @@ func (tc *TickerCreate) createSpec() (*Ticker, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.exchange_ticker = &nodes[0]
+		_node.venue_ticker = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

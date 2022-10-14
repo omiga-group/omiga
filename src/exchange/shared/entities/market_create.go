@@ -10,9 +10,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 )
 
 // MarketCreate is the builder for creating a Market entity.
@@ -35,15 +35,15 @@ func (mc *MarketCreate) SetType(m market.Type) *MarketCreate {
 	return mc
 }
 
-// SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
-func (mc *MarketCreate) SetExchangeID(id int) *MarketCreate {
-	mc.mutation.SetExchangeID(id)
+// SetVenueID sets the "venue" edge to the Venue entity by ID.
+func (mc *MarketCreate) SetVenueID(id int) *MarketCreate {
+	mc.mutation.SetVenueID(id)
 	return mc
 }
 
-// SetExchange sets the "exchange" edge to the Exchange entity.
-func (mc *MarketCreate) SetExchange(e *Exchange) *MarketCreate {
-	return mc.SetExchangeID(e.ID)
+// SetVenue sets the "venue" edge to the Venue entity.
+func (mc *MarketCreate) SetVenue(v *Venue) *MarketCreate {
+	return mc.SetVenueID(v.ID)
 }
 
 // AddTradingPairIDs adds the "trading_pair" edge to the TradingPair entity by IDs.
@@ -148,8 +148,8 @@ func (mc *MarketCreate) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`entities: validator failed for field "Market.type": %w`, err)}
 		}
 	}
-	if _, ok := mc.mutation.ExchangeID(); !ok {
-		return &ValidationError{Name: "exchange", err: errors.New(`entities: missing required edge "Market.exchange"`)}
+	if _, ok := mc.mutation.VenueID(); !ok {
+		return &ValidationError{Name: "venue", err: errors.New(`entities: missing required edge "Market.venue"`)}
 	}
 	return nil
 }
@@ -196,17 +196,17 @@ func (mc *MarketCreate) createSpec() (*Market, *sqlgraph.CreateSpec) {
 		})
 		_node.Type = value
 	}
-	if nodes := mc.mutation.ExchangeIDs(); len(nodes) > 0 {
+	if nodes := mc.mutation.VenueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   market.ExchangeTable,
-			Columns: []string{market.ExchangeColumn},
+			Table:   market.VenueTable,
+			Columns: []string{market.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}
@@ -214,7 +214,7 @@ func (mc *MarketCreate) createSpec() (*Market, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.exchange_market = &nodes[0]
+		_node.venue_market = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := mc.mutation.TradingPairIDs(); len(nodes) > 0 {

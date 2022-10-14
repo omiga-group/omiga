@@ -11,11 +11,11 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 )
 
 // TradingPairUpdate is the builder for updating TradingPair entities.
@@ -254,15 +254,15 @@ func (tpu *TradingPairUpdate) ClearCounterQuantityMaxPrecision() *TradingPairUpd
 	return tpu
 }
 
-// SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
-func (tpu *TradingPairUpdate) SetExchangeID(id int) *TradingPairUpdate {
-	tpu.mutation.SetExchangeID(id)
+// SetVenueID sets the "venue" edge to the Venue entity by ID.
+func (tpu *TradingPairUpdate) SetVenueID(id int) *TradingPairUpdate {
+	tpu.mutation.SetVenueID(id)
 	return tpu
 }
 
-// SetExchange sets the "exchange" edge to the Exchange entity.
-func (tpu *TradingPairUpdate) SetExchange(e *Exchange) *TradingPairUpdate {
-	return tpu.SetExchangeID(e.ID)
+// SetVenue sets the "venue" edge to the Venue entity.
+func (tpu *TradingPairUpdate) SetVenue(v *Venue) *TradingPairUpdate {
+	return tpu.SetVenueID(v.ID)
 }
 
 // SetBaseID sets the "base" edge to the Currency entity by ID.
@@ -307,9 +307,9 @@ func (tpu *TradingPairUpdate) Mutation() *TradingPairMutation {
 	return tpu.mutation
 }
 
-// ClearExchange clears the "exchange" edge to the Exchange entity.
-func (tpu *TradingPairUpdate) ClearExchange() *TradingPairUpdate {
-	tpu.mutation.ClearExchange()
+// ClearVenue clears the "venue" edge to the Venue entity.
+func (tpu *TradingPairUpdate) ClearVenue() *TradingPairUpdate {
+	tpu.mutation.ClearVenue()
 	return tpu
 }
 
@@ -408,8 +408,8 @@ func (tpu *TradingPairUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (tpu *TradingPairUpdate) check() error {
-	if _, ok := tpu.mutation.ExchangeID(); tpu.mutation.ExchangeCleared() && !ok {
-		return errors.New(`entities: clearing a required unique edge "TradingPair.exchange"`)
+	if _, ok := tpu.mutation.VenueID(); tpu.mutation.VenueCleared() && !ok {
+		return errors.New(`entities: clearing a required unique edge "TradingPair.venue"`)
 	}
 	if _, ok := tpu.mutation.BaseID(); tpu.mutation.BaseCleared() && !ok {
 		return errors.New(`entities: clearing a required unique edge "TradingPair.base"`)
@@ -611,34 +611,34 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: tradingpair.FieldCounterQuantityMaxPrecision,
 		})
 	}
-	if tpu.mutation.ExchangeCleared() {
+	if tpu.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tradingpair.ExchangeTable,
-			Columns: []string{tradingpair.ExchangeColumn},
+			Table:   tradingpair.VenueTable,
+			Columns: []string{tradingpair.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}
 		edge.Schema = tpu.schemaConfig.TradingPair
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tpu.mutation.ExchangeIDs(); len(nodes) > 0 {
+	if nodes := tpu.mutation.VenueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tradingpair.ExchangeTable,
-			Columns: []string{tradingpair.ExchangeColumn},
+			Table:   tradingpair.VenueTable,
+			Columns: []string{tradingpair.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}
@@ -1024,15 +1024,15 @@ func (tpuo *TradingPairUpdateOne) ClearCounterQuantityMaxPrecision() *TradingPai
 	return tpuo
 }
 
-// SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
-func (tpuo *TradingPairUpdateOne) SetExchangeID(id int) *TradingPairUpdateOne {
-	tpuo.mutation.SetExchangeID(id)
+// SetVenueID sets the "venue" edge to the Venue entity by ID.
+func (tpuo *TradingPairUpdateOne) SetVenueID(id int) *TradingPairUpdateOne {
+	tpuo.mutation.SetVenueID(id)
 	return tpuo
 }
 
-// SetExchange sets the "exchange" edge to the Exchange entity.
-func (tpuo *TradingPairUpdateOne) SetExchange(e *Exchange) *TradingPairUpdateOne {
-	return tpuo.SetExchangeID(e.ID)
+// SetVenue sets the "venue" edge to the Venue entity.
+func (tpuo *TradingPairUpdateOne) SetVenue(v *Venue) *TradingPairUpdateOne {
+	return tpuo.SetVenueID(v.ID)
 }
 
 // SetBaseID sets the "base" edge to the Currency entity by ID.
@@ -1077,9 +1077,9 @@ func (tpuo *TradingPairUpdateOne) Mutation() *TradingPairMutation {
 	return tpuo.mutation
 }
 
-// ClearExchange clears the "exchange" edge to the Exchange entity.
-func (tpuo *TradingPairUpdateOne) ClearExchange() *TradingPairUpdateOne {
-	tpuo.mutation.ClearExchange()
+// ClearVenue clears the "venue" edge to the Venue entity.
+func (tpuo *TradingPairUpdateOne) ClearVenue() *TradingPairUpdateOne {
+	tpuo.mutation.ClearVenue()
 	return tpuo
 }
 
@@ -1191,8 +1191,8 @@ func (tpuo *TradingPairUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (tpuo *TradingPairUpdateOne) check() error {
-	if _, ok := tpuo.mutation.ExchangeID(); tpuo.mutation.ExchangeCleared() && !ok {
-		return errors.New(`entities: clearing a required unique edge "TradingPair.exchange"`)
+	if _, ok := tpuo.mutation.VenueID(); tpuo.mutation.VenueCleared() && !ok {
+		return errors.New(`entities: clearing a required unique edge "TradingPair.venue"`)
 	}
 	if _, ok := tpuo.mutation.BaseID(); tpuo.mutation.BaseCleared() && !ok {
 		return errors.New(`entities: clearing a required unique edge "TradingPair.base"`)
@@ -1411,34 +1411,34 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 			Column: tradingpair.FieldCounterQuantityMaxPrecision,
 		})
 	}
-	if tpuo.mutation.ExchangeCleared() {
+	if tpuo.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tradingpair.ExchangeTable,
-			Columns: []string{tradingpair.ExchangeColumn},
+			Table:   tradingpair.VenueTable,
+			Columns: []string{tradingpair.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}
 		edge.Schema = tpuo.schemaConfig.TradingPair
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tpuo.mutation.ExchangeIDs(); len(nodes) > 0 {
+	if nodes := tpuo.mutation.VenueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tradingpair.ExchangeTable,
-			Columns: []string{tradingpair.ExchangeColumn},
+			Table:   tradingpair.VenueTable,
+			Columns: []string{tradingpair.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}

@@ -25,8 +25,8 @@ const (
 	FieldCounterQuantityMinPrecision = "counter_quantity_min_precision"
 	// FieldCounterQuantityMaxPrecision holds the string denoting the counter_quantity_max_precision field in the database.
 	FieldCounterQuantityMaxPrecision = "counter_quantity_max_precision"
-	// EdgeExchange holds the string denoting the exchange edge name in mutations.
-	EdgeExchange = "exchange"
+	// EdgeVenue holds the string denoting the venue edge name in mutations.
+	EdgeVenue = "venue"
 	// EdgeBase holds the string denoting the base edge name in mutations.
 	EdgeBase = "base"
 	// EdgeCounter holds the string denoting the counter edge name in mutations.
@@ -35,13 +35,13 @@ const (
 	EdgeMarket = "market"
 	// Table holds the table name of the tradingpair in the database.
 	Table = "trading_pairs"
-	// ExchangeTable is the table that holds the exchange relation/edge.
-	ExchangeTable = "trading_pairs"
-	// ExchangeInverseTable is the table name for the Exchange entity.
-	// It exists in this package in order to avoid circular dependency with the "exchange" package.
-	ExchangeInverseTable = "exchanges"
-	// ExchangeColumn is the table column denoting the exchange relation/edge.
-	ExchangeColumn = "exchange_trading_pair"
+	// VenueTable is the table that holds the venue relation/edge.
+	VenueTable = "trading_pairs"
+	// VenueInverseTable is the table name for the Venue entity.
+	// It exists in this package in order to avoid circular dependency with the "venue" package.
+	VenueInverseTable = "venues"
+	// VenueColumn is the table column denoting the venue relation/edge.
+	VenueColumn = "venue_trading_pair"
 	// BaseTable is the table that holds the base relation/edge.
 	BaseTable = "trading_pairs"
 	// BaseInverseTable is the table name for the Currency entity.
@@ -82,7 +82,7 @@ var Columns = []string{
 var ForeignKeys = []string{
 	"currency_currency_base",
 	"currency_currency_counter",
-	"exchange_trading_pair",
+	"venue_trading_pair",
 }
 
 var (

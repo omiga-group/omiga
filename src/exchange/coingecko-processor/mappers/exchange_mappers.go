@@ -3,12 +3,13 @@ package mappers
 import (
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/exchange/coingecko-processor/configuration"
+	venuerepo "github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 	coingeckov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingecko/v3"
 )
 
-func FromConfigurationExchangeToExchange(exchange configuration.Exchange) models.Exchange {
-	return models.Exchange{
+func FromConfigurationExchangeToExchange(exchange configuration.Exchange) models.Venue {
+	return models.Venue{
 		MakerFee:   &exchange.MakerFee,
 		TakerFee:   &exchange.TakerFee,
 		SpreadFee:  &exchange.SpreadFee,
@@ -18,12 +19,13 @@ func FromConfigurationExchangeToExchange(exchange configuration.Exchange) models
 
 func FromCoingeckoExchangeToExchange(
 	exchange coingeckov3.Exchange,
-	configurationExchange *configuration.Exchange) models.Exchange {
+	configurationExchange *configuration.Exchange) models.Venue {
 	links := make(map[string]string)
 	links["website"] = exchange.Url
 
-	mappedExchange := models.Exchange{
-		ExchangeId:          exchange.Id,
+	mappedExchange := models.Venue{
+		VenueId:             exchange.Id,
+		Type:                venuerepo.TypeEXCHANGE,
 		Name:                exchange.Name,
 		YearEstablished:     exchange.YearEstablished,
 		Country:             exchange.Country,
@@ -47,7 +49,7 @@ func FromCoingeckoExchangeToExchange(
 func FromCoingeckoExchangeDetailsToExchange(
 	exchangeId string,
 	exchangeDetails coingeckov3.ExchangeDetails,
-	configurationExchange *configuration.Exchange) models.Exchange {
+	configurationExchange *configuration.Exchange) models.Venue {
 	links := make(map[string]string)
 	links["website"] = exchangeDetails.Url
 	links["facebook"] = exchangeDetails.FacebookUrl
@@ -58,8 +60,8 @@ func FromCoingeckoExchangeDetailsToExchange(
 	links["other1"] = exchangeDetails.OtherUrl1
 	links["other2"] = exchangeDetails.OtherUrl2
 
-	mappedExchange := models.Exchange{
-		ExchangeId:                  exchangeId,
+	mappedExchange := models.Venue{
+		VenueId:                     exchangeId,
 		Name:                        exchangeDetails.Name,
 		YearEstablished:             exchangeDetails.YearEstablished,
 		Country:                     exchangeDetails.Country,

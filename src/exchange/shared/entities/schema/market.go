@@ -43,7 +43,7 @@ func (Market) Fields() []ent.Field {
 // Edges of the Market.
 func (Market) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("exchange", Exchange.Type).
+		edge.From("venue", Venue.Type).
 			Ref("market").
 			Unique().
 			Required(),

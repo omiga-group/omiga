@@ -17,19 +17,19 @@ const (
 	FieldName = "name"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
-	// EdgeExchange holds the string denoting the exchange edge name in mutations.
-	EdgeExchange = "exchange"
+	// EdgeVenue holds the string denoting the venue edge name in mutations.
+	EdgeVenue = "venue"
 	// EdgeTradingPair holds the string denoting the trading_pair edge name in mutations.
 	EdgeTradingPair = "trading_pair"
 	// Table holds the table name of the market in the database.
 	Table = "markets"
-	// ExchangeTable is the table that holds the exchange relation/edge.
-	ExchangeTable = "markets"
-	// ExchangeInverseTable is the table name for the Exchange entity.
-	// It exists in this package in order to avoid circular dependency with the "exchange" package.
-	ExchangeInverseTable = "exchanges"
-	// ExchangeColumn is the table column denoting the exchange relation/edge.
-	ExchangeColumn = "exchange_market"
+	// VenueTable is the table that holds the venue relation/edge.
+	VenueTable = "markets"
+	// VenueInverseTable is the table name for the Venue entity.
+	// It exists in this package in order to avoid circular dependency with the "venue" package.
+	VenueInverseTable = "venues"
+	// VenueColumn is the table column denoting the venue relation/edge.
+	VenueColumn = "venue_market"
 	// TradingPairTable is the table that holds the trading_pair relation/edge. The primary key declared below.
 	TradingPairTable = "market_trading_pair"
 	// TradingPairInverseTable is the table name for the TradingPair entity.
@@ -47,7 +47,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "markets"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"exchange_market",
+	"venue_market",
 }
 
 var (

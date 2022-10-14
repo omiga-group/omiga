@@ -38,127 +38,12 @@ var (
 			},
 		},
 	}
-	// ExchangesColumns holds the columns for the "exchanges" table.
-	ExchangesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "exchange_id", Type: field.TypeString},
-		{Name: "name", Type: field.TypeString, Nullable: true},
-		{Name: "year_established", Type: field.TypeInt, Nullable: true},
-		{Name: "country", Type: field.TypeString, Nullable: true},
-		{Name: "image", Type: field.TypeString, Nullable: true},
-		{Name: "links", Type: field.TypeJSON, Nullable: true},
-		{Name: "has_trading_incentive", Type: field.TypeBool, Nullable: true},
-		{Name: "centralized", Type: field.TypeBool, Nullable: true},
-		{Name: "public_notice", Type: field.TypeString, Nullable: true},
-		{Name: "alert_notice", Type: field.TypeString, Nullable: true},
-		{Name: "trust_score", Type: field.TypeInt, Nullable: true},
-		{Name: "trust_score_rank", Type: field.TypeInt, Nullable: true},
-		{Name: "trade_volume_24h_btc", Type: field.TypeFloat64, Nullable: true},
-		{Name: "trade_volume_24h_btc_normalized", Type: field.TypeFloat64, Nullable: true},
-		{Name: "maker_fee", Type: field.TypeFloat64, Nullable: true},
-		{Name: "taker_fee", Type: field.TypeFloat64, Nullable: true},
-		{Name: "spread_fee", Type: field.TypeBool, Nullable: true},
-		{Name: "support_api", Type: field.TypeBool, Nullable: true},
-	}
-	// ExchangesTable holds the schema information for the "exchanges" table.
-	ExchangesTable = &schema.Table{
-		Name:       "exchanges",
-		Columns:    ExchangesColumns,
-		PrimaryKey: []*schema.Column{ExchangesColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "exchange_exchange_id",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[1]},
-			},
-			{
-				Name:    "exchange_name",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[2]},
-			},
-			{
-				Name:    "exchange_year_established",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[3]},
-			},
-			{
-				Name:    "exchange_country",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[4]},
-			},
-			{
-				Name:    "exchange_image",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[5]},
-			},
-			{
-				Name:    "exchange_has_trading_incentive",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[7]},
-			},
-			{
-				Name:    "exchange_centralized",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[8]},
-			},
-			{
-				Name:    "exchange_public_notice",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[9]},
-			},
-			{
-				Name:    "exchange_alert_notice",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[10]},
-			},
-			{
-				Name:    "exchange_trust_score",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[11]},
-			},
-			{
-				Name:    "exchange_trust_score_rank",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[12]},
-			},
-			{
-				Name:    "exchange_trade_volume_24h_btc",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[13]},
-			},
-			{
-				Name:    "exchange_trade_volume_24h_btc_normalized",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[14]},
-			},
-			{
-				Name:    "exchange_maker_fee",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[15]},
-			},
-			{
-				Name:    "exchange_taker_fee",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[16]},
-			},
-			{
-				Name:    "exchange_spread_fee",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[17]},
-			},
-			{
-				Name:    "exchange_support_api",
-				Unique:  false,
-				Columns: []*schema.Column{ExchangesColumns[18]},
-			},
-		},
-	}
 	// MarketsColumns holds the columns for the "markets" table.
 	MarketsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"SPORT_TRADING", "MARGIN_TRADING", "DERIVATIVES", "EARN", "PERPETUAL", "FUTURES", "WARRANT", "OTC", "YIELD", "P2P", "STRATEGY_TRADING", "SWAP_FARMING", "FAN_TOKEN", "ETF", "NFT", "SWAP"}},
-		{Name: "exchange_market", Type: field.TypeInt},
+		{Name: "venue_market", Type: field.TypeInt},
 	}
 	// MarketsTable holds the schema information for the "markets" table.
 	MarketsTable = &schema.Table{
@@ -167,9 +52,9 @@ var (
 		PrimaryKey: []*schema.Column{MarketsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "markets_exchanges_market",
+				Symbol:     "markets_venues_market",
 				Columns:    []*schema.Column{MarketsColumns[3]},
-				RefColumns: []*schema.Column{ExchangesColumns[0]},
+				RefColumns: []*schema.Column{VenuesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -238,7 +123,7 @@ var (
 		{Name: "is_stale", Type: field.TypeBool, Nullable: true},
 		{Name: "trade_url", Type: field.TypeString, Nullable: true},
 		{Name: "token_info_url", Type: field.TypeString, Nullable: true},
-		{Name: "exchange_ticker", Type: field.TypeInt},
+		{Name: "venue_ticker", Type: field.TypeInt},
 	}
 	// TickersTable holds the schema information for the "tickers" table.
 	TickersTable = &schema.Table{
@@ -247,9 +132,9 @@ var (
 		PrimaryKey: []*schema.Column{TickersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "tickers_exchanges_ticker",
+				Symbol:     "tickers_venues_ticker",
 				Columns:    []*schema.Column{TickersColumns[19]},
-				RefColumns: []*schema.Column{ExchangesColumns[0]},
+				RefColumns: []*schema.Column{VenuesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -345,7 +230,7 @@ var (
 		{Name: "counter_quantity_max_precision", Type: field.TypeInt, Nullable: true},
 		{Name: "currency_currency_base", Type: field.TypeInt},
 		{Name: "currency_currency_counter", Type: field.TypeInt},
-		{Name: "exchange_trading_pair", Type: field.TypeInt},
+		{Name: "venue_trading_pair", Type: field.TypeInt},
 	}
 	// TradingPairsTable holds the schema information for the "trading_pairs" table.
 	TradingPairsTable = &schema.Table{
@@ -366,9 +251,9 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "trading_pairs_exchanges_trading_pair",
+				Symbol:     "trading_pairs_venues_trading_pair",
 				Columns:    []*schema.Column{TradingPairsColumns[12]},
-				RefColumns: []*schema.Column{ExchangesColumns[0]},
+				RefColumns: []*schema.Column{VenuesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -420,6 +305,127 @@ var (
 			},
 		},
 	}
+	// VenuesColumns holds the columns for the "venues" table.
+	VenuesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "venue_id", Type: field.TypeString},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"EXCHANGE"}},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "year_established", Type: field.TypeInt, Nullable: true},
+		{Name: "country", Type: field.TypeString, Nullable: true},
+		{Name: "image", Type: field.TypeString, Nullable: true},
+		{Name: "links", Type: field.TypeJSON, Nullable: true},
+		{Name: "has_trading_incentive", Type: field.TypeBool, Nullable: true},
+		{Name: "centralized", Type: field.TypeBool, Nullable: true},
+		{Name: "public_notice", Type: field.TypeString, Nullable: true},
+		{Name: "alert_notice", Type: field.TypeString, Nullable: true},
+		{Name: "trust_score", Type: field.TypeInt, Nullable: true},
+		{Name: "trust_score_rank", Type: field.TypeInt, Nullable: true},
+		{Name: "trade_volume_24h_btc", Type: field.TypeFloat64, Nullable: true},
+		{Name: "trade_volume_24h_btc_normalized", Type: field.TypeFloat64, Nullable: true},
+		{Name: "maker_fee", Type: field.TypeFloat64, Nullable: true},
+		{Name: "taker_fee", Type: field.TypeFloat64, Nullable: true},
+		{Name: "spread_fee", Type: field.TypeBool, Nullable: true},
+		{Name: "support_api", Type: field.TypeBool, Nullable: true},
+	}
+	// VenuesTable holds the schema information for the "venues" table.
+	VenuesTable = &schema.Table{
+		Name:       "venues",
+		Columns:    VenuesColumns,
+		PrimaryKey: []*schema.Column{VenuesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "venue_venue_id",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[1]},
+			},
+			{
+				Name:    "venue_type",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[2]},
+			},
+			{
+				Name:    "venue_name",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[3]},
+			},
+			{
+				Name:    "venue_year_established",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[4]},
+			},
+			{
+				Name:    "venue_country",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[5]},
+			},
+			{
+				Name:    "venue_image",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[6]},
+			},
+			{
+				Name:    "venue_has_trading_incentive",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[8]},
+			},
+			{
+				Name:    "venue_centralized",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[9]},
+			},
+			{
+				Name:    "venue_public_notice",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[10]},
+			},
+			{
+				Name:    "venue_alert_notice",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[11]},
+			},
+			{
+				Name:    "venue_trust_score",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[12]},
+			},
+			{
+				Name:    "venue_trust_score_rank",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[13]},
+			},
+			{
+				Name:    "venue_trade_volume_24h_btc",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[14]},
+			},
+			{
+				Name:    "venue_trade_volume_24h_btc_normalized",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[15]},
+			},
+			{
+				Name:    "venue_maker_fee",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[16]},
+			},
+			{
+				Name:    "venue_taker_fee",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[17]},
+			},
+			{
+				Name:    "venue_spread_fee",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[18]},
+			},
+			{
+				Name:    "venue_support_api",
+				Unique:  false,
+				Columns: []*schema.Column{VenuesColumns[19]},
+			},
+		},
+	}
 	// MarketTradingPairColumns holds the columns for the "market_trading_pair" table.
 	MarketTradingPairColumns = []*schema.Column{
 		{Name: "market_id", Type: field.TypeInt},
@@ -448,21 +454,21 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		CurrenciesTable,
-		ExchangesTable,
 		MarketsTable,
 		OutboxesTable,
 		TickersTable,
 		TradingPairsTable,
+		VenuesTable,
 		MarketTradingPairTable,
 	}
 )
 
 func init() {
-	MarketsTable.ForeignKeys[0].RefTable = ExchangesTable
-	TickersTable.ForeignKeys[0].RefTable = ExchangesTable
+	MarketsTable.ForeignKeys[0].RefTable = VenuesTable
+	TickersTable.ForeignKeys[0].RefTable = VenuesTable
 	TradingPairsTable.ForeignKeys[0].RefTable = CurrenciesTable
 	TradingPairsTable.ForeignKeys[1].RefTable = CurrenciesTable
-	TradingPairsTable.ForeignKeys[2].RefTable = ExchangesTable
+	TradingPairsTable.ForeignKeys[2].RefTable = VenuesTable
 	MarketTradingPairTable.ForeignKeys[0].RefTable = MarketsTable
 	MarketTradingPairTable.ForeignKeys[1].RefTable = TradingPairsTable
 }

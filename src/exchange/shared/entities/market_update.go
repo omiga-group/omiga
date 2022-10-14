@@ -10,11 +10,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 )
 
 // MarketUpdate is the builder for updating Market entities.
@@ -43,15 +43,15 @@ func (mu *MarketUpdate) SetType(m market.Type) *MarketUpdate {
 	return mu
 }
 
-// SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
-func (mu *MarketUpdate) SetExchangeID(id int) *MarketUpdate {
-	mu.mutation.SetExchangeID(id)
+// SetVenueID sets the "venue" edge to the Venue entity by ID.
+func (mu *MarketUpdate) SetVenueID(id int) *MarketUpdate {
+	mu.mutation.SetVenueID(id)
 	return mu
 }
 
-// SetExchange sets the "exchange" edge to the Exchange entity.
-func (mu *MarketUpdate) SetExchange(e *Exchange) *MarketUpdate {
-	return mu.SetExchangeID(e.ID)
+// SetVenue sets the "venue" edge to the Venue entity.
+func (mu *MarketUpdate) SetVenue(v *Venue) *MarketUpdate {
+	return mu.SetVenueID(v.ID)
 }
 
 // AddTradingPairIDs adds the "trading_pair" edge to the TradingPair entity by IDs.
@@ -74,9 +74,9 @@ func (mu *MarketUpdate) Mutation() *MarketMutation {
 	return mu.mutation
 }
 
-// ClearExchange clears the "exchange" edge to the Exchange entity.
-func (mu *MarketUpdate) ClearExchange() *MarketUpdate {
-	mu.mutation.ClearExchange()
+// ClearVenue clears the "venue" edge to the Venue entity.
+func (mu *MarketUpdate) ClearVenue() *MarketUpdate {
+	mu.mutation.ClearVenue()
 	return mu
 }
 
@@ -168,8 +168,8 @@ func (mu *MarketUpdate) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`entities: validator failed for field "Market.type": %w`, err)}
 		}
 	}
-	if _, ok := mu.mutation.ExchangeID(); mu.mutation.ExchangeCleared() && !ok {
-		return errors.New(`entities: clearing a required unique edge "Market.exchange"`)
+	if _, ok := mu.mutation.VenueID(); mu.mutation.VenueCleared() && !ok {
+		return errors.New(`entities: clearing a required unique edge "Market.venue"`)
 	}
 	return nil
 }
@@ -212,34 +212,34 @@ func (mu *MarketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: market.FieldType,
 		})
 	}
-	if mu.mutation.ExchangeCleared() {
+	if mu.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   market.ExchangeTable,
-			Columns: []string{market.ExchangeColumn},
+			Table:   market.VenueTable,
+			Columns: []string{market.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}
 		edge.Schema = mu.schemaConfig.Market
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := mu.mutation.ExchangeIDs(); len(nodes) > 0 {
+	if nodes := mu.mutation.VenueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   market.ExchangeTable,
-			Columns: []string{market.ExchangeColumn},
+			Table:   market.VenueTable,
+			Columns: []string{market.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}
@@ -341,15 +341,15 @@ func (muo *MarketUpdateOne) SetType(m market.Type) *MarketUpdateOne {
 	return muo
 }
 
-// SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
-func (muo *MarketUpdateOne) SetExchangeID(id int) *MarketUpdateOne {
-	muo.mutation.SetExchangeID(id)
+// SetVenueID sets the "venue" edge to the Venue entity by ID.
+func (muo *MarketUpdateOne) SetVenueID(id int) *MarketUpdateOne {
+	muo.mutation.SetVenueID(id)
 	return muo
 }
 
-// SetExchange sets the "exchange" edge to the Exchange entity.
-func (muo *MarketUpdateOne) SetExchange(e *Exchange) *MarketUpdateOne {
-	return muo.SetExchangeID(e.ID)
+// SetVenue sets the "venue" edge to the Venue entity.
+func (muo *MarketUpdateOne) SetVenue(v *Venue) *MarketUpdateOne {
+	return muo.SetVenueID(v.ID)
 }
 
 // AddTradingPairIDs adds the "trading_pair" edge to the TradingPair entity by IDs.
@@ -372,9 +372,9 @@ func (muo *MarketUpdateOne) Mutation() *MarketMutation {
 	return muo.mutation
 }
 
-// ClearExchange clears the "exchange" edge to the Exchange entity.
-func (muo *MarketUpdateOne) ClearExchange() *MarketUpdateOne {
-	muo.mutation.ClearExchange()
+// ClearVenue clears the "venue" edge to the Venue entity.
+func (muo *MarketUpdateOne) ClearVenue() *MarketUpdateOne {
+	muo.mutation.ClearVenue()
 	return muo
 }
 
@@ -479,8 +479,8 @@ func (muo *MarketUpdateOne) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`entities: validator failed for field "Market.type": %w`, err)}
 		}
 	}
-	if _, ok := muo.mutation.ExchangeID(); muo.mutation.ExchangeCleared() && !ok {
-		return errors.New(`entities: clearing a required unique edge "Market.exchange"`)
+	if _, ok := muo.mutation.VenueID(); muo.mutation.VenueCleared() && !ok {
+		return errors.New(`entities: clearing a required unique edge "Market.venue"`)
 	}
 	return nil
 }
@@ -540,34 +540,34 @@ func (muo *MarketUpdateOne) sqlSave(ctx context.Context) (_node *Market, err err
 			Column: market.FieldType,
 		})
 	}
-	if muo.mutation.ExchangeCleared() {
+	if muo.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   market.ExchangeTable,
-			Columns: []string{market.ExchangeColumn},
+			Table:   market.VenueTable,
+			Columns: []string{market.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}
 		edge.Schema = muo.schemaConfig.Market
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := muo.mutation.ExchangeIDs(); len(nodes) > 0 {
+	if nodes := muo.mutation.VenueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   market.ExchangeTable,
-			Columns: []string{market.ExchangeColumn},
+			Table:   market.VenueTable,
+			Columns: []string{market.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}

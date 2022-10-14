@@ -36,15 +36,15 @@ func (m *MockTradingPairRepository) EXPECT() *MockTradingPairRepositoryMockRecor
 }
 
 // CreateTradingPairs mocks base method.
-func (m *MockTradingPairRepository) CreateTradingPairs(ctx context.Context, exchangeId string, tradingPairs []models.TradingPair) error {
+func (m *MockTradingPairRepository) CreateTradingPairs(ctx context.Context, venueId string, tradingPairs []models.TradingPair) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateTradingPairs", ctx, exchangeId, tradingPairs)
+	ret := m.ctrl.Call(m, "CreateTradingPairs", ctx, venueId, tradingPairs)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateTradingPairs indicates an expected call of CreateTradingPairs.
-func (mr *MockTradingPairRepositoryMockRecorder) CreateTradingPairs(ctx, exchangeId, tradingPairs interface{}) *gomock.Call {
+func (mr *MockTradingPairRepositoryMockRecorder) CreateTradingPairs(ctx, venueId, tradingPairs interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTradingPairs", reflect.TypeOf((*MockTradingPairRepository)(nil).CreateTradingPairs), ctx, exchangeId, tradingPairs)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTradingPairs", reflect.TypeOf((*MockTradingPairRepository)(nil).CreateTradingPairs), ctx, venueId, tradingPairs)
 }

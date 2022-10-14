@@ -76,7 +76,7 @@ func NewBittrexTradingPairSubscriber(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
 		repositories.NewCurrencyRepository,
-		repositories.NewExchangeRepository,
+		repositories.NewVenueRepository,
 		repositories.NewTradingPairRepository,
 		subscribers.NewBittrexTradingPairSubscriber)
 

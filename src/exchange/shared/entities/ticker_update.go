@@ -11,10 +11,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/ticker"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 	"github.com/omiga-group/omiga/src/exchange/shared/models"
 )
 
@@ -385,15 +385,15 @@ func (tu *TickerUpdate) ClearTokenInfoURL() *TickerUpdate {
 	return tu
 }
 
-// SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
-func (tu *TickerUpdate) SetExchangeID(id int) *TickerUpdate {
-	tu.mutation.SetExchangeID(id)
+// SetVenueID sets the "venue" edge to the Venue entity by ID.
+func (tu *TickerUpdate) SetVenueID(id int) *TickerUpdate {
+	tu.mutation.SetVenueID(id)
 	return tu
 }
 
-// SetExchange sets the "exchange" edge to the Exchange entity.
-func (tu *TickerUpdate) SetExchange(e *Exchange) *TickerUpdate {
-	return tu.SetExchangeID(e.ID)
+// SetVenue sets the "venue" edge to the Venue entity.
+func (tu *TickerUpdate) SetVenue(v *Venue) *TickerUpdate {
+	return tu.SetVenueID(v.ID)
 }
 
 // Mutation returns the TickerMutation object of the builder.
@@ -401,9 +401,9 @@ func (tu *TickerUpdate) Mutation() *TickerMutation {
 	return tu.mutation
 }
 
-// ClearExchange clears the "exchange" edge to the Exchange entity.
-func (tu *TickerUpdate) ClearExchange() *TickerUpdate {
-	tu.mutation.ClearExchange()
+// ClearVenue clears the "venue" edge to the Venue entity.
+func (tu *TickerUpdate) ClearVenue() *TickerUpdate {
+	tu.mutation.ClearVenue()
 	return tu
 }
 
@@ -469,8 +469,8 @@ func (tu *TickerUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (tu *TickerUpdate) check() error {
-	if _, ok := tu.mutation.ExchangeID(); tu.mutation.ExchangeCleared() && !ok {
-		return errors.New(`entities: clearing a required unique edge "Ticker.exchange"`)
+	if _, ok := tu.mutation.VenueID(); tu.mutation.VenueCleared() && !ok {
+		return errors.New(`entities: clearing a required unique edge "Ticker.venue"`)
 	}
 	return nil
 }
@@ -742,34 +742,34 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: ticker.FieldTokenInfoURL,
 		})
 	}
-	if tu.mutation.ExchangeCleared() {
+	if tu.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   ticker.ExchangeTable,
-			Columns: []string{ticker.ExchangeColumn},
+			Table:   ticker.VenueTable,
+			Columns: []string{ticker.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}
 		edge.Schema = tu.schemaConfig.Ticker
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.ExchangeIDs(); len(nodes) > 0 {
+	if nodes := tu.mutation.VenueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   ticker.ExchangeTable,
-			Columns: []string{ticker.ExchangeColumn},
+			Table:   ticker.VenueTable,
+			Columns: []string{ticker.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}
@@ -1155,15 +1155,15 @@ func (tuo *TickerUpdateOne) ClearTokenInfoURL() *TickerUpdateOne {
 	return tuo
 }
 
-// SetExchangeID sets the "exchange" edge to the Exchange entity by ID.
-func (tuo *TickerUpdateOne) SetExchangeID(id int) *TickerUpdateOne {
-	tuo.mutation.SetExchangeID(id)
+// SetVenueID sets the "venue" edge to the Venue entity by ID.
+func (tuo *TickerUpdateOne) SetVenueID(id int) *TickerUpdateOne {
+	tuo.mutation.SetVenueID(id)
 	return tuo
 }
 
-// SetExchange sets the "exchange" edge to the Exchange entity.
-func (tuo *TickerUpdateOne) SetExchange(e *Exchange) *TickerUpdateOne {
-	return tuo.SetExchangeID(e.ID)
+// SetVenue sets the "venue" edge to the Venue entity.
+func (tuo *TickerUpdateOne) SetVenue(v *Venue) *TickerUpdateOne {
+	return tuo.SetVenueID(v.ID)
 }
 
 // Mutation returns the TickerMutation object of the builder.
@@ -1171,9 +1171,9 @@ func (tuo *TickerUpdateOne) Mutation() *TickerMutation {
 	return tuo.mutation
 }
 
-// ClearExchange clears the "exchange" edge to the Exchange entity.
-func (tuo *TickerUpdateOne) ClearExchange() *TickerUpdateOne {
-	tuo.mutation.ClearExchange()
+// ClearVenue clears the "venue" edge to the Venue entity.
+func (tuo *TickerUpdateOne) ClearVenue() *TickerUpdateOne {
+	tuo.mutation.ClearVenue()
 	return tuo
 }
 
@@ -1252,8 +1252,8 @@ func (tuo *TickerUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (tuo *TickerUpdateOne) check() error {
-	if _, ok := tuo.mutation.ExchangeID(); tuo.mutation.ExchangeCleared() && !ok {
-		return errors.New(`entities: clearing a required unique edge "Ticker.exchange"`)
+	if _, ok := tuo.mutation.VenueID(); tuo.mutation.VenueCleared() && !ok {
+		return errors.New(`entities: clearing a required unique edge "Ticker.venue"`)
 	}
 	return nil
 }
@@ -1542,34 +1542,34 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 			Column: ticker.FieldTokenInfoURL,
 		})
 	}
-	if tuo.mutation.ExchangeCleared() {
+	if tuo.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   ticker.ExchangeTable,
-			Columns: []string{ticker.ExchangeColumn},
+			Table:   ticker.VenueTable,
+			Columns: []string{ticker.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}
 		edge.Schema = tuo.schemaConfig.Ticker
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.ExchangeIDs(); len(nodes) > 0 {
+	if nodes := tuo.mutation.VenueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   ticker.ExchangeTable,
-			Columns: []string{ticker.ExchangeColumn},
+			Table:   ticker.VenueTable,
+			Columns: []string{ticker.VenueColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: exchange.FieldID,
+					Column: venue.FieldID,
 				},
 			},
 		}

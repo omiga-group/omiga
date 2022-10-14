@@ -55,14 +55,14 @@ extend type Query {
     where: CurrencyWhereInput
   ): CurrencyConnection
 
-  exchange(
+  venue(
     """
     Ordering directions
     """
-    where: ExchangeWhereInput
-  ): Exchange
+    where: VenueWhereInput
+  ): Venue
 
-  exchanges(
+  venues(
     """
     Returns the items in the list that come after the specified cursor.
     """
@@ -86,13 +86,13 @@ extend type Query {
     """
     Ordering directions
     """
-    orderBy: [ExchangeOrder!]
+    orderBy: [VenueOrder!]
 
     """
     Ordering directions
     """
-    where: ExchangeWhereInput
-  ): ExchangeConnection
+    where: VenueWhereInput
+  ): VenueConnection
 }
 
 enum OrderDirection {
@@ -178,8 +178,8 @@ type CurrencyEdge {
   cursor: Cursor!
 }
 
-enum ExchangeOrderField {
-  exchangeId
+enum VenueOrderField {
+  venueId
   name
   yearEstablished
   country
@@ -194,14 +194,16 @@ enum ExchangeOrderField {
   tradeVolume24hBtcNormalized
 }
 
-input ExchangeOrder {
+input VenueOrder {
   direction: OrderDirection!
-  field: ExchangeOrderField
+  field: VenueOrderField
 }
 
-type Exchange implements Node {
+type Venue implements Node {
   id: ID!
-  exchangeId: String!
+  venueId: String!
+  type: VenueType!
+
   name: String
   yearEstablished: Int
   country: String
@@ -286,7 +288,7 @@ type ConvertedDetails {
 """
 A connection to a list of items.
 """
-type ExchangeConnection {
+type VenueConnection {
   """
   Information to aid in pagination.
   """
@@ -295,10 +297,10 @@ type ExchangeConnection {
   """
   A list of edges.
   """
-  edges: [ExchangeEdge]
+  edges: [VenueEdge]
 
   """
-  Total number of exchanges
+  Total number of venues
   """
   totalCount: Int
 }
@@ -306,11 +308,11 @@ type ExchangeConnection {
 """
 An edge in a connection.
 """
-type ExchangeEdge {
+type VenueEdge {
   """
   The item at the end of the edge
   """
-  node: Exchange
+  node: Venue
 
   """
   A cursor for use in pagination
@@ -328,6 +330,10 @@ type Market implements Node {
   id: ID!
   name: String!
   type: MarketType!
+}
+
+enum VenueType {
+  EXCHANGE
 }
 
 enum CurrencyType {

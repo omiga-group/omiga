@@ -13,11 +13,11 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/currency"
-	"github.com/omiga-group/omiga/src/exchange/shared/entities/exchange"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/market"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/predicate"
 	"github.com/omiga-group/omiga/src/exchange/shared/entities/tradingpair"
+	"github.com/omiga-group/omiga/src/exchange/shared/entities/venue"
 )
 
 // TradingPairQuery is the builder for querying TradingPair entities.
@@ -29,7 +29,7 @@ type TradingPairQuery struct {
 	order           []OrderFunc
 	fields          []string
 	predicates      []predicate.TradingPair
-	withExchange    *ExchangeQuery
+	withVenue       *VenueQuery
 	withBase        *CurrencyQuery
 	withCounter     *CurrencyQuery
 	withMarket      *MarketQuery
@@ -73,9 +73,9 @@ func (tpq *TradingPairQuery) Order(o ...OrderFunc) *TradingPairQuery {
 	return tpq
 }
 
-// QueryExchange chains the current query on the "exchange" edge.
-func (tpq *TradingPairQuery) QueryExchange() *ExchangeQuery {
-	query := &ExchangeQuery{config: tpq.config}
+// QueryVenue chains the current query on the "venue" edge.
+func (tpq *TradingPairQuery) QueryVenue() *VenueQuery {
+	query := &VenueQuery{config: tpq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tpq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -86,11 +86,11 @@ func (tpq *TradingPairQuery) QueryExchange() *ExchangeQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, selector),
-			sqlgraph.To(exchange.Table, exchange.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, tradingpair.ExchangeTable, tradingpair.ExchangeColumn),
+			sqlgraph.To(venue.Table, venue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tradingpair.VenueTable, tradingpair.VenueColumn),
 		)
 		schemaConfig := tpq.schemaConfig
-		step.To.Schema = schemaConfig.Exchange
+		step.To.Schema = schemaConfig.Venue
 		step.Edge.Schema = schemaConfig.TradingPair
 		fromU = sqlgraph.SetNeighbors(tpq.driver.Dialect(), step)
 		return fromU, nil
@@ -349,15 +349,15 @@ func (tpq *TradingPairQuery) Clone() *TradingPairQuery {
 		return nil
 	}
 	return &TradingPairQuery{
-		config:       tpq.config,
-		limit:        tpq.limit,
-		offset:       tpq.offset,
-		order:        append([]OrderFunc{}, tpq.order...),
-		predicates:   append([]predicate.TradingPair{}, tpq.predicates...),
-		withExchange: tpq.withExchange.Clone(),
-		withBase:     tpq.withBase.Clone(),
-		withCounter:  tpq.withCounter.Clone(),
-		withMarket:   tpq.withMarket.Clone(),
+		config:      tpq.config,
+		limit:       tpq.limit,
+		offset:      tpq.offset,
+		order:       append([]OrderFunc{}, tpq.order...),
+		predicates:  append([]predicate.TradingPair{}, tpq.predicates...),
+		withVenue:   tpq.withVenue.Clone(),
+		withBase:    tpq.withBase.Clone(),
+		withCounter: tpq.withCounter.Clone(),
+		withMarket:  tpq.withMarket.Clone(),
 		// clone intermediate query.
 		sql:    tpq.sql.Clone(),
 		path:   tpq.path,
@@ -365,14 +365,14 @@ func (tpq *TradingPairQuery) Clone() *TradingPairQuery {
 	}
 }
 
-// WithExchange tells the query-builder to eager-load the nodes that are connected to
-// the "exchange" edge. The optional arguments are used to configure the query builder of the edge.
-func (tpq *TradingPairQuery) WithExchange(opts ...func(*ExchangeQuery)) *TradingPairQuery {
-	query := &ExchangeQuery{config: tpq.config}
+// WithVenue tells the query-builder to eager-load the nodes that are connected to
+// the "venue" edge. The optional arguments are used to configure the query builder of the edge.
+func (tpq *TradingPairQuery) WithVenue(opts ...func(*VenueQuery)) *TradingPairQuery {
+	query := &VenueQuery{config: tpq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	tpq.withExchange = query
+	tpq.withVenue = query
 	return tpq
 }
 
@@ -479,13 +479,13 @@ func (tpq *TradingPairQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		withFKs     = tpq.withFKs
 		_spec       = tpq.querySpec()
 		loadedTypes = [4]bool{
-			tpq.withExchange != nil,
+			tpq.withVenue != nil,
 			tpq.withBase != nil,
 			tpq.withCounter != nil,
 			tpq.withMarket != nil,
 		}
 	)
-	if tpq.withExchange != nil || tpq.withBase != nil || tpq.withCounter != nil {
+	if tpq.withVenue != nil || tpq.withBase != nil || tpq.withCounter != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -514,9 +514,9 @@ func (tpq *TradingPairQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := tpq.withExchange; query != nil {
-		if err := tpq.loadExchange(ctx, query, nodes, nil,
-			func(n *TradingPair, e *Exchange) { n.Edges.Exchange = e }); err != nil {
+	if query := tpq.withVenue; query != nil {
+		if err := tpq.loadVenue(ctx, query, nodes, nil,
+			func(n *TradingPair, e *Venue) { n.Edges.Venue = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -554,20 +554,20 @@ func (tpq *TradingPairQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	return nodes, nil
 }
 
-func (tpq *TradingPairQuery) loadExchange(ctx context.Context, query *ExchangeQuery, nodes []*TradingPair, init func(*TradingPair), assign func(*TradingPair, *Exchange)) error {
+func (tpq *TradingPairQuery) loadVenue(ctx context.Context, query *VenueQuery, nodes []*TradingPair, init func(*TradingPair), assign func(*TradingPair, *Venue)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*TradingPair)
 	for i := range nodes {
-		if nodes[i].exchange_trading_pair == nil {
+		if nodes[i].venue_trading_pair == nil {
 			continue
 		}
-		fk := *nodes[i].exchange_trading_pair
+		fk := *nodes[i].venue_trading_pair
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
 		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.Where(exchange.IDIn(ids...))
+	query.Where(venue.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -575,7 +575,7 @@ func (tpq *TradingPairQuery) loadExchange(ctx context.Context, query *ExchangeQu
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "exchange_trading_pair" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "venue_trading_pair" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
