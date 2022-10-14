@@ -12,7 +12,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/mappers"
-	exchangeConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
+	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 )
 
@@ -23,7 +23,7 @@ type geminiTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
 	geminiConfig          configuration.GeminiConfig
-	exchangeConfig        exchangeConfiguration.ExchangeConfig
+	venueConfig           venueConfiguration.VenueConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
@@ -31,7 +31,7 @@ func NewGeminiTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	geminiConfig configuration.GeminiConfig,
-	exchangeConfig exchangeConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (GeminiTradingPairSubscriber, error) {
 
@@ -39,7 +39,7 @@ func NewGeminiTradingPairSubscriber(
 		ctx:                   ctx,
 		logger:                logger,
 		geminiConfig:          geminiConfig,
-		exchangeConfig:        exchangeConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -109,7 +109,7 @@ func (gtps *geminiTradingPairSubscriber) Run() {
 
 	if err = gtps.tradingPairRepository.CreateTradingPairs(
 		gtps.ctx,
-		gtps.exchangeConfig.Id,
+		gtps.venueConfig.Id,
 		mappers.GeminiTradingPairsToTradingPairs(maps.Values(all))); err != nil {
 		gtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

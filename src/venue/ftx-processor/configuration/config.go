@@ -3,14 +3,14 @@ package configuration
 import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	exchangeConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
+	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 )
 
 type Config struct {
-	App      configuration.AppConfig              `yaml:"app"`
-	Exchange exchangeConfiguration.ExchangeConfig `yaml:"exchange"`
-	Pulsar   pulsar.PulsarConfig                  `yaml:"pulsar"`
-	Ftx      FtxConfig                            `yaml:"ftx"`
+	App    configuration.AppConfig        `yaml:"app"`
+	Venue  venueConfiguration.VenueConfig `yaml:"venue"`
+	Pulsar pulsar.PulsarConfig            `yaml:"pulsar"`
+	Ftx    FtxConfig                      `yaml:"ftx"`
 }
 
 type FtxConfig struct {

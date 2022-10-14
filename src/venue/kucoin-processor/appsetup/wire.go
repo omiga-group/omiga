@@ -30,7 +30,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/kucoin-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/kucoin-processor/subscribers"
-	exchangeConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
+	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
@@ -69,7 +69,7 @@ func NewKuCoinTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	kuCoinConfig configuration.KuCoinConfig,
-	exchangeConfig exchangeConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.ExchangeConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.KuCoinTradingPairSubscriber, error) {
 	wire.Build(

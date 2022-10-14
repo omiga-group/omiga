@@ -30,7 +30,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/coinbase-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/coinbase-processor/subscribers"
-	exchangeConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
+	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
@@ -69,7 +69,7 @@ func NewCoinbaseTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	coinbaseConfig configuration.CoinbaseConfig,
-	exchangeConfig exchangeConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.ExchangeConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.CoinbaseTradingPairSubscriber, error) {
 	wire.Build(

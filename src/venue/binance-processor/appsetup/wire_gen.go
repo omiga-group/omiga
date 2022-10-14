@@ -106,7 +106,7 @@ func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	return binanceOrderBookSubscriber, nil
 }
 
-func NewBinanceTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, binanceConfig configuration2.BinanceConfig, exchangeConfig configuration3.ExchangeConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.BinanceTradingPairSubscriber, error) {
+func NewBinanceTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, binanceConfig configuration2.BinanceConfig, exchangeConfig configuration3.VenueConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.BinanceTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err

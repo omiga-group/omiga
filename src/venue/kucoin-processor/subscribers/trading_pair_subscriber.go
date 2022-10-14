@@ -7,7 +7,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/venue/kucoin-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/kucoin-processor/mappers"
-	exchangeConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
+	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
 )
@@ -19,7 +19,7 @@ type kuCoinTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
 	kuCoinConfig          configuration.KuCoinConfig
-	exchangeConfig        exchangeConfiguration.ExchangeConfig
+	venueConfig           venueConfiguration.VenueConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
@@ -27,7 +27,7 @@ func NewKuCoinTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	kuCoinConfig configuration.KuCoinConfig,
-	exchangeConfig exchangeConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (KuCoinTradingPairSubscriber, error) {
 
@@ -35,7 +35,7 @@ func NewKuCoinTradingPairSubscriber(
 		ctx:                   ctx,
 		logger:                logger,
 		kuCoinConfig:          kuCoinConfig,
-		exchangeConfig:        exchangeConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -72,7 +72,7 @@ func (ktps *kuCoinTradingPairSubscriber) Run() {
 
 	if err = ktps.tradingPairRepository.CreateTradingPairs(
 		ktps.ctx,
-		ktps.exchangeConfig.Id,
+		ktps.venueConfig.Id,
 		mappers.KuCoinSymbolModelToTradingPairs(symbolModel)); err != nil {
 		ktps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

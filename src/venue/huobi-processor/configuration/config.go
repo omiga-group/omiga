@@ -4,15 +4,15 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	exchangeConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
+	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 )
 
 type Config struct {
-	App      configuration.AppConfig              `yaml:"app"`
-	Exchange exchangeConfiguration.ExchangeConfig `yaml:"exchange"`
-	Pulsar   pulsar.PulsarConfig                  `yaml:"pulsar"`
-	Huobi    HuobiConfig                          `yaml:"huobi"`
-	Postgres postgres.PostgresConfig              `yaml:"postgres"`
+	App      configuration.AppConfig        `yaml:"app"`
+	Venue    venueConfiguration.VenueConfig `yaml:"venue"`
+	Pulsar   pulsar.PulsarConfig            `yaml:"pulsar"`
+	Huobi    HuobiConfig                    `yaml:"huobi"`
+	Postgres postgres.PostgresConfig        `yaml:"postgres"`
 }
 
 type HuobiConfig struct {

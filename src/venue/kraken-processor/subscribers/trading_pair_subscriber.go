@@ -7,7 +7,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/venue/kraken-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/kraken-processor/mappers"
-	exchangeConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
+	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
 )
@@ -19,7 +19,7 @@ type krakenTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
 	krakenConfig          configuration.KrakenConfig
-	exchangeConfig        exchangeConfiguration.ExchangeConfig
+	venueConfig           venueConfiguration.VenueConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
@@ -27,7 +27,7 @@ func NewKrakenTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	krakenConfig configuration.KrakenConfig,
-	exchangeConfig exchangeConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (KrakenTradingPairSubscriber, error) {
 
@@ -35,7 +35,7 @@ func NewKrakenTradingPairSubscriber(
 		ctx:                   ctx,
 		logger:                logger,
 		krakenConfig:          krakenConfig,
-		exchangeConfig:        exchangeConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -61,7 +61,7 @@ func (ktps *krakenTradingPairSubscriber) Run() {
 
 	if err = ktps.tradingPairRepository.CreateTradingPairs(
 		ktps.ctx,
-		ktps.exchangeConfig.Id,
+		ktps.venueConfig.Id,
 		mappers.KrakenAssetPairsToTradingPairs(assetPairs)); err != nil {
 		ktps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

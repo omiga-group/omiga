@@ -7,7 +7,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/venue/bitmart-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/bitmart-processor/mappers"
-	exchangeConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
+	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
 )
@@ -19,7 +19,7 @@ type bitMartTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
 	bitMartConfig         configuration.BitMartConfig
-	exchangeConfig        exchangeConfiguration.ExchangeConfig
+	venueConfig           venueConfiguration.VenueConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
@@ -27,14 +27,14 @@ func NewBitMartTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	bitMartConfig configuration.BitMartConfig,
-	exchangeConfig exchangeConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (BitMartTradingPairSubscriber, error) {
 	instance := &bitMartTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
 		bitMartConfig:         bitMartConfig,
-		exchangeConfig:        exchangeConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -77,7 +77,7 @@ func (btps *bitMartTradingPairSubscriber) Run() {
 
 	if err = btps.tradingPairRepository.CreateTradingPairs(
 		btps.ctx,
-		btps.exchangeConfig.Id,
+		btps.venueConfig.Id,
 		mappers.BitMartSymbolsToTradingPairs(response.JSON200.Data.Symbols)); err != nil {
 		btps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

@@ -7,7 +7,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/venue/crypto-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/crypto-processor/mappers"
-	exchangeConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
+	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
 )
@@ -19,7 +19,7 @@ type cryptoTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
 	cryptoConfig          configuration.CryptoConfig
-	exchangeConfig        exchangeConfiguration.ExchangeConfig
+	venueConfig           venueConfiguration.VenueConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
@@ -27,7 +27,7 @@ func NewCryptoTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	cryptoConfig configuration.CryptoConfig,
-	exchangeConfig exchangeConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (CryptoTradingPairSubscriber, error) {
 
@@ -35,7 +35,7 @@ func NewCryptoTradingPairSubscriber(
 		ctx:                   ctx,
 		logger:                logger,
 		cryptoConfig:          cryptoConfig,
-		exchangeConfig:        exchangeConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -78,7 +78,7 @@ func (ctps *cryptoTradingPairSubscriber) Run() {
 
 	if err = ctps.tradingPairRepository.CreateTradingPairs(
 		ctps.ctx,
-		ctps.exchangeConfig.Id,
+		ctps.venueConfig.Id,
 		mappers.CryptoInstrumentsToTradingPairs(response.JSON200.Result.Instruments)); err != nil {
 		ctps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

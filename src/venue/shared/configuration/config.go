@@ -1,5 +1,5 @@
 package configuration
 
-type ExchangeConfig struct {
-	Id string `yaml:"id" env:"OMIGA_EXCHANGE_ID"`
+type VenueConfig struct {
+	Id string `yaml:"id" env:"OMIGA_VENUE_ID"`
 }
