@@ -5,7 +5,6 @@ on:
     branches:
       - "main"
     paths:
-      - ".github/workflows/codeql-analysis.yml"
       - ".github/workflows/lint.yml"
       - ".github/workflows/web.yml"
       - "api-definitions/graphql/omiga/**"
@@ -14,7 +13,6 @@ on:
     branches:
       - "main"
     paths:
-      - ".github/workflows/codeql-analysis.yml"
       - ".github/workflows/lint.yml"
       - ".github/workflows/web.yml"
       - "api-definitions/graphql/omiga/**"
@@ -35,10 +33,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set required environment variable
+        run: |
+          echo "build_container_tag=$(uuidgen)" >> $GITHUB_ENV
+          echo "unittest_container_tag=$(uuidgen)" >> $GITHUB_ENV
+          echo "unittest_extract_container_name=$(uuidgen)" >> $GITHUB_ENV
+          echo "sem_version=$(docker run --rm -v $(pwd):/repo gittools/gitversion:5.10.3-alpine.3.13-6.0 /repo | jq '.SemVer')" >> $GITHUB_ENV
+
       - name: Build
         run: |
           DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
+            --tag omiga/web:${{ env.sem_version }} \
             --tag omiga/web:${{ github.sha }} \
             --file ./src/web/Dockerfile \
             ./
@@ -53,3 +59,12 @@ jobs:
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
           timeout: "10m0s"
+
+      - name: Clean up
+        if: always()
+        run: |
+          docker rm ${{ env.unittest_extract_container_name }} || true
+          docker rmi ${{ env.build_container_tag }} || true
+          docker rmi ${{ env.unittest_container_tag }} || true
+          docker rmi omiga/web:${{ env.sem_version }} || true
+          docker rmi omiga/web:${{ github.sha }} || true
