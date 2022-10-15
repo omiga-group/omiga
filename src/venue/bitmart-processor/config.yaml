@@ -1,9 +1,6 @@
 app:
   source: "urn::omiga::bitmart-processor"
 
-venue:
-  id: "bitmart"
-
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "bitmart-processor"
@@ -16,4 +13,5 @@ postgres:
   maxOpenConns: 5
 
 bitmart:
+  id: "bitmart"
   baseUrl: "https://api-cloud.bitmart.com/spot/v1"
