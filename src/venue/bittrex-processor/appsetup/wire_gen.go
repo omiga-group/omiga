@@ -16,7 +16,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/bittrex-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/bittrex-processor/subscribers"
-	configuration2 "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
@@ -65,7 +64,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewBittrexTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, bittrexConfig configuration.BittrexConfig, venueConfig configuration2.VenueConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.BittrexTradingPairSubscriber, error) {
+func NewBittrexTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, bittrexConfig configuration.BittrexConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.BittrexTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -86,7 +85,7 @@ func NewBittrexTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLog
 	if err != nil {
 		return nil, err
 	}
-	bittrexTradingPairSubscriber, err := subscribers.NewBittrexTradingPairSubscriber(ctx, logger, bittrexConfig, venueConfig, cronService, tradingPairRepository)
+	bittrexTradingPairSubscriber, err := subscribers.NewBittrexTradingPairSubscriber(ctx, logger, bittrexConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

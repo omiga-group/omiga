@@ -30,7 +30,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/bittrex-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/bittrex-processor/subscribers"
-	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
@@ -69,7 +68,6 @@ func NewBittrexTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	bittrexConfig configuration.BittrexConfig,
-	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.BittrexTradingPairSubscriber, error) {
 	wire.Build(

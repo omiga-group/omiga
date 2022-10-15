@@ -1,9 +1,6 @@
 app:
   source: "urn::omiga::bittrex-processor"
 
-venue:
-  id: "bittrex"
-
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "bittrex-processor"
@@ -16,5 +13,6 @@ postgres:
   maxOpenConns: 5
 
 bittrex:
+  id: "bittrex"
   apiKey: ""
   secretKey: ""
