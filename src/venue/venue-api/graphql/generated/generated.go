@@ -1349,7 +1349,7 @@ enum CurrencyType {
 }
 
 enum MarketType {
-  SPORT_TRADING
+  SPOT_TRADING
   MARGIN_TRADING
   DERIVATIVES
   EARN

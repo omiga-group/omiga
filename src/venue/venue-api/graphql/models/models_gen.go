@@ -73,7 +73,7 @@ func (e CurrencyType) MarshalGQL(w io.Writer) {
 type MarketType string
 
 const (
-	MarketTypeSportTrading    MarketType = "SPORT_TRADING"
+	MarketTypeSpotTrading     MarketType = "SPOT_TRADING"
 	MarketTypeMarginTrading   MarketType = "MARGIN_TRADING"
 	MarketTypeDerivatives     MarketType = "DERIVATIVES"
 	MarketTypeEarn            MarketType = "EARN"
@@ -93,7 +93,7 @@ const (
 )
 
 var AllMarketType = []MarketType{
-	MarketTypeSportTrading,
+	MarketTypeSpotTrading,
 	MarketTypeMarginTrading,
 	MarketTypeDerivatives,
 	MarketTypeEarn,
@@ -114,7 +114,7 @@ var AllMarketType = []MarketType{
 
 func (e MarketType) IsValid() bool {
 	switch e {
-	case MarketTypeSportTrading, MarketTypeMarginTrading, MarketTypeDerivatives, MarketTypeEarn, MarketTypePerpetual, MarketTypeFutures, MarketTypeWarrant, MarketTypeOtc, MarketTypeYield, MarketTypeP2p, MarketTypeStrategyTrading, MarketTypeSwapFarming, MarketTypeFanToken, MarketTypeEtf, MarketTypeNft, MarketTypeSwap, MarketTypeLiquidity:
+	case MarketTypeSpotTrading, MarketTypeMarginTrading, MarketTypeDerivatives, MarketTypeEarn, MarketTypePerpetual, MarketTypeFutures, MarketTypeWarrant, MarketTypeOtc, MarketTypeYield, MarketTypeP2p, MarketTypeStrategyTrading, MarketTypeSwapFarming, MarketTypeFanToken, MarketTypeEtf, MarketTypeNft, MarketTypeSwap, MarketTypeLiquidity:
 		return true
 	}
 	return false

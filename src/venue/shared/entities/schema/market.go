@@ -20,7 +20,7 @@ func (Market) Fields() []ent.Field {
 
 		field.Enum("type").
 			NamedValues(
-				"SPORT_TRADING", "SPORT_TRADING",
+				"SPOT_TRADING", "SPOT_TRADING",
 				"MARGIN_TRADING", "MARGIN_TRADING",
 				"DERIVATIVES", "DERIVATIVES",
 				"EARN", "EARN",

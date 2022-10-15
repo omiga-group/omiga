@@ -76,7 +76,7 @@ type Type string
 
 // Type values.
 const (
-	TypeSPORT_TRADING    Type = "SPORT_TRADING"
+	TypeSPOT_TRADING     Type = "SPOT_TRADING"
 	TypeMARGIN_TRADING   Type = "MARGIN_TRADING"
 	TypeDERIVATIVES      Type = "DERIVATIVES"
 	TypeEARN             Type = "EARN"
@@ -102,7 +102,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeSPORT_TRADING, TypeMARGIN_TRADING, TypeDERIVATIVES, TypeEARN, TypePERPETUAL, TypeFUTURES, TypeWARRANT, TypeOTC, TypeYIELD, TypeP2P, TypeSTRATEGY_TRADING, TypeSWAP_FARMING, TypeFAN_TOKEN, TypeETF, TypeNFT, TypeSwap, TypeLIQUIDITY:
+	case TypeSPOT_TRADING, TypeMARGIN_TRADING, TypeDERIVATIVES, TypeEARN, TypePERPETUAL, TypeFUTURES, TypeWARRANT, TypeOTC, TypeYIELD, TypeP2P, TypeSTRATEGY_TRADING, TypeSWAP_FARMING, TypeFAN_TOKEN, TypeETF, TypeNFT, TypeSwap, TypeLIQUIDITY:
 		return nil
 	default:
 		return fmt.Errorf("market: invalid enum value for type field: %q", _type)
