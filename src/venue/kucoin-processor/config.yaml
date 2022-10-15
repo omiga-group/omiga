@@ -1,7 +1,7 @@
 app:
   source: "urn::omiga::kucoin-processor"
 
-exchange:
+venue:
   id: "kucoin"
 
 pulsar:

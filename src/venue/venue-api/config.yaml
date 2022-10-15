@@ -1,6 +1,6 @@
 app:
   listeningInterface: ":11000"
-  source: "urn::omiga::exchange::venue-api"
+  source: "urn::omiga::venue::venue-api"
 
 postgres:
   connectionString: "postgres://postgres:12345678@localhost/venue"

@@ -1,7 +1,7 @@
 app:
   source: "urn::omiga::crypto-processor"
 
-exchange:
+venue:
   id: "crypto"
 
 pulsar:

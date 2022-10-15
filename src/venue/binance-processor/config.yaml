@@ -1,7 +1,7 @@
 app:
   source: "urn::omiga::binance-processor"
 
-exchange:
+venue:
   id: "binance"
 
 pulsar:

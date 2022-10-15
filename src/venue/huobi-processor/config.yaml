@@ -1,7 +1,7 @@
 app:
   source: "urn::omiga::huobi-processor"
 
-exchange:
+venue:
   id: "huobi"
 
 pulsar:

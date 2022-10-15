@@ -1,7 +1,7 @@
 app:
   source: "urn::omiga::bittrex-processor"
 
-exchange:
+venue:
   id: "bittrex"
 
 pulsar:
