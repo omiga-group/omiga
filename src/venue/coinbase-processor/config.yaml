@@ -1,9 +1,6 @@
 app:
   source: "urn::omiga::coinbase-processor"
 
-venue:
-  id: "coinbase"
-
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "coinbase-processor"
@@ -16,6 +13,7 @@ postgres:
   maxOpenConns: 5
 
 coinbase:
+  id: "coinbase"
   useSandbox: false
   baseUrl: "https://api.pro.coinbase.com"
   apiKey: ""
