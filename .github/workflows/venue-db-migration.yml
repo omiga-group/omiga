@@ -84,15 +84,15 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target final \
-            --tag omiga/venue-db-migration:${{ env.sem_version }} \
-            --tag omiga/venue-db-migration:${{ github.sha }} \
+            --tag microbusiness/venue-db-migration:${{ env.sem_version }} \
+            --tag microbusiness/venue-db-migration:${{ github.sha }} \
             --file ./src/venue/shared/cli/Dockerfile \
             ./src
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: omiga/venue-db-migration:${{ github.sha }}
+          image-ref: microbusiness/venue-db-migration:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
@@ -106,5 +106,5 @@ jobs:
           docker rm ${{ env.unittest_extract_container_name }} || true
           docker rmi ${{ env.build_container_tag }} || true
           docker rmi ${{ env.unittest_container_tag }} || true
-          docker rmi omiga/venue-db-migration:${{ env.sem_version }} || true
-          docker rmi omiga/venue-db-migration:${{ github.sha }} || true
+          docker rmi microbusiness/venue-db-migration:${{ env.sem_version }} || true
+          docker rmi microbusiness/venue-db-migration:${{ github.sha }} || true

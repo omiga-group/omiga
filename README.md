@@ -22,23 +22,17 @@ Please note that starting dependecies only won't create database and migrate the
 
 ## Start dependencies only
 
-Please note that starting dependecies only won't create database and migrate the schema
-
 ```bash
 ./src/scripts/start-dependencies.sh up --build
 ```
 
 ## Start `venue` domain and depdencies only
 
-Please note that starting dependecies only won't create database and migrate the schema
-
 ```bash
 ./src/venue/scripts/run-docker-compose.sh up --build
 ```
 
 ## Start `order` domain and depdencies only
-
-Please note that starting dependecies only won't create database and migrate the schema
 
 ```bash
 ./src/order/scripts/run-docker-compose.sh up --build

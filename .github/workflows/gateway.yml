@@ -39,15 +39,15 @@ jobs:
         run: |
           DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
-            --tag omiga/gateway:${{ env.sem_version }} \
-            --tag omiga/gateway:${{ github.sha }} \
+            --tag microbusiness/gateway:${{ env.sem_version }} \
+            --tag microbusiness/gateway:${{ github.sha }} \
             --file ./src/gateway/Dockerfile \
             ./src
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: omiga/gateway:${{ github.sha }}
+          image-ref: microbusiness/gateway:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
@@ -58,5 +58,5 @@ jobs:
       - name: Clean up
         if: always()
         run: |
-          docker rmi omiga/gateway:${{ env.sem_version }} || true
-          docker rmi omiga/gateway:${{ github.sha }} || true
+          docker rmi microbusiness/gateway:${{ env.sem_version }} || true
+          docker rmi microbusiness/gateway:${{ github.sha }} || true

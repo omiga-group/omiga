@@ -86,15 +86,15 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=${{ env.sem_version }} docker build \
              --pull \
              --target final \
-            --tag omiga/binance-processor:${{ env.sem_version }} \
-            --tag omiga/binance-processor:${{ github.sha }} \
+            --tag microbusiness/binance-processor:${{ env.sem_version }} \
+            --tag microbusiness/binance-processor:${{ github.sha }} \
             --file ./src/venue/binance-processor/Dockerfile \
             ./src
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: omiga/binance-processor:${{ github.sha }}
+          image-ref: microbusiness/binance-processor:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
@@ -108,5 +108,5 @@ jobs:
           docker rm ${{ env.unittest_extract_container_name }} || true
           docker rmi ${{ env.build_container_tag }} || true
           docker rmi ${{ env.unittest_container_tag }} || true
-          docker rmi omiga/binance-processor:${{ env.sem_version }} || true
-          docker rmi omiga/binance-processor:${{ github.sha }} || true
+          docker rmi microbusiness/binance-processor:${{ env.sem_version }} || true
+          docker rmi microbusiness/binance-processor:${{ github.sha }} || true

@@ -84,15 +84,15 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target final \
-            --tag omiga/order-db-migration:${{ env.sem_version }} \
-            --tag omiga/order-db-migration:${{ github.sha }} \
+            --tag microbusiness/order-db-migration:${{ env.sem_version }} \
+            --tag microbusiness/order-db-migration:${{ github.sha }} \
             --file ./src/order/shared/cli/Dockerfile \
             ./src
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: omiga/order-db-migration:${{ github.sha }}
+          image-ref: microbusiness/order-db-migration:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
@@ -106,5 +106,5 @@ jobs:
           docker rm ${{ env.unittest_extract_container_name }} || true
           docker rmi ${{ env.build_container_tag }} || true
           docker rmi ${{ env.unittest_container_tag }} || true
-          docker rmi omiga/order-db-migration:${{ env.sem_version }} || true
-          docker rmi omiga/order-db-migration:${{ github.sha }} || true
+          docker rmi microbusiness/order-db-migration:${{ env.sem_version }} || true
+          docker rmi microbusiness/order-db-migration:${{ github.sha }} || true

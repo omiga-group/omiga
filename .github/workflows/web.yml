@@ -7,7 +7,7 @@ on:
     paths:
       - ".github/workflows/lint.yml"
       - ".github/workflows/web.yml"
-      - "api-definitions/graphql/omiga/**"
+      - "api-definitions/graphql/microbusiness/**"
       - "src/web/**"
   pull_request:
     branches:
@@ -15,7 +15,7 @@ on:
     paths:
       - ".github/workflows/lint.yml"
       - ".github/workflows/web.yml"
-      - "api-definitions/graphql/omiga/**"
+      - "api-definitions/graphql/microbusiness/**"
       - "src/web/**"
 
 jobs:
@@ -44,15 +44,15 @@ jobs:
         run: |
           DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
-            --tag omiga/web:${{ env.sem_version }} \
-            --tag omiga/web:${{ github.sha }} \
+            --tag microbusiness/web:${{ env.sem_version }} \
+            --tag microbusiness/web:${{ github.sha }} \
             --file ./src/web/Dockerfile \
             ./
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: omiga/web:${{ github.sha }}
+          image-ref: microbusiness/web:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
@@ -66,5 +66,5 @@ jobs:
           docker rm ${{ env.unittest_extract_container_name }} || true
           docker rmi ${{ env.build_container_tag }} || true
           docker rmi ${{ env.unittest_container_tag }} || true
-          docker rmi omiga/web:${{ env.sem_version }} || true
-          docker rmi omiga/web:${{ github.sha }} || true
+          docker rmi microbusiness/web:${{ env.sem_version }} || true
+          docker rmi microbusiness/web:${{ github.sha }} || true

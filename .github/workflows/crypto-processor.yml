@@ -86,15 +86,15 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target final \
-            --tag omiga/crypto-processor:${{ env.sem_version }} \
-            --tag omiga/crypto-processor:${{ github.sha }} \
+            --tag microbusiness/crypto-processor:${{ env.sem_version }} \
+            --tag microbusiness/crypto-processor:${{ github.sha }} \
             --file ./src/venue/crypto-processor/Dockerfile \
             ./src
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: omiga/crypto-processor:${{ github.sha }}
+          image-ref: microbusiness/crypto-processor:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
@@ -108,5 +108,5 @@ jobs:
           docker rm ${{ env.unittest_extract_container_name }} || true
           docker rmi ${{ env.build_container_tag }} || true
           docker rmi ${{ env.unittest_container_tag }} || true
-          docker rmi omiga/crypto-processor:${{ env.sem_version }} || true
-          docker rmi omiga/crypto-processor:${{ github.sha }} || true
+          docker rmi microbusiness/crypto-processor:${{ env.sem_version }} || true
+          docker rmi microbusiness/crypto-processor:${{ github.sha }} || true
