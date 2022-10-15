@@ -84,7 +84,6 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target final \
-            --tag microbusiness/venue-db-migration:${{ env.sem_version }} \
             --tag microbusiness/venue-db-migration:${{ github.sha }} \
             --file ./src/venue/shared/cli/Dockerfile \
             ./src
@@ -99,6 +98,26 @@ jobs:
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
           timeout: "10m0s"
+
+      - name: Login to Docker Hub
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push docker image
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker tag \
+            microbusiness/venue-db-migration:${{ github.sha }} \
+            microbusiness/venue-db-migration:latest
+          docker tag \
+            microbusiness/venue-db-migration:${{ github.sha }} \
+            microbusiness/venue-db-migration:${{ env.sem_version }}
+          docker push microbusiness/venue-db-migration:${{ env.sem_version }}
+          docker push microbusiness/venue-db-migration:${{ github.sha }}
+          docker push microbusiness/venue-db-migration:latest
 
       - name: Clean up
         if: always()

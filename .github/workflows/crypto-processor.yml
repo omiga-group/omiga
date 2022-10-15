@@ -86,7 +86,6 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target final \
-            --tag microbusiness/crypto-processor:${{ env.sem_version }} \
             --tag microbusiness/crypto-processor:${{ github.sha }} \
             --file ./src/venue/crypto-processor/Dockerfile \
             ./src
@@ -101,6 +100,26 @@ jobs:
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
           timeout: "10m0s"
+
+      - name: Login to Docker Hub
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push docker image
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker tag \
+            microbusiness/crypto-processor:${{ github.sha }} \
+            microbusiness/crypto-processor:latest
+          docker tag \
+            microbusiness/crypto-processor:${{ github.sha }} \
+            microbusiness/crypto-processor:${{ env.sem_version }}
+          docker push microbusiness/crypto-processor:${{ env.sem_version }}
+          docker push microbusiness/crypto-processor:${{ github.sha }}
+          docker push microbusiness/crypto-processor:latest
 
       - name: Clean up
         if: always()

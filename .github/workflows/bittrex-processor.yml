@@ -86,7 +86,6 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target final \
-            --tag microbusiness/bittrex-processor:${{ env.sem_version }} \
             --tag microbusiness/bittrex-processor:${{ github.sha }} \
             --file ./src/venue/bittrex-processor/Dockerfile \
             ./src
@@ -107,6 +106,26 @@ jobs:
         run: |
           docker rm ${{ env.unittest_container_tag }} || true
           docker rm ${{ env.unittest_extract_container_name }} || true
+
+      - name: Login to Docker Hub
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push docker image
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker tag \
+            microbusiness/bittrex-processor:${{ github.sha }} \
+            microbusiness/bittrex-processor:latest
+          docker tag \
+            microbusiness/bittrex-processor:${{ github.sha }} \
+            microbusiness/bittrex-processor:${{ env.sem_version }}
+          docker push microbusiness/bittrex-processor:${{ env.sem_version }}
+          docker push microbusiness/bittrex-processor:${{ github.sha }}
+          docker push microbusiness/bittrex-processor:latest
 
       - name: Clean up
         if: always()
