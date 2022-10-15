@@ -3,17 +3,16 @@ package configuration
 import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 )
 
 type Config struct {
-	App    configuration.AppConfig        `yaml:"app"`
-	Venue  venueConfiguration.VenueConfig `yaml:"venue"`
-	Pulsar pulsar.PulsarConfig            `yaml:"pulsar"`
-	Ftx    FtxConfig                      `yaml:"ftx"`
+	App    configuration.AppConfig `yaml:"app"`
+	Pulsar pulsar.PulsarConfig     `yaml:"pulsar"`
+	Ftx    FtxConfig               `yaml:"ftx"`
 }
 
 type FtxConfig struct {
+	Id           string    `yaml:"id" env:"OMIGA_FTX_ID"`
 	ApiUrl       string    `yaml:"apiUrl" env:"OMIGA_FTX_APIURL"`
 	WebsocketUrl string    `yaml:"websocketUrl" env:"OMIGA_FTX_WEBSOCKETURL"`
 	Timeout      int       `yaml:"timeout"`

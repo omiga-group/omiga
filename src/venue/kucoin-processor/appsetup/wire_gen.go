@@ -16,7 +16,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/kucoin-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/kucoin-processor/subscribers"
-	configuration2 "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
@@ -65,7 +64,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewKuCoinTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, kuCoinConfig configuration.KuCoinConfig, venueConfig configuration2.VenueConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.KuCoinTradingPairSubscriber, error) {
+func NewKuCoinTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, kuCoinConfig configuration.KuCoinConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.KuCoinTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -86,7 +85,7 @@ func NewKuCoinTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	kuCoinTradingPairSubscriber, err := subscribers.NewKuCoinTradingPairSubscriber(ctx, logger, kuCoinConfig, venueConfig, cronService, tradingPairRepository)
+	kuCoinTradingPairSubscriber, err := subscribers.NewKuCoinTradingPairSubscriber(ctx, logger, kuCoinConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

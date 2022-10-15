@@ -1,9 +1,6 @@
 app:
   source: "urn::omiga::crypto-processor"
 
-venue:
-  id: "crypto"
-
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "crypto-processor"
@@ -16,4 +13,5 @@ postgres:
   maxOpenConns: 5
 
 crypto:
+  id: "crypto"
   baseUrl: "https://api.crypto.com/v2"

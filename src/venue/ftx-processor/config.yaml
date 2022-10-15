@@ -1,9 +1,6 @@
 app:
   source: "urn::omiga::ftx-processor"
 
-venue:
-  id: "ftx"
-
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "ftx-processor"
@@ -12,6 +9,7 @@ pulsar:
   connectionTimeout: 30s
 
 ftx:
+  id: "ftx"
   apiUrl: https://ftx.com/api
   websocketUrl: "wss://ftx.com/ws/"
   timeout: 10

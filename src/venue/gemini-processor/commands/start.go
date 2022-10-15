@@ -83,7 +83,6 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				config.Gemini,
-				config.Venue,
 				cronService,
 				config.Postgres); err != nil {
 				sugarLogger.Fatal(err)

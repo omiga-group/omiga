@@ -1,9 +1,6 @@
 app:
   source: "urn::omiga::kucoin-processor"
 
-venue:
-  id: "kucoin"
-
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "kucoin-processor"
@@ -16,6 +13,7 @@ postgres:
   maxOpenConns: 5
 
 kucoin:
+  id: "kucoin"
   apiKey: ""
   passphrase: ""
   secretKey: ""

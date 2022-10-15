@@ -1,9 +1,6 @@
 app:
   source: "urn::omiga::gemini-processor"
 
-venue:
-  id: "gemini"
-
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "gemini-processor"
@@ -16,6 +13,7 @@ postgres:
   maxOpenConns: 5
 
 gemini:
+  id: "gemini"
   apiUrl: https://api.gemini.com/v1
   websocketUrl: wss://api.sandbox.gemini.com
   timeout: 10

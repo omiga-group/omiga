@@ -1,9 +1,6 @@
 app:
   source: "urn::omiga::kraken-processor"
 
-venue:
-  id: "kraken"
-
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "kraken-processor"
@@ -16,6 +13,7 @@ postgres:
   maxOpenConns: 5
 
 kraken:
+  id: "kraken"
   apiKey: ""
   secretKey: ""
   orderBook:

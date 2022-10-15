@@ -1,9 +1,6 @@
 app:
   source: "urn::omiga::huobi-processor"
 
-venue:
-  id: "huobi"
-
 pulsar:
   url: "pulsar://localhost:6650"
   subscriptionName: "huobi-processor"
@@ -16,6 +13,7 @@ postgres:
   maxOpenConns: 5
 
 huobi:
+  id: "huobi"
   baseUrl: "api.huobi.pro"
   apiKey: ""
   secretKey: ""

@@ -19,7 +19,6 @@ import (
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/client"
 	configuration2 "github.com/omiga-group/omiga/src/venue/gemini-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/subscribers"
-	configuration3 "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/shared/publishers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
@@ -95,7 +94,7 @@ func NewGeminiOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	return geminiOrderBookSubscriber, nil
 }
 
-func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, geminiConfig configuration2.GeminiConfig, venueConfig configuration3.VenueConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.GeminiTradingPairSubscriber, error) {
+func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, geminiConfig configuration2.GeminiConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.GeminiTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -116,7 +115,7 @@ func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	geminiTradingPairSubscriber, err := subscribers.NewGeminiTradingPairSubscriber(ctx, logger, geminiConfig, venueConfig, cronService, tradingPairRepository)
+	geminiTradingPairSubscriber, err := subscribers.NewGeminiTradingPairSubscriber(ctx, logger, geminiConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

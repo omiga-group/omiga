@@ -16,7 +16,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/huobi-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/huobi-processor/subscribers"
-	configuration2 "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
@@ -65,7 +64,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewHuobiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, huobiConfig configuration.HuobiConfig, venueConfig configuration2.VenueConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.HuobiTradingPairSubscriber, error) {
+func NewHuobiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, huobiConfig configuration.HuobiConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.HuobiTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -86,7 +85,7 @@ func NewHuobiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
-	huobiTradingPairSubscriber, err := subscribers.NewHuobiTradingPairSubscriber(ctx, logger, huobiConfig, venueConfig, cronService, tradingPairRepository)
+	huobiTradingPairSubscriber, err := subscribers.NewHuobiTradingPairSubscriber(ctx, logger, huobiConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

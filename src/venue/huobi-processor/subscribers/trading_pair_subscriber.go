@@ -7,7 +7,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/venue/huobi-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/huobi-processor/mappers"
-	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
 )
@@ -19,7 +18,6 @@ type huobiTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
 	huobiConfig           configuration.HuobiConfig
-	venueConfig           venueConfiguration.VenueConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
@@ -27,7 +25,6 @@ func NewHuobiTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	huobiConfig configuration.HuobiConfig,
-	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (HuobiTradingPairSubscriber, error) {
 
@@ -35,7 +32,6 @@ func NewHuobiTradingPairSubscriber(
 		ctx:                   ctx,
 		logger:                logger,
 		huobiConfig:           huobiConfig,
-		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -61,7 +57,7 @@ func (htps *huobiTradingPairSubscriber) Run() {
 
 	if err = htps.tradingPairRepository.CreateTradingPairs(
 		htps.ctx,
-		htps.venueConfig.Id,
+		htps.huobiConfig.Id,
 		mappers.HuobiSymbolsToTradingPairs(symbols)); err != nil {
 		htps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

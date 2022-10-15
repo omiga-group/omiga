@@ -18,7 +18,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	configuration2 "github.com/omiga-group/omiga/src/venue/kraken-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/kraken-processor/subscribers"
-	configuration3 "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/shared/publishers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
@@ -106,7 +105,7 @@ func NewKrakenOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	return krakenOrderBookSubscriber, nil
 }
 
-func NewKrakenTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, krakenConfig configuration2.KrakenConfig, venueConfig configuration3.VenueConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairSubscriber, error) {
+func NewKrakenTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, krakenConfig configuration2.KrakenConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -127,7 +126,7 @@ func NewKrakenTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	krakenTradingPairSubscriber, err := subscribers.NewKrakenTradingPairSubscriber(ctx, logger, krakenConfig, venueConfig, cronService, tradingPairRepository)
+	krakenTradingPairSubscriber, err := subscribers.NewKrakenTradingPairSubscriber(ctx, logger, krakenConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}
