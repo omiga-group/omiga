@@ -94,7 +94,7 @@ func NewGeminiTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	geminiConfig configuration.GeminiConfig,
-	venueConfig venueConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.GeminiTradingPairSubscriber, error) {
 	wire.Build(

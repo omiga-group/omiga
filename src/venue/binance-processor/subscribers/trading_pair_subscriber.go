@@ -7,7 +7,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/mappers"
-	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
 )
@@ -19,7 +18,6 @@ type binanceTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
 	binanceConfig         configuration.BinanceConfig
-	venueConfig           venueConfiguration.VenueConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
@@ -27,7 +25,6 @@ func NewBinanceTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	binanceConfig configuration.BinanceConfig,
-	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (BinanceTradingPairSubscriber, error) {
 
@@ -35,7 +32,6 @@ func NewBinanceTradingPairSubscriber(
 		ctx:                   ctx,
 		logger:                logger,
 		binanceConfig:         binanceConfig,
-		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -62,7 +58,7 @@ func (btps *binanceTradingPairSubscriber) Run() {
 
 	if err = btps.tradingPairRepository.CreateTradingPairs(
 		btps.ctx,
-		btps.venueConfig.Id,
+		btps.binanceConfig.Id,
 		mappers.BinanceSymbolsToTradingPairs(exchangeInfo.Symbols)); err != nil {
 		btps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

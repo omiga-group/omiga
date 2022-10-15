@@ -69,7 +69,7 @@ func NewBittrexTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	bittrexConfig configuration.BittrexConfig,
-	venueConfig venueConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.BittrexTradingPairSubscriber, error) {
 	wire.Build(

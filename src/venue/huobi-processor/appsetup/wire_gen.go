@@ -65,7 +65,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewHuobiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, huobiConfig configuration.HuobiConfig, exchangeConfig configuration2.VenueConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.HuobiTradingPairSubscriber, error) {
+func NewHuobiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, huobiConfig configuration.HuobiConfig, venueConfig configuration2.VenueConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.HuobiTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ func NewHuobiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
-	huobiTradingPairSubscriber, err := subscribers.NewHuobiTradingPairSubscriber(ctx, logger, huobiConfig, exchangeConfig, cronService, tradingPairRepository)
+	huobiTradingPairSubscriber, err := subscribers.NewHuobiTradingPairSubscriber(ctx, logger, huobiConfig, venueConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

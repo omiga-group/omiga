@@ -95,7 +95,7 @@ func NewGeminiOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	return geminiOrderBookSubscriber, nil
 }
 
-func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, geminiConfig configuration2.GeminiConfig, exchangeConfig configuration3.VenueConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.GeminiTradingPairSubscriber, error) {
+func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, geminiConfig configuration2.GeminiConfig, venueConfig configuration3.VenueConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.GeminiTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -116,7 +116,7 @@ func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	geminiTradingPairSubscriber, err := subscribers.NewGeminiTradingPairSubscriber(ctx, logger, geminiConfig, exchangeConfig, cronService, tradingPairRepository)
+	geminiTradingPairSubscriber, err := subscribers.NewGeminiTradingPairSubscriber(ctx, logger, geminiConfig, venueConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

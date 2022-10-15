@@ -32,7 +32,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/subscribers"
-	venueConfiguration "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/shared/publishers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
@@ -96,7 +95,6 @@ func NewBinanceTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	binanceConfig configuration.BinanceConfig,
-	venueConfig venueConfiguration.ExchangeConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.BinanceTradingPairSubscriber, error) {
 	wire.Build(

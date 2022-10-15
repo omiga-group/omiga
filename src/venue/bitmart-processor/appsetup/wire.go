@@ -69,7 +69,7 @@ func NewBitMartTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	bitMartConfig configuration.BitMartConfig,
-	venueConfig venueConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.BitMartTradingPairSubscriber, error) {
 	wire.Build(

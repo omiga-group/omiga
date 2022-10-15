@@ -18,7 +18,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	configuration2 "github.com/omiga-group/omiga/src/venue/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/subscribers"
-	configuration3 "github.com/omiga-group/omiga/src/venue/shared/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/shared/publishers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
@@ -106,7 +105,7 @@ func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	return binanceOrderBookSubscriber, nil
 }
 
-func NewBinanceTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, binanceConfig configuration2.BinanceConfig, exchangeConfig configuration3.VenueConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.BinanceTradingPairSubscriber, error) {
+func NewBinanceTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, binanceConfig configuration2.BinanceConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.BinanceTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -127,7 +126,7 @@ func NewBinanceTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLog
 	if err != nil {
 		return nil, err
 	}
-	binanceTradingPairSubscriber, err := subscribers.NewBinanceTradingPairSubscriber(ctx, logger, binanceConfig, exchangeConfig, cronService, tradingPairRepository)
+	binanceTradingPairSubscriber, err := subscribers.NewBinanceTradingPairSubscriber(ctx, logger, binanceConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

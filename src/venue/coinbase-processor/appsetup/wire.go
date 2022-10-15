@@ -69,7 +69,7 @@ func NewCoinbaseTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	coinbaseConfig configuration.CoinbaseConfig,
-	venueConfig venueConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.CoinbaseTradingPairSubscriber, error) {
 	wire.Build(

@@ -69,7 +69,7 @@ func NewHuobiTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	huobiConfig configuration.HuobiConfig,
-	venueConfig venueConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.HuobiTradingPairSubscriber, error) {
 	wire.Build(

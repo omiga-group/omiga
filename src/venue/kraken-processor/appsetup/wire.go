@@ -95,7 +95,7 @@ func NewKrakenTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	krakenConfig configuration.KrakenConfig,
-	venueConfig venueConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairSubscriber, error) {
 	wire.Build(

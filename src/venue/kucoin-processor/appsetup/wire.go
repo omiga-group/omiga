@@ -69,7 +69,7 @@ func NewKuCoinTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	kuCoinConfig configuration.KuCoinConfig,
-	venueConfig venueConfiguration.ExchangeConfig,
+	venueConfig venueConfiguration.VenueConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.KuCoinTradingPairSubscriber, error) {
 	wire.Build(
