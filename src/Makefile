@@ -24,6 +24,7 @@ generate-via-docker: ## Generate code
 	@../api-definitions/asyncapi/events/scripts/generate-all.sh
 	@./shared/scripts/generate.sh
 	@./venue/shared/scripts/generate.sh
+	@./venue/venues-all-in-one/scripts/generate.sh
 	@./venue/venue-api/scripts/generate.sh
 	@./venue/binance-processor/scripts/generate.sh
 	@./venue/bitmart-processor/scripts/generate.sh
