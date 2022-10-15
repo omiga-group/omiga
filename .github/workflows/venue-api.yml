@@ -29,31 +29,26 @@ on:
 jobs:
   build:
     name: "Build - Venue API"
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
 
     steps:
+      - name: Set required environment variable
+        run: |
+          echo "unittest_extract_container_tag=$(uuidgen)" >> $GITHUB_ENV
+          echo "unittest_extract_container_name=$(uuidgen)" >> $GITHUB_ENV
+
       - name: Checkout code with full history
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0.9.13
-        with:
-          versionSpec: "5.x"
-
-      - name: Determine Version
-        uses: gittools/actions/gitversion/execute@v0.9.13
-        with:
-          useConfigFile: true
-          configFilePath: GitVersion.yml
-
       - name: Build
         run: |
-          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target build \
             --file ./src/venue/venue-api/Dockerfile \
@@ -61,15 +56,15 @@ jobs:
 
       - name: Unit Tests
         run: |
-          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target test \
-            --tag omiga/venue-api-unittests:$GitVersion_SemVer \
+            --tag ${{ env.unittest_extract_container_tag }} \
             --file ./src/venue/venue-api/Dockerfile \
             ./src
           mkdir -p ./coverage/reports
-          docker create --name extract-container omiga/venue-api-unittests:$GitVersion_SemVer
-          docker cp extract-container:/coverage/reports/. "./coverage/reports/"
+          docker create --name ${{ env.unittest_extract_container_name }} ${{ env.unittest_extract_container_tag }}
+          docker cp ${{ env.unittest_extract_container_name }}:/coverage/reports/. "./coverage/reports/"
 
       - name: Upload coverage to Codecov
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -83,10 +78,9 @@ jobs:
 
       - name: Build final
         run: |
-          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target final \
-            --tag omiga/venue-api:$GitVersion_SemVer \
             --tag omiga/venue-api:${{ github.sha }} \
             --file ./src/venue/venue-api/Dockerfile \
             ./src
@@ -101,3 +95,9 @@ jobs:
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
           timeout: "10m0s"
+
+      - name: Clean up
+        if: always()
+        run: |
+          docker rm ${{ env.unittest_extract_container_tag }} || true
+          docker rm ${{ env.unittest_extract_container_name }} || true

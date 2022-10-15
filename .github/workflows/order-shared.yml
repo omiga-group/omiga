@@ -27,12 +27,18 @@ on:
 jobs:
   build:
     name: "Build - Order Shared"
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
 
     steps:
+      - name: Set required environment variable
+        run: |
+          echo "unittest_extract_container_tag=$(uuidgen)" >> $GITHUB_ENV
+          echo "unittest_extract_container_name=$(uuidgen)" >> $GITHUB_ENV
+
       - name: Checkout code with full history
         uses: actions/checkout@v3
         with:
@@ -51,15 +57,15 @@ jobs:
 
       - name: Unit Tests
         run: |
-          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target test \
-            --tag omiga/order-shared-unittests:$GitVersion_SemVer \
+            --tag ${{ env.unittest_extract_container_tag }} \
             --file ./src/order/shared/Dockerfile \
             ./src
           mkdir -p ./coverage/reports
-          docker create --name extract-container omiga/order-shared-unittests:$GitVersion_SemVer
-          docker cp extract-container:/coverage/reports/. "./coverage/reports/"
+          docker create --name ${{ env.unittest_extract_container_name }} ${{ env.unittest_extract_container_tag }}
+          docker cp ${{ env.unittest_extract_container_name }}:/coverage/reports/. "./coverage/reports/"
 
       - name: Upload coverage to Codecov
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -70,3 +76,9 @@ jobs:
           flags: unittests,order-shared
           fail_ci_if_error: true
           verbose: true
+
+      - name: Clean up
+        if: always()
+        run: |
+          docker rm ${{ env.unittest_extract_container_tag }} || true
+          docker rm ${{ env.unittest_extract_container_name }} || true

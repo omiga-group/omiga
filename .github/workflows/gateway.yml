@@ -21,7 +21,8 @@ on:
 jobs:
   build:
     name: "Build - Gateway"
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
@@ -32,22 +33,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0.9.13
-        with:
-          versionSpec: "5.x"
-
-      - name: Determine Version
-        uses: gittools/actions/gitversion/execute@v0.9.13
-        with:
-          useConfigFile: true
-          configFilePath: GitVersion.yml
-
       - name: Build final
         run: |
-          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
-            --tag omiga/gateway:$GitVersion_SemVer \
             --tag omiga/gateway:${{ github.sha }} \
             --file ./src/gateway/Dockerfile \
             ./src
