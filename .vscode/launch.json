@@ -14,8 +14,8 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/venue/shared/repositories/cli/main.go",
-      "args": ["migrate", "--post-migration-script-path", "${workspaceFolder}/src/venue/shared/repositories/cli/post-migration-script.sql"]
+      "program": "${workspaceFolder}/src/venue/shared/cli/main.go",
+      "args": ["migrate", "--post-migration-script-path", "${workspaceFolder}/src/venue/shared/cli/post_migration_script.sql"]
     },
     {
       "name": "Coingeko",
@@ -118,8 +118,8 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/order/shared/repositories/cli/main.go",
-      "args": ["migrate", "--post-migration-script-path", "${workspaceFolder}/src/order/shared/repositories/cli/post-migration-script.sql"]
+      "program": "${workspaceFolder}/src/order/shared/cli/main.go",
+      "args": ["migrate", "--post-migration-script-path", "${workspaceFolder}/src/order/shared/cli/post_migration_script.sql"]
     },
     {
       "name": "Order API",
