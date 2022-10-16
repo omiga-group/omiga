@@ -8,6 +8,7 @@ services:
     image: microbusiness/order-api:latest
     restart: unless-stopped
     environment:
+      OMIGA_APP_LISTENINGINTERFACE: ":80"
       OMIGA_POSTGRES_CONNECTIONSTRING: $OMIGA_POSTGRES_CONNECTIONSTRING
     networks:
       - omiga_apis_network
@@ -16,6 +17,7 @@ services:
     image: microbusiness/venue-api:latest
     restart: unless-stopped
     environment:
+      OMIGA_APP_LISTENINGINTERFACE: ":80"
       OMIGA_POSTGRES_CONNECTIONSTRING: $OMIGA_POSTGRES_CONNECTIONSTRING
     networks:
       - omiga_apis_network
@@ -24,6 +26,7 @@ services:
     image: microbusiness/gateway:latest
     restart: unless-stopped
     environment:
+      PORT: "80"
       ORDER_GRAPHQL_API: http://order-api/graphql
       EXCHANGE_GRAPHQL_API: http://venue-api/graphql
     ports:
