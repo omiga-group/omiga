@@ -20,6 +20,7 @@ generate: ## Generate code
 	@go install github.com/golang/mock/mockgen@latest
 	@GOFLAGS=-mod=mod go generate ./...
 
+.PHONY: generate-via-docker
 generate-via-docker: ## Generate code
 	@../api-definitions/asyncapi/events/scripts/generate-all.sh
 	@./shared/scripts/generate.sh
@@ -48,6 +49,30 @@ lint: ## run golanci-lint locally
 .PHONY: format
 format: ## Format the source
 	@goimports -w $(GOFILES)
+
+.PHONY: restart-venues
+restart-venues:
+	@docker compose -f docker-compose-venues.yml -p omiga-venues-dev --env-file .env.omiga.venues down -v || true
+	@docker compose -f docker-compose-venues.yml -p omiga-venues-dev --env-file .env.omiga.venues pull
+	@docker compose -f docker-compose-venues.yml -p omiga-venues-dev --env-file .env.omiga.venues up -d
+
+.PHONY: restart-venues-dev
+restart-venues-dev:
+	@docker compose -f docker-compose-venues.yml -p omiga-venues --env-file .env.omiga.venues.dev down -v || true
+	@docker compose -f docker-compose-venues.yml -p omiga-venues --env-file .env.omiga.venues.dev pull
+	@docker compose -f docker-compose-venues.yml -p omiga-venues --env-file .env.omiga.venues.dev up -d
+
+.PHONY: restart-apis-dev
+restart-apis-dev:
+	@docker compose -f docker-compose-apis.yml -p omiga-apis-dev --env-file .env.omiga.apis.dev down -v || true
+	@docker compose -f docker-compose-apis.yml -p omiga-apis-dev --env-file .env.omiga.apis.dev pull
+	@docker compose -f docker-compose-apis.yml -p omiga-apis-dev --env-file .env.omiga.apis.dev up -d
+
+.PHONY: restart-apis
+restart-apis:
+	@docker compose -f docker-compose-apis.yml -p omiga-apis --env-file .env.omiga.apis.dev down -v || true
+	@docker compose -f docker-compose-apis.yml -p omiga-apis --env-file .env.omiga.apis.dev pull
+	@docker compose -f docker-compose-apis.yml -p omiga-apis --env-file .env.omiga.apis.dev up -d
 
 .PHONY: list
 list: ## List all make targets

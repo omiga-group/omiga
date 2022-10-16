@@ -1,0 +1,13 @@
+version: "3.9"
+
+networks:
+  omiga_syncer_network:
+
+services:
+  venues-all-in-one:
+    image: microbusiness/venues-all-in-one:latest
+    restart: unless-stopped
+    environment:
+      OMIGA_POSTGRES_CONNECTIONSTRING: $OMIGA_POSTGRES_CONNECTIONSTRING
+    networks:
+      - omiga_syncer_network
