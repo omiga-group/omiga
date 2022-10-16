@@ -4,7 +4,7 @@ const { ApolloGateway } = require("@apollo/gateway");
 const gateway = new ApolloGateway({
   serviceList: [
     { name: "order", url: process.env.ORDER_GRAPHQL_API },
-    { name: "exchange", url: process.env.EXCHANGE_GRAPHQL_API },
+    { name: "venue", url: process.env.VENUE_GRAPHQL_API },
   ],
 });
 
