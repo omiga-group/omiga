@@ -79,3 +79,19 @@ jobs:
         run: |
           docker rmi microbusiness/gateway:${{ env.sem_version }} || true
           docker rmi microbusiness/gateway:${{ github.sha }} || true
+
+  deploy-to-dev:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    name: "Deploying to Dev"
+    needs: build
+    runs-on:
+      - self-hosted
+    steps:
+      - name: Setting up SSH Agent
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_GITHUB_ACTION }}
+
+      - name: Deploy
+        run: |
+          ssh ${{ secrets.PROD_SERVER_SSH_HOST_ADDRESS }} -p ${{ secrets.PROD_SERVER_SSH_PORT }} -o StrictHostKeyChecking=no "/root/omiga-restart-apis-dev.sh"
