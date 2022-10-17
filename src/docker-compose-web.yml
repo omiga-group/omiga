@@ -8,7 +8,6 @@ services:
     image: microbusiness/web:latest
     restart: unless-stopped
     environment:
-      OMIGA_APP_LISTENINGINTERFACE: ":80"
       GRAPHQL_API_ENDPOINT: $GRAPHQL_API_ENDPOINT
     ports:
       - "$OMIGA_WEB_PORT:80"
