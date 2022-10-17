@@ -9,7 +9,7 @@ services:
     restart: unless-stopped
     environment:
       OMIGA_APP_LISTENINGINTERFACE: ":80"
-      OMIGA_POSTGRES_CONNECTIONSTRING: $OMIGA_POSTGRES_CONNECTIONSTRING
+      OMIGA_POSTGRES_CONNECTIONSTRING: $OMIGA_POSTGRES_CONNECTIONSTRING_ORDER
     networks:
       - omiga_apis_network
 
@@ -18,7 +18,7 @@ services:
     restart: unless-stopped
     environment:
       OMIGA_APP_LISTENINGINTERFACE: ":80"
-      OMIGA_POSTGRES_CONNECTIONSTRING: $OMIGA_POSTGRES_CONNECTIONSTRING
+      OMIGA_POSTGRES_CONNECTIONSTRING: $OMIGA_POSTGRES_CONNECTIONSTRING_VENUE
     networks:
       - omiga_apis_network
 
