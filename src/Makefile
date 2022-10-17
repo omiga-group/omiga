@@ -101,11 +101,11 @@ restart-web-dev:
 	@docker compose -f docker-compose-web.yml -p omiga-web-dev --env-file .env.omiga.web.dev up -d
 
 .PHONY: stop-web
-stop-web-dev:
+stop-web:
 	@docker compose -f docker-compose-web.yml -p omiga-web --env-file .env.omiga.web down -v || true
 
 .PHONY: restart-web
-restart-web-dev:
+restart-web:
 	@docker compose -f docker-compose-web.yml -p omiga-web --env-file .env.omiga.web down -v || true
 	@docker compose -f docker-compose-web.yml -p omiga-web --env-file .env.omiga.web pull
 	@docker compose -f docker-compose-web.yml -p omiga-web --env-file .env.omiga.web up -d
