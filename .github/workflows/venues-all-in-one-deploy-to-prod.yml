@@ -1,4 +1,4 @@
-name: "Venues all-in-one"
+name: "Venues all-in-one - Deploy to Prod"
 
 on:
   - workflow_dispatch
