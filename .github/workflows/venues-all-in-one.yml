@@ -130,6 +130,7 @@ jobs:
           docker rmi microbusiness/venues-all-in-one:${{ github.sha }} || true
 
   deploy-dev:
+    if: ${{ github.ref == 'refs/heads/main' }}
     name: "Deploying to Dev"
     needs: build
     runs-on:
