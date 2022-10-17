@@ -129,16 +129,12 @@ jobs:
           docker rmi microbusiness/venues-all-in-one:${{ env.sem_version }} || true
           docker rmi microbusiness/venues-all-in-one:${{ github.sha }} || true
 
-  deploy-dev:
+  deploy-to-dev:
     if: ${{ github.ref == 'refs/heads/main' }}
     name: "Deploying to Dev"
     needs: build
     runs-on:
       - self-hosted
-    env:
-      DOCKER_BUILDKIT: 1
-      COMPOSE_DOCKER_CLI_BUILD: 1
-
     steps:
       - name: Setting up SSH Agent
         uses: webfactory/ssh-agent@v0.5.4
