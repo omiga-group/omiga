@@ -1,7 +1,7 @@
 version: "3.9"
 
 networks:
-  omiga_syncer_network:
+  omiga_venues_network:
 
 services:
   venues-all-in-one:
@@ -10,4 +10,4 @@ services:
     environment:
       OMIGA_POSTGRES_CONNECTIONSTRING: $OMIGA_POSTGRES_CONNECTIONSTRING
     networks:
-      - omiga_syncer_network
+      - omiga_venues_network
