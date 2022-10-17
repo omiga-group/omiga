@@ -128,3 +128,22 @@ jobs:
           docker rmi ${{ env.unittest_container_tag }} || true
           docker rmi microbusiness/venues-all-in-one:${{ env.sem_version }} || true
           docker rmi microbusiness/venues-all-in-one:${{ github.sha }} || true
+
+  deploy-dev:
+    name: "Deploying to Dev"
+    needs: build
+    runs-on:
+      - self-hosted
+    env:
+      DOCKER_BUILDKIT: 1
+      COMPOSE_DOCKER_CLI_BUILD: 1
+
+    steps:
+      - name: Setting up SSH Agent
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_GITHUB_ACTION }}
+
+      - name: Deploy
+        run: |
+          ssh ${{ secrets.LOCAL_SERVER_SSH_HOST_ADDRESS }} -p ${{ secrets.LOCAL_SERVER_SSH_PORT }} -o StrictHostKeyChecking=no "/home/morteza/omiga-restart-venues-dev.sh"
