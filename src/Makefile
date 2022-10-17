@@ -90,6 +90,26 @@ restart-apis-dev:
 	@docker compose -f docker-compose-apis.yml -p omiga-apis-dev --env-file .env.omiga.apis.dev pull
 	@docker compose -f docker-compose-apis.yml -p omiga-apis-dev --env-file .env.omiga.apis.dev up -d
 
+.PHONY: stop-web-dev
+stop-web-dev:
+	@docker compose -f docker-compose-web.yml -p omiga-web-dev --env-file .env.omiga.web.dev down -v || true
+
+.PHONY: restart-web-dev
+restart-web-dev:
+	@docker compose -f docker-compose-web.yml -p omiga-web-dev --env-file .env.omiga.web.dev down -v || true
+	@docker compose -f docker-compose-web.yml -p omiga-web-dev --env-file .env.omiga.web.dev pull
+	@docker compose -f docker-compose-web.yml -p omiga-web-dev --env-file .env.omiga.web.dev up -d
+
+.PHONY: stop-web
+stop-web-dev:
+	@docker compose -f docker-compose-web.yml -p omiga-web --env-file .env.omiga.web down -v || true
+
+.PHONY: restart-web
+restart-web-dev:
+	@docker compose -f docker-compose-web.yml -p omiga-web --env-file .env.omiga.web down -v || true
+	@docker compose -f docker-compose-web.yml -p omiga-web --env-file .env.omiga.web pull
+	@docker compose -f docker-compose-web.yml -p omiga-web --env-file .env.omiga.web up -d
+
 .PHONY: list
 list: ## List all make targets
 	@$(MAKE) -pRrn : -f $(MAKEFILE_LIST) 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | sort
