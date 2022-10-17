@@ -8,7 +8,7 @@ import (
 // RootCommand returns root CLI application command interface
 func Root() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use: "exchange-database-migration",
+		Use: "venue-database-migration",
 		PreRun: func(cmd *cobra.Command, args []string) {
 			printHeader()
 		},

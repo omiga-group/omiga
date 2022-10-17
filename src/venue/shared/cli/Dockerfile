@@ -19,10 +19,10 @@ COPY venue/shared/cli /src/venue/shared/cli
 
 WORKDIR /src/venue/shared/cli
 
-RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/exchange-database-migration main.go
+RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/venue-database-migration main.go
 
 FROM build AS local
-CMD ["/bin/exchange-database-migration", "migrate", "--post-migration-script-path", "post_migration_script.sql"]
+CMD ["/bin/venue-database-migration", "migrate", "--post-migration-script-path", "post_migration_script.sql"]
 
 FROM build AS test
 
@@ -32,7 +32,7 @@ RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -coverpkg=./... -v -cove
 FROM base AS final
 
 WORKDIR /omiga
-COPY --from=build /bin/exchange-database-migration /omiga
+COPY --from=build /bin/venue-database-migration /omiga
 COPY --from=build /src/venue/shared/cli/config.yaml /omiga
 COPY --from=build /src/venue/shared/cli/post_migration_script.sql /omiga
-CMD ["/omiga/exchange-database-migration", "migrate", "--post-migration-script-path", "post_migration_script.sql"]
+CMD ["/omiga/venue-database-migration", "migrate", "--post-migration-script-path", "post_migration_script.sql"]

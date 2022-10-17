@@ -11,8 +11,8 @@ import (
 func versionCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "version",
-		Short: "Return exchange-database-migration version",
-		Long:  "Return exchange-database-migration version",
+		Short: "Return venue-database-migration version",
+		Long:  "Return venue-database-migration version",
 		Run: func(cmd *cobra.Command, args []string) {
 			util.PrintInfo("Exchange Database Migration Tool\n")
 			util.PrintInfo(fmt.Sprintf("Copyright (C) %d, Omiga Ltd.\n", time.Now().Year()))
