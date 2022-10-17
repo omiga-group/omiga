@@ -6,7 +6,6 @@ on:
 jobs:
   deploy-to-prod:
     name: "Deploying to Prod"
-    needs: build
     runs-on:
       - self-hosted
     steps:
