@@ -183,6 +183,8 @@ func (r *venueResolver) TradingPairs(ctx context.Context, obj *entities.Venue) (
 	return r.client.TradingPair.
 		Query().
 		Where(tradingpairrepo.HasVenueWith(venuerepo.IDEQ(obj.ID))).
+		WithBase().
+		WithCounter().
 		All(ctx)
 }
 
