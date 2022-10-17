@@ -72,13 +72,13 @@ restart-venues-dev:
 
 .PHONY: stop-apis
 stop-apis:
-	@docker compose -f docker-compose-apis.yml -p omiga-apis --env-file .env.omiga.apis.dev down -v || true
+	@docker compose -f docker-compose-apis.yml -p omiga-apis --env-file .env.omiga.apis down -v || true
 
 .PHONY: restart-apis
 restart-apis:
-	@docker compose -f docker-compose-apis.yml -p omiga-apis --env-file .env.omiga.apis.dev down -v || true
-	@docker compose -f docker-compose-apis.yml -p omiga-apis --env-file .env.omiga.apis.dev pull
-	@docker compose -f docker-compose-apis.yml -p omiga-apis --env-file .env.omiga.apis.dev up -d
+	@docker compose -f docker-compose-apis.yml -p omiga-apis --env-file .env.omiga.apis down -v || true
+	@docker compose -f docker-compose-apis.yml -p omiga-apis --env-file .env.omiga.apis pull
+	@docker compose -f docker-compose-apis.yml -p omiga-apis --env-file .env.omiga.apis up -d
 
 .PHONY: stop-apis-dev
 stop-apis-dev:
