@@ -2,6 +2,9 @@ package postgres
 
 import (
 	"database/sql"
+	"fmt"
+	"net"
+	"net/url"
 
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
@@ -15,9 +18,28 @@ type postgres struct {
 	logger *zap.SugaredLogger
 }
 
+type brokenConnectiongString struct {
+	databaseName string
+	host         string
+	port         string
+	username     string
+	password     string
+}
+
 func NewPostgres(
 	logger *zap.SugaredLogger,
 	postgresConfig PostgresConfig) (database.Database, error) {
+	brokenConnectiongString, err := parseConnectionString(postgresConfig.ConnectionString)
+	if err != nil {
+		return nil, err
+	}
+
+	logger.Infof(
+		"Connecting to Postgres: host: %s, port: %s, databaseName: %s",
+		brokenConnectiongString.host,
+		brokenConnectiongString.port,
+		brokenConnectiongString.databaseName)
+
 	db, err := sql.Open("pgx", postgresConfig.ConnectionString)
 	if err != nil {
 		return nil, err
@@ -47,4 +69,51 @@ func (p *postgres) Close() {
 
 		p.db = nil
 	}
+}
+
+func parseConnectionString(connectionString string) (brokenConnectiongString, error) {
+	result := brokenConnectiongString{}
+
+	u, err := url.Parse(connectionString)
+	if err != nil {
+		return result, err
+	}
+
+	if u.Scheme != "postgres" && u.Scheme != "postgresql" {
+		return result, fmt.Errorf("invalid connection protocol: %s", u.Scheme)
+	}
+
+	if u.User != nil {
+		v := u.User.Username()
+		if v != "" {
+			result.username = v
+		}
+
+		v, _ = u.User.Password()
+		if v != "" {
+			result.password = v
+		}
+	}
+
+	if host, port, err := net.SplitHostPort(u.Host); err != nil {
+		if u.Host != "" {
+			result.host = u.Host
+		}
+	} else {
+		if host != "" {
+			result.host = host
+		}
+
+		if port != "" {
+			result.port = port
+		}
+	}
+
+	if u.Path != "" {
+		if u.Path[1:] != "" {
+			result.databaseName = u.Path[1:]
+		}
+	}
+
+	return result, nil
 }
