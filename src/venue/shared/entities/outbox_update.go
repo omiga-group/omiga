@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/venue/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/venue/shared/entities/outbox"
@@ -102,6 +103,12 @@ func (ou *OutboxUpdate) ClearLastRetry() *OutboxUpdate {
 // SetProcessingErrors sets the "processing_errors" field.
 func (ou *OutboxUpdate) SetProcessingErrors(s []string) *OutboxUpdate {
 	ou.mutation.SetProcessingErrors(s)
+	return ou
+}
+
+// AppendProcessingErrors appends s to the "processing_errors" field.
+func (ou *OutboxUpdate) AppendProcessingErrors(s []string) *OutboxUpdate {
+	ou.mutation.AppendProcessingErrors(s)
 	return ou
 }
 
@@ -286,6 +293,11 @@ func (ou *OutboxUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: outbox.FieldProcessingErrors,
 		})
 	}
+	if value, ok := ou.mutation.AppendedProcessingErrors(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, outbox.FieldProcessingErrors, value)
+		})
+	}
 	if ou.mutation.ProcessingErrorsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
@@ -294,7 +306,7 @@ func (ou *OutboxUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	_spec.Node.Schema = ou.schemaConfig.Outbox
 	ctx = internal.NewSchemaConfigContext(ctx, ou.schemaConfig)
-	_spec.Modifiers = ou.modifiers
+	_spec.AddModifiers(ou.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{outbox.Label}
@@ -387,6 +399,12 @@ func (ouo *OutboxUpdateOne) ClearLastRetry() *OutboxUpdateOne {
 // SetProcessingErrors sets the "processing_errors" field.
 func (ouo *OutboxUpdateOne) SetProcessingErrors(s []string) *OutboxUpdateOne {
 	ouo.mutation.SetProcessingErrors(s)
+	return ouo
+}
+
+// AppendProcessingErrors appends s to the "processing_errors" field.
+func (ouo *OutboxUpdateOne) AppendProcessingErrors(s []string) *OutboxUpdateOne {
+	ouo.mutation.AppendProcessingErrors(s)
 	return ouo
 }
 
@@ -601,6 +619,11 @@ func (ouo *OutboxUpdateOne) sqlSave(ctx context.Context) (_node *Outbox, err err
 			Column: outbox.FieldProcessingErrors,
 		})
 	}
+	if value, ok := ouo.mutation.AppendedProcessingErrors(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, outbox.FieldProcessingErrors, value)
+		})
+	}
 	if ouo.mutation.ProcessingErrorsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
@@ -609,7 +632,7 @@ func (ouo *OutboxUpdateOne) sqlSave(ctx context.Context) (_node *Outbox, err err
 	}
 	_spec.Node.Schema = ouo.schemaConfig.Outbox
 	ctx = internal.NewSchemaConfigContext(ctx, ouo.schemaConfig)
-	_spec.Modifiers = ouo.modifiers
+	_spec.AddModifiers(ouo.modifiers...)
 	_node = &Outbox{config: ouo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

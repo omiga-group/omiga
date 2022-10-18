@@ -33,15 +33,16 @@ const (
 // OrderMutation represents an operation that mutates the Order nodes in the graph.
 type OrderMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int
-	order_details       *models.OrderDetails
-	preferred_exchanges *[]models.Exchange
-	clearedFields       map[string]struct{}
-	done                bool
-	oldValue            func(context.Context) (*Order, error)
-	predicates          []predicate.Order
+	op                        Op
+	typ                       string
+	id                        *int
+	order_details             *models.OrderDetails
+	preferred_exchanges       *[]models.Exchange
+	appendpreferred_exchanges []models.Exchange
+	clearedFields             map[string]struct{}
+	done                      bool
+	oldValue                  func(context.Context) (*Order, error)
+	predicates                []predicate.Order
 }
 
 var _ ent.Mutation = (*OrderMutation)(nil)
@@ -181,6 +182,7 @@ func (m *OrderMutation) ResetOrderDetails() {
 // SetPreferredExchanges sets the "preferred_exchanges" field.
 func (m *OrderMutation) SetPreferredExchanges(value []models.Exchange) {
 	m.preferred_exchanges = &value
+	m.appendpreferred_exchanges = nil
 }
 
 // PreferredExchanges returns the value of the "preferred_exchanges" field in the mutation.
@@ -209,9 +211,23 @@ func (m *OrderMutation) OldPreferredExchanges(ctx context.Context) (v []models.E
 	return oldValue.PreferredExchanges, nil
 }
 
+// AppendPreferredExchanges adds value to the "preferred_exchanges" field.
+func (m *OrderMutation) AppendPreferredExchanges(value []models.Exchange) {
+	m.appendpreferred_exchanges = append(m.appendpreferred_exchanges, value...)
+}
+
+// AppendedPreferredExchanges returns the list of values that were appended to the "preferred_exchanges" field in this mutation.
+func (m *OrderMutation) AppendedPreferredExchanges() ([]models.Exchange, bool) {
+	if len(m.appendpreferred_exchanges) == 0 {
+		return nil, false
+	}
+	return m.appendpreferred_exchanges, true
+}
+
 // ResetPreferredExchanges resets all changes to the "preferred_exchanges" field.
 func (m *OrderMutation) ResetPreferredExchanges() {
 	m.preferred_exchanges = nil
+	m.appendpreferred_exchanges = nil
 }
 
 // Where appends a list predicates to the OrderMutation builder.
@@ -398,23 +414,24 @@ func (m *OrderMutation) ResetEdge(name string) error {
 // OutboxMutation represents an operation that mutates the Outbox nodes in the graph.
 type OutboxMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *int
-	timestamp         *time.Time
-	topic             *string
-	key               *string
-	payload           *[]byte
-	headers           *map[string]string
-	retry_count       *int
-	addretry_count    *int
-	status            *outbox.Status
-	last_retry        *time.Time
-	processing_errors *[]string
-	clearedFields     map[string]struct{}
-	done              bool
-	oldValue          func(context.Context) (*Outbox, error)
-	predicates        []predicate.Outbox
+	op                      Op
+	typ                     string
+	id                      *int
+	timestamp               *time.Time
+	topic                   *string
+	key                     *string
+	payload                 *[]byte
+	headers                 *map[string]string
+	retry_count             *int
+	addretry_count          *int
+	status                  *outbox.Status
+	last_retry              *time.Time
+	processing_errors       *[]string
+	appendprocessing_errors []string
+	clearedFields           map[string]struct{}
+	done                    bool
+	oldValue                func(context.Context) (*Outbox, error)
+	predicates              []predicate.Outbox
 }
 
 var _ ent.Mutation = (*OutboxMutation)(nil)
@@ -839,6 +856,7 @@ func (m *OutboxMutation) ResetLastRetry() {
 // SetProcessingErrors sets the "processing_errors" field.
 func (m *OutboxMutation) SetProcessingErrors(s []string) {
 	m.processing_errors = &s
+	m.appendprocessing_errors = nil
 }
 
 // ProcessingErrors returns the value of the "processing_errors" field in the mutation.
@@ -867,9 +885,23 @@ func (m *OutboxMutation) OldProcessingErrors(ctx context.Context) (v []string, e
 	return oldValue.ProcessingErrors, nil
 }
 
+// AppendProcessingErrors adds s to the "processing_errors" field.
+func (m *OutboxMutation) AppendProcessingErrors(s []string) {
+	m.appendprocessing_errors = append(m.appendprocessing_errors, s...)
+}
+
+// AppendedProcessingErrors returns the list of values that were appended to the "processing_errors" field in this mutation.
+func (m *OutboxMutation) AppendedProcessingErrors() ([]string, bool) {
+	if len(m.appendprocessing_errors) == 0 {
+		return nil, false
+	}
+	return m.appendprocessing_errors, true
+}
+
 // ClearProcessingErrors clears the value of the "processing_errors" field.
 func (m *OutboxMutation) ClearProcessingErrors() {
 	m.processing_errors = nil
+	m.appendprocessing_errors = nil
 	m.clearedFields[outbox.FieldProcessingErrors] = struct{}{}
 }
 
@@ -882,6 +914,7 @@ func (m *OutboxMutation) ProcessingErrorsCleared() bool {
 // ResetProcessingErrors resets all changes to the "processing_errors" field.
 func (m *OutboxMutation) ResetProcessingErrors() {
 	m.processing_errors = nil
+	m.appendprocessing_errors = nil
 	delete(m.clearedFields, outbox.FieldProcessingErrors)
 }
 

@@ -781,7 +781,7 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	_spec.Node.Schema = tpu.schemaConfig.TradingPair
 	ctx = internal.NewSchemaConfigContext(ctx, tpu.schemaConfig)
-	_spec.Modifiers = tpu.modifiers
+	_spec.AddModifiers(tpu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, tpu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{tradingpair.Label}
@@ -1581,7 +1581,7 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 	}
 	_spec.Node.Schema = tpuo.schemaConfig.TradingPair
 	ctx = internal.NewSchemaConfigContext(ctx, tpuo.schemaConfig)
-	_spec.Modifiers = tpuo.modifiers
+	_spec.AddModifiers(tpuo.modifiers...)
 	_node = &TradingPair{config: tpuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -365,11 +365,14 @@ func (oq *OrderQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (oq *OrderQuery) sqlExist(ctx context.Context) (bool, error) {
-	n, err := oq.sqlCount(ctx)
-	if err != nil {
+	switch _, err := oq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
 		return false, fmt.Errorf("entities: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return n > 0, nil
 }
 
 func (oq *OrderQuery) querySpec() *sqlgraph.QuerySpec {
