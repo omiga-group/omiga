@@ -14,6 +14,7 @@ RUN mkdir -p /src/shared/enterprise \
     mkdir -p /src/venue/binance-processor \
     mkdir -p /src/venue/bitmart-processor \
     mkdir -p /src/venue/bittrex-processor \
+    mkdir -p /src/venue/bybit-processor \
     mkdir -p /src/venue/coinbase-processor \
     mkdir -p /src/venue/crypto-processor \
     mkdir -p /src/venue/ftx-processor \
@@ -31,6 +32,7 @@ COPY venue/venues-all-in-one /src/venue/venues-all-in-one
 COPY venue/binance-processor /src/venue/binance-processor
 COPY venue/bitmart-processor /src/venue/bitmart-processor
 COPY venue/bittrex-processor /src/venue/bittrex-processor
+COPY venue/bybit-processor /src/venue/bybit-processor
 COPY venue/coinbase-processor /src/venue/coinbase-processor
 COPY venue/crypto-processor /src/venue/crypto-processor
 COPY venue/ftx-processor /src/venue/ftx-processor
@@ -58,6 +60,7 @@ COPY --from=build /bin/venues-all-in-one /omiga
 COPY --from=build /src/venue/binance-processor/config.yaml /omiga/binance-processor-config.yaml
 COPY --from=build /src/venue/bitmart-processor/config.yaml /omiga/bitmart-processor-config.yaml
 COPY --from=build /src/venue/bittrex-processor/config.yaml /omiga/bittrex-processor-config.yaml
+COPY --from=build /src/venue/bybit-processor/config.yaml /omiga/bybit-processor-config.yaml
 COPY --from=build /src/venue/coinbase-processor/config.yaml /omiga/coinbase-processor-config.yaml
 COPY --from=build /src/venue/crypto-processor/config.yaml /omiga/crypto-processor-config.yaml
 COPY --from=build /src/venue/ftx-processor/config.yaml /omiga/ftx-processor-config.yaml
