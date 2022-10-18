@@ -25,7 +25,7 @@ func (c *CurrencyQuery) collectField(ctx context.Context, op *graphql.OperationC
 	path = append([]string(nil), path...)
 	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
 		switch field.Name {
-		case "currencyBase", "currency_base":
+		case "currencyBase":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -37,7 +37,7 @@ func (c *CurrencyQuery) collectField(ctx context.Context, op *graphql.OperationC
 			c.WithNamedCurrencyBase(alias, func(wq *TradingPairQuery) {
 				*wq = *query
 			})
-		case "currencyCounter", "currency_counter":
+		case "currencyCounter":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -131,7 +131,7 @@ func (m *MarketQuery) collectField(ctx context.Context, op *graphql.OperationCon
 				return err
 			}
 			m.withVenue = query
-		case "tradingPair", "trading_pair":
+		case "tradingPair":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -469,7 +469,7 @@ func (v *VenueQuery) collectField(ctx context.Context, op *graphql.OperationCont
 			v.WithNamedTicker(alias, func(wq *TickerQuery) {
 				*wq = *query
 			})
-		case "tradingPair", "trading_pair":
+		case "tradingPair":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)

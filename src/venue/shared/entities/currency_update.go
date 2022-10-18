@@ -376,7 +376,7 @@ func (cu *CurrencyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	_spec.Node.Schema = cu.schemaConfig.Currency
 	ctx = internal.NewSchemaConfigContext(ctx, cu.schemaConfig)
-	_spec.Modifiers = cu.modifiers
+	_spec.AddModifiers(cu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{currency.Label}
@@ -773,7 +773,7 @@ func (cuo *CurrencyUpdateOne) sqlSave(ctx context.Context) (_node *Currency, err
 	}
 	_spec.Node.Schema = cuo.schemaConfig.Currency
 	ctx = internal.NewSchemaConfigContext(ctx, cuo.schemaConfig)
-	_spec.Modifiers = cuo.modifiers
+	_spec.AddModifiers(cuo.modifiers...)
 	_node = &Currency{config: cuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

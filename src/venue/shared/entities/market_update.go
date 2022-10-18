@@ -308,7 +308,7 @@ func (mu *MarketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	_spec.Node.Schema = mu.schemaConfig.Market
 	ctx = internal.NewSchemaConfigContext(ctx, mu.schemaConfig)
-	_spec.Modifiers = mu.modifiers
+	_spec.AddModifiers(mu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{market.Label}
@@ -636,7 +636,7 @@ func (muo *MarketUpdateOne) sqlSave(ctx context.Context) (_node *Market, err err
 	}
 	_spec.Node.Schema = muo.schemaConfig.Market
 	ctx = internal.NewSchemaConfigContext(ctx, muo.schemaConfig)
-	_spec.Modifiers = muo.modifiers
+	_spec.AddModifiers(muo.modifiers...)
 	_node = &Market{config: muo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

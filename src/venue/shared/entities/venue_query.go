@@ -628,11 +628,14 @@ func (vq *VenueQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (vq *VenueQuery) sqlExist(ctx context.Context) (bool, error) {
-	n, err := vq.sqlCount(ctx)
-	if err != nil {
+	switch _, err := vq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
 		return false, fmt.Errorf("entities: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return n > 0, nil
 }
 
 func (vq *VenueQuery) querySpec() *sqlgraph.QuerySpec {

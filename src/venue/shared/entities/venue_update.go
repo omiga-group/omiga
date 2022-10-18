@@ -1089,7 +1089,7 @@ func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	_spec.Node.Schema = vu.schemaConfig.Venue
 	ctx = internal.NewSchemaConfigContext(ctx, vu.schemaConfig)
-	_spec.Modifiers = vu.modifiers
+	_spec.AddModifiers(vu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, vu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{venue.Label}
@@ -2197,7 +2197,7 @@ func (vuo *VenueUpdateOne) sqlSave(ctx context.Context) (_node *Venue, err error
 	}
 	_spec.Node.Schema = vuo.schemaConfig.Venue
 	ctx = internal.NewSchemaConfigContext(ctx, vuo.schemaConfig)
-	_spec.Modifiers = vuo.modifiers
+	_spec.AddModifiers(vuo.modifiers...)
 	_node = &Venue{config: vuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -541,11 +541,14 @@ func (cq *CurrencyQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (cq *CurrencyQuery) sqlExist(ctx context.Context) (bool, error) {
-	n, err := cq.sqlCount(ctx)
-	if err != nil {
+	switch _, err := cq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
 		return false, fmt.Errorf("entities: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return n > 0, nil
 }
 
 func (cq *CurrencyQuery) querySpec() *sqlgraph.QuerySpec {

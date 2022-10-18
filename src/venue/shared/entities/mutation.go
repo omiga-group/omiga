@@ -1175,23 +1175,24 @@ func (m *MarketMutation) ResetEdge(name string) error {
 // OutboxMutation represents an operation that mutates the Outbox nodes in the graph.
 type OutboxMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *int
-	timestamp         *time.Time
-	topic             *string
-	key               *string
-	payload           *[]byte
-	headers           *map[string]string
-	retry_count       *int
-	addretry_count    *int
-	status            *outbox.Status
-	last_retry        *time.Time
-	processing_errors *[]string
-	clearedFields     map[string]struct{}
-	done              bool
-	oldValue          func(context.Context) (*Outbox, error)
-	predicates        []predicate.Outbox
+	op                      Op
+	typ                     string
+	id                      *int
+	timestamp               *time.Time
+	topic                   *string
+	key                     *string
+	payload                 *[]byte
+	headers                 *map[string]string
+	retry_count             *int
+	addretry_count          *int
+	status                  *outbox.Status
+	last_retry              *time.Time
+	processing_errors       *[]string
+	appendprocessing_errors []string
+	clearedFields           map[string]struct{}
+	done                    bool
+	oldValue                func(context.Context) (*Outbox, error)
+	predicates              []predicate.Outbox
 }
 
 var _ ent.Mutation = (*OutboxMutation)(nil)
@@ -1616,6 +1617,7 @@ func (m *OutboxMutation) ResetLastRetry() {
 // SetProcessingErrors sets the "processing_errors" field.
 func (m *OutboxMutation) SetProcessingErrors(s []string) {
 	m.processing_errors = &s
+	m.appendprocessing_errors = nil
 }
 
 // ProcessingErrors returns the value of the "processing_errors" field in the mutation.
@@ -1644,9 +1646,23 @@ func (m *OutboxMutation) OldProcessingErrors(ctx context.Context) (v []string, e
 	return oldValue.ProcessingErrors, nil
 }
 
+// AppendProcessingErrors adds s to the "processing_errors" field.
+func (m *OutboxMutation) AppendProcessingErrors(s []string) {
+	m.appendprocessing_errors = append(m.appendprocessing_errors, s...)
+}
+
+// AppendedProcessingErrors returns the list of values that were appended to the "processing_errors" field in this mutation.
+func (m *OutboxMutation) AppendedProcessingErrors() ([]string, bool) {
+	if len(m.appendprocessing_errors) == 0 {
+		return nil, false
+	}
+	return m.appendprocessing_errors, true
+}
+
 // ClearProcessingErrors clears the value of the "processing_errors" field.
 func (m *OutboxMutation) ClearProcessingErrors() {
 	m.processing_errors = nil
+	m.appendprocessing_errors = nil
 	m.clearedFields[outbox.FieldProcessingErrors] = struct{}{}
 }
 
@@ -1659,6 +1675,7 @@ func (m *OutboxMutation) ProcessingErrorsCleared() bool {
 // ResetProcessingErrors resets all changes to the "processing_errors" field.
 func (m *OutboxMutation) ResetProcessingErrors() {
 	m.processing_errors = nil
+	m.appendprocessing_errors = nil
 	delete(m.clearedFields, outbox.FieldProcessingErrors)
 }
 

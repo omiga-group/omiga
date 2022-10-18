@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/omiga-group/omiga/src/order/shared/entities/internal"
 	"github.com/omiga-group/omiga/src/order/shared/entities/order"
@@ -39,6 +40,12 @@ func (ou *OrderUpdate) SetOrderDetails(md models.OrderDetails) *OrderUpdate {
 // SetPreferredExchanges sets the "preferred_exchanges" field.
 func (ou *OrderUpdate) SetPreferredExchanges(m []models.Exchange) *OrderUpdate {
 	ou.mutation.SetPreferredExchanges(m)
+	return ou
+}
+
+// AppendPreferredExchanges appends m to the "preferred_exchanges" field.
+func (ou *OrderUpdate) AppendPreferredExchanges(m []models.Exchange) *OrderUpdate {
+	ou.mutation.AppendPreferredExchanges(m)
 	return ou
 }
 
@@ -139,9 +146,14 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: order.FieldPreferredExchanges,
 		})
 	}
+	if value, ok := ou.mutation.AppendedPreferredExchanges(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, order.FieldPreferredExchanges, value)
+		})
+	}
 	_spec.Node.Schema = ou.schemaConfig.Order
 	ctx = internal.NewSchemaConfigContext(ctx, ou.schemaConfig)
-	_spec.Modifiers = ou.modifiers
+	_spec.AddModifiers(ou.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{order.Label}
@@ -171,6 +183,12 @@ func (ouo *OrderUpdateOne) SetOrderDetails(md models.OrderDetails) *OrderUpdateO
 // SetPreferredExchanges sets the "preferred_exchanges" field.
 func (ouo *OrderUpdateOne) SetPreferredExchanges(m []models.Exchange) *OrderUpdateOne {
 	ouo.mutation.SetPreferredExchanges(m)
+	return ouo
+}
+
+// AppendPreferredExchanges appends m to the "preferred_exchanges" field.
+func (ouo *OrderUpdateOne) AppendPreferredExchanges(m []models.Exchange) *OrderUpdateOne {
+	ouo.mutation.AppendPreferredExchanges(m)
 	return ouo
 }
 
@@ -301,9 +319,14 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 			Column: order.FieldPreferredExchanges,
 		})
 	}
+	if value, ok := ouo.mutation.AppendedPreferredExchanges(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, order.FieldPreferredExchanges, value)
+		})
+	}
 	_spec.Node.Schema = ouo.schemaConfig.Order
 	ctx = internal.NewSchemaConfigContext(ctx, ouo.schemaConfig)
-	_spec.Modifiers = ouo.modifiers
+	_spec.AddModifiers(ouo.modifiers...)
 	_node = &Order{config: ouo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

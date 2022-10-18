@@ -781,7 +781,7 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	_spec.Node.Schema = tu.schemaConfig.Ticker
 	ctx = internal.NewSchemaConfigContext(ctx, tu.schemaConfig)
-	_spec.Modifiers = tu.modifiers
+	_spec.AddModifiers(tu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{ticker.Label}
@@ -1581,7 +1581,7 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 	}
 	_spec.Node.Schema = tuo.schemaConfig.Ticker
 	ctx = internal.NewSchemaConfigContext(ctx, tuo.schemaConfig)
-	_spec.Modifiers = tuo.modifiers
+	_spec.AddModifiers(tuo.modifiers...)
 	_node = &Ticker{config: tuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

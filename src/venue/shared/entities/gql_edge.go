@@ -8,16 +8,24 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
-func (c *Currency) CurrencyBase(ctx context.Context) ([]*TradingPair, error) {
-	result, err := c.NamedCurrencyBase(graphql.GetFieldContext(ctx).Field.Alias)
+func (c *Currency) CurrencyBase(ctx context.Context) (result []*TradingPair, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = c.NamedCurrencyBase(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = c.Edges.CurrencyBaseOrErr()
+	}
 	if IsNotLoaded(err) {
 		result, err = c.QueryCurrencyBase().All(ctx)
 	}
 	return result, err
 }
 
-func (c *Currency) CurrencyCounter(ctx context.Context) ([]*TradingPair, error) {
-	result, err := c.NamedCurrencyCounter(graphql.GetFieldContext(ctx).Field.Alias)
+func (c *Currency) CurrencyCounter(ctx context.Context) (result []*TradingPair, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = c.NamedCurrencyCounter(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = c.Edges.CurrencyCounterOrErr()
+	}
 	if IsNotLoaded(err) {
 		result, err = c.QueryCurrencyCounter().All(ctx)
 	}
@@ -32,8 +40,12 @@ func (m *Market) Venue(ctx context.Context) (*Venue, error) {
 	return result, err
 }
 
-func (m *Market) TradingPair(ctx context.Context) ([]*TradingPair, error) {
-	result, err := m.NamedTradingPair(graphql.GetFieldContext(ctx).Field.Alias)
+func (m *Market) TradingPair(ctx context.Context) (result []*TradingPair, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = m.NamedTradingPair(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = m.Edges.TradingPairOrErr()
+	}
 	if IsNotLoaded(err) {
 		result, err = m.QueryTradingPair().All(ctx)
 	}
@@ -72,32 +84,48 @@ func (tp *TradingPair) Counter(ctx context.Context) (*Currency, error) {
 	return result, err
 }
 
-func (tp *TradingPair) Market(ctx context.Context) ([]*Market, error) {
-	result, err := tp.NamedMarket(graphql.GetFieldContext(ctx).Field.Alias)
+func (tp *TradingPair) Market(ctx context.Context) (result []*Market, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = tp.NamedMarket(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = tp.Edges.MarketOrErr()
+	}
 	if IsNotLoaded(err) {
 		result, err = tp.QueryMarket().All(ctx)
 	}
 	return result, err
 }
 
-func (v *Venue) Ticker(ctx context.Context) ([]*Ticker, error) {
-	result, err := v.NamedTicker(graphql.GetFieldContext(ctx).Field.Alias)
+func (v *Venue) Ticker(ctx context.Context) (result []*Ticker, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = v.NamedTicker(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = v.Edges.TickerOrErr()
+	}
 	if IsNotLoaded(err) {
 		result, err = v.QueryTicker().All(ctx)
 	}
 	return result, err
 }
 
-func (v *Venue) TradingPair(ctx context.Context) ([]*TradingPair, error) {
-	result, err := v.NamedTradingPair(graphql.GetFieldContext(ctx).Field.Alias)
+func (v *Venue) TradingPair(ctx context.Context) (result []*TradingPair, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = v.NamedTradingPair(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = v.Edges.TradingPairOrErr()
+	}
 	if IsNotLoaded(err) {
 		result, err = v.QueryTradingPair().All(ctx)
 	}
 	return result, err
 }
 
-func (v *Venue) Market(ctx context.Context) ([]*Market, error) {
-	result, err := v.NamedMarket(graphql.GetFieldContext(ctx).Field.Alias)
+func (v *Venue) Market(ctx context.Context) (result []*Market, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = v.NamedMarket(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = v.Edges.MarketOrErr()
+	}
 	if IsNotLoaded(err) {
 		result, err = v.QueryMarket().All(ctx)
 	}
