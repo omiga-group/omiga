@@ -44,7 +44,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	if err != nil {
 		return nil, err
 	}
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(pulsarClient)
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarClient)
 	if err != nil {
 		return nil, err
 	}
