@@ -129,6 +129,7 @@ jobs:
           docker rmi ${{ env.unittest_container_tag }} || true
           docker rmi microbusiness/order-api:${{ env.sem_version }} || true
           docker rmi microbusiness/order-api:${{ github.sha }} || true
+          docker rmi microbusiness/order-api:latest || true
 
   deploy-to-dev:
     if: ${{ github.ref == 'refs/heads/main' }}

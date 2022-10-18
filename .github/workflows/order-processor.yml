@@ -129,3 +129,4 @@ jobs:
           docker rmi ${{ env.unittest_container_tag }} || true
           docker rmi microbusiness/order-processor:${{ env.sem_version }} || true
           docker rmi microbusiness/order-processor:${{ github.sha }} || true
+          docker rmi microbusiness/order-processor:latest || true

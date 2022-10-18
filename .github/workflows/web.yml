@@ -87,6 +87,7 @@ jobs:
           docker rmi ${{ env.unittest_container_tag }} || true
           docker rmi microbusiness/web:${{ env.sem_version }} || true
           docker rmi microbusiness/web:${{ github.sha }} || true
+          docker rmi microbusiness/web:latest || true
 
   deploy-to-dev:
     if: ${{ github.ref == 'refs/heads/main' }}

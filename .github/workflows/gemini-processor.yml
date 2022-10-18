@@ -129,3 +129,4 @@ jobs:
           docker rmi ${{ env.unittest_container_tag }} || true
           docker rmi microbusiness/gemini-processor:${{ env.sem_version }} || true
           docker rmi microbusiness/gemini-processor:${{ github.sha }} || true
+          docker rmi microbusiness/gemini-processor:latest || true

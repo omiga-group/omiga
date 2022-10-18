@@ -129,3 +129,4 @@ jobs:
           docker rmi ${{ env.unittest_container_tag }} || true
           docker rmi microbusiness/bitmart-processor:${{ env.sem_version }} || true
           docker rmi microbusiness/bitmart-processor:${{ github.sha }} || true
+          docker rmi microbusiness/bitmart-processor:latest || true
