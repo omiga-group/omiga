@@ -30,6 +30,7 @@ generate-via-docker: ## Generate code
 	@./venue/binance-processor/scripts/generate.sh
 	@./venue/bitmart-processor/scripts/generate.sh
 	@./venue/bittrext-processor/scripts/generate.sh
+	@./venue/bybit-processor/scripts/generate.sh
 	@./venue/coinbase-processor/scripts/generate.sh
 	@./venue/crypto-processor/scripts/generate.sh
 	@./venue/coingecko-processor/scripts/generate.sh

@@ -14,6 +14,8 @@ import (
 	bitmartprocessorconfiguration "github.com/omiga-group/omiga/src/venue/bitmart-processor/configuration"
 	bittrexprocessorappsetup "github.com/omiga-group/omiga/src/venue/bittrex-processor/appsetup"
 	bittrexprocessorconfiguration "github.com/omiga-group/omiga/src/venue/bittrex-processor/configuration"
+	bybitprocessorappsetup "github.com/omiga-group/omiga/src/venue/bybit-processor/appsetup"
+	bybitprocessorconfiguration "github.com/omiga-group/omiga/src/venue/bybit-processor/configuration"
 	coinbaseprocessorappsetup "github.com/omiga-group/omiga/src/venue/coinbase-processor/appsetup"
 	coinbaseprocessorconfiguration "github.com/omiga-group/omiga/src/venue/coinbase-processor/configuration"
 	cryptoprocessorappsetup "github.com/omiga-group/omiga/src/venue/crypto-processor/appsetup"
@@ -56,6 +58,11 @@ func startCommand() *cobra.Command {
 
 			var bittrexProcessorConfig bittrexprocessorconfiguration.Config
 			if err := entconfiguration.LoadConfig("bittrex-processor-config.yaml", &bittrexProcessorConfig); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			var bybitProcessorConfig bybitprocessorconfiguration.Config
+			if err := entconfiguration.LoadConfig("bybit-processor-config.yaml", &bybitProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
@@ -133,6 +140,15 @@ func startCommand() *cobra.Command {
 				bittrexProcessorConfig.Bittrex,
 				cronService,
 				bittrexProcessorConfig.Postgres); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			if _, err = bybitprocessorappsetup.NewBybitTradingPairSubscriber(
+				ctx,
+				sugarLogger,
+				bybitProcessorConfig.Bybit,
+				cronService,
+				bybitProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
