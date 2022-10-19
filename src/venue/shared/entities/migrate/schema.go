@@ -42,7 +42,7 @@ var (
 	MarketsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"SPOT_TRADING", "MARGIN_TRADING", "DERIVATIVES", "EARN", "PERPETUAL", "FUTURES", "WARRANT", "OTC", "YIELD", "P2P", "STRATEGY_TRADING", "SWAP_FARMING", "FAN_TOKEN", "ETF", "NFT", "SWAP", "LIQUIDITY"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"SPOT_TRADING", "MARGIN_TRADING", "DERIVATIVES", "EARN", "PERPETUAL", "FUTURES", "WARRANT", "OTC", "YIELD", "P2P", "STRATEGY_TRADING", "SWAP_FARMING", "FAN_TOKEN", "ETF", "NFT", "SWAP", "CFD", "LIQUIDITY", "FARM"}},
 		{Name: "venue_market", Type: field.TypeInt},
 	}
 	// MarketsTable holds the schema information for the "markets" table.

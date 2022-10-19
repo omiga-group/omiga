@@ -84,6 +84,16 @@ type PageInfo {
   endCursor: Cursor
 }
 type Query {
+  order(where: OrderWhereInput): Order
+  orders(
+    "Returns the items in the list that come after the specified cursor."
+    after: Cursor,
+    "Returns the first n items from the list."
+    first: Int,
+    "Returns the items in the list that come before the specified cursor."
+    before: Cursor,
+    "Returns the last n items from the list."
+    last: Int,where: OrderWhereInput  ): OrderConnection
   currency(
     "Ordering directions"
     where: CurrencyWhereInput
@@ -120,16 +130,6 @@ type Query {
     "Ordering directions"
     where: VenueWhereInput
   ): VenueConnection
-  order(where: OrderWhereInput): Order
-  orders(
-    "Returns the items in the list that come after the specified cursor."
-    after: Cursor,
-    "Returns the first n items from the list."
-    first: Int,
-    "Returns the items in the list that come before the specified cursor."
-    before: Cursor,
-    "Returns the last n items from the list."
-    last: Int,where: OrderWhereInput  ): OrderConnection
 }
 type Ticker implements Node {
   id: ID!
@@ -244,6 +244,7 @@ enum MarketType {
   ETF
   NFT
   SWAP
+  LIQUIDITY
 }
 enum OrderDirection {
   ASC

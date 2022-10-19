@@ -35,8 +35,10 @@ func (Market) Fields() []ent.Field {
 				"FAN_TOKEN", "FAN_TOKEN",
 				"ETF", "ETF",
 				"NFT", "NFT",
-				"Swap", "SWAP",
-				"LIQUIDITY", "LIQUIDITY").
+				"SWAP", "SWAP",
+				"CFD", "CFD",
+				"LIQUIDITY", "LIQUIDITY",
+				"FARM", "FARM").
 			Annotations(entgql.OrderField("type")),
 	}
 }
