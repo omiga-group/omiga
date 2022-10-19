@@ -28,6 +28,8 @@ import (
 	krakenprocessorconfiguration "github.com/omiga-group/omiga/src/venue/kraken-processor/configuration"
 	kucoinprocessorappsetup "github.com/omiga-group/omiga/src/venue/kucoin-processor/appsetup"
 	kucoinprocessorconfiguration "github.com/omiga-group/omiga/src/venue/kucoin-processor/configuration"
+	mexcprocessorappsetup "github.com/omiga-group/omiga/src/venue/mexc-processor/appsetup"
+	mexcprocessorconfiguration "github.com/omiga-group/omiga/src/venue/mexc-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/venues-all-in-one/appsetup"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -93,6 +95,11 @@ func startCommand() *cobra.Command {
 
 			var kucoinProcessorConfig kucoinprocessorconfiguration.Config
 			if err := entconfiguration.LoadConfig("kucoin-processor-config.yaml", &kucoinProcessorConfig); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			var mexcProcessorConfig mexcprocessorconfiguration.Config
+			if err := entconfiguration.LoadConfig("mexc-processor-config.yaml", &mexcProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
@@ -203,6 +210,15 @@ func startCommand() *cobra.Command {
 				kucoinProcessorConfig.KuCoin,
 				cronService,
 				kucoinProcessorConfig.Postgres); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			if _, err = mexcprocessorappsetup.NewMexcTradingPairSubscriber(
+				ctx,
+				sugarLogger,
+				mexcProcessorConfig.Mexc,
+				cronService,
+				mexcProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
 

@@ -32,13 +32,14 @@ generate-via-docker: ## Generate code
 	@./venue/bittrext-processor/scripts/generate.sh
 	@./venue/bybit-processor/scripts/generate.sh
 	@./venue/coinbase-processor/scripts/generate.sh
-	@./venue/crypto-processor/scripts/generate.sh
 	@./venue/coingecko-processor/scripts/generate.sh
+	@./venue/crypto-processor/scripts/generate.sh
+	@./venue/ftx-processor/scripts/generate.sh
 	@./venue/gemini-processor/scripts/generate.sh
 	@./venue/huobi-processor/scripts/generate.sh
 	@./venue/kraken-processor/scripts/generate.sh
 	@./venue/kucoin-processor/scripts/generate.sh
-	@./venue/ftx-processor/scripts/generate.sh
+	@./venue/mexc-processor/scripts/generate.sh
 	@./order/shared/scripts/generate.sh
 	@./order/order-api/scripts/generate.sh
 	@./order/order-processor/scripts/generate.sh
