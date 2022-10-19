@@ -52,15 +52,15 @@ func (btps *bitMartTradingPairSubscriber) Run() {
 		return
 	}
 
-	response, err := client.GetAllSymbolDetailsWithResponse(btps.ctx)
+	response, err := client.GetAllSymbolsDetailsWithResponse(btps.ctx)
 	if err != nil {
-		btps.logger.Errorf("Failed to call getSymbolDetails endpoint. Error: %v", err)
+		btps.logger.Errorf("Failed to call getAllSymbolsDetails endpoint. Error: %v", err)
 
 		return
 	}
 
 	if response.HTTPResponse.StatusCode != 200 {
-		btps.logger.Errorf("Failed to call getSymbolDetails endpoint. Return status code is %d", response.HTTPResponse.StatusCode)
+		btps.logger.Errorf("Failed to call getAllSymbolsDetails endpoint. Return status code is %d", response.HTTPResponse.StatusCode)
 
 		return
 	}

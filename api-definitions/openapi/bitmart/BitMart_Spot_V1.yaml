@@ -12,19 +12,19 @@ paths:
     get:
       tags:
       - spot
-      summary: fetches the supported symbol details
-      operationId: getAllSymbolDetails
+      summary: fetches the supported symbols details
+      operationId: getAllSymbolsDetails
       responses:
         200:
-          description: list of symbol details
+          description: list of symbols details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getSymbolDetailsResponse"
+                $ref: "#/components/schemas/getSymbolsDetailsResponse"
 
 components:
   schemas:
-    getSymbolDetailsResponse:
+    getSymbolsDetailsResponse:
       type: object
       additionalProperties: true
       required:
@@ -40,9 +40,9 @@ components:
         trace:
           type: string
         data:
-          $ref: "#/components/schemas/getSymbolDetailsData"
+          $ref: "#/components/schemas/getSymbolsDetailsData"
 
-    getSymbolDetailsData:
+    getSymbolsDetailsData:
       type: object
       additionalProperties: true
       required:
