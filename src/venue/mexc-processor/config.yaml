@@ -1,0 +1,19 @@
+app:
+  source: "urn::omiga::mexc-processor"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "mexc-processor"
+  producerName: "mexc-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+mexc:
+  id: "mexc"
+  baseUrl: ""
+  apiKey: ""
+  secretKey: ""
