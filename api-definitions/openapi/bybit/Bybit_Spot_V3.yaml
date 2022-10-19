@@ -1,0 +1,99 @@
+openapi: 3.0.1
+info:
+  title: Bybit API V3
+  description: "Bybit REST API"
+  version: 3.0.0
+
+servers:
+  - url: https://api.bybit.com/spot/v3
+
+paths:
+  /public/symbols:
+    get:
+      tags:
+      - spot
+      summary: fetches the supported symbols
+      operationId: getAllSymbols
+      responses:
+        200:
+          description: list of symbols
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getSymbolsResponse"
+
+components:
+  schemas:
+    getSymbolsResponse:
+      type: object
+      additionalProperties: true
+      required:
+        - retCode
+        - retMsg
+        - trace
+      properties:
+        retCode:
+          type: integer
+        retMsg:
+          type: string
+        result:
+          $ref: "#/components/schemas/getSymbolsData"
+
+    getSymbolsData:
+      type: object
+      additionalProperties: true
+      required:
+        - list
+      properties:
+        list:
+          type: array
+          items:
+            $ref: "#/components/schemas/symbol"
+
+    symbol:
+      type: object
+      additionalProperties: true
+      required:
+        - name
+        - alias
+        - baseCoin
+        - quoteCoin
+        - basePrecision
+        - quotePrecision
+        - minTradeQty
+        - minTradeAmt
+        - maxTradeQty
+        - maxTradeAmt
+        - minPricePrecision
+        - category
+        - showStatus
+        - innovation
+      properties:
+        name:
+          type: string
+        alias:
+          type: string
+        baseCoin:
+          type: string
+        quoteCoin:
+          type: string
+        basePrecision:
+          type: string
+        quotePrecision:
+          type: string
+        minTradeQty:
+          type: string
+        minTradeAmt:
+          type: string
+        maxTradeQty:
+          type: string
+        maxTradeAmt:
+          type: string
+        minPricePrecision:
+          type: string
+        category:
+          type: string
+        showStatus:
+          type: string
+        innovation:
+          type: string
