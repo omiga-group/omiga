@@ -1365,7 +1365,9 @@ enum MarketType {
   ETF
   NFT
   SWAP
+  CFD
   LIQUIDITY
+  FARM
 }
 `, BuiltIn: false},
 	{Name: "../../../../../api-definitions/graphql/omiga/venue/V1/ent.graphql", Input: `"""

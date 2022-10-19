@@ -89,7 +89,9 @@ const (
 	MarketTypeEtf             MarketType = "ETF"
 	MarketTypeNft             MarketType = "NFT"
 	MarketTypeSwap            MarketType = "SWAP"
+	MarketTypeCfd             MarketType = "CFD"
 	MarketTypeLiquidity       MarketType = "LIQUIDITY"
+	MarketTypeFarm            MarketType = "FARM"
 )
 
 var AllMarketType = []MarketType{
@@ -109,12 +111,14 @@ var AllMarketType = []MarketType{
 	MarketTypeEtf,
 	MarketTypeNft,
 	MarketTypeSwap,
+	MarketTypeCfd,
 	MarketTypeLiquidity,
+	MarketTypeFarm,
 }
 
 func (e MarketType) IsValid() bool {
 	switch e {
-	case MarketTypeSpotTrading, MarketTypeMarginTrading, MarketTypeDerivatives, MarketTypeEarn, MarketTypePerpetual, MarketTypeFutures, MarketTypeWarrant, MarketTypeOtc, MarketTypeYield, MarketTypeP2p, MarketTypeStrategyTrading, MarketTypeSwapFarming, MarketTypeFanToken, MarketTypeEtf, MarketTypeNft, MarketTypeSwap, MarketTypeLiquidity:
+	case MarketTypeSpotTrading, MarketTypeMarginTrading, MarketTypeDerivatives, MarketTypeEarn, MarketTypePerpetual, MarketTypeFutures, MarketTypeWarrant, MarketTypeOtc, MarketTypeYield, MarketTypeP2p, MarketTypeStrategyTrading, MarketTypeSwapFarming, MarketTypeFanToken, MarketTypeEtf, MarketTypeNft, MarketTypeSwap, MarketTypeCfd, MarketTypeLiquidity, MarketTypeFarm:
 		return true
 	}
 	return false

@@ -244,7 +244,9 @@ enum MarketType {
   ETF
   NFT
   SWAP
+  CFD
   LIQUIDITY
+  FARM
 }
 enum OrderDirection {
   ASC
