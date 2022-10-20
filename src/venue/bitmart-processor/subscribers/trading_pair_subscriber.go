@@ -3,8 +3,8 @@ package subscribers
 import (
 	"context"
 
-	bitmartspotv1 "github.com/omiga-group/omiga/src/shared/clients/openapi/bitmart/spot/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	bitmartspotv1 "github.com/omiga-group/omiga/src/venue/bitmart-processor/bitmartclient/spot/v1"
 	"github.com/omiga-group/omiga/src/venue/bitmart-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/bitmart-processor/mappers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"

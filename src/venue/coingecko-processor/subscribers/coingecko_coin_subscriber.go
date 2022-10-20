@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/life4/genesis/slices"
-	coingeckov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingecko/v3"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	coingeckov3 "github.com/omiga-group/omiga/src/venue/coingecko-processor/coingeckoclient/v3"
 	"github.com/omiga-group/omiga/src/venue/coingecko-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/coingecko-processor/mappers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"

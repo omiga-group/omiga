@@ -3,9 +3,9 @@ package subscribers
 import (
 	"context"
 
-	cryptov2 "github.com/omiga-group/omiga/src/shared/clients/openapi/crypto/v2"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/venue/crypto-processor/configuration"
+	cryptov2 "github.com/omiga-group/omiga/src/venue/crypto-processor/cryptoclient/v2"
 	"github.com/omiga-group/omiga/src/venue/crypto-processor/mappers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"

@@ -3,10 +3,10 @@ package subscribers
 import (
 	"context"
 
-	mexcpotv2 "github.com/omiga-group/omiga/src/shared/clients/openapi/mexc/spot/v2"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/venue/mexc-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/mexc-processor/mappers"
+	mexcpotv2 "github.com/omiga-group/omiga/src/venue/mexc-processor/mexcclient/spot/v2"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
 )
