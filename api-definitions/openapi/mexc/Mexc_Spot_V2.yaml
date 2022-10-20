@@ -1,0 +1,96 @@
+openapi: 3.0.1
+info:
+  title: Mexc Spot API V2
+  description: "Mexc Spot REST API"
+  version: 2.0.0
+
+servers:
+  - url: https://www.mexc.com/open/api/v2
+
+paths:
+  /market/symbols:
+    get:
+      tags:
+      - spot
+      summary: fetches the supported symbols
+      operationId: getAllSymbols
+      responses:
+        200:
+          description: list of symbols
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getSymbolsResponse"
+
+components:
+  schemas:
+    getSymbolsResponse:
+      type: object
+      additionalProperties: true
+      required:
+        - code
+        - data
+      properties:
+        code:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/symbol"
+
+    symbol:
+      type: object
+      additionalProperties: true
+      required:
+        - symbol
+        - state
+        - countDownMark
+        - timeZone
+        - fullName
+        - symbolStatus
+        - vcoinName
+        - vcoinStatus
+        - price_scale
+        - quantity_scale
+        - min_amount
+        - max_amount
+        - maker_fee_rate
+        - taker_fee_rate
+        - limited
+        - etf_mark
+        - symbol_partition
+      properties:
+        symbol:
+          type: string
+        state:
+          type: string
+        countDownMark:
+          type: integer
+        timeZone:
+          type: string
+        fullName:
+          type: string
+        symbolStatus:
+          type: integer
+        vcoinName:
+          type: string
+        vcoinStatus:
+          type: integer
+        price_scale:
+          type: integer
+        quantity_scale:
+          type: integer
+        min_amount:
+          type: string
+        max_amount:
+          type: string
+        maker_fee_rate:
+          type: string
+        taker_fee_rate:
+          type: string
+        limited:
+          type: boolean
+        etf_mark:
+          type: integer
+        symbol_partition:
+          type: string

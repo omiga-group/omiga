@@ -361,18 +361,18 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// GetPricefeed request
-	GetPricefeed(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetPriceFeed request
+	GetPriceFeed(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetSymbols request
-	GetSymbols(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetAllSymbols request
+	GetAllSymbols(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetSymbolsDetailsSymbol request
-	GetSymbolsDetailsSymbol(ctx context.Context, symbol string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetSymbolDetails request
+	GetSymbolDetails(ctx context.Context, symbol string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) GetPricefeed(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetPricefeedRequest(c.Server)
+func (c *Client) GetPriceFeed(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetPriceFeedRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -383,8 +383,8 @@ func (c *Client) GetPricefeed(ctx context.Context, reqEditors ...RequestEditorFn
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetSymbols(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetSymbolsRequest(c.Server)
+func (c *Client) GetAllSymbols(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAllSymbolsRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -395,8 +395,8 @@ func (c *Client) GetSymbols(ctx context.Context, reqEditors ...RequestEditorFn) 
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetSymbolsDetailsSymbol(ctx context.Context, symbol string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetSymbolsDetailsSymbolRequest(c.Server, symbol)
+func (c *Client) GetSymbolDetails(ctx context.Context, symbol string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetSymbolDetailsRequest(c.Server, symbol)
 	if err != nil {
 		return nil, err
 	}
@@ -407,8 +407,8 @@ func (c *Client) GetSymbolsDetailsSymbol(ctx context.Context, symbol string, req
 	return c.Client.Do(req)
 }
 
-// NewGetPricefeedRequest generates requests for GetPricefeed
-func NewGetPricefeedRequest(server string) (*http.Request, error) {
+// NewGetPriceFeedRequest generates requests for GetPriceFeed
+func NewGetPriceFeedRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -434,8 +434,8 @@ func NewGetPricefeedRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewGetSymbolsRequest generates requests for GetSymbols
-func NewGetSymbolsRequest(server string) (*http.Request, error) {
+// NewGetAllSymbolsRequest generates requests for GetAllSymbols
+func NewGetAllSymbolsRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -461,8 +461,8 @@ func NewGetSymbolsRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewGetSymbolsDetailsSymbolRequest generates requests for GetSymbolsDetailsSymbol
-func NewGetSymbolsDetailsSymbolRequest(server string, symbol string) (*http.Request, error) {
+// NewGetSymbolDetailsRequest generates requests for GetSymbolDetails
+func NewGetSymbolDetailsRequest(server string, symbol string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -538,24 +538,24 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// GetPricefeed request
-	GetPricefeedWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetPricefeedResponse, error)
+	// GetPriceFeed request
+	GetPriceFeedWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetPriceFeedResponse, error)
 
-	// GetSymbols request
-	GetSymbolsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetSymbolsResponse, error)
+	// GetAllSymbols request
+	GetAllSymbolsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetAllSymbolsResponse, error)
 
-	// GetSymbolsDetailsSymbol request
-	GetSymbolsDetailsSymbolWithResponse(ctx context.Context, symbol string, reqEditors ...RequestEditorFn) (*GetSymbolsDetailsSymbolResponse, error)
+	// GetSymbolDetails request
+	GetSymbolDetailsWithResponse(ctx context.Context, symbol string, reqEditors ...RequestEditorFn) (*GetSymbolDetailsResponse, error)
 }
 
-type GetPricefeedResponse struct {
+type GetPriceFeedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *[]PriceFeed
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPricefeedResponse) Status() string {
+func (r GetPriceFeedResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -563,21 +563,21 @@ func (r GetPricefeedResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPricefeedResponse) StatusCode() int {
+func (r GetPriceFeedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type GetSymbolsResponse struct {
+type GetAllSymbolsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *[]Symbol
 }
 
 // Status returns HTTPResponse.Status
-func (r GetSymbolsResponse) Status() string {
+func (r GetAllSymbolsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -585,21 +585,21 @@ func (r GetSymbolsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetSymbolsResponse) StatusCode() int {
+func (r GetAllSymbolsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type GetSymbolsDetailsSymbolResponse struct {
+type GetSymbolDetailsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *TradingPair
 }
 
 // Status returns HTTPResponse.Status
-func (r GetSymbolsDetailsSymbolResponse) Status() string {
+func (r GetSymbolDetailsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -607,49 +607,49 @@ func (r GetSymbolsDetailsSymbolResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetSymbolsDetailsSymbolResponse) StatusCode() int {
+func (r GetSymbolDetailsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-// GetPricefeedWithResponse request returning *GetPricefeedResponse
-func (c *ClientWithResponses) GetPricefeedWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetPricefeedResponse, error) {
-	rsp, err := c.GetPricefeed(ctx, reqEditors...)
+// GetPriceFeedWithResponse request returning *GetPriceFeedResponse
+func (c *ClientWithResponses) GetPriceFeedWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetPriceFeedResponse, error) {
+	rsp, err := c.GetPriceFeed(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetPricefeedResponse(rsp)
+	return ParseGetPriceFeedResponse(rsp)
 }
 
-// GetSymbolsWithResponse request returning *GetSymbolsResponse
-func (c *ClientWithResponses) GetSymbolsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetSymbolsResponse, error) {
-	rsp, err := c.GetSymbols(ctx, reqEditors...)
+// GetAllSymbolsWithResponse request returning *GetAllSymbolsResponse
+func (c *ClientWithResponses) GetAllSymbolsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetAllSymbolsResponse, error) {
+	rsp, err := c.GetAllSymbols(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetSymbolsResponse(rsp)
+	return ParseGetAllSymbolsResponse(rsp)
 }
 
-// GetSymbolsDetailsSymbolWithResponse request returning *GetSymbolsDetailsSymbolResponse
-func (c *ClientWithResponses) GetSymbolsDetailsSymbolWithResponse(ctx context.Context, symbol string, reqEditors ...RequestEditorFn) (*GetSymbolsDetailsSymbolResponse, error) {
-	rsp, err := c.GetSymbolsDetailsSymbol(ctx, symbol, reqEditors...)
+// GetSymbolDetailsWithResponse request returning *GetSymbolDetailsResponse
+func (c *ClientWithResponses) GetSymbolDetailsWithResponse(ctx context.Context, symbol string, reqEditors ...RequestEditorFn) (*GetSymbolDetailsResponse, error) {
+	rsp, err := c.GetSymbolDetails(ctx, symbol, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetSymbolsDetailsSymbolResponse(rsp)
+	return ParseGetSymbolDetailsResponse(rsp)
 }
 
-// ParseGetPricefeedResponse parses an HTTP response from a GetPricefeedWithResponse call
-func ParseGetPricefeedResponse(rsp *http.Response) (*GetPricefeedResponse, error) {
+// ParseGetPriceFeedResponse parses an HTTP response from a GetPriceFeedWithResponse call
+func ParseGetPriceFeedResponse(rsp *http.Response) (*GetPriceFeedResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPricefeedResponse{
+	response := &GetPriceFeedResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -667,15 +667,15 @@ func ParseGetPricefeedResponse(rsp *http.Response) (*GetPricefeedResponse, error
 	return response, nil
 }
 
-// ParseGetSymbolsResponse parses an HTTP response from a GetSymbolsWithResponse call
-func ParseGetSymbolsResponse(rsp *http.Response) (*GetSymbolsResponse, error) {
+// ParseGetAllSymbolsResponse parses an HTTP response from a GetAllSymbolsWithResponse call
+func ParseGetAllSymbolsResponse(rsp *http.Response) (*GetAllSymbolsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetSymbolsResponse{
+	response := &GetAllSymbolsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -693,15 +693,15 @@ func ParseGetSymbolsResponse(rsp *http.Response) (*GetSymbolsResponse, error) {
 	return response, nil
 }
 
-// ParseGetSymbolsDetailsSymbolResponse parses an HTTP response from a GetSymbolsDetailsSymbolWithResponse call
-func ParseGetSymbolsDetailsSymbolResponse(rsp *http.Response) (*GetSymbolsDetailsSymbolResponse, error) {
+// ParseGetSymbolDetailsResponse parses an HTTP response from a GetSymbolDetailsWithResponse call
+func ParseGetSymbolDetailsResponse(rsp *http.Response) (*GetSymbolDetailsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetSymbolsDetailsSymbolResponse{
+	response := &GetSymbolDetailsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
