@@ -14,8 +14,8 @@ type Config struct {
 }
 
 type DexTradeConfig struct {
-	Id         string `yaml:"id" env:"OMIGA_DEXTRADE_ID"`
-	ApiKey     string `yaml:"apiKey" env:"OMIGA_DEXTRADE_APIKEY"`
-	Passphrase string `yaml:"passphrase" env:"OMIGA_DEXTRADE_PASSPHRASE"`
-	SecretKey  string `yaml:"secretKey" env:"OMIGA_DEXTRADE_SECRETKEY"`
+	Id        string `yaml:"id" env:"OMIGA_DEXTRADE_ID"`
+	BaseUrl   string `yaml:"baseUrl" env:"OMIGA_DEXTRADE_BASEURL"`
+	ApiKey    string `yaml:"apiKey" env:"OMIGA_DEXTRADE_APIKEY"`
+	SecretKey string `yaml:"secretKey" env:"OMIGA_DEXTRADE_SECRETKEY"`
 }
