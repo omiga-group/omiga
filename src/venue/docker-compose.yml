@@ -394,3 +394,30 @@ services:
       - all
     networks:
       - omiga_network
+
+  xt-processor:
+    image: ${DOCKER_REGISTRY-}xtprocessor
+    build:
+      context: .
+      dockerfile: venue/xt-processor/Dockerfile
+      target: local
+    restart: unless-stopped
+    environment:
+      OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
+      OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2: ${OMIGA_PULSAR_ENABLEAUTHENTICATIONOAUTH2}
+      OMIGA_PULSAR_AUTHENTICATION_TYPE: ${OMIGA_PULSAR_AUTHENTICATION_TYPE}
+      OMIGA_PULSAR_AUTHENTICATION_ISSUERURL: ${OMIGA_PULSAR_AUTHENTICATION_ISSUERURL}
+      OMIGA_PULSAR_AUTHENTICATION_AUDIENCE: ${OMIGA_PULSAR_AUTHENTICATION_AUDIENCE}
+      OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY: ${OMIGA_PULSAR_AUTHENTICATION_PRIVATEKEY}
+      OMIGA_PULSAR_AUTHENTICATION_CLIENTID: ${OMIGA_PULSAR_AUTHENTICATION_CLIENTID}
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+    depends_on:
+      - postgres
+      - venue-database-migration
+      - pulsar
+    profiles:
+      - venue
+      - all
+    networks:
+      - omiga_network
+

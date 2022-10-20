@@ -1,0 +1,19 @@
+app:
+  source: "urn::omiga::xt-processor"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "xt-processor"
+  producerName: "xt-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+xt:
+  id: "xt"
+  baseUrl: "https://api.xt.com/data/api/v1"
+  apiKey: ""
+  secretKey: ""
