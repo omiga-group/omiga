@@ -34,6 +34,7 @@ generate-via-docker: ## Generate code
 	@./venue/coinbase-processor/scripts/generate.sh
 	@./venue/coingecko-processor/scripts/generate.sh
 	@./venue/crypto-processor/scripts/generate.sh
+	@./venue/dextrade-processor/scripts/generate.sh
 	@./venue/ftx-processor/scripts/generate.sh
 	@./venue/gemini-processor/scripts/generate.sh
 	@./venue/huobi-processor/scripts/generate.sh
