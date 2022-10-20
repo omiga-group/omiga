@@ -23,7 +23,7 @@ type MarketConfig struct {
 	CoinPoint            int                    `json:"coinPoint"`
 	Maker                float64                `json:"maker"`
 	MinAmount            float64                `json:"minAmount"`
-	MinMoney             int                    `json:"minMoney"`
+	MinMoney             float64                `json:"minMoney"`
 	PricePoint           int                    `json:"pricePoint"`
 	Taker                float64                `json:"taker"`
 	AdditionalProperties map[string]interface{} `json:"-"`

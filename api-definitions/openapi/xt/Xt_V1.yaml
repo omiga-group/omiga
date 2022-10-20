@@ -51,7 +51,8 @@ components:
           type: number
           format: double
         minMoney:
-          type: integer
+          type: number
+          format: double
         taker:
           type: number
           format: double
