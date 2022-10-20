@@ -3,6 +3,7 @@ package configuration
 import (
 	exchangeConfiguration "github.com/omiga-group/omiga/src/exchange/shared/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 )
 
@@ -11,6 +12,7 @@ type Config struct {
 	Exchange exchangeConfiguration.ExchangeConfig `yaml:"exchange"`
 	Pulsar   pulsar.PulsarConfig                  `yaml:"pulsar"`
 	Ftx      FtxConfig                            `yaml:"ftx"`
+	Postgres postgres.PostgresConfig              `yaml:"postgres"`
 }
 
 type FtxConfig struct {
@@ -21,9 +23,9 @@ type FtxConfig struct {
 }
 
 type OrderBook struct {
-	Markets []MarketConfig `yaml:"markets"`
+	Pairs []PairConfig `yaml:"pairs"`
 }
 
-type MarketConfig struct {
-	Market string `yaml:"market"`
+type PairConfig struct {
+	Pair string `yaml:"pair"`
 }

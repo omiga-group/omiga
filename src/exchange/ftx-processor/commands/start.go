@@ -60,19 +60,41 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			ftxOrderBookSubscriber, err := appsetup.NewFtxOrderBookSubscriber(
-				ctx,
-				sugarLogger,
-				config.App,
-				config.Ftx,
-				config.Pulsar,
-				orderbookv1.TopicName,
-			)
+			for _, pairConfig := range config.Ftx.OrderBook.Pairs {
+				ftxOrderBookSubscriber, err := appsetup.NewFtxOrderBookSubscriber(
+					ctx,
+					sugarLogger,
+					config.App,
+					config.Ftx,
+					pairConfig,
+					config.Pulsar,
+					config.Postgres,
+					orderbookv1.TopicName,
+				)
+				if err != nil {
+					sugarLogger.Fatal(err)
+				}
+
+				defer ftxOrderBookSubscriber.Close()
+			}
+
+			cronService, err := appsetup.NewCronService(sugarLogger)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
 
-			defer ftxOrderBookSubscriber.Close()
+			defer cronService.Close()
+
+			if _, err = appsetup.NewFtxTradingPairSubscriber(
+				ctx,
+				sugarLogger,
+				config.Ftx,
+				config.Exchange,
+				cronService,
+				config.Postgres); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
 
 			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {

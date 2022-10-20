@@ -1,15 +1,33 @@
-name: "Ftx Processor"
+name: "FTX Processor"
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/ftx-processor.yml"
+      - "src/go.mod"
+      - "src/go.sum"
+      - "src/shared/**"
+      - "src/venue/shared/**"
+      - "src/venue/ftx-processor/**"
   pull_request:
-    branches: ["main"]
+    branches:
+      - "main"
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/ftx-processor.yml"
+      - "src/go.mod"
+      - "src/go.sum"
+      - "src/shared/**"
+      - "src/venue/shared/**"
+      - "src/venue/ftx-processor/**"    
 
 jobs:
   build:
-    name: "Build - Ftx Processor"
-    runs-on: ubuntu-latest
+    name: "Build - FTX Processor"
+    runs-on:
+      - self-hosted
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
@@ -20,40 +38,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: dorny/paths-filter@v2.10.2
-        id: filter
-        with:
-          filters: |
-            relevant_directories_changed:
-              - '.github/workflows/codeql-analysis.yml'
-              - '.github/workflows/lint.yml'
-              - '.github/workflows/ftx-processor.yml'
-              - 'src/go.mod'
-              - 'src/go.sum'
-              - 'src/shared/**'
-              - 'src/exchange/shared/**'
-              - 'src/exchange/ftx-processor/**'
-
-      - name: Install GitVersion
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
-        uses: gittools/actions/gitversion/setup@v0.9.13
-        with:
-          versionSpec: "5.x"
-
-      - name: Determine Version
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
-        uses: gittools/actions/gitversion/execute@v0.9.13
-        with:
-          useConfigFile: true
-          configFilePath: GitVersion.yml
+      - name: Set required environment variable
+        run: |
+          echo "build_container_tag=$(uuidgen)" >> $GITHUB_ENV
+          echo "unittest_container_tag=$(uuidgen)" >> $GITHUB_ENV
+          echo "unittest_extract_container_name=$(uuidgen)" >> $GITHUB_ENV
+          echo "sem_version=$(docker run --rm -v $(pwd):/repo gittools/gitversion:5.10.3-alpine.3.13-6.0 /repo | jq '.SemVer')" >> $GITHUB_ENV
 
       - name: Build
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         run: |
-          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target build \
-            --file ./src/exchange/ftx-processor/Dockerfile \
+            --tag ${{ env.build_container_tag }} \
+            --file ./src/venue/ftx-processor/Dockerfile \
             ./src
 
       - name: Unit Tests
