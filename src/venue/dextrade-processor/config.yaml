@@ -1,0 +1,19 @@
+app:
+  source: "urn::omiga::dextrade-processor"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "dextrade-processor"
+  producerName: "dextrade-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+dextrade:
+  id: "dextrade"
+  apiKey: ""
+  passphrase: ""
+  secretKey: ""
