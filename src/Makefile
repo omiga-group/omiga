@@ -24,6 +24,9 @@ generate: ## Generate code
 generate-via-docker: ## Generate code
 	@../api-definitions/asyncapi/events/scripts/generate-all.sh
 	@./shared/scripts/generate.sh
+	@./order/shared/scripts/generate.sh
+	@./order/order-api/scripts/generate.sh
+	@./order/order-processor/scripts/generate.sh
 	@./venue/shared/scripts/generate.sh
 	@./venue/venues-all-in-one/scripts/generate.sh
 	@./venue/venue-api/scripts/generate.sh
@@ -41,9 +44,7 @@ generate-via-docker: ## Generate code
 	@./venue/kraken-processor/scripts/generate.sh
 	@./venue/kucoin-processor/scripts/generate.sh
 	@./venue/mexc-processor/scripts/generate.sh
-	@./order/shared/scripts/generate.sh
-	@./order/order-api/scripts/generate.sh
-	@./order/order-processor/scripts/generate.sh
+	@./venue/xt-processor/scripts/generate.sh
 
 .PHONY: lint
 lint: ## run golanci-lint locally

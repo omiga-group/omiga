@@ -138,6 +138,14 @@
       "args": ["start"]
     },
     {
+      "name": "Xt Processor",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/venue/xt-processor/main.go",
+      "args": ["start"]
+    },
+    {
       "name": "Order Database Migration",
       "type": "go",
       "request": "launch",
