@@ -14,6 +14,6 @@ postgres:
 
 mexc:
   id: "mexc"
-  baseUrl: ""
+  baseUrl: "https://www.mexc.com/open/api/v2"
   apiKey: ""
   secretKey: ""

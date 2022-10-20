@@ -57,15 +57,15 @@ func (gtps *geminiTradingPairSubscriber) Run() {
 		return
 	}
 
-	symbolsReponse, err := client.GetSymbolsWithResponse(gtps.ctx)
+	symbolsReponse, err := client.GetAllSymbolsWithResponse(gtps.ctx)
 	if err != nil {
-		gtps.logger.Errorf("Failed to call getSymbols endpoint. Error: %v", err)
+		gtps.logger.Errorf("Failed to call getAllSymbols endpoint. Error: %v", err)
 
 		return
 	}
 
 	if symbolsReponse.HTTPResponse.StatusCode != 200 {
-		gtps.logger.Errorf("Failed to call getSymbols endpoint. Return status code is %d", symbolsReponse.HTTPResponse.StatusCode)
+		gtps.logger.Errorf("Failed to call getAllSymbols endpoint. Return status code is %d", symbolsReponse.HTTPResponse.StatusCode)
 
 		return
 	}
@@ -79,20 +79,20 @@ func (gtps *geminiTradingPairSubscriber) Run() {
 	all, err := slices.ReduceWhile(*symbolsReponse.JSON200,
 		make(map[string]geminiv1.TradingPair),
 		func(el string, acc map[string]geminiv1.TradingPair) (map[string]geminiv1.TradingPair, error) {
-			symbolDetailResponse, err := client.GetSymbolsDetailsSymbolWithResponse(gtps.ctx, el)
+			symbolDetailsResponse, err := client.GetSymbolDetailsWithResponse(gtps.ctx, el)
 			if err != nil {
 				return acc, err
 			}
 
-			if symbolDetailResponse.HTTPResponse.StatusCode != 200 {
+			if symbolDetailsResponse.HTTPResponse.StatusCode != 200 {
 				return acc, fmt.Errorf("failed to get symbol details. Return status code is %d", symbolsReponse.HTTPResponse.StatusCode)
 			}
 
-			if symbolDetailResponse.JSON200 == nil {
+			if symbolDetailsResponse.JSON200 == nil {
 				return acc, fmt.Errorf("returned JSON object is nil")
 			}
 
-			acc[el] = *symbolDetailResponse.JSON200
+			acc[el] = *symbolDetailsResponse.JSON200
 
 			return acc, nil
 		})
