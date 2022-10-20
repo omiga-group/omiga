@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/life4/genesis/slices"
-	bybitpotv3 "github.com/omiga-group/omiga/src/shared/clients/openapi/bybit/spot/v3"
+	bybitpotv3 "github.com/omiga-group/omiga/src/venue/bybit-processor/bybitclient/spot/v3"
 	"github.com/omiga-group/omiga/src/venue/shared/models"
 )
 

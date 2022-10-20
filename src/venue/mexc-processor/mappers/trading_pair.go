@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/life4/genesis/slices"
-	mexcpotv2 "github.com/omiga-group/omiga/src/shared/clients/openapi/mexc/spot/v2"
+	mexcpotv2 "github.com/omiga-group/omiga/src/venue/mexc-processor/mexcclient/spot/v2"
 	"github.com/omiga-group/omiga/src/venue/shared/models"
 )
 

@@ -2,7 +2,7 @@ package mappers
 
 import (
 	"github.com/life4/genesis/slices"
-	geminiv1 "github.com/omiga-group/omiga/src/shared/clients/openapi/gemini/v1"
+	geminiv1 "github.com/omiga-group/omiga/src/venue/gemini-processor/geminiclient/v1"
 	"github.com/omiga-group/omiga/src/venue/shared/models"
 )
 
