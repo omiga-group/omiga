@@ -1,0 +1,19 @@
+name: "Order API - Deploy to Prod"
+
+on:
+  - workflow_dispatch
+
+jobs:
+  deploy-to-prod:
+    name: "Deploying to Prod"
+    runs-on:
+      - self-hosted
+    steps:
+      - name: Setting up SSH Agent
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_GITHUB_ACTION }}
+
+      - name: Deploy
+        run: |
+          ssh ${{ secrets.PROD_SERVER_SSH_HOST_ADDRESS }} -p ${{ secrets.PROD_SERVER_SSH_PORT }} -o StrictHostKeyChecking=no "/root/omiga-restart-apis.sh"

@@ -5,68 +5,30 @@ schema {
 scalar Cursor
 scalar Time
 scalar UUID
-type Coin implements Node {
-  id: ID!
-  symbol: String!
-  name: String
-}
-"A connection to a list of items."
-type CoinConnection {
-  "Information to aid in pagination."
-  pageInfo: PageInfo!
-  "A list of edges."
-  edges: [CoinEdge]
-  "Total number of coins"
-  totalCount: Int
-}
-"An edge in a connection."
-type CoinEdge {
-  "The item at the end of the edge"
-  node: Coin
-  "A cursor for use in pagination"
-  cursor: Cursor!
-}
 type ConvertedDetails {
   btc: Float!
   eth: Float!
   usd: Float!
 }
-type Exchange implements Node {
+type Currency implements Node {
   id: ID!
-  exchangeId: String!
+  symbol: String!
   name: String
-  yearEstablished: Int
-  country: String
-  image: String
-  links: Links!
-  hasTradingIncentive: Boolean
-  centralized: Boolean
-  publicNotice: String
-  alertNotice: String
-  trustScore: Int
-  trustScoreRank: Int
-  tradeVolume24hBtc: Float
-  tradeVolume24hBtcNormalized: Float
-  tickers: [Ticker!]!
-  tradingPairs: [TradingPair!]!
-  makerFee: Float
-  takerFee: Float
-  spreadFee: Boolean
-  supportAPI: Boolean
+  type: CurrencyType!
 }
 "A connection to a list of items."
-type ExchangeConnection {
+type CurrencyConnection {
   "Information to aid in pagination."
   pageInfo: PageInfo!
   "A list of edges."
-  edges: [ExchangeEdge]
-  "Total number of exchanges"
+  edges: [CurrencyEdge]
+  "Total number of currencies"
   totalCount: Int
 }
 "An edge in a connection."
-type ExchangeEdge {
+type CurrencyEdge {
   "The item at the end of the edge"
-  node: Exchange
+  node: Currency
   "A cursor for use in pagination"
   cursor: Cursor!
 }
@@ -78,10 +40,10 @@ type Links {
   slack: String
   telegram: String
 }
-type Market {
-  hasTradingIncentive: Boolean!
-  identifier: String!
-  name: String
+type Market implements Node {
+  id: ID!
+  name: String!
+  type: MarketType!
 }
 type Mutation {
   submitOrder(input: SubmitOrderInput!): OrderPayload
@@ -122,42 +84,6 @@ type PageInfo {
   endCursor: Cursor
 }
 type Query {
-  coin(
-    "Ordering directions"
-    where: CoinWhereInput
-  ): Coin
-  coins(
-    "Returns the items in the list that come after the specified cursor."
-    after: Cursor,
-    "Returns the first n items from the list."
-    first: Int,
-    "Returns the items in the list that come before the specified cursor."
-    before: Cursor,
-    "Returns the last n items from the list."
-    last: Int,
-    "Ordering directions"
-    orderBy: [CoinOrder!],
-    "Ordering directions"
-    where: CoinWhereInput
-  ): CoinConnection
-  exchange(
-    "Ordering directions"
-    where: ExchangeWhereInput
-  ): Exchange
-  exchanges(
-    "Returns the items in the list that come after the specified cursor."
-    after: Cursor,
-    "Returns the first n items from the list."
-    first: Int,
-    "Returns the items in the list that come before the specified cursor."
-    before: Cursor,
-    "Returns the last n items from the list."
-    last: Int,
-    "Ordering directions"
-    orderBy: [ExchangeOrder!],
-    "Ordering directions"
-    where: ExchangeWhereInput
-  ): ExchangeConnection
   order(where: OrderWhereInput): Order
   orders(
     "Returns the items in the list that come after the specified cursor."
@@ -168,6 +94,42 @@ type Query {
     before: Cursor,
     "Returns the last n items from the list."
     last: Int,where: OrderWhereInput  ): OrderConnection
+  currency(
+    "Ordering directions"
+    where: CurrencyWhereInput
+  ): Currency
+  currencies(
+    "Returns the items in the list that come after the specified cursor."
+    after: Cursor,
+    "Returns the first n items from the list."
+    first: Int,
+    "Returns the items in the list that come before the specified cursor."
+    before: Cursor,
+    "Returns the last n items from the list."
+    last: Int,
+    "Ordering directions"
+    orderBy: [CurrencyOrder!],
+    "Ordering directions"
+    where: CurrencyWhereInput
+  ): CurrencyConnection
+  venue(
+    "Ordering directions"
+    where: VenueWhereInput
+  ): Venue
+  venues(
+    "Returns the items in the list that come after the specified cursor."
+    after: Cursor,
+    "Returns the first n items from the list."
+    first: Int,
+    "Returns the items in the list that come before the specified cursor."
+    before: Cursor,
+    "Returns the last n items from the list."
+    last: Int,
+    "Ordering directions"
+    orderBy: [VenueOrder!],
+    "Ordering directions"
+    where: VenueWhereInput
+  ): VenueConnection
 }
 type Ticker implements Node {
   id: ID!
@@ -175,7 +137,7 @@ type Ticker implements Node {
   baseCoinId: String
   counter: String!
   counterCoinId: String
-  market: Market
+  market: TickerMarket
   last: Float
   volume: Float
   convertedLast: ConvertedDetails
@@ -190,37 +152,101 @@ type Ticker implements Node {
   tradeUrl: String
   tokenInfoUrl: String
 }
+type TickerMarket {
+  hasTradingIncentive: Boolean!
+  identifier: String!
+  name: String
+}
 type TradingPair implements Node {
   id: ID!
   symbol: String!
-  base: Coin!
-  basePrecision: Int
-  counter: Coin!
-  counterPrecision: Int
+  base: Currency!
+  basePriceMinPrecision: Int
+  basePriceMaxPrecision: Int
+  baseQuantityMinPrecision: Int
+  baseQuantityMaxPrecision: Int
+  counter: Currency!
+  counterPriceMinPrecision: Int
+  counterPriceMaxPrecision: Int
+  counterQuantityMinPrecision: Int
+  counterQuantityMaxPrecision: Int
+  markets: [Market!]!
+}
+type Venue implements Node {
+  id: ID!
+  venueId: String!
+  type: VenueType!
+  name: String
+  yearEstablished: Int
+  country: String
+  image: String
+  links: Links!
+  hasTradingIncentive: Boolean
+  centralized: Boolean
+  publicNotice: String
+  alertNotice: String
+  trustScore: Int
+  trustScoreRank: Int
+  tradeVolume24hBtc: Float
+  tradeVolume24hBtcNormalized: Float
+  tickers: [Ticker!]!
+  tradingPairs: [TradingPair!]!
+  markets: [Market!]!
+  makerFee: Float
+  takerFee: Float
+  spreadFee: Boolean
+  supportAPI: Boolean
+}
+"A connection to a list of items."
+type VenueConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [VenueEdge]
+  "Total number of venues"
+  totalCount: Int
+}
+"An edge in a connection."
+type VenueEdge {
+  "The item at the end of the edge"
+  node: Venue
+  "A cursor for use in pagination"
+  cursor: Cursor!
 }
 "An object with an ID"
 interface Node {
   "The id of the object."
   id: ID
 }
-enum CoinOrderField {
+enum CurrencyOrderField {
   symbol
   name
+  type
 }
-enum ExchangeOrderField {
-  exchangeId
-  name
-  yearEstablished
-  country
-  image
-  hasTradingIncentive
-  centralized
-  publicNotice
-  alertNotice
-  trustScore
-  trustScoreRank
-  tradeVolume24hBtc
-  tradeVolume24hBtcNormalized
+enum CurrencyType {
+  DIGITAL
+  FIAT
+}
+enum MarketType {
+  SPOT_TRADING
+  MARGIN_TRADING
+  DERIVATIVES
+  EARN
+  PERPETUAL
+  FUTURES
+  WARRANT
+  OTC
+  YIELD
+  P2P
+  STRATEGY_TRADING
+  SWAP_FARMING
+  FAN_TOKEN
+  ETF
+  NFT
+  SWAP
+  CFD
+  LIQUIDITY
+  FARM
 }
 enum OrderDirection {
   ASC
@@ -242,22 +268,46 @@ enum OutboxStatus {
   SUCCEEDED
   FAILED
 }
+enum VenueOrderField {
+  venueId
+  name
+  yearEstablished
+  country
+  image
+  hasTradingIncentive
+  centralized
+  publicNotice
+  alertNotice
+  trustScore
+  trustScoreRank
+  tradeVolume24hBtc
+  tradeVolume24hBtcNormalized
+}
+enum VenueType {
+  EXCHANGE
+}
 input CancelOrderInput {
   clientMutationId: String
   id: ID!
 }
-input CoinOrder {
+input CurrencyInput {
+  code: String!
+  name: String!
+  maxPrecision: Int!
+  digital: Boolean!
+}
+input CurrencyOrder {
   direction: OrderDirection!
-  field: CoinOrderField
+  field: CurrencyOrderField
 }
 """
-CoinWhereInput is used for filtering Coin objects.
+CurrencyWhereInput is used for filtering Currency objects.
 Input was generated by ent.
 """
-input CoinWhereInput {
-  not: CoinWhereInput
-  and: [CoinWhereInput!]
-  or: [CoinWhereInput!]
+input CurrencyWhereInput {
+  not: CurrencyWhereInput
+  and: [CurrencyWhereInput!]
+  or: [CurrencyWhereInput!]
   "id field predicates"
   id: ID
   idNEQ: ID
@@ -297,34 +347,29 @@ input CoinWhereInput {
   nameNotNil: Boolean
   nameEqualFold: String
   nameContainsFold: String
-  "coin_base edge predicates"
-  hasCoinBase: Boolean
-  hasCoinBaseWith: [TradingPairWhereInput!]
-  "coin_counter edge predicates"
-  hasCoinCounter: Boolean
-  hasCoinCounterWith: [TradingPairWhereInput!]
-}
-input CurrencyInput {
-  code: String!
-  name: String!
-  maxPrecision: Int!
-  digital: Boolean!
+  "type field predicates"
+  type: CurrencyType
+  typeNEQ: CurrencyType
+  typeIn: [CurrencyType!]
+  typeNotIn: [CurrencyType!]
+  "currency_base edge predicates"
+  hasCurrencyBase: Boolean
+  hasCurrencyBaseWith: [TradingPairWhereInput!]
+  "currency_counter edge predicates"
+  hasCurrencyCounter: Boolean
+  hasCurrencyCounterWith: [TradingPairWhereInput!]
 }
 input ExchangeInput {
   id: String!
 }
-input ExchangeOrder {
-  direction: OrderDirection!
-  field: ExchangeOrderField
-}
 """
-ExchangeWhereInput is used for filtering Exchange objects.
+MarketWhereInput is used for filtering Market objects.
 Input was generated by ent.
 """
-input ExchangeWhereInput {
-  not: ExchangeWhereInput
-  and: [ExchangeWhereInput!]
-  or: [ExchangeWhereInput!]
+input MarketWhereInput {
+  not: MarketWhereInput
+  and: [MarketWhereInput!]
+  or: [MarketWhereInput!]
   "id field predicates"
   id: ID
   idNEQ: ID
@@ -334,20 +379,6 @@ input ExchangeWhereInput {
   idGTE: ID
   idLT: ID
   idLTE: ID
-  "exchange_id field predicates"
-  exchangeID: String
-  exchangeIDNEQ: String
-  exchangeIDIn: [String!]
-  exchangeIDNotIn: [String!]
-  exchangeIDGT: String
-  exchangeIDGTE: String
-  exchangeIDLT: String
-  exchangeIDLTE: String
-  exchangeIDContains: String
-  exchangeIDHasPrefix: String
-  exchangeIDHasSuffix: String
-  exchangeIDEqualFold: String
-  exchangeIDContainsFold: String
   "name field predicates"
   name: String
   nameNEQ: String
@@ -360,174 +391,16 @@ input ExchangeWhereInput {
   nameContains: String
   nameHasPrefix: String
   nameHasSuffix: String
-  nameIsNil: Boolean
-  nameNotNil: Boolean
   nameEqualFold: String
   nameContainsFold: String
-  "year_established field predicates"
-  yearEstablished: Int
-  yearEstablishedNEQ: Int
-  yearEstablishedIn: [Int!]
-  yearEstablishedNotIn: [Int!]
-  yearEstablishedGT: Int
-  yearEstablishedGTE: Int
-  yearEstablishedLT: Int
-  yearEstablishedLTE: Int
-  yearEstablishedIsNil: Boolean
-  yearEstablishedNotNil: Boolean
-  "country field predicates"
-  country: String
-  countryNEQ: String
-  countryIn: [String!]
-  countryNotIn: [String!]
-  countryGT: String
-  countryGTE: String
-  countryLT: String
-  countryLTE: String
-  countryContains: String
-  countryHasPrefix: String
-  countryHasSuffix: String
-  countryIsNil: Boolean
-  countryNotNil: Boolean
-  countryEqualFold: String
-  countryContainsFold: String
-  "image field predicates"
-  image: String
-  imageNEQ: String
-  imageIn: [String!]
-  imageNotIn: [String!]
-  imageGT: String
-  imageGTE: String
-  imageLT: String
-  imageLTE: String
-  imageContains: String
-  imageHasPrefix: String
-  imageHasSuffix: String
-  imageIsNil: Boolean
-  imageNotNil: Boolean
-  imageEqualFold: String
-  imageContainsFold: String
-  "has_trading_incentive field predicates"
-  hasTradingIncentive: Boolean
-  hasTradingIncentiveNEQ: Boolean
-  hasTradingIncentiveIsNil: Boolean
-  hasTradingIncentiveNotNil: Boolean
-  "centralized field predicates"
-  centralized: Boolean
-  centralizedNEQ: Boolean
-  centralizedIsNil: Boolean
-  centralizedNotNil: Boolean
-  "public_notice field predicates"
-  publicNotice: String
-  publicNoticeNEQ: String
-  publicNoticeIn: [String!]
-  publicNoticeNotIn: [String!]
-  publicNoticeGT: String
-  publicNoticeGTE: String
-  publicNoticeLT: String
-  publicNoticeLTE: String
-  publicNoticeContains: String
-  publicNoticeHasPrefix: String
-  publicNoticeHasSuffix: String
-  publicNoticeIsNil: Boolean
-  publicNoticeNotNil: Boolean
-  publicNoticeEqualFold: String
-  publicNoticeContainsFold: String
-  "alert_notice field predicates"
-  alertNotice: String
-  alertNoticeNEQ: String
-  alertNoticeIn: [String!]
-  alertNoticeNotIn: [String!]
-  alertNoticeGT: String
-  alertNoticeGTE: String
-  alertNoticeLT: String
-  alertNoticeLTE: String
-  alertNoticeContains: String
-  alertNoticeHasPrefix: String
-  alertNoticeHasSuffix: String
-  alertNoticeIsNil: Boolean
-  alertNoticeNotNil: Boolean
-  alertNoticeEqualFold: String
-  alertNoticeContainsFold: String
-  "trust_score field predicates"
-  trustScore: Int
-  trustScoreNEQ: Int
-  trustScoreIn: [Int!]
-  trustScoreNotIn: [Int!]
-  trustScoreGT: Int
-  trustScoreGTE: Int
-  trustScoreLT: Int
-  trustScoreLTE: Int
-  trustScoreIsNil: Boolean
-  trustScoreNotNil: Boolean
-  "trust_score_rank field predicates"
-  trustScoreRank: Int
-  trustScoreRankNEQ: Int
-  trustScoreRankIn: [Int!]
-  trustScoreRankNotIn: [Int!]
-  trustScoreRankGT: Int
-  trustScoreRankGTE: Int
-  trustScoreRankLT: Int
-  trustScoreRankLTE: Int
-  trustScoreRankIsNil: Boolean
-  trustScoreRankNotNil: Boolean
-  "trade_volume_24h_btc field predicates"
-  tradeVolume24hBtc: Float
-  tradeVolume24hBtcNEQ: Float
-  tradeVolume24hBtcIn: [Float!]
-  tradeVolume24hBtcNotIn: [Float!]
-  tradeVolume24hBtcGT: Float
-  tradeVolume24hBtcGTE: Float
-  tradeVolume24hBtcLT: Float
-  tradeVolume24hBtcLTE: Float
-  tradeVolume24hBtcIsNil: Boolean
-  tradeVolume24hBtcNotNil: Boolean
-  "trade_volume_24h_btc_normalized field predicates"
-  tradeVolume24hBtcNormalized: Float
-  tradeVolume24hBtcNormalizedNEQ: Float
-  tradeVolume24hBtcNormalizedIn: [Float!]
-  tradeVolume24hBtcNormalizedNotIn: [Float!]
-  tradeVolume24hBtcNormalizedGT: Float
-  tradeVolume24hBtcNormalizedGTE: Float
-  tradeVolume24hBtcNormalizedLT: Float
-  tradeVolume24hBtcNormalizedLTE: Float
-  tradeVolume24hBtcNormalizedIsNil: Boolean
-  tradeVolume24hBtcNormalizedNotNil: Boolean
-  "maker_fee field predicates"
-  makerFee: Float
-  makerFeeNEQ: Float
-  makerFeeIn: [Float!]
-  makerFeeNotIn: [Float!]
-  makerFeeGT: Float
-  makerFeeGTE: Float
-  makerFeeLT: Float
-  makerFeeLTE: Float
-  makerFeeIsNil: Boolean
-  makerFeeNotNil: Boolean
-  "taker_fee field predicates"
-  takerFee: Float
-  takerFeeNEQ: Float
-  takerFeeIn: [Float!]
-  takerFeeNotIn: [Float!]
-  takerFeeGT: Float
-  takerFeeGTE: Float
-  takerFeeLT: Float
-  takerFeeLTE: Float
-  takerFeeIsNil: Boolean
-  takerFeeNotNil: Boolean
-  "spread_fee field predicates"
-  spreadFee: Boolean
-  spreadFeeNEQ: Boolean
-  spreadFeeIsNil: Boolean
-  spreadFeeNotNil: Boolean
-  "support_api field predicates"
-  supportAPI: Boolean
-  supportAPINEQ: Boolean
-  supportAPIIsNil: Boolean
-  supportAPINotNil: Boolean
-  "ticker edge predicates"
-  hasTicker: Boolean
-  hasTickerWith: [TickerWhereInput!]
+  "type field predicates"
+  type: MarketType
+  typeNEQ: MarketType
+  typeIn: [MarketType!]
+  typeNotIn: [MarketType!]
+  "venue edge predicates"
+  hasVenue: Boolean
+  hasVenueWith: [VenueWhereInput!]
   "trading_pair edge predicates"
   hasTradingPair: Boolean
   hasTradingPairWith: [TradingPairWhereInput!]
@@ -848,9 +721,9 @@ input TickerWhereInput {
   tokenInfoURLNotNil: Boolean
   tokenInfoURLEqualFold: String
   tokenInfoURLContainsFold: String
-  "exchange edge predicates"
-  hasExchange: Boolean
-  hasExchangeWith: [ExchangeWhereInput!]
+  "venue edge predicates"
+  hasVenue: Boolean
+  hasVenueWith: [VenueWhereInput!]
 }
 """
 TradingPairWhereInput is used for filtering TradingPair objects.
@@ -883,37 +756,333 @@ input TradingPairWhereInput {
   symbolHasSuffix: String
   symbolEqualFold: String
   symbolContainsFold: String
-  "base_precision field predicates"
-  basePrecision: Int
-  basePrecisionNEQ: Int
-  basePrecisionIn: [Int!]
-  basePrecisionNotIn: [Int!]
-  basePrecisionGT: Int
-  basePrecisionGTE: Int
-  basePrecisionLT: Int
-  basePrecisionLTE: Int
-  basePrecisionIsNil: Boolean
-  basePrecisionNotNil: Boolean
-  "counter_precision field predicates"
-  counterPrecision: Int
-  counterPrecisionNEQ: Int
-  counterPrecisionIn: [Int!]
-  counterPrecisionNotIn: [Int!]
-  counterPrecisionGT: Int
-  counterPrecisionGTE: Int
-  counterPrecisionLT: Int
-  counterPrecisionLTE: Int
-  counterPrecisionIsNil: Boolean
-  counterPrecisionNotNil: Boolean
-  "exchange edge predicates"
-  hasExchange: Boolean
-  hasExchangeWith: [ExchangeWhereInput!]
+  "base_price_min_precision field predicates"
+  basePriceMinPrecision: Int
+  basePriceMinPrecisionNEQ: Int
+  basePriceMinPrecisionIn: [Int!]
+  basePriceMinPrecisionNotIn: [Int!]
+  basePriceMinPrecisionGT: Int
+  basePriceMinPrecisionGTE: Int
+  basePriceMinPrecisionLT: Int
+  basePriceMinPrecisionLTE: Int
+  basePriceMinPrecisionIsNil: Boolean
+  basePriceMinPrecisionNotNil: Boolean
+  "base_price_max_precision field predicates"
+  basePriceMaxPrecision: Int
+  basePriceMaxPrecisionNEQ: Int
+  basePriceMaxPrecisionIn: [Int!]
+  basePriceMaxPrecisionNotIn: [Int!]
+  basePriceMaxPrecisionGT: Int
+  basePriceMaxPrecisionGTE: Int
+  basePriceMaxPrecisionLT: Int
+  basePriceMaxPrecisionLTE: Int
+  basePriceMaxPrecisionIsNil: Boolean
+  basePriceMaxPrecisionNotNil: Boolean
+  "base_quantity_min_precision field predicates"
+  baseQuantityMinPrecision: Int
+  baseQuantityMinPrecisionNEQ: Int
+  baseQuantityMinPrecisionIn: [Int!]
+  baseQuantityMinPrecisionNotIn: [Int!]
+  baseQuantityMinPrecisionGT: Int
+  baseQuantityMinPrecisionGTE: Int
+  baseQuantityMinPrecisionLT: Int
+  baseQuantityMinPrecisionLTE: Int
+  baseQuantityMinPrecisionIsNil: Boolean
+  baseQuantityMinPrecisionNotNil: Boolean
+  "base_quantity_max_precision field predicates"
+  baseQuantityMaxPrecision: Int
+  baseQuantityMaxPrecisionNEQ: Int
+  baseQuantityMaxPrecisionIn: [Int!]
+  baseQuantityMaxPrecisionNotIn: [Int!]
+  baseQuantityMaxPrecisionGT: Int
+  baseQuantityMaxPrecisionGTE: Int
+  baseQuantityMaxPrecisionLT: Int
+  baseQuantityMaxPrecisionLTE: Int
+  baseQuantityMaxPrecisionIsNil: Boolean
+  baseQuantityMaxPrecisionNotNil: Boolean
+  "counter_price_min_precision field predicates"
+  counterPriceMinPrecision: Int
+  counterPriceMinPrecisionNEQ: Int
+  counterPriceMinPrecisionIn: [Int!]
+  counterPriceMinPrecisionNotIn: [Int!]
+  counterPriceMinPrecisionGT: Int
+  counterPriceMinPrecisionGTE: Int
+  counterPriceMinPrecisionLT: Int
+  counterPriceMinPrecisionLTE: Int
+  counterPriceMinPrecisionIsNil: Boolean
+  counterPriceMinPrecisionNotNil: Boolean
+  "counter_price_max_precision field predicates"
+  counterPriceMaxPrecision: Int
+  counterPriceMaxPrecisionNEQ: Int
+  counterPriceMaxPrecisionIn: [Int!]
+  counterPriceMaxPrecisionNotIn: [Int!]
+  counterPriceMaxPrecisionGT: Int
+  counterPriceMaxPrecisionGTE: Int
+  counterPriceMaxPrecisionLT: Int
+  counterPriceMaxPrecisionLTE: Int
+  counterPriceMaxPrecisionIsNil: Boolean
+  counterPriceMaxPrecisionNotNil: Boolean
+  "counter_quantity_min_precision field predicates"
+  counterQuantityMinPrecision: Int
+  counterQuantityMinPrecisionNEQ: Int
+  counterQuantityMinPrecisionIn: [Int!]
+  counterQuantityMinPrecisionNotIn: [Int!]
+  counterQuantityMinPrecisionGT: Int
+  counterQuantityMinPrecisionGTE: Int
+  counterQuantityMinPrecisionLT: Int
+  counterQuantityMinPrecisionLTE: Int
+  counterQuantityMinPrecisionIsNil: Boolean
+  counterQuantityMinPrecisionNotNil: Boolean
+  "counter_quantity_max_precision field predicates"
+  counterQuantityMaxPrecision: Int
+  counterQuantityMaxPrecisionNEQ: Int
+  counterQuantityMaxPrecisionIn: [Int!]
+  counterQuantityMaxPrecisionNotIn: [Int!]
+  counterQuantityMaxPrecisionGT: Int
+  counterQuantityMaxPrecisionGTE: Int
+  counterQuantityMaxPrecisionLT: Int
+  counterQuantityMaxPrecisionLTE: Int
+  counterQuantityMaxPrecisionIsNil: Boolean
+  counterQuantityMaxPrecisionNotNil: Boolean
+  "venue edge predicates"
+  hasVenue: Boolean
+  hasVenueWith: [VenueWhereInput!]
   "base edge predicates"
   hasBase: Boolean
-  hasBaseWith: [CoinWhereInput!]
+  hasBaseWith: [CurrencyWhereInput!]
   "counter edge predicates"
   hasCounter: Boolean
-  hasCounterWith: [CoinWhereInput!]
+  hasCounterWith: [CurrencyWhereInput!]
+  "market edge predicates"
+  hasMarket: Boolean
+  hasMarketWith: [MarketWhereInput!]
+}
+input VenueOrder {
+  direction: OrderDirection!
+  field: VenueOrderField
+}
+"""
+VenueWhereInput is used for filtering Venue objects.
+Input was generated by ent.
+"""
+input VenueWhereInput {
+  not: VenueWhereInput
+  and: [VenueWhereInput!]
+  or: [VenueWhereInput!]
+  "id field predicates"
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  "venue_id field predicates"
+  venueID: String
+  venueIDNEQ: String
+  venueIDIn: [String!]
+  venueIDNotIn: [String!]
+  venueIDGT: String
+  venueIDGTE: String
+  venueIDLT: String
+  venueIDLTE: String
+  venueIDContains: String
+  venueIDHasPrefix: String
+  venueIDHasSuffix: String
+  venueIDEqualFold: String
+  venueIDContainsFold: String
+  "type field predicates"
+  type: VenueType
+  typeNEQ: VenueType
+  typeIn: [VenueType!]
+  typeNotIn: [VenueType!]
+  "name field predicates"
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
+  nameEqualFold: String
+  nameContainsFold: String
+  "year_established field predicates"
+  yearEstablished: Int
+  yearEstablishedNEQ: Int
+  yearEstablishedIn: [Int!]
+  yearEstablishedNotIn: [Int!]
+  yearEstablishedGT: Int
+  yearEstablishedGTE: Int
+  yearEstablishedLT: Int
+  yearEstablishedLTE: Int
+  yearEstablishedIsNil: Boolean
+  yearEstablishedNotNil: Boolean
+  "country field predicates"
+  country: String
+  countryNEQ: String
+  countryIn: [String!]
+  countryNotIn: [String!]
+  countryGT: String
+  countryGTE: String
+  countryLT: String
+  countryLTE: String
+  countryContains: String
+  countryHasPrefix: String
+  countryHasSuffix: String
+  countryIsNil: Boolean
+  countryNotNil: Boolean
+  countryEqualFold: String
+  countryContainsFold: String
+  "image field predicates"
+  image: String
+  imageNEQ: String
+  imageIn: [String!]
+  imageNotIn: [String!]
+  imageGT: String
+  imageGTE: String
+  imageLT: String
+  imageLTE: String
+  imageContains: String
+  imageHasPrefix: String
+  imageHasSuffix: String
+  imageIsNil: Boolean
+  imageNotNil: Boolean
+  imageEqualFold: String
+  imageContainsFold: String
+  "has_trading_incentive field predicates"
+  hasTradingIncentive: Boolean
+  hasTradingIncentiveNEQ: Boolean
+  hasTradingIncentiveIsNil: Boolean
+  hasTradingIncentiveNotNil: Boolean
+  "centralized field predicates"
+  centralized: Boolean
+  centralizedNEQ: Boolean
+  centralizedIsNil: Boolean
+  centralizedNotNil: Boolean
+  "public_notice field predicates"
+  publicNotice: String
+  publicNoticeNEQ: String
+  publicNoticeIn: [String!]
+  publicNoticeNotIn: [String!]
+  publicNoticeGT: String
+  publicNoticeGTE: String
+  publicNoticeLT: String
+  publicNoticeLTE: String
+  publicNoticeContains: String
+  publicNoticeHasPrefix: String
+  publicNoticeHasSuffix: String
+  publicNoticeIsNil: Boolean
+  publicNoticeNotNil: Boolean
+  publicNoticeEqualFold: String
+  publicNoticeContainsFold: String
+  "alert_notice field predicates"
+  alertNotice: String
+  alertNoticeNEQ: String
+  alertNoticeIn: [String!]
+  alertNoticeNotIn: [String!]
+  alertNoticeGT: String
+  alertNoticeGTE: String
+  alertNoticeLT: String
+  alertNoticeLTE: String
+  alertNoticeContains: String
+  alertNoticeHasPrefix: String
+  alertNoticeHasSuffix: String
+  alertNoticeIsNil: Boolean
+  alertNoticeNotNil: Boolean
+  alertNoticeEqualFold: String
+  alertNoticeContainsFold: String
+  "trust_score field predicates"
+  trustScore: Int
+  trustScoreNEQ: Int
+  trustScoreIn: [Int!]
+  trustScoreNotIn: [Int!]
+  trustScoreGT: Int
+  trustScoreGTE: Int
+  trustScoreLT: Int
+  trustScoreLTE: Int
+  trustScoreIsNil: Boolean
+  trustScoreNotNil: Boolean
+  "trust_score_rank field predicates"
+  trustScoreRank: Int
+  trustScoreRankNEQ: Int
+  trustScoreRankIn: [Int!]
+  trustScoreRankNotIn: [Int!]
+  trustScoreRankGT: Int
+  trustScoreRankGTE: Int
+  trustScoreRankLT: Int
+  trustScoreRankLTE: Int
+  trustScoreRankIsNil: Boolean
+  trustScoreRankNotNil: Boolean
+  "trade_volume_24h_btc field predicates"
+  tradeVolume24hBtc: Float
+  tradeVolume24hBtcNEQ: Float
+  tradeVolume24hBtcIn: [Float!]
+  tradeVolume24hBtcNotIn: [Float!]
+  tradeVolume24hBtcGT: Float
+  tradeVolume24hBtcGTE: Float
+  tradeVolume24hBtcLT: Float
+  tradeVolume24hBtcLTE: Float
+  tradeVolume24hBtcIsNil: Boolean
+  tradeVolume24hBtcNotNil: Boolean
+  "trade_volume_24h_btc_normalized field predicates"
+  tradeVolume24hBtcNormalized: Float
+  tradeVolume24hBtcNormalizedNEQ: Float
+  tradeVolume24hBtcNormalizedIn: [Float!]
+  tradeVolume24hBtcNormalizedNotIn: [Float!]
+  tradeVolume24hBtcNormalizedGT: Float
+  tradeVolume24hBtcNormalizedGTE: Float
+  tradeVolume24hBtcNormalizedLT: Float
+  tradeVolume24hBtcNormalizedLTE: Float
+  tradeVolume24hBtcNormalizedIsNil: Boolean
+  tradeVolume24hBtcNormalizedNotNil: Boolean
+  "maker_fee field predicates"
+  makerFee: Float
+  makerFeeNEQ: Float
+  makerFeeIn: [Float!]
+  makerFeeNotIn: [Float!]
+  makerFeeGT: Float
+  makerFeeGTE: Float
+  makerFeeLT: Float
+  makerFeeLTE: Float
+  makerFeeIsNil: Boolean
+  makerFeeNotNil: Boolean
+  "taker_fee field predicates"
+  takerFee: Float
+  takerFeeNEQ: Float
+  takerFeeIn: [Float!]
+  takerFeeNotIn: [Float!]
+  takerFeeGT: Float
+  takerFeeGTE: Float
+  takerFeeLT: Float
+  takerFeeLTE: Float
+  takerFeeIsNil: Boolean
+  takerFeeNotNil: Boolean
+  "spread_fee field predicates"
+  spreadFee: Boolean
+  spreadFeeNEQ: Boolean
+  spreadFeeIsNil: Boolean
+  spreadFeeNotNil: Boolean
+  "support_api field predicates"
+  supportAPI: Boolean
+  supportAPINEQ: Boolean
+  supportAPIIsNil: Boolean
+  supportAPINotNil: Boolean
+  "ticker edge predicates"
+  hasTicker: Boolean
+  hasTickerWith: [TickerWhereInput!]
+  "trading_pair edge predicates"
+  hasTradingPair: Boolean
+  hasTradingPairWith: [TradingPairWhereInput!]
+  "market edge predicates"
+  hasMarket: Boolean
+  hasMarketWith: [MarketWhereInput!]
 }
 "Exposes a URL that specifies the behavior of this scalar."
 directive @specifiedBy(

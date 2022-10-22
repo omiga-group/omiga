@@ -1,0 +1,15 @@
+version: "3.9"
+
+networks:
+  omiga_web_network:
+
+services:
+  order-api:
+    image: microbusiness/web:latest
+    restart: unless-stopped
+    environment:
+      GRAPHQL_API_ENDPOINT: $GRAPHQL_API_ENDPOINT
+    ports:
+      - "$OMIGA_WEB_PORT:80"
+    networks:
+      - omiga_web_network

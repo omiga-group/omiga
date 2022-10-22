@@ -10,9 +10,9 @@ services:
     ports:
       - "4343:80"
     environment:
-      PORT: 80
+      PORT: "80"
       ORDER_GRAPHQL_API: http://order-api/graphql
-      EXCHANGE_GRAPHQL_API: http://exchange-api/graphql
+      VENUE_GRAPHQL_API: http://venue-api/graphql
     profiles:
       - gateway
       - all

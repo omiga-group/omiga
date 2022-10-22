@@ -4,15 +4,19 @@ import (
 	"context"
 
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
+	"go.uber.org/zap"
 )
 
 type pulsarMessageConsumer struct {
+	logger       *zap.SugaredLogger
 	pulsarClient PulsarClient
 }
 
 func NewPulsarMessageConsumer(
+	logger *zap.SugaredLogger,
 	pulsarClient PulsarClient) (messaging.MessageConsumer, error) {
 	return &pulsarMessageConsumer{
+		logger:       logger,
 		pulsarClient: pulsarClient,
 	}, nil
 }
@@ -38,7 +42,10 @@ func (pmc *pulsarMessageConsumer) Consume(ctx context.Context, topic string) (
 
 	messageProcessedCallback := func() {
 		if consumer != nil {
-			consumer.Ack(msg)
+			if ackErr := consumer.Ack(msg); ackErr != nil {
+				pmc.logger.Errorf("Failed to ack message. Error: %v", err)
+
+			}
 		}
 	}
 

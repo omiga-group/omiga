@@ -1,0 +1,99 @@
+openapi: 3.0.1
+info:
+  title: Crypto API V2
+  description: "Crypto REST API"
+  version: 2.0.0
+
+servers:
+  - url: https://api.crypto.com/v2
+
+paths:
+  /public/get-instruments:
+    get:
+      tags:
+      - public
+      summary: fetches the supported instruments
+      operationId: getAllInstruments
+      responses:
+        200:
+          description: list of instruments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getInstrumentsResponse"
+
+components:
+  schemas:
+    getInstrumentsResponse:
+      type: object
+      additionalProperties: true
+      required:
+        - id
+        - method
+        - code
+        - result
+      properties:
+        id:
+          type: integer
+        method:
+          type: string
+        code:
+          type: integer
+        result:
+          $ref: "#/components/schemas/getInstrumentsResult"
+
+    getInstrumentsResult:
+      type: object
+      additionalProperties: true
+      required:
+        - instruments
+      properties:
+        instruments:
+          type: array
+          items:
+            $ref: "#/components/schemas/instrument"
+
+    instrument:
+      type: object
+      additionalProperties: true
+      required:
+        - instrument_name
+        - base_currency
+        - quote_currency
+        - price_decimals
+        - quantity_decimals
+        - margin_trading_enabled
+        - margin_trading_enabled_5x
+        - margin_trading_enabled_10x
+        - max_quantity
+        - min_quantity
+        - max_price
+        - min_price
+        - last_update_date
+      properties:
+        instrument_name:
+          type: string
+        base_currency:
+          type: string
+        quote_currency:
+          type: string
+        price_decimals:
+          type: integer
+        quantity_decimals:
+          type: integer
+        margin_trading_enabled:
+          type: boolean
+        margin_trading_enabled_5x:
+          type: boolean
+        margin_trading_enabled_10x:
+          type: boolean
+        max_quantity:
+          type: string
+        min_quantity:
+          type: string
+        max_price:
+          type: string
+        min_price:
+          type: string
+        last_update_date:
+          type: integer

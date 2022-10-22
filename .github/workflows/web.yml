@@ -2,14 +2,27 @@ name: "Web"
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/web.yml"
+      - "api-definitions/graphql/microbusiness/**"
+      - "src/web/**"
   pull_request:
-    branches: ["main"]
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/web.yml"
+      - "api-definitions/graphql/microbusiness/**"
+      - "src/web/**"
 
 jobs:
   build:
     name: "Build - Web"
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
@@ -20,48 +33,74 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: dorny/paths-filter@v2.10.2
-        id: filter
-        with:
-          filters: |
-            relevant_directories_changed:
-              - '.github/workflows/codeql-analysis.yml'
-              - '.github/workflows/lint.yml'
-              - '.github/workflows/web.yml'
-              - 'api-definitions/graphql/omiga/**'
-              - 'src/web/**'
-
-      - name: Install GitVersion
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
-        uses: gittools/actions/gitversion/setup@v0.9.13
-        with:
-          versionSpec: "5.x"
-
-      - name: Determine Version
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
-        uses: gittools/actions/gitversion/execute@v0.9.13
-        with:
-          useConfigFile: true
-          configFilePath: GitVersion.yml
+      - name: Set required environment variable
+        run: |
+          echo "build_container_tag=$(uuidgen)" >> $GITHUB_ENV
+          echo "unittest_container_tag=$(uuidgen)" >> $GITHUB_ENV
+          echo "unittest_extract_container_name=$(uuidgen)" >> $GITHUB_ENV
+          echo "sem_version=$(docker run --rm -v $(pwd):/repo gittools/gitversion:5.10.3-alpine.3.13-6.0 /repo | jq '.SemVer')" >> $GITHUB_ENV
 
       - name: Build
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         run: |
-          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
-            --tag omiga/web:$GitVersion_SemVer \
-            --tag omiga/web:${{ github.sha }} \
+            --tag microbusiness/web:${{ github.sha }} \
             --file ./src/web/Dockerfile \
             ./
 
       - name: Run Trivy vulnerability scanner
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: omiga/web:${{ github.sha }}
+          image-ref: microbusiness/web:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
           timeout: "10m0s"
+
+      - name: Login to Docker Hub
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push docker image
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker tag \
+            microbusiness/web:${{ github.sha }} \
+            microbusiness/web:latest
+          docker tag \
+            microbusiness/web:${{ github.sha }} \
+            microbusiness/web:${{ env.sem_version }}
+          docker push microbusiness/web:${{ env.sem_version }}
+          docker push microbusiness/web:${{ github.sha }}
+          docker push microbusiness/web:latest
+
+      - name: Clean up
+        if: always()
+        run: |
+          docker rm ${{ env.unittest_extract_container_name }} || true
+          docker rmi ${{ env.build_container_tag }} || true
+          docker rmi ${{ env.unittest_container_tag }} || true
+          docker rmi microbusiness/web:${{ env.sem_version }} || true
+          docker rmi microbusiness/web:${{ github.sha }} || true
+          docker rmi microbusiness/web:latest || true
+
+  deploy-to-dev:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    name: "Deploying to Dev"
+    needs: build
+    runs-on:
+      - self-hosted
+    steps:
+      - name: Setting up SSH Agent
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_GITHUB_ACTION }}
+
+      - name: Deploy
+        run: |
+          ssh ${{ secrets.PROD_SERVER_SSH_HOST_ADDRESS }} -p ${{ secrets.PROD_SERVER_SSH_PORT }} -o StrictHostKeyChecking=no "/root/omiga-restart-web-dev.sh"

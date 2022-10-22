@@ -2,14 +2,29 @@ name: "Omigactl"
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/omigactl.yml"
+      - "src/go.mod"
+      - "src/go.sum"
+      - "src/shared/**"
   pull_request:
-    branches: ["main"]
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/omigactl.yml"
+      - "src/go.mod"
+      - "src/go.sum"
+      - "src/shared/**"
 
 jobs:
   build:
     name: "Build - omigactl"
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
@@ -20,46 +35,29 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: dorny/paths-filter@v2.10.2
-        id: filter
-        with:
-          filters: |
-            relevant_directories_changed:
-              - '.github/workflows/codeql-analysis.yml'
-              - '.github/workflows/lint.yml'
-              - '.github/workflows/omigactl.yml'
-              - 'src/go.mod'
-              - 'src/go.sum'
-              - 'src/shared/**'
-
-      - name: Install GitVersion
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
-        uses: gittools/actions/gitversion/setup@v0.9.13
-        with:
-          versionSpec: "5.x"
-
-      - name: Determine Version
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
-        uses: gittools/actions/gitversion/execute@v0.9.13
-        with:
-          useConfigFile: true
-          configFilePath: GitVersion.yml
+      - name: Set required environment variable
+        run: |
+          echo "unittest_container_tag=$(uuidgen)" >> $GITHUB_ENV
+          echo "unittest_extract_container_name=$(uuidgen)" >> $GITHUB_ENV
 
       - name: Unit Tests
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' }}
         run: |
-          DOCKER_BUILDKIT=1 VERSION=$GitVersion_SemVer docker build \
+          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target test \
-            --tag omiga/omigactl-unittests:$GitVersion_SemVer \
+            --tag ${{ env.unittest_container_tag }} \
             --file ./src/shared/omigactl/Dockerfile \
             ./src
+
+      - name: Extract coverage output
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
           mkdir -p ./coverage/reports
-          docker create --name extract-container omiga/omigactl-unittests:$GitVersion_SemVer
-          docker cp extract-container:/coverage/reports/. "./coverage/reports/"
+          docker create --name ${{ env.unittest_extract_container_name }} ${{ env.unittest_container_tag }}
+          docker cp ${{ env.unittest_extract_container_name }}:/coverage/reports/. "./coverage/reports/"
 
       - name: Upload coverage to Codecov
-        if: ${{ steps.filter.outputs.relevant_directories_changed == 'true' && github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -67,3 +65,9 @@ jobs:
           flags: unittests,omigactl
           fail_ci_if_error: true
           verbose: true
+
+      - name: Clean up
+        if: always()
+        run: |
+          docker rm ${{ env.unittest_extract_container_name }} || true
+          docker rmi ${{ env.unittest_container_tag }} || true

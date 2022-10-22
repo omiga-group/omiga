@@ -1,0 +1,22 @@
+app:
+  source: "urn::omiga::binance-processor"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "binance-processor"
+  producerName: "binance-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+binance:
+  id: "binance"
+  apiKey: ""
+  secretKey: ""
+  useTestnet: false
+  orderBook:
+    pairs:
+      - pair: LTC/BTC

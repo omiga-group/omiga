@@ -10,19 +10,27 @@
       "args": ["setup-pulsar"]
     },
     {
-      "name": "Exchange Database Migration",
+      "name": "Venue Database Migration",
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/exchange/shared/repositories/cli/main.go",
-      "args": ["migrate", "--post-migration-script-path", "${workspaceFolder}/src/exchange/shared/repositories/cli/post-migration-script.sql"]
+      "program": "${workspaceFolder}/src/venue/shared/cli/main.go",
+      "args": ["migrate", "--post-migration-script-path", "${workspaceFolder}/src/venue/shared/cli/post_migration_script.sql"]
     },
     {
       "name": "Coingeko",
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/exchange/coingeko-processor/main.go",
+      "program": "${workspaceFolder}/src/venue/coingeko-processor/main.go",
+      "args": ["start"]
+    },
+    {
+      "name": "Venue API",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/venue/venue-api/main.go",
       "args": ["start"]
     },
     {
@@ -30,7 +38,15 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/exchange/binance-processor/main.go",
+      "program": "${workspaceFolder}/src/venue/binance-processor/main.go",
+      "args": ["start"]
+    },
+    {
+      "name": "BitMart Processor",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/venue/bitmart-processor/main.go",
       "args": ["start"]
     },
     {
@@ -38,7 +54,23 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/exchange/bittrex-processor/main.go",
+      "program": "${workspaceFolder}/src/venue/bittrex-processor/main.go",
+      "args": ["start"]
+    },
+    {
+      "name": "Bybit Processor",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/venue/bybit-processor/main.go",
+      "args": ["start"]
+    },
+    {
+      "name": "Mexc Processor",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/venue/mexc-processor/main.go",
       "args": ["start"]
     },
     {
@@ -46,7 +78,15 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/exchange/coinbase-processor/main.go",
+      "program": "${workspaceFolder}/src/venue/coinbase-processor/main.go",
+      "args": ["start"]
+    },
+    {
+      "name": "Crypto Processor",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/venue/crypto-processor/main.go",
       "args": ["start"]
     },
     {
@@ -54,7 +94,7 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/exchange/ftx-processor/main.go",
+      "program": "${workspaceFolder}/src/venue/ftx-processor/main.go",
       "args": ["start"]
     },
     {
@@ -62,7 +102,7 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/exchange/gemini-processor/main.go",
+      "program": "${workspaceFolder}/src/venue/gemini-processor/main.go",
       "args": ["start"]
     },
     {
@@ -70,7 +110,7 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/exchange/huobi-processor/main.go",
+      "program": "${workspaceFolder}/src/venue/huobi-processor/main.go",
       "args": ["start"]
     },
     {
@@ -78,7 +118,7 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/exchange/kraken-processor/main.go",
+      "program": "${workspaceFolder}/src/venue/kraken-processor/main.go",
       "args": ["start"]
     },
     {
@@ -86,7 +126,7 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/exchange/kucoin-processor/main.go",
+      "program": "${workspaceFolder}/src/venue/kucoin-processor/main.go",
       "args": ["start"]
     },
     {
@@ -94,8 +134,8 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/src/order/shared/repositories/cli/main.go",
-      "args": ["migrate", "--post-migration-script-path", "${workspaceFolder}/src/order/shared/repositories/cli/post-migration-script.sql"]
+      "program": "${workspaceFolder}/src/order/shared/cli/main.go",
+      "args": ["migrate", "--post-migration-script-path", "${workspaceFolder}/src/order/shared/cli/post_migration_script.sql"]
     },
     {
       "name": "Order API",

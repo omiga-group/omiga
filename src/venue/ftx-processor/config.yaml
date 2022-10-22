@@ -1,0 +1,22 @@
+app:
+  source: "urn::omiga::ftx-processor"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "ftx-processor"
+  producerName: "ftx-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+ftx:
+  id: "ftx"
+  apiUrl: https://ftx.com/api
+  websocketUrl: wss://ftx.com/ws/
+  timeout: 10
+  apiKey: ""
+  passphrase: ""
+  secretKey: ""

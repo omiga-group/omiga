@@ -1,0 +1,19 @@
+app:
+  source: "urn::omiga::bybit-processor"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "bybit-processor"
+  producerName: "bybit-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+bybit:
+  id: "bybit"
+  baseUrl: "https://api.bybit.com/spot/v3"
+  apiKey: ""
+  secretKey: ""

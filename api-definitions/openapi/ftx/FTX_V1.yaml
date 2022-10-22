@@ -1,0 +1,115 @@
+openapi: 3.0.1
+info:
+  title: FTX API
+  description: "FTX Rest API"
+  version: '1.0.0'
+
+servers:
+  - url: https://ftx.com/api
+
+paths:
+  /api/markets:
+    get:
+      description: "This section covers all types of markets on FTX: spot, perpetual futures, expiring futures, and MOVE contracts."
+      responses:
+        '200':
+          description: list of markets
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/response"
+
+  /api/coins:
+    get:
+      description: "List of supported coins."
+      responses:
+        '200':
+          description: list of markets
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/response"
+
+components:
+  schemas:
+    response:
+      type: object
+      properties:
+        success: 
+          type: boolean
+        result: 
+          type: array
+          oneOf:
+            - $ref: '#/components/schemas/coin'
+            - $ref: '#/components/schemas/market'
+
+    coin:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+  
+    market:
+      type: object
+      properties:
+        name:
+          type: string
+        enabled: 
+          type: boolean
+        postOnly: 
+          type: boolean
+        priceIncrement:
+          type: number
+          format: double
+        sizeIncrement:
+          type: number
+          format: in32
+        minProvideSize:
+          type: number
+          format: int32
+        last:
+          type: number
+          format: double
+        bid:
+          type: number
+          format: double      
+        ask:
+          type: number
+          format: double      
+        price:
+          type: number
+          format: double      
+        type:
+          type: string
+        futureType:
+          type: string
+        baseCurrency:
+          type: string
+        isEtfMarket:
+          type: boolean
+        quoteCurrency:
+          type: string
+        underlying:
+          type: string
+        restricted:
+          type: boolean
+        highLeverageFeeExempt: 
+          type: boolean
+        largeOrderThreshold:
+          type: integer
+        change1h:
+          $ref: "#/components/schemas/BigDecimal"
+        change24h:
+          $ref: "#/components/schemas/BigDecimal"
+        changeBod:
+          $ref: "#/components/schemas/BigDecimal"
+        quoteVolume24h:
+          $ref: "#/components/schemas/BigDecimal"
+        volumeUsd24h:
+          $ref: "#/components/schemas/BigDecimal"
+        priceHigh24h:
+          $ref: "#/components/schemas/BigDecimal"
+        priceLow24h:
+          $ref: "#/components/schemas/BigDecimal"

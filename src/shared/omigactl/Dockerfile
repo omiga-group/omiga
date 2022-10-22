@@ -33,5 +33,5 @@ FROM base AS final
 
 WORKDIR /omiga
 COPY --from=build /bin/omigactl /omiga
-COPY --from=build /src/exchange/omigactl/config.yaml /omiga
+COPY --from=build /src/venue/omigactl/config.yaml /omiga
 CMD ["/omiga/omigactl", "setup-pulsar"]

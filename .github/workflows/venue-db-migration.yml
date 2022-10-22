@@ -1,0 +1,130 @@
+name: "Venue Database Migration"
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/venue-db-migration.yml"
+      - "src/go.mod"
+      - "src/go.sum"
+      - "src/shared/**"
+      - "src/venue/shared/repositories/**"
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/venue-db-migration.yml"
+      - "src/go.mod"
+      - "src/go.sum"
+      - "src/shared/**"
+      - "src/venue/shared/repositories/**"
+
+jobs:
+  build:
+    name: "Build - Venue Database Migration"
+    runs-on:
+      - self-hosted
+    env:
+      DOCKER_BUILDKIT: 1
+      COMPOSE_DOCKER_CLI_BUILD: 1
+
+    steps:
+      - name: Checkout code with full history
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set required environment variable
+        run: |
+          echo "build_container_tag=$(uuidgen)" >> $GITHUB_ENV
+          echo "unittest_container_tag=$(uuidgen)" >> $GITHUB_ENV
+          echo "unittest_extract_container_name=$(uuidgen)" >> $GITHUB_ENV
+          echo "sem_version=$(docker run --rm -v $(pwd):/repo gittools/gitversion:5.10.3-alpine.3.13-6.0 /repo | jq '.SemVer')" >> $GITHUB_ENV
+
+      - name: Build
+        run: |
+          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
+             --pull \
+             --target build \
+            --tag ${{ env.build_container_tag }} \
+            --file ./src/venue/shared/cli/Dockerfile \
+            ./src
+
+      - name: Unit Tests
+        run: |
+          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
+             --pull \
+             --target test \
+            --tag ${{ env.unittest_container_tag }} \
+            --file ./src/venue/shared/cli/Dockerfile \
+            ./src
+
+      - name: Extract coverage output
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          mkdir -p ./coverage/reports
+          docker create --name ${{ env.unittest_extract_container_name }} ${{ env.unittest_container_tag }}
+          docker cp ${{ env.unittest_extract_container_name }}:/coverage/reports/. "./coverage/reports/"
+
+      - name: Upload coverage to Codecov
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage/reports/
+          flags: unittests,venue-db-migration
+          fail_ci_if_error: true
+          verbose: true
+
+      - name: Build final
+        run: |
+          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
+             --pull \
+             --target final \
+            --tag microbusiness/venue-db-migration:${{ github.sha }} \
+            --file ./src/venue/shared/cli/Dockerfile \
+            ./src
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: microbusiness/venue-db-migration:${{ github.sha }}
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          timeout: "10m0s"
+
+      - name: Login to Docker Hub
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push docker image
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker tag \
+            microbusiness/venue-db-migration:${{ github.sha }} \
+            microbusiness/venue-db-migration:latest
+          docker tag \
+            microbusiness/venue-db-migration:${{ github.sha }} \
+            microbusiness/venue-db-migration:${{ env.sem_version }}
+          docker push microbusiness/venue-db-migration:${{ env.sem_version }}
+          docker push microbusiness/venue-db-migration:${{ github.sha }}
+          docker push microbusiness/venue-db-migration:latest
+
+      - name: Clean up
+        if: always()
+        run: |
+          docker rm ${{ env.unittest_extract_container_name }} || true
+          docker rmi ${{ env.build_container_tag }} || true
+          docker rmi ${{ env.unittest_container_tag }} || true
+          docker rmi microbusiness/venue-db-migration:${{ env.sem_version }} || true
+          docker rmi microbusiness/venue-db-migration:${{ github.sha }} || true
+          docker rmi microbusiness/venue-db-migration:latest || true
