@@ -24,6 +24,9 @@ generate: ## Generate code
 generate-via-docker: ## Generate code
 	@../api-definitions/asyncapi/events/scripts/generate-all.sh
 	@./shared/scripts/generate.sh
+	@./order/shared/scripts/generate.sh
+	@./order/order-api/scripts/generate.sh
+	@./order/order-processor/scripts/generate.sh
 	@./venue/shared/scripts/generate.sh
 	@./venue/venues-all-in-one/scripts/generate.sh
 	@./venue/venue-api/scripts/generate.sh
@@ -34,19 +37,19 @@ generate-via-docker: ## Generate code
 	@./venue/coinbase-processor/scripts/generate.sh
 	@./venue/coingecko-processor/scripts/generate.sh
 	@./venue/crypto-processor/scripts/generate.sh
+	@./venue/dextrade-processor/scripts/generate.sh
 	@./venue/ftx-processor/scripts/generate.sh
 	@./venue/gemini-processor/scripts/generate.sh
 	@./venue/huobi-processor/scripts/generate.sh
 	@./venue/kraken-processor/scripts/generate.sh
 	@./venue/kucoin-processor/scripts/generate.sh
 	@./venue/mexc-processor/scripts/generate.sh
-	@./order/shared/scripts/generate.sh
-	@./order/order-api/scripts/generate.sh
-	@./order/order-processor/scripts/generate.sh
+	@./venue/xt-processor/scripts/generate.sh
 
 .PHONY: lint
 lint: ## run golanci-lint locally
-	@docker run --rm -v $(CURRENT_DIRECTORY):/app -w /app golangci/golangci-lint:latest golangci-lint run -v
+	@docker pull golangci/golangci-lint:latest-alpine
+	@docker run --rm -v $(CURRENT_DIRECTORY):/app -w /app golangci/golangci-lint:latest-alpine golangci-lint run -v
 
 .PHONY: format
 format: ## Format the source

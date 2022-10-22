@@ -3,8 +3,8 @@ package subscribers
 import (
 	"context"
 
-	bybitpotv3 "github.com/omiga-group/omiga/src/shared/clients/openapi/bybit/spot/v3"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	bybitpotv3 "github.com/omiga-group/omiga/src/venue/bybit-processor/bybitclient/spot/v3"
 	"github.com/omiga-group/omiga/src/venue/bybit-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/bybit-processor/mappers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"

@@ -20,6 +20,8 @@ import (
 	coinbaseprocessorconfiguration "github.com/omiga-group/omiga/src/venue/coinbase-processor/configuration"
 	cryptoprocessorappsetup "github.com/omiga-group/omiga/src/venue/crypto-processor/appsetup"
 	cryptoprocessorconfiguration "github.com/omiga-group/omiga/src/venue/crypto-processor/configuration"
+	dextradeprocessorappsetup "github.com/omiga-group/omiga/src/venue/dextrade-processor/appsetup"
+	dextradeprocessorconfiguration "github.com/omiga-group/omiga/src/venue/dextrade-processor/configuration"
 	geminiprocessorappsetup "github.com/omiga-group/omiga/src/venue/gemini-processor/appsetup"
 	geminiprocessorconfiguration "github.com/omiga-group/omiga/src/venue/gemini-processor/configuration"
 	huobiprocessorappsetup "github.com/omiga-group/omiga/src/venue/huobi-processor/appsetup"
@@ -33,6 +35,8 @@ import (
 	ftxprocessorappsetup "github.com/omiga-group/omiga/src/venue/ftx-processor/appsetup"
 	ftxprocessorconfiguration "github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/venues-all-in-one/appsetup"
+	xtprocessorappsetup "github.com/omiga-group/omiga/src/venue/xt-processor/appsetup"
+	xtprocessorconfiguration "github.com/omiga-group/omiga/src/venue/xt-processor/configuration"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -80,6 +84,11 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
+			var dextradeProcessorConfig dextradeprocessorconfiguration.Config
+			if err := entconfiguration.LoadConfig("dextrade-processor-config.yaml", &dextradeProcessorConfig); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
 			var geminiProcessorConfig geminiprocessorconfiguration.Config
 			if err := entconfiguration.LoadConfig("gemini-processor-config.yaml", &geminiProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
@@ -102,6 +111,11 @@ func startCommand() *cobra.Command {
 
 			var mexcProcessorConfig mexcprocessorconfiguration.Config
 			if err := entconfiguration.LoadConfig("mexc-processor-config.yaml", &mexcProcessorConfig); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			var xtProcessorConfig xtprocessorconfiguration.Config
+			if err := entconfiguration.LoadConfig("xt-processor-config.yaml", &xtProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
@@ -184,6 +198,15 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
+			if _, err = dextradeprocessorappsetup.NewDexTradeTradingPairSubscriber(
+				ctx,
+				sugarLogger,
+				dextradeProcessorConfig.DexTrade,
+				cronService,
+				dextradeProcessorConfig.Postgres); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
 			if _, err = geminiprocessorappsetup.NewGeminiTradingPairSubscriber(
 				ctx,
 				sugarLogger,
@@ -226,6 +249,15 @@ func startCommand() *cobra.Command {
 				mexcProcessorConfig.Mexc,
 				cronService,
 				mexcProcessorConfig.Postgres); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			if _, err = xtprocessorappsetup.NewXtTradingPairSubscriber(
+				ctx,
+				sugarLogger,
+				xtProcessorConfig.Xt,
+				cronService,
+				xtProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
 

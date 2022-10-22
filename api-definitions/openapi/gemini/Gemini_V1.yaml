@@ -11,6 +11,7 @@ paths:
   /symbols:
     get:
       summary: fetches the supported symbols
+      operationId: getAllSymbols
       responses:
         200:
           description: list of symbols
@@ -24,6 +25,7 @@ paths:
   /pricefeed:
     get:
       summary: fetches the price feeds along with trading pairs
+      operationId: getPriceFeed
       responses:
         200:
           description: list of price feeds
@@ -37,6 +39,7 @@ paths:
   /symbols/details/{symbol}:
     get:
       summary: gets the details for a trading pair
+      operationId: getSymbolDetails
       parameters:
         - in: path
           name: symbol
@@ -44,6 +47,7 @@ paths:
             type: string
           required: true
           description: symbol name
+
       responses:
         200:
           description: tradingPair details

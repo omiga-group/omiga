@@ -1,7 +1,7 @@
 package mappers
 
 import (
-	coingeckov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingecko/v3"
+	coingeckov3 "github.com/omiga-group/omiga/src/venue/coingecko-processor/coingeckoclient/v3"
 	currencyrepo "github.com/omiga-group/omiga/src/venue/shared/entities/currency"
 	"github.com/omiga-group/omiga/src/venue/shared/models"
 )

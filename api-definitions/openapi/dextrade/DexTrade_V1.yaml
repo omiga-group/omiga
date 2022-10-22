@@ -1,0 +1,57 @@
+openapi: 3.0.1
+info:
+  title: DexTrade API V2
+  description: "DexTrade REST API"
+  version: 1.0.0
+
+servers:
+  - url: https://api.dex-trade.com/v1
+
+paths:
+  /public/symbols:
+    get:
+      tags:
+      - spot
+      summary: fetches the supported symbols
+      operationId: getAllSymbols
+      responses:
+        200:
+          description: list of symbols
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getSymbolsResponse"
+
+components:
+  schemas:
+    getSymbolsResponse:
+      type: object
+      additionalProperties: true
+      required:
+        - status
+        - data
+      properties:
+        status:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/symbol"
+
+    symbol:
+      type: object
+      additionalProperties: true
+      required:
+        - id
+        - pair
+        - base
+        - quote
+      properties:
+        id:
+          type: integer
+        pair:
+          type: string
+        base:
+          type: string
+        quote:
+          type: string

@@ -6,9 +6,9 @@ import (
 
 	"github.com/life4/genesis/maps"
 	"github.com/life4/genesis/slices"
-	coingeckov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingecko/v3"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	timeex "github.com/omiga-group/omiga/src/shared/enterprise/time"
+	coingeckov3 "github.com/omiga-group/omiga/src/venue/coingecko-processor/coingeckoclient/v3"
 	"github.com/omiga-group/omiga/src/venue/coingecko-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/coingecko-processor/mappers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"

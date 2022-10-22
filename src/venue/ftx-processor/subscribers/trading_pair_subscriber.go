@@ -5,6 +5,8 @@ import (
 
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
+	ftxv1 "github.com/omiga-group/omiga/src/venue/ftx-processor/ftxclient/v1"
+	"github.com/omiga-group/omiga/src/venue/ftx-processor/mappers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
 )
@@ -44,21 +46,37 @@ func NewFTXTradingPairSubscriber(
 }
 
 func (ftps *ftxTradingPairSubscriber) Run() {
-	exchangeInfo, err := ftx.
-		NewClient(btps.binanceConfig.ApiKey, btps.binanceConfig.SecretKey).
-		NewExchangeInfoService().
-		Do(btps.ctx)
+	client, err := ftxv1.NewClientWithResponses(ftps.ftxConfig.ApiUrl)
 	if err != nil {
-		btps.logger.Errorf("Failed to call exchangeInfo endpoint. Error: %v", err)
+		ftps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
 		return
 	}
 
-	if err = btps.tradingPairRepository.CreateTradingPairs(
-		btps.ctx,
-		btps.binanceConfig.Id,
-		mappers.BinanceSymbolsToTradingPairs(exchangeInfo.Symbols)); err != nil {
-		btps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
+	response, err := client.GetMarketsWithResponse(ftps.ctx)
+	if err != nil {
+		ftps.logger.Errorf("Failed to call getMarkets endpoint. Error: %v", err)
+
+		return
+	}
+
+	if response.HTTPResponse.StatusCode != 200 {
+		ftps.logger.Errorf("Failed to call getMarkets endpoint. Return status code is %d", response.HTTPResponse.StatusCode)
+
+		return
+	}
+
+	if response.JSON200 == nil {
+		ftps.logger.Errorf("Returned JSON object is nil")
+
+		return
+	}
+
+	if err = ftps.tradingPairRepository.CreateTradingPairs(
+		ftps.ctx,
+		ftps.ftxConfig.Id,
+		mappers.FtxMarketToTradingPairs(*response.JSON200.Result)); err != nil {
+		ftps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
 	}

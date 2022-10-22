@@ -2,7 +2,7 @@ package mappers
 
 import (
 	"github.com/life4/genesis/slices"
-	coingeckov3 "github.com/omiga-group/omiga/src/shared/clients/openapi/coingecko/v3"
+	coingeckov3 "github.com/omiga-group/omiga/src/venue/coingecko-processor/coingeckoclient/v3"
 	"github.com/omiga-group/omiga/src/venue/coingecko-processor/configuration"
 	venuerepo "github.com/omiga-group/omiga/src/venue/shared/entities/venue"
 	"github.com/omiga-group/omiga/src/venue/shared/models"

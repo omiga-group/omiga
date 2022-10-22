@@ -1,14 +1,14 @@
 openapi: 3.0.1
 info:
-  title: FTX API
-  description: "FTX Rest API"
-  version: '1.0.0'
+  title: Ftx API V1
+  description: "Ftx Rest API"
+  version: 1.0.0
 
 servers:
   - url: https://ftx.com/api
 
 paths:
-  /api/markets:
+  /markets:
     get:
       description: "This section covers all types of markets on FTX: spot, perpetual futures, expiring futures, and MOVE contracts."
       responses:
@@ -17,9 +17,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/response"
+                type: object
+                properties:
+                  success: 
+                    type: boolean
+                  result: 
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/market'
 
-  /api/coins:
+  /coins:
     get:
       description: "List of supported coins."
       responses:
@@ -28,23 +35,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/response"
+                type: object
+                properties:
+                  success: 
+                    type: boolean
+                  result: 
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/coin'
 
 components:
   schemas:
-    response:
-      type: object
-      properties:
-        success: 
-          type: boolean
-        result: 
-          type: array
-          oneOf:
-            - $ref: '#/components/schemas/coin'
-            - $ref: '#/components/schemas/market'
-
     coin:
       type: object
+      additionalProperties: true
       properties:
         name:
           type: string
@@ -53,6 +57,11 @@ components:
   
     market:
       type: object
+      additionalProperties: true
+      required:
+       - name
+       - baseCurrency
+       - quoteCurrency
       properties:
         name:
           type: string
@@ -62,13 +71,10 @@ components:
           type: boolean
         priceIncrement:
           type: number
-          format: double
         sizeIncrement:
           type: number
-          format: in32
         minProvideSize:
           type: number
-          format: int32
         last:
           type: number
           format: double
@@ -98,18 +104,25 @@ components:
         highLeverageFeeExempt: 
           type: boolean
         largeOrderThreshold:
-          type: integer
+          type: number
         change1h:
-          $ref: "#/components/schemas/BigDecimal"
+          type: number
+          format: double
         change24h:
-          $ref: "#/components/schemas/BigDecimal"
+          type: number
+          format: double
         changeBod:
-          $ref: "#/components/schemas/BigDecimal"
+          type: number
+          format: double
         quoteVolume24h:
-          $ref: "#/components/schemas/BigDecimal"
+          type: number
+          format: double
         volumeUsd24h:
-          $ref: "#/components/schemas/BigDecimal"
+          type: number
+          format: double
         priceHigh24h:
-          $ref: "#/components/schemas/BigDecimal"
+          type: number
+          format: double
         priceLow24h:
-          $ref: "#/components/schemas/BigDecimal"
+          type: number
+          format: double

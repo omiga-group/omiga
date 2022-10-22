@@ -14,7 +14,7 @@ make generate
 
 ## Start everything
 
-Please note that starting dependecies only won't create database and migrate the schema
+Please note that starting dependencies only won't create database and migrate the schema
 
 ```bash
 ./src/scripts/run-docker-compose.sh up --build
@@ -26,13 +26,13 @@ Please note that starting dependecies only won't create database and migrate the
 ./src/scripts/start-dependencies.sh up --build
 ```
 
-## Start `venue` domain and depdencies only
+## Start `venue` domain and dependencies only
 
 ```bash
 ./src/venue/scripts/run-docker-compose.sh up --build
 ```
 
-## Start `order` domain and depdencies only
+## Start `order` domain and dependencies only
 
 ```bash
 ./src/order/scripts/run-docker-compose.sh up --build
