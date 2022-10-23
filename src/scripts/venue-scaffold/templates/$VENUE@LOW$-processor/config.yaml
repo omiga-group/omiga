@@ -1,0 +1,22 @@
+app:
+  source: "urn::omiga::$VENUE@LOW$-processor"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "$VENUE@LOW$-processor"
+  producerName: "$VENUE@LOW$-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+$VENUE@LOW$:
+  id: "$VENUE@LOW$"
+  apiKey: ""
+  secretKey: ""
+  useTestnet: false
+  orderBook:
+    pairs:
+      - pair: LTC/BTC

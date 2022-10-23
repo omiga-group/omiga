@@ -27,3 +27,5 @@ __transpiled/
 .watchman*
 
 !.vscode/launch.json
+.DS_Store
+src/scripts/venue-scaffold/.venv
