@@ -2,7 +2,7 @@ import dataclasses
 import os
 import re
 import argparse
-from typing import Dict, List
+from typing import Dict, List, Callable
 from enum import Enum
 
 regex = re.compile(r"\$(VENUE)\@(PAS|LOW|UP)\$", re.IGNORECASE)
@@ -44,7 +44,7 @@ def venue_to_string(venue: Venue) -> str:
             return venue.name.upper()
 
 
-def transformer(venue_name: str):
+def transformer(venue_name: str) -> Callable[[re.Match], str]:
     def replacer(matches: re.Match):
         venue = Venue(name=venue_name, case=str_to_case(matches.group(2)))
         return venue_to_string(venue)
