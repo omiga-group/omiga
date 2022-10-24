@@ -49,6 +49,9 @@ components:
     coin:
       type: object
       additionalProperties: true
+      required:
+        - id
+        - name
       properties:
         name:
           type: string
@@ -60,8 +63,31 @@ components:
       additionalProperties: true
       required:
        - name
+       - enabled
+       - postOnly
+       - priceIncrement
+       - sizeIncrement
+       - minProvideSize
+       - last
+       - bid
+       - ask
+       - price
+       - type
+       - futureType
        - baseCurrency
+       - isEtfMarket
        - quoteCurrency
+       - underlying
+       - restricted
+       - highLeverageFeeExempt
+       - largeOrderThreshold
+       - change1h
+       - change24h
+       - changeBod
+       - quoteVolume24h
+       - volumeUsd24h
+       - priceHigh24h
+       - priceLow24h
       properties:
         name:
           type: string

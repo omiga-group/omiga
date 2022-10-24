@@ -8,15 +8,18 @@ package appsetup
 
 import (
 	"context"
+	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
+	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
-	"github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
+	configuration2 "github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
+	"github.com/omiga-group/omiga/src/venue/shared/publishers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
 )
@@ -64,7 +67,32 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewFTXTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, ftxConfig configuration.FtxConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.FTXTradingPairSubscriber, error) {
+func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, ftxConfig configuration2.FtxConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.FtxOrderBookSubscriber, error) {
+	osHelper, err := os.NewOsHelper()
+	if err != nil {
+		return nil, err
+	}
+	pulsarClient, err := pulsar.NewPulsarClient(logger, pulsarConfig, osHelper)
+	if err != nil {
+		return nil, err
+	}
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient)
+	if err != nil {
+		return nil, err
+	}
+	producer := orderbookv1.NewProducer(logger, messageProducer)
+	orderBookPublisher, err := publishers.NewOrderBookPublisher(logger, appConfig, producer)
+	if err != nil {
+		return nil, err
+	}
+	ftxOrderBookSubscriber, err := subscribers.NewFtxOrderBookSubscriber(ctx, logger, ftxConfig, orderBookPublisher)
+	if err != nil {
+		return nil, err
+	}
+	return ftxOrderBookSubscriber, nil
+}
+
+func NewFtxTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, ftxConfig configuration2.FtxConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.FtxTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -85,7 +113,7 @@ func NewFTXTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger,
 	if err != nil {
 		return nil, err
 	}
-	ftxTradingPairSubscriber, err := subscribers.NewFTXTradingPairSubscriber(ctx, logger, ftxConfig, cronService, tradingPairRepository)
+	ftxTradingPairSubscriber, err := subscribers.NewFtxTradingPairSubscriber(ctx, logger, ftxConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

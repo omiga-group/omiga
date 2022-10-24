@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/appsetup"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
@@ -45,6 +46,34 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
+			syntheticOrderConsumer, err := appsetup.NewSyntheticOrderConsumer(
+				sugarLogger,
+				config.Pulsar)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer syntheticOrderConsumer.Close()
+
+			err = syntheticOrderConsumer.StartAsync(ctx)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			ftxOrderBookSubscriber, err := appsetup.NewFtxOrderBookSubscriber(
+				ctx,
+				sugarLogger,
+				config.App,
+				config.Ftx,
+				config.Pulsar,
+				orderbookv1.TopicName,
+			)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer ftxOrderBookSubscriber.Close()
+
 			cronService, err := appsetup.NewCronService(sugarLogger)
 			if err != nil {
 				sugarLogger.Fatal(err)
@@ -52,7 +81,7 @@ func startCommand() *cobra.Command {
 
 			defer cronService.Close()
 
-			if _, err = appsetup.NewFTXTradingPairSubscriber(
+			if _, err = appsetup.NewFtxTradingPairSubscriber(
 				ctx,
 				sugarLogger,
 				config.Ftx,

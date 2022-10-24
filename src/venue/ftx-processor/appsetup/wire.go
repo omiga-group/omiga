@@ -26,7 +26,9 @@ import (
 	"github.com/google/wire"
 	"go.uber.org/zap"
 
+	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
+	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
@@ -34,6 +36,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/subscribers"
+	"github.com/omiga-group/omiga/src/venue/shared/publishers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 )
@@ -48,8 +51,7 @@ func NewCronService(
 }
 
 func NewTimeHelper() (time.TimeHelper, error) {
-	wire.Build(
-		time.NewTimeHelper)
+	wire.Build(time.NewTimeHelper)
 
 	return nil, nil
 }
@@ -67,19 +69,38 @@ func NewSyntheticOrderConsumer(
 	return nil, nil
 }
 
-func NewFTXTradingPairSubscriber(
+func NewFtxOrderBookSubscriber(
+	ctx context.Context,
+	logger *zap.SugaredLogger,
+	appConfig enterpriseConfiguration.AppConfig,
+	ftxConfig configuration.FtxConfig,
+	pulsarConfig pulsar.PulsarConfig,
+	topic string) (subscribers.FtxOrderBookSubscriber, error) {
+	wire.Build(
+		os.NewOsHelper,
+		orderbookv1.NewProducer,
+		pulsar.NewPulsarClient,
+		pulsar.NewPulsarMessageProducer,
+		publishers.NewOrderBookPublisher,
+		subscribers.NewFtxOrderBookSubscriber,
+	)
+
+	return nil, nil
+}
+
+func NewFtxTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	ftxConfig configuration.FtxConfig,
 	cronService cron.CronService,
-	postgresConfig postgres.PostgresConfig) (subscribers.FTXTradingPairSubscriber, error) {
+	postgresConfig postgres.PostgresConfig) (subscribers.FtxTradingPairSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
 		repositories.NewCurrencyRepository,
 		repositories.NewVenueRepository,
 		repositories.NewTradingPairRepository,
-		subscribers.NewFTXTradingPairSubscriber)
+		subscribers.NewFtxTradingPairSubscriber)
 
 	return nil, nil
 }

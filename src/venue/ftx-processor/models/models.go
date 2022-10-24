@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	ftxv1 "github.com/omiga-group/omiga/src/venue/ftx-processor/ftxclient/v1"
 )
 
 const (
@@ -42,6 +44,7 @@ type OrderBookEntry struct {
 
 // There are far more fields to ftx market object but for now we only handle those that we actually
 // need, ok!
+/*
 type Market struct {
 	Name          string     `json:"name"`
 	BaseCurrency  string     `json:"baseCurrency"`
@@ -49,5 +52,6 @@ type Market struct {
 	Type          MarketType `json:"type"`
 	Enabled       bool       `json:"enabled"`
 }
+*/
 
-type MarketsMap map[string]Market
+type MarketsMap map[string]ftxv1.Market

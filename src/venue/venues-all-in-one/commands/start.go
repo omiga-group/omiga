@@ -261,7 +261,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			if _, err = ftxprocessorappsetup.NewFTXTradingPairSubscriber(
+			if _, err = ftxprocessorappsetup.NewFtxTradingPairSubscriber(
 				ctx,
 				sugarLogger,
 				ftxProcessorConfig.Ftx,

@@ -15,39 +15,39 @@ import (
 
 // Coin defines model for coin.
 type Coin struct {
-	Id                   *string                `json:"id,omitempty"`
-	Name                 *string                `json:"name,omitempty"`
+	Id                   string                 `json:"id"`
+	Name                 string                 `json:"name"`
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
 // Market defines model for market.
 type Market struct {
-	Ask                   *float64               `json:"ask,omitempty"`
+	Ask                   float64                `json:"ask"`
 	BaseCurrency          string                 `json:"baseCurrency"`
-	Bid                   *float64               `json:"bid,omitempty"`
-	Change1h              *float64               `json:"change1h,omitempty"`
-	Change24h             *float64               `json:"change24h,omitempty"`
-	ChangeBod             *float64               `json:"changeBod,omitempty"`
-	Enabled               *bool                  `json:"enabled,omitempty"`
-	FutureType            *string                `json:"futureType,omitempty"`
-	HighLeverageFeeExempt *bool                  `json:"highLeverageFeeExempt,omitempty"`
-	IsEtfMarket           *bool                  `json:"isEtfMarket,omitempty"`
-	LargeOrderThreshold   *float32               `json:"largeOrderThreshold,omitempty"`
-	Last                  *float64               `json:"last,omitempty"`
-	MinProvideSize        *float32               `json:"minProvideSize,omitempty"`
+	Bid                   float64                `json:"bid"`
+	Change1h              float64                `json:"change1h"`
+	Change24h             float64                `json:"change24h"`
+	ChangeBod             float64                `json:"changeBod"`
+	Enabled               bool                   `json:"enabled"`
+	FutureType            string                 `json:"futureType"`
+	HighLeverageFeeExempt bool                   `json:"highLeverageFeeExempt"`
+	IsEtfMarket           bool                   `json:"isEtfMarket"`
+	LargeOrderThreshold   float32                `json:"largeOrderThreshold"`
+	Last                  float64                `json:"last"`
+	MinProvideSize        float32                `json:"minProvideSize"`
 	Name                  string                 `json:"name"`
-	PostOnly              *bool                  `json:"postOnly,omitempty"`
-	Price                 *float64               `json:"price,omitempty"`
-	PriceHigh24h          *float64               `json:"priceHigh24h,omitempty"`
-	PriceIncrement        *float32               `json:"priceIncrement,omitempty"`
-	PriceLow24h           *float64               `json:"priceLow24h,omitempty"`
+	PostOnly              bool                   `json:"postOnly"`
+	Price                 float64                `json:"price"`
+	PriceHigh24h          float64                `json:"priceHigh24h"`
+	PriceIncrement        float32                `json:"priceIncrement"`
+	PriceLow24h           float64                `json:"priceLow24h"`
 	QuoteCurrency         string                 `json:"quoteCurrency"`
-	QuoteVolume24h        *float64               `json:"quoteVolume24h,omitempty"`
-	Restricted            *bool                  `json:"restricted,omitempty"`
-	SizeIncrement         *float32               `json:"sizeIncrement,omitempty"`
-	Type                  *string                `json:"type,omitempty"`
-	Underlying            *string                `json:"underlying,omitempty"`
-	VolumeUsd24h          *float64               `json:"volumeUsd24h,omitempty"`
+	QuoteVolume24h        float64                `json:"quoteVolume24h"`
+	Restricted            bool                   `json:"restricted"`
+	SizeIncrement         float32                `json:"sizeIncrement"`
+	Type                  string                 `json:"type"`
+	Underlying            string                 `json:"underlying"`
+	VolumeUsd24h          float64                `json:"volumeUsd24h"`
 	AdditionalProperties  map[string]interface{} `json:"-"`
 }
 
@@ -111,18 +111,14 @@ func (a Coin) MarshalJSON() ([]byte, error) {
 	var err error
 	object := make(map[string]json.RawMessage)
 
-	if a.Id != nil {
-		object["id"], err = json.Marshal(a.Id)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'id': %w", err)
-		}
+	object["id"], err = json.Marshal(a.Id)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'id': %w", err)
 	}
 
-	if a.Name != nil {
-		object["name"], err = json.Marshal(a.Name)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'name': %w", err)
-		}
+	object["name"], err = json.Marshal(a.Name)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'name': %w", err)
 	}
 
 	for fieldName, field := range a.AdditionalProperties {
@@ -386,11 +382,9 @@ func (a Market) MarshalJSON() ([]byte, error) {
 	var err error
 	object := make(map[string]json.RawMessage)
 
-	if a.Ask != nil {
-		object["ask"], err = json.Marshal(a.Ask)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'ask': %w", err)
-		}
+	object["ask"], err = json.Marshal(a.Ask)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'ask': %w", err)
 	}
 
 	object["baseCurrency"], err = json.Marshal(a.BaseCurrency)
@@ -398,81 +392,59 @@ func (a Market) MarshalJSON() ([]byte, error) {
 		return nil, fmt.Errorf("error marshaling 'baseCurrency': %w", err)
 	}
 
-	if a.Bid != nil {
-		object["bid"], err = json.Marshal(a.Bid)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'bid': %w", err)
-		}
+	object["bid"], err = json.Marshal(a.Bid)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'bid': %w", err)
 	}
 
-	if a.Change1h != nil {
-		object["change1h"], err = json.Marshal(a.Change1h)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'change1h': %w", err)
-		}
+	object["change1h"], err = json.Marshal(a.Change1h)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'change1h': %w", err)
 	}
 
-	if a.Change24h != nil {
-		object["change24h"], err = json.Marshal(a.Change24h)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'change24h': %w", err)
-		}
+	object["change24h"], err = json.Marshal(a.Change24h)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'change24h': %w", err)
 	}
 
-	if a.ChangeBod != nil {
-		object["changeBod"], err = json.Marshal(a.ChangeBod)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'changeBod': %w", err)
-		}
+	object["changeBod"], err = json.Marshal(a.ChangeBod)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'changeBod': %w", err)
 	}
 
-	if a.Enabled != nil {
-		object["enabled"], err = json.Marshal(a.Enabled)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'enabled': %w", err)
-		}
+	object["enabled"], err = json.Marshal(a.Enabled)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'enabled': %w", err)
 	}
 
-	if a.FutureType != nil {
-		object["futureType"], err = json.Marshal(a.FutureType)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'futureType': %w", err)
-		}
+	object["futureType"], err = json.Marshal(a.FutureType)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'futureType': %w", err)
 	}
 
-	if a.HighLeverageFeeExempt != nil {
-		object["highLeverageFeeExempt"], err = json.Marshal(a.HighLeverageFeeExempt)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'highLeverageFeeExempt': %w", err)
-		}
+	object["highLeverageFeeExempt"], err = json.Marshal(a.HighLeverageFeeExempt)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'highLeverageFeeExempt': %w", err)
 	}
 
-	if a.IsEtfMarket != nil {
-		object["isEtfMarket"], err = json.Marshal(a.IsEtfMarket)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'isEtfMarket': %w", err)
-		}
+	object["isEtfMarket"], err = json.Marshal(a.IsEtfMarket)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'isEtfMarket': %w", err)
 	}
 
-	if a.LargeOrderThreshold != nil {
-		object["largeOrderThreshold"], err = json.Marshal(a.LargeOrderThreshold)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'largeOrderThreshold': %w", err)
-		}
+	object["largeOrderThreshold"], err = json.Marshal(a.LargeOrderThreshold)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'largeOrderThreshold': %w", err)
 	}
 
-	if a.Last != nil {
-		object["last"], err = json.Marshal(a.Last)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'last': %w", err)
-		}
+	object["last"], err = json.Marshal(a.Last)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'last': %w", err)
 	}
 
-	if a.MinProvideSize != nil {
-		object["minProvideSize"], err = json.Marshal(a.MinProvideSize)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'minProvideSize': %w", err)
-		}
+	object["minProvideSize"], err = json.Marshal(a.MinProvideSize)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'minProvideSize': %w", err)
 	}
 
 	object["name"], err = json.Marshal(a.Name)
@@ -480,39 +452,29 @@ func (a Market) MarshalJSON() ([]byte, error) {
 		return nil, fmt.Errorf("error marshaling 'name': %w", err)
 	}
 
-	if a.PostOnly != nil {
-		object["postOnly"], err = json.Marshal(a.PostOnly)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'postOnly': %w", err)
-		}
+	object["postOnly"], err = json.Marshal(a.PostOnly)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'postOnly': %w", err)
 	}
 
-	if a.Price != nil {
-		object["price"], err = json.Marshal(a.Price)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'price': %w", err)
-		}
+	object["price"], err = json.Marshal(a.Price)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'price': %w", err)
 	}
 
-	if a.PriceHigh24h != nil {
-		object["priceHigh24h"], err = json.Marshal(a.PriceHigh24h)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'priceHigh24h': %w", err)
-		}
+	object["priceHigh24h"], err = json.Marshal(a.PriceHigh24h)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'priceHigh24h': %w", err)
 	}
 
-	if a.PriceIncrement != nil {
-		object["priceIncrement"], err = json.Marshal(a.PriceIncrement)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'priceIncrement': %w", err)
-		}
+	object["priceIncrement"], err = json.Marshal(a.PriceIncrement)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'priceIncrement': %w", err)
 	}
 
-	if a.PriceLow24h != nil {
-		object["priceLow24h"], err = json.Marshal(a.PriceLow24h)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'priceLow24h': %w", err)
-		}
+	object["priceLow24h"], err = json.Marshal(a.PriceLow24h)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'priceLow24h': %w", err)
 	}
 
 	object["quoteCurrency"], err = json.Marshal(a.QuoteCurrency)
@@ -520,46 +482,34 @@ func (a Market) MarshalJSON() ([]byte, error) {
 		return nil, fmt.Errorf("error marshaling 'quoteCurrency': %w", err)
 	}
 
-	if a.QuoteVolume24h != nil {
-		object["quoteVolume24h"], err = json.Marshal(a.QuoteVolume24h)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'quoteVolume24h': %w", err)
-		}
+	object["quoteVolume24h"], err = json.Marshal(a.QuoteVolume24h)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'quoteVolume24h': %w", err)
 	}
 
-	if a.Restricted != nil {
-		object["restricted"], err = json.Marshal(a.Restricted)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'restricted': %w", err)
-		}
+	object["restricted"], err = json.Marshal(a.Restricted)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'restricted': %w", err)
 	}
 
-	if a.SizeIncrement != nil {
-		object["sizeIncrement"], err = json.Marshal(a.SizeIncrement)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'sizeIncrement': %w", err)
-		}
+	object["sizeIncrement"], err = json.Marshal(a.SizeIncrement)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'sizeIncrement': %w", err)
 	}
 
-	if a.Type != nil {
-		object["type"], err = json.Marshal(a.Type)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'type': %w", err)
-		}
+	object["type"], err = json.Marshal(a.Type)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'type': %w", err)
 	}
 
-	if a.Underlying != nil {
-		object["underlying"], err = json.Marshal(a.Underlying)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'underlying': %w", err)
-		}
+	object["underlying"], err = json.Marshal(a.Underlying)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'underlying': %w", err)
 	}
 
-	if a.VolumeUsd24h != nil {
-		object["volumeUsd24h"], err = json.Marshal(a.VolumeUsd24h)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'volumeUsd24h': %w", err)
-		}
+	object["volumeUsd24h"], err = json.Marshal(a.VolumeUsd24h)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'volumeUsd24h': %w", err)
 	}
 
 	for fieldName, field := range a.AdditionalProperties {

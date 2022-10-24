@@ -8,25 +8,25 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockFTXTradingPairSubscriber is a mock of FTXTradingPairSubscriber interface.
-type MockFTXTradingPairSubscriber struct {
+// MockFtxTradingPairSubscriber is a mock of FtxTradingPairSubscriber interface.
+type MockFtxTradingPairSubscriber struct {
 	ctrl     *gomock.Controller
-	recorder *MockFTXTradingPairSubscriberMockRecorder
+	recorder *MockFtxTradingPairSubscriberMockRecorder
 }
 
-// MockFTXTradingPairSubscriberMockRecorder is the mock recorder for MockFTXTradingPairSubscriber.
-type MockFTXTradingPairSubscriberMockRecorder struct {
-	mock *MockFTXTradingPairSubscriber
+// MockFtxTradingPairSubscriberMockRecorder is the mock recorder for MockFtxTradingPairSubscriber.
+type MockFtxTradingPairSubscriberMockRecorder struct {
+	mock *MockFtxTradingPairSubscriber
 }
 
-// NewMockFTXTradingPairSubscriber creates a new mock instance.
-func NewMockFTXTradingPairSubscriber(ctrl *gomock.Controller) *MockFTXTradingPairSubscriber {
-	mock := &MockFTXTradingPairSubscriber{ctrl: ctrl}
-	mock.recorder = &MockFTXTradingPairSubscriberMockRecorder{mock}
+// NewMockFtxTradingPairSubscriber creates a new mock instance.
+func NewMockFtxTradingPairSubscriber(ctrl *gomock.Controller) *MockFtxTradingPairSubscriber {
+	mock := &MockFtxTradingPairSubscriber{ctrl: ctrl}
+	mock.recorder = &MockFtxTradingPairSubscriberMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockFTXTradingPairSubscriber) EXPECT() *MockFTXTradingPairSubscriberMockRecorder {
+func (m *MockFtxTradingPairSubscriber) EXPECT() *MockFtxTradingPairSubscriberMockRecorder {
 	return m.recorder
 }

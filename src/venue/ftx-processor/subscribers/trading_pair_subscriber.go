@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type FTXTradingPairSubscriber interface {
+type FtxTradingPairSubscriber interface {
 }
 
 type ftxTradingPairSubscriber struct {
@@ -21,12 +21,12 @@ type ftxTradingPairSubscriber struct {
 	tradingPairRepository repositories.TradingPairRepository
 }
 
-func NewFTXTradingPairSubscriber(
+func NewFtxTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	ftxConfig configuration.FtxConfig,
 	cronService cron.CronService,
-	tradingPairRepository repositories.TradingPairRepository) (FTXTradingPairSubscriber, error) {
+	tradingPairRepository repositories.TradingPairRepository) (FtxTradingPairSubscriber, error) {
 
 	instance := &ftxTradingPairSubscriber{
 		ctx:                   ctx,
@@ -72,10 +72,11 @@ func (ftps *ftxTradingPairSubscriber) Run() {
 		return
 	}
 
+	m := *response.JSON200.Result
 	if err = ftps.tradingPairRepository.CreateTradingPairs(
 		ftps.ctx,
 		ftps.ftxConfig.Id,
-		mappers.FtxMarketToTradingPairs(*response.JSON200.Result)); err != nil {
+		mappers.FtxMarketToTradingPairs(m)); err != nil {
 		ftps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
