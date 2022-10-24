@@ -103,8 +103,8 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Currencies         func(childComplexity int, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.CurrencyOrder, where *entities.CurrencyWhereInput) int
-		Currency           func(childComplexity int, where *entities.CurrencyWhereInput) int
-		Venue              func(childComplexity int, where *entities.VenueWhereInput) int
+		Currency           func(childComplexity int, where entities.CurrencyWhereInput) int
+		Venue              func(childComplexity int, where entities.VenueWhereInput) int
 		Venues             func(childComplexity int, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.VenueOrder, where *entities.VenueWhereInput) int
 		__resolve__service func(childComplexity int) int
 	}
@@ -202,9 +202,9 @@ type MarketResolver interface {
 	Type(ctx context.Context, obj *entities.Market) (models.MarketType, error)
 }
 type QueryResolver interface {
-	Currency(ctx context.Context, where *entities.CurrencyWhereInput) (*entities.Currency, error)
+	Currency(ctx context.Context, where entities.CurrencyWhereInput) (*entities.Currency, error)
 	Currencies(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.CurrencyOrder, where *entities.CurrencyWhereInput) (*entities.CurrencyConnection, error)
-	Venue(ctx context.Context, where *entities.VenueWhereInput) (*entities.Venue, error)
+	Venue(ctx context.Context, where entities.VenueWhereInput) (*entities.Venue, error)
 	Venues(ctx context.Context, after *entities.Cursor, first *int, before *entities.Cursor, last *int, orderBy []*entities.VenueOrder, where *entities.VenueWhereInput) (*entities.VenueConnection, error)
 }
 type TickerResolver interface {
@@ -463,7 +463,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Currency(childComplexity, args["where"].(*entities.CurrencyWhereInput)), true
+		return e.complexity.Query.Currency(childComplexity, args["where"].(entities.CurrencyWhereInput)), true
 
 	case "Query.venue":
 		if e.complexity.Query.Venue == nil {
@@ -475,7 +475,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Venue(childComplexity, args["where"].(*entities.VenueWhereInput)), true
+		return e.complexity.Query.Venue(childComplexity, args["where"].(entities.VenueWhereInput)), true
 
 	case "Query.venues":
 		if e.complexity.Query.Venues == nil {
@@ -1027,7 +1027,7 @@ extend type Query {
     """
     Ordering directions
     """
-    where: CurrencyWhereInput
+    where: CurrencyWhereInput!
   ): Currency
 
   currencies(
@@ -1066,7 +1066,7 @@ extend type Query {
     """
     Ordering directions
     """
-    where: VenueWhereInput
+    where: VenueWhereInput!
   ): Venue
 
   venues(
@@ -2223,10 +2223,10 @@ func (ec *executionContext) field_Query_currencies_args(ctx context.Context, raw
 func (ec *executionContext) field_Query_currency_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *entities.CurrencyWhereInput
+	var arg0 entities.CurrencyWhereInput
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg0, err = ec.unmarshalOCurrencyWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋvenueᚋsharedᚋentitiesᚐCurrencyWhereInput(ctx, tmp)
+		arg0, err = ec.unmarshalNCurrencyWhereInput2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋvenueᚋsharedᚋentitiesᚐCurrencyWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2238,10 +2238,10 @@ func (ec *executionContext) field_Query_currency_args(ctx context.Context, rawAr
 func (ec *executionContext) field_Query_venue_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *entities.VenueWhereInput
+	var arg0 entities.VenueWhereInput
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg0, err = ec.unmarshalOVenueWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋvenueᚋsharedᚋentitiesᚐVenueWhereInput(ctx, tmp)
+		arg0, err = ec.unmarshalNVenueWhereInput2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋvenueᚋsharedᚋentitiesᚐVenueWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3452,7 +3452,7 @@ func (ec *executionContext) _Query_currency(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Currency(rctx, fc.Args["where"].(*entities.CurrencyWhereInput))
+		return ec.resolvers.Query().Currency(rctx, fc.Args["where"].(entities.CurrencyWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3574,7 +3574,7 @@ func (ec *executionContext) _Query_venue(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Venue(rctx, fc.Args["where"].(*entities.VenueWhereInput))
+		return ec.resolvers.Query().Venue(rctx, fc.Args["where"].(entities.VenueWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15337,6 +15337,11 @@ func (ec *executionContext) marshalNCurrencyType2githubᚗcomᚋomigaᚑgroupᚋ
 	return v
 }
 
+func (ec *executionContext) unmarshalNCurrencyWhereInput2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋvenueᚋsharedᚋentitiesᚐCurrencyWhereInput(ctx context.Context, v interface{}) (entities.CurrencyWhereInput, error) {
+	res, err := ec.unmarshalInputCurrencyWhereInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCurrencyWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋvenueᚋsharedᚋentitiesᚐCurrencyWhereInput(ctx context.Context, v interface{}) (*entities.CurrencyWhereInput, error) {
 	res, err := ec.unmarshalInputCurrencyWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -15670,6 +15675,11 @@ func (ec *executionContext) unmarshalNVenueType2githubᚗcomᚋomigaᚑgroupᚋo
 
 func (ec *executionContext) marshalNVenueType2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋvenueᚋvenueᚑapiᚋgraphqlᚋmodelsᚐVenueType(ctx context.Context, sel ast.SelectionSet, v models.VenueType) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) unmarshalNVenueWhereInput2githubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋvenueᚋsharedᚋentitiesᚐVenueWhereInput(ctx context.Context, v interface{}) (entities.VenueWhereInput, error) {
+	res, err := ec.unmarshalInputVenueWhereInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNVenueWhereInput2ᚖgithubᚗcomᚋomigaᚑgroupᚋomigaᚋsrcᚋvenueᚋsharedᚋentitiesᚐVenueWhereInput(ctx context.Context, v interface{}) (*entities.VenueWhereInput, error) {

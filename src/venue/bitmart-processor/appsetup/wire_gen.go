@@ -85,9 +85,9 @@ func NewBitmartTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLog
 	if err != nil {
 		return nil, err
 	}
-	bitMartTradingPairSubscriber, err := subscribers.NewBitmartTradingPairSubscriber(ctx, logger, bitMartConfig, cronService, tradingPairRepository)
+	bitmartTradingPairSubscriber, err := subscribers.NewBitmartTradingPairSubscriber(ctx, logger, bitMartConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}
-	return bitMartTradingPairSubscriber, nil
+	return bitmartTradingPairSubscriber, nil
 }

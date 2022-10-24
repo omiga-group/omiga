@@ -85,9 +85,9 @@ func NewDextradeTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLo
 	if err != nil {
 		return nil, err
 	}
-	dexTradeTradingPairSubscriber, err := subscribers.NewDextradeTradingPairSubscriber(ctx, logger, dexTradeConfig, cronService, tradingPairRepository)
+	dextradeTradingPairSubscriber, err := subscribers.NewDextradeTradingPairSubscriber(ctx, logger, dexTradeConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}
-	return dexTradeTradingPairSubscriber, nil
+	return dextradeTradingPairSubscriber, nil
 }

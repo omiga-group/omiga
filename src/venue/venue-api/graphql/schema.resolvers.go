@@ -27,7 +27,7 @@ func (r *marketResolver) Type(ctx context.Context, obj *entities.Market) (models
 }
 
 // Currency is the resolver for the currency field.
-func (r *queryResolver) Currency(ctx context.Context, where *entities.CurrencyWhereInput) (*entities.Currency, error) {
+func (r *queryResolver) Currency(ctx context.Context, where entities.CurrencyWhereInput) (*entities.Currency, error) {
 	query, err := where.Filter(r.client.Currency.Query())
 	if err != nil {
 		return nil, err
@@ -65,7 +65,7 @@ func (r *queryResolver) Currencies(ctx context.Context, after *entities.Cursor, 
 }
 
 // Venue is the resolver for the exchange field.
-func (r *queryResolver) Venue(ctx context.Context, where *entities.VenueWhereInput) (*entities.Venue, error) {
+func (r *queryResolver) Venue(ctx context.Context, where entities.VenueWhereInput) (*entities.Venue, error) {
 	query, err := where.Filter(r.client.Venue.Query())
 	if err != nil {
 		return nil, err

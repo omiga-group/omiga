@@ -85,9 +85,9 @@ func NewKucoinTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	kuCoinTradingPairSubscriber, err := subscribers.NewKucoinTradingPairSubscriber(ctx, logger, kuCoinConfig, cronService, tradingPairRepository)
+	kucoinTradingPairSubscriber, err := subscribers.NewKucoinTradingPairSubscriber(ctx, logger, kuCoinConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}
-	return kuCoinTradingPairSubscriber, nil
+	return kucoinTradingPairSubscriber, nil
 }

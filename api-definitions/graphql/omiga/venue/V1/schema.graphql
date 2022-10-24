@@ -20,7 +20,7 @@ extend type Query {
     """
     Ordering directions
     """
-    where: CurrencyWhereInput
+    where: CurrencyWhereInput!
   ): Currency
 
   currencies(
@@ -59,7 +59,7 @@ extend type Query {
     """
     Ordering directions
     """
-    where: VenueWhereInput
+    where: VenueWhereInput!
   ): Venue
 
   venues(

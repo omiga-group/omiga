@@ -96,7 +96,7 @@ type Query {
     last: Int,where: OrderWhereInput  ): OrderConnection
   currency(
     "Ordering directions"
-    where: CurrencyWhereInput
+    where: CurrencyWhereInput!
   ): Currency
   currencies(
     "Returns the items in the list that come after the specified cursor."
@@ -114,7 +114,7 @@ type Query {
   ): CurrencyConnection
   venue(
     "Ordering directions"
-    where: VenueWhereInput
+    where: VenueWhereInput!
   ): Venue
   venues(
     "Returns the items in the list that come after the specified cursor."
