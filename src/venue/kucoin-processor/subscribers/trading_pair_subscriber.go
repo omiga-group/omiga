@@ -11,22 +11,22 @@ import (
 	"go.uber.org/zap"
 )
 
-type KuCoinTradingPairSubscriber interface {
+type KucoinTradingPairSubscriber interface {
 }
 
 type kuCoinTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	kuCoinConfig          configuration.KuCoinConfig
+	kuCoinConfig          configuration.KucoinConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
-func NewKuCoinTradingPairSubscriber(
+func NewKucoinTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	kuCoinConfig configuration.KuCoinConfig,
+	kuCoinConfig configuration.KucoinConfig,
 	cronService cron.CronService,
-	tradingPairRepository repositories.TradingPairRepository) (KuCoinTradingPairSubscriber, error) {
+	tradingPairRepository repositories.TradingPairRepository) (KucoinTradingPairSubscriber, error) {
 
 	instance := &kuCoinTradingPairSubscriber{
 		ctx:                   ctx,
@@ -69,7 +69,7 @@ func (ktps *kuCoinTradingPairSubscriber) Run() {
 	if err = ktps.tradingPairRepository.CreateTradingPairs(
 		ktps.ctx,
 		ktps.kuCoinConfig.Id,
-		mappers.KuCoinSymbolModelToTradingPairs(symbolModel)); err != nil {
+		mappers.KucoinSymbolModelToTradingPairs(symbolModel)); err != nil {
 		ktps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return

@@ -14,7 +14,7 @@ func versionCommand() *cobra.Command {
 		Short: "Return bitmart-processor version",
 		Long:  "Return bitmart-processor version",
 		Run: func(cmd *cobra.Command, args []string) {
-			util.PrintInfo("BitMart Processor\n")
+			util.PrintInfo("Bitmart Processor\n")
 			util.PrintInfo(fmt.Sprintf("Copyright (C) %d, Omiga Ltd.\n", time.Now().Year()))
 			util.PrintYAML(util.GetVersion())
 		},

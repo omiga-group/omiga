@@ -11,22 +11,22 @@ import (
 	"go.uber.org/zap"
 )
 
-type DexTradeTradingPairSubscriber interface {
+type DextradeTradingPairSubscriber interface {
 }
 
 type dexTradeTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	dexTradeConfig        configuration.DexTradeConfig
+	dexTradeConfig        configuration.DextradeConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
-func NewDexTradeTradingPairSubscriber(
+func NewDextradeTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	dexTradeConfig configuration.DexTradeConfig,
+	dexTradeConfig configuration.DextradeConfig,
 	cronService cron.CronService,
-	tradingPairRepository repositories.TradingPairRepository) (DexTradeTradingPairSubscriber, error) {
+	tradingPairRepository repositories.TradingPairRepository) (DextradeTradingPairSubscriber, error) {
 
 	instance := &dexTradeTradingPairSubscriber{
 		ctx:                   ctx,
@@ -75,7 +75,7 @@ func (dtps *dexTradeTradingPairSubscriber) Run() {
 	if err = dtps.tradingPairRepository.CreateTradingPairs(
 		dtps.ctx,
 		dtps.dexTradeConfig.Id,
-		mappers.DexTradeSymbolsToTradingPairs(response.JSON200.Data)); err != nil {
+		mappers.DextradeSymbolsToTradingPairs(response.JSON200.Data)); err != nil {
 		dtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return

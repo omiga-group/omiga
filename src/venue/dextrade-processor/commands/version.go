@@ -14,7 +14,7 @@ func versionCommand() *cobra.Command {
 		Short: "Return dextrade-processor version",
 		Long:  "Return dextrade-processor version",
 		Run: func(cmd *cobra.Command, args []string) {
-			util.PrintInfo("DexTrade Processor\n")
+			util.PrintInfo("Dextrade Processor\n")
 			util.PrintInfo(fmt.Sprintf("Copyright (C) %d, Omiga Ltd.\n", time.Now().Year()))
 			util.PrintYAML(util.GetVersion())
 		},

@@ -1,4 +1,4 @@
-name: "KuCoin Processor"
+name: "Kucoin Processor"
 
 on:
   push:
@@ -26,7 +26,7 @@ on:
 
 jobs:
   build:
-    name: "Build - KuCoin Processor"
+    name: "Build - Kucoin Processor"
     runs-on:
       - self-hosted
     env:

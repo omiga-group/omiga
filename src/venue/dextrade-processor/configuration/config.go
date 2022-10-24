@@ -9,11 +9,11 @@ import (
 type Config struct {
 	App      configuration.AppConfig `yaml:"app"`
 	Pulsar   pulsar.PulsarConfig     `yaml:"pulsar"`
-	DexTrade DexTradeConfig          `yaml:"dextrade"`
+	Dextrade DextradeConfig          `yaml:"dextrade"`
 	Postgres postgres.PostgresConfig `yaml:"postgres"`
 }
 
-type DexTradeConfig struct {
+type DextradeConfig struct {
 	Id        string `yaml:"id" env:"OMIGA_DEXTRADE_ID"`
 	BaseUrl   string `yaml:"baseUrl" env:"OMIGA_DEXTRADE_BASEURL"`
 	ApiKey    string `yaml:"apiKey" env:"OMIGA_DEXTRADE_APIKEY"`

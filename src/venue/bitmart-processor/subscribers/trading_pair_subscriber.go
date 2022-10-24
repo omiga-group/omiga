@@ -11,22 +11,22 @@ import (
 	"go.uber.org/zap"
 )
 
-type BitMartTradingPairSubscriber interface {
+type BitmartTradingPairSubscriber interface {
 }
 
 type bitMartTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	bitMartConfig         configuration.BitMartConfig
+	bitMartConfig         configuration.BitmartConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
-func NewBitMartTradingPairSubscriber(
+func NewBitmartTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	bitMartConfig configuration.BitMartConfig,
+	bitMartConfig configuration.BitmartConfig,
 	cronService cron.CronService,
-	tradingPairRepository repositories.TradingPairRepository) (BitMartTradingPairSubscriber, error) {
+	tradingPairRepository repositories.TradingPairRepository) (BitmartTradingPairSubscriber, error) {
 	instance := &bitMartTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
@@ -74,7 +74,7 @@ func (btps *bitMartTradingPairSubscriber) Run() {
 	if err = btps.tradingPairRepository.CreateTradingPairs(
 		btps.ctx,
 		btps.bitMartConfig.Id,
-		mappers.BitMartSymbolsToTradingPairs(response.JSON200.Data.Symbols)); err != nil {
+		mappers.BitmartSymbolsToTradingPairs(response.JSON200.Data.Symbols)); err != nil {
 		btps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return

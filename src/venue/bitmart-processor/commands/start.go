@@ -66,10 +66,10 @@ func startCommand() *cobra.Command {
 
 			defer cronService.Close()
 
-			if _, err = appsetup.NewBitMartTradingPairSubscriber(
+			if _, err = appsetup.NewBitmartTradingPairSubscriber(
 				ctx,
 				sugarLogger,
-				config.BitMart,
+				config.Bitmart,
 				cronService,
 				config.Postgres); err != nil {
 				sugarLogger.Fatal(err)

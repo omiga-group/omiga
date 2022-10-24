@@ -1,4 +1,4 @@
-name: "DexTrade Processor"
+name: "Dextrade Processor"
 
 on:
   push:
@@ -26,7 +26,7 @@ on:
 
 jobs:
   build:
-    name: "Build - DexTrade Processor"
+    name: "Build - Dextrade Processor"
     runs-on:
       - self-hosted
     env:

@@ -64,19 +64,19 @@ func NewSyntheticOrderConsumer(
 	return nil, nil
 }
 
-func NewKuCoinTradingPairSubscriber(
+func NewKucoinTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	kuCoinConfig configuration.KuCoinConfig,
+	kuCoinConfig configuration.KucoinConfig,
 	cronService cron.CronService,
-	postgresConfig postgres.PostgresConfig) (subscribers.KuCoinTradingPairSubscriber, error) {
+	postgresConfig postgres.PostgresConfig) (subscribers.KucoinTradingPairSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
 		repositories.NewCurrencyRepository,
 		repositories.NewVenueRepository,
 		repositories.NewTradingPairRepository,
-		subscribers.NewKuCoinTradingPairSubscriber)
+		subscribers.NewKucoinTradingPairSubscriber)
 
 	return nil, nil
 }

@@ -8,25 +8,25 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockDexTradeTradingPairSubscriber is a mock of DexTradeTradingPairSubscriber interface.
-type MockDexTradeTradingPairSubscriber struct {
+// MockDextradeTradingPairSubscriber is a mock of DextradeTradingPairSubscriber interface.
+type MockDextradeTradingPairSubscriber struct {
 	ctrl     *gomock.Controller
-	recorder *MockDexTradeTradingPairSubscriberMockRecorder
+	recorder *MockDextradeTradingPairSubscriberMockRecorder
 }
 
-// MockDexTradeTradingPairSubscriberMockRecorder is the mock recorder for MockDexTradeTradingPairSubscriber.
-type MockDexTradeTradingPairSubscriberMockRecorder struct {
-	mock *MockDexTradeTradingPairSubscriber
+// MockDextradeTradingPairSubscriberMockRecorder is the mock recorder for MockDextradeTradingPairSubscriber.
+type MockDextradeTradingPairSubscriberMockRecorder struct {
+	mock *MockDextradeTradingPairSubscriber
 }
 
-// NewMockDexTradeTradingPairSubscriber creates a new mock instance.
-func NewMockDexTradeTradingPairSubscriber(ctrl *gomock.Controller) *MockDexTradeTradingPairSubscriber {
-	mock := &MockDexTradeTradingPairSubscriber{ctrl: ctrl}
-	mock.recorder = &MockDexTradeTradingPairSubscriberMockRecorder{mock}
+// NewMockDextradeTradingPairSubscriber creates a new mock instance.
+func NewMockDextradeTradingPairSubscriber(ctrl *gomock.Controller) *MockDextradeTradingPairSubscriber {
+	mock := &MockDextradeTradingPairSubscriber{ctrl: ctrl}
+	mock.recorder = &MockDextradeTradingPairSubscriberMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockDexTradeTradingPairSubscriber) EXPECT() *MockDexTradeTradingPairSubscriberMockRecorder {
+func (m *MockDextradeTradingPairSubscriber) EXPECT() *MockDextradeTradingPairSubscriberMockRecorder {
 	return m.recorder
 }

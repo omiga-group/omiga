@@ -27,5 +27,5 @@ func Root() *cobra.Command {
 }
 
 func printHeader() {
-	util.PrintInfo("KuCoin Processor")
+	util.PrintInfo("Kucoin Processor")
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/omiga-group/omiga/src/venue/shared/models"
 )
 
-func BitMartSymbolsToTradingPairs(symbols []bitmartspotv1.Symbol) []models.TradingPair {
+func BitmartSymbolsToTradingPairs(symbols []bitmartspotv1.Symbol) []models.TradingPair {
 	return slices.Map(symbols, func(symbol bitmartspotv1.Symbol) models.TradingPair {
 		return models.TradingPair{
 			Symbol:                   symbol.Symbol,

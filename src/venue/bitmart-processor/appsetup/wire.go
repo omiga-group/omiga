@@ -64,19 +64,19 @@ func NewSyntheticOrderConsumer(
 	return nil, nil
 }
 
-func NewBitMartTradingPairSubscriber(
+func NewBitmartTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	bitMartConfig configuration.BitMartConfig,
+	bitMartConfig configuration.BitmartConfig,
 	cronService cron.CronService,
-	postgresConfig postgres.PostgresConfig) (subscribers.BitMartTradingPairSubscriber, error) {
+	postgresConfig postgres.PostgresConfig) (subscribers.BitmartTradingPairSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
 		repositories.NewCurrencyRepository,
 		repositories.NewVenueRepository,
 		repositories.NewTradingPairRepository,
-		subscribers.NewBitMartTradingPairSubscriber)
+		subscribers.NewBitmartTradingPairSubscriber)
 
 	return nil, nil
 }

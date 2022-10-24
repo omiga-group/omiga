@@ -27,5 +27,5 @@ func Root() *cobra.Command {
 }
 
 func printHeader() {
-	util.PrintInfo("DexTrade Processor")
+	util.PrintInfo("Dextrade Processor")
 }

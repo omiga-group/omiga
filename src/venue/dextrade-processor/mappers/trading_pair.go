@@ -6,7 +6,7 @@ import (
 	"github.com/omiga-group/omiga/src/venue/shared/models"
 )
 
-func DexTradeSymbolsToTradingPairs(symbols []dextradev1.Symbol) []models.TradingPair {
+func DextradeSymbolsToTradingPairs(symbols []dextradev1.Symbol) []models.TradingPair {
 	return slices.Map(symbols, func(symbol dextradev1.Symbol) models.TradingPair {
 		return models.TradingPair{
 			Symbol:  symbol.Pair,

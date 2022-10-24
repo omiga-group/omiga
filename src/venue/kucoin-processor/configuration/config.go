@@ -9,11 +9,11 @@ import (
 type Config struct {
 	App      configuration.AppConfig `yaml:"app"`
 	Pulsar   pulsar.PulsarConfig     `yaml:"pulsar"`
-	KuCoin   KuCoinConfig            `yaml:"kucoin"`
+	Kucoin   KucoinConfig            `yaml:"kucoin"`
 	Postgres postgres.PostgresConfig `yaml:"postgres"`
 }
 
-type KuCoinConfig struct {
+type KucoinConfig struct {
 	Id         string `yaml:"id" env:"OMIGA_KUCOIN_ID"`
 	ApiKey     string `yaml:"apiKey" env:"OMIGA_KUCOIN_APIKEY"`
 	Passphrase string `yaml:"passphrase" env:"OMIGA_KUCOIN_PASSPHRASE"`

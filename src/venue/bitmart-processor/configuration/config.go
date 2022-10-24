@@ -9,11 +9,11 @@ import (
 type Config struct {
 	App      configuration.AppConfig `yaml:"app"`
 	Pulsar   pulsar.PulsarConfig     `yaml:"pulsar"`
-	BitMart  BitMartConfig           `yaml:"bitmart"`
+	Bitmart  BitmartConfig           `yaml:"bitmart"`
 	Postgres postgres.PostgresConfig `yaml:"postgres"`
 }
 
-type BitMartConfig struct {
+type BitmartConfig struct {
 	Id      string `yaml:"id" env:"OMIGA_BITMART_ID"`
 	BaseUrl string `yaml:"baseUrl" env:"OMIGA_BITMART_BASEURL"`
 }

@@ -64,19 +64,19 @@ func NewSyntheticOrderConsumer(
 	return nil, nil
 }
 
-func NewDexTradeTradingPairSubscriber(
+func NewDextradeTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	dexTradeConfig configuration.DexTradeConfig,
+	dexTradeConfig configuration.DextradeConfig,
 	cronService cron.CronService,
-	postgresConfig postgres.PostgresConfig) (subscribers.DexTradeTradingPairSubscriber, error) {
+	postgresConfig postgres.PostgresConfig) (subscribers.DextradeTradingPairSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
 		repositories.NewCurrencyRepository,
 		repositories.NewVenueRepository,
 		repositories.NewTradingPairRepository,
-		subscribers.NewDexTradeTradingPairSubscriber)
+		subscribers.NewDextradeTradingPairSubscriber)
 
 	return nil, nil
 }

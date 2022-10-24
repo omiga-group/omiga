@@ -153,10 +153,10 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			if _, err = bitmartprocessorappsetup.NewBitMartTradingPairSubscriber(
+			if _, err = bitmartprocessorappsetup.NewBitmartTradingPairSubscriber(
 				ctx,
 				sugarLogger,
-				bitmartProcessorConfig.BitMart,
+				bitmartProcessorConfig.Bitmart,
 				cronService,
 				bitmartProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
@@ -198,10 +198,10 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			if _, err = dextradeprocessorappsetup.NewDexTradeTradingPairSubscriber(
+			if _, err = dextradeprocessorappsetup.NewDextradeTradingPairSubscriber(
 				ctx,
 				sugarLogger,
-				dextradeProcessorConfig.DexTrade,
+				dextradeProcessorConfig.Dextrade,
 				cronService,
 				dextradeProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
@@ -234,10 +234,10 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			if _, err = kucoinprocessorappsetup.NewKuCoinTradingPairSubscriber(
+			if _, err = kucoinprocessorappsetup.NewKucoinTradingPairSubscriber(
 				ctx,
 				sugarLogger,
-				kucoinProcessorConfig.KuCoin,
+				kucoinProcessorConfig.Kucoin,
 				cronService,
 				kucoinProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)

@@ -14,7 +14,7 @@ func versionCommand() *cobra.Command {
 		Short: "Return kucoin-processor version",
 		Long:  "Return kucoin-processor version",
 		Run: func(cmd *cobra.Command, args []string) {
-			util.PrintInfo("KuCoin Processor\n")
+			util.PrintInfo("Kucoin Processor\n")
 			util.PrintInfo(fmt.Sprintf("Copyright (C) %d, Omiga Ltd.\n", time.Now().Year()))
 			util.PrintYAML(util.GetVersion())
 		},

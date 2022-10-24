@@ -6,7 +6,7 @@ import (
 	"github.com/omiga-group/omiga/src/venue/shared/models"
 )
 
-func KuCoinSymbolModelToTradingPairs(symbols kucoin.SymbolsModel) []models.TradingPair {
+func KucoinSymbolModelToTradingPairs(symbols kucoin.SymbolsModel) []models.TradingPair {
 	return slices.Map(symbols, func(symbol *kucoin.SymbolModel) models.TradingPair {
 		return models.TradingPair{
 			Symbol:  symbol.Symbol,

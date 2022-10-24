@@ -27,5 +27,5 @@ func Root() *cobra.Command {
 }
 
 func printHeader() {
-	util.PrintInfo("BitMart Processor")
+	util.PrintInfo("Bitmart Processor")
 }

@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: BitMart Spot API V1
-  description: "BitMart Spot REST API"
+  title: Bitmart Spot API V1
+  description: "Bitmart Spot REST API"
   version: 1.0.0
 
 servers:

@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: DexTrade API V2
-  description: "DexTrade REST API"
+  title: Dextrade API V2
+  description: "Dextrade REST API"
   version: 1.0.0
 
 servers:
