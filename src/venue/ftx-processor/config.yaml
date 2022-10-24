@@ -8,11 +8,15 @@ pulsar:
   operationTimeout: 30s
   connectionTimeout: 30s
 
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
 ftx:
   id: "ftx"
   apiUrl: https://ftx.com/api
-  websocketUrl: "wss://ftx.com/ws/"
+  websocketUrl: wss://ftx.com/ws/
   timeout: 10
-  orderBook:
-    markets:
-      - market: ETH-PERP
+  apiKey: ""
+  passphrase: ""
+  secretKey: ""

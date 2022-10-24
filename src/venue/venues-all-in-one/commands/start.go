@@ -22,6 +22,8 @@ import (
 	cryptoprocessorconfiguration "github.com/omiga-group/omiga/src/venue/crypto-processor/configuration"
 	dextradeprocessorappsetup "github.com/omiga-group/omiga/src/venue/dextrade-processor/appsetup"
 	dextradeprocessorconfiguration "github.com/omiga-group/omiga/src/venue/dextrade-processor/configuration"
+	ftxprocessorappsetup "github.com/omiga-group/omiga/src/venue/ftx-processor/appsetup"
+	ftxprocessorconfiguration "github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
 	geminiprocessorappsetup "github.com/omiga-group/omiga/src/venue/gemini-processor/appsetup"
 	geminiprocessorconfiguration "github.com/omiga-group/omiga/src/venue/gemini-processor/configuration"
 	huobiprocessorappsetup "github.com/omiga-group/omiga/src/venue/huobi-processor/appsetup"
@@ -114,6 +116,11 @@ func startCommand() *cobra.Command {
 
 			var xtProcessorConfig xtprocessorconfiguration.Config
 			if err := entconfiguration.LoadConfig("xt-processor-config.yaml", &xtProcessorConfig); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			var ftxProcessorConfig ftxprocessorconfiguration.Config
+			if err := entconfiguration.LoadConfig("ftx-processor-config.yaml", &ftxProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
@@ -251,6 +258,15 @@ func startCommand() *cobra.Command {
 				xtProcessorConfig.Xt,
 				cronService,
 				xtProcessorConfig.Postgres); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			if _, err = ftxprocessorappsetup.NewFtxTradingPairSubscriber(
+				ctx,
+				sugarLogger,
+				ftxProcessorConfig.Ftx,
+				cronService,
+				ftxProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
 

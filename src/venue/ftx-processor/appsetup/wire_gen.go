@@ -11,17 +11,32 @@ import (
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
-	"github.com/omiga-group/omiga/src/venue/ftx-processor/client"
 	configuration2 "github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/subscribers"
+	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/shared/publishers"
+	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
+
+func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	cronService, err := cron.NewCronService(logger, timeHelper)
+	if err != nil {
+		return nil, err
+	}
+	return cronService, nil
+}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	timeHelper, err := time.NewTimeHelper()
@@ -53,7 +68,6 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 }
 
 func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, ftxConfig configuration2.FtxConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.FtxOrderBookSubscriber, error) {
-	apiClient := client.NewFtxApiClient(ftxConfig)
 	osHelper, err := os.NewOsHelper()
 	if err != nil {
 		return nil, err
@@ -71,9 +85,37 @@ func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, a
 	if err != nil {
 		return nil, err
 	}
-	ftxOrderBookSubscriber, err := subscribers.NewFtxOrderBookSubscriber(ctx, logger, apiClient, ftxConfig, orderBookPublisher)
+	ftxOrderBookSubscriber, err := subscribers.NewFtxOrderBookSubscriber(ctx, logger, ftxConfig, orderBookPublisher)
 	if err != nil {
 		return nil, err
 	}
 	return ftxOrderBookSubscriber, nil
+}
+
+func NewFtxTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, ftxConfig configuration2.FtxConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.FtxTradingPairSubscriber, error) {
+	database, err := postgres.NewPostgres(logger, postgresConfig)
+	if err != nil {
+		return nil, err
+	}
+	entgoClient, err := entities.NewEntgoClient(logger, database)
+	if err != nil {
+		return nil, err
+	}
+	currencyRepository, err := repositories.NewCurrencyRepository(logger, entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	venueRepository, err := repositories.NewVenueRepository(logger, entgoClient)
+	if err != nil {
+		return nil, err
+	}
+	tradingPairRepository, err := repositories.NewTradingPairRepository(logger, entgoClient, currencyRepository, venueRepository)
+	if err != nil {
+		return nil, err
+	}
+	ftxTradingPairSubscriber, err := subscribers.NewFtxTradingPairSubscriber(ctx, logger, ftxConfig, cronService, tradingPairRepository)
+	if err != nil {
+		return nil, err
+	}
+	return ftxTradingPairSubscriber, nil
 }

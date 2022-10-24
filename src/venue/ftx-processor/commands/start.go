@@ -74,6 +74,22 @@ func startCommand() *cobra.Command {
 
 			defer ftxOrderBookSubscriber.Close()
 
+			cronService, err := appsetup.NewCronService(sugarLogger)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer cronService.Close()
+
+			if _, err = appsetup.NewFtxTradingPairSubscriber(
+				ctx,
+				sugarLogger,
+				config.Ftx,
+				cronService,
+				config.Postgres); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
 			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)

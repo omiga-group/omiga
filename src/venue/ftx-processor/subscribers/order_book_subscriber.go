@@ -8,8 +8,8 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/life4/genesis/slices"
-	"github.com/omiga-group/omiga/src/venue/ftx-processor/client"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
+	ftxv1 "github.com/omiga-group/omiga/src/venue/ftx-processor/ftxclient/v1"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/mappers"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/models"
 	exchangeModels "github.com/omiga-group/omiga/src/venue/shared/models"
@@ -25,13 +25,11 @@ type ftxOrderBookSubscriber struct {
 	logger             *zap.SugaredLogger
 	ftxConfig          configuration.FtxConfig
 	orderBookPublisher publishers.OrderBookPublisher
-	apiClient          client.ApiClient
 }
 
 func NewFtxOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	apiClient client.ApiClient,
 	ftxConfig configuration.FtxConfig,
 	orderBookPublisher publishers.OrderBookPublisher) (FtxOrderBookSubscriber, error) {
 
@@ -40,7 +38,6 @@ func NewFtxOrderBookSubscriber(
 		logger:             logger,
 		ftxConfig:          ftxConfig,
 		orderBookPublisher: orderBookPublisher,
-		apiClient:          apiClient,
 	}
 
 	go instance.run()
@@ -80,10 +77,40 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe() {
 		}
 	}()
 
-	mm, err := fobs.apiClient.GetMarkets()
+	client, err := ftxv1.NewClientWithResponses(fobs.ftxConfig.ApiUrl)
 	if err != nil {
-		fobs.logger.Errorf("Failed to get FTX markets list. Error: %v", err)
+		fobs.logger.Errorf("Failed to create client with response. Error: %v", err)
+
 		return
+	}
+
+	response, err := client.GetMarketsWithResponse(fobs.ctx)
+	if err != nil {
+		fobs.logger.Errorf("Failed to call getMarkets endpoint. Error: %v", err)
+
+		return
+	}
+
+	if response.HTTPResponse.StatusCode != 200 {
+		fobs.logger.Errorf("Failed to call getMarkets endpoint. Return status code is %d", response.HTTPResponse.StatusCode)
+
+		return
+	}
+
+	if response.JSON200 == nil {
+		fobs.logger.Errorf("Returned JSON object is nil")
+
+		return
+	}
+
+	rs := *response.JSON200.Result
+	mm := models.MarketsMap{}
+	for _, m := range rs {
+		if !m.Enabled || m.Type != string(models.MarketTypeSpot) {
+			continue
+		}
+
+		mm[m.Name] = m
 	}
 
 	channel := "orderbook"
@@ -124,7 +151,7 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe() {
 
 func (fobs *ftxOrderBookSubscriber) publish(
 	ob *ftxOrderBook,
-	market models.Market) {
+	market ftxv1.Market) {
 	asks := slices.Map(ob.Data.Asks, func(ask [2]float64) models.OrderBookEntry {
 		return models.OrderBookEntry{
 			Symbol: ob.Market,
