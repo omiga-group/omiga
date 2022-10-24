@@ -90,7 +90,6 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-
 			timeHelper, err := appsetup.NewTimeHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)

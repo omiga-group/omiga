@@ -36,8 +36,8 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/subscribers"
-	"github.com/omiga-group/omiga/src/venue/shared/publishers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
+	"github.com/omiga-group/omiga/src/venue/shared/publishers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 )
 

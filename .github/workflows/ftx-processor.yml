@@ -1,4 +1,4 @@
-name: "FTX Processor"
+name: "Ftx Processor"
 
 on:
   push:

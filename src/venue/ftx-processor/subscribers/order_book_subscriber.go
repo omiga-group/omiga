@@ -9,11 +9,11 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/life4/genesis/slices"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
+	ftxv1 "github.com/omiga-group/omiga/src/venue/ftx-processor/ftxclient/v1"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/mappers"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/models"
 	exchangeModels "github.com/omiga-group/omiga/src/venue/shared/models"
 	"github.com/omiga-group/omiga/src/venue/shared/publishers"
-	ftxv1 "github.com/omiga-group/omiga/src/venue/ftx-processor/ftxclient/v1"
 )
 
 type FtxOrderBookSubscriber interface {
@@ -101,7 +101,7 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe() {
 		fobs.logger.Errorf("Returned JSON object is nil")
 
 		return
-	}	
+	}
 
 	rs := *response.JSON200.Result
 	mm := models.MarketsMap{}

@@ -17,7 +17,7 @@ type FtxTradingPairSubscriber interface {
 type ftxTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	ftxConfig        	  configuration.FtxConfig
+	ftxConfig             configuration.FtxConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
@@ -31,7 +31,7 @@ func NewFtxTradingPairSubscriber(
 	instance := &ftxTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		ftxConfig:        	   ftxConfig,
+		ftxConfig:             ftxConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
