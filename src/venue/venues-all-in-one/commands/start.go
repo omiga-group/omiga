@@ -34,6 +34,8 @@ import (
 	kucoinprocessorconfiguration "github.com/omiga-group/omiga/src/venue/kucoin-processor/configuration"
 	mexcprocessorappsetup "github.com/omiga-group/omiga/src/venue/mexc-processor/appsetup"
 	mexcprocessorconfiguration "github.com/omiga-group/omiga/src/venue/mexc-processor/configuration"
+	rainprocessorappsetup "github.com/omiga-group/omiga/src/venue/rain-processor/appsetup"
+	rainprocessorconfiguration "github.com/omiga-group/omiga/src/venue/rain-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/venues-all-in-one/appsetup"
 	xtprocessorappsetup "github.com/omiga-group/omiga/src/venue/xt-processor/appsetup"
 	xtprocessorconfiguration "github.com/omiga-group/omiga/src/venue/xt-processor/configuration"
@@ -111,6 +113,11 @@ func startCommand() *cobra.Command {
 
 			var mexcProcessorConfig mexcprocessorconfiguration.Config
 			if err := entconfiguration.LoadConfig("mexc-processor-config.yaml", &mexcProcessorConfig); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			var rainProcessorConfig rainprocessorconfiguration.Config
+			if err := entconfiguration.LoadConfig("rain-processor-config.yaml", &rainProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
@@ -249,6 +256,15 @@ func startCommand() *cobra.Command {
 				mexcProcessorConfig.Mexc,
 				cronService,
 				mexcProcessorConfig.Postgres); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			if _, err = rainprocessorappsetup.NewRainTradingPairSubscriber(
+				ctx,
+				sugarLogger,
+				rainProcessorConfig.Rain,
+				cronService,
+				rainProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
 

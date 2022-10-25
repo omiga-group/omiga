@@ -24,6 +24,7 @@ RUN mkdir -p /src/shared/enterprise \
     mkdir -p /src/venue/kraken-processor \
     mkdir -p /src/venue/kucoin-processor \
     mkdir -p /src/venue/mexc-processor \
+    mkdir -p /src/venue/rain-processor \
     mkdir -p /src/venue/xt-processor
 
 COPY go.mod /src/
@@ -45,6 +46,7 @@ COPY venue/huobi-processor /src/venue/huobi-processor
 COPY venue/kraken-processor /src/venue/kraken-processor
 COPY venue/kucoin-processor /src/venue/kucoin-processor
 COPY venue/mexc-processor /src/venue/mexc-processor
+COPY venue/rain-processor /src/venue/rain-processor
 COPY venue/xt-processor /src/venue/xt-processor
 
 WORKDIR /src/venue/venues-all-in-one
@@ -76,5 +78,6 @@ COPY --from=build /src/venue/huobi-processor/config.yaml /omiga/huobi-processor-
 COPY --from=build /src/venue/kraken-processor/config.yaml /omiga/kraken-processor-config.yaml
 COPY --from=build /src/venue/kucoin-processor/config.yaml /omiga/kucoin-processor-config.yaml
 COPY --from=build /src/venue/mexc-processor/config.yaml /omiga/mexc-processor-config.yaml
+COPY --from=build /src/venue/rain-processor/config.yaml /omiga/rain-processor-config.yaml
 COPY --from=build /src/venue/xt-processor/config.yaml /omiga/xt-processor-config.yaml
 CMD ["/omiga/venues-all-in-one", "start"]
