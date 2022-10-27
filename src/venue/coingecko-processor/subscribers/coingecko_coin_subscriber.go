@@ -49,8 +49,6 @@ func NewCoingeckoCoinSubscriber(
 		return nil, err
 	}
 
-	go instance.Run()
-
 	return instance, nil
 }
 

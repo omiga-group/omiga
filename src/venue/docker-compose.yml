@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: venue/shared/cli/Dockerfile
-      target: local
+      target: final
     restart: on-failure
     environment:
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
@@ -24,7 +24,7 @@ services:
     build:
       context: .
       dockerfile: venue/venue-api/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_APP_LISTENINGINTERFACE: ":80"
@@ -45,7 +45,7 @@ services:
     build:
       context: .
       dockerfile: venue/coingecko-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
@@ -63,7 +63,7 @@ services:
     build:
       context: .
       dockerfile: venue/binance-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -89,7 +89,7 @@ services:
     build:
       context: .
       dockerfile: venue/bitmart-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -115,7 +115,7 @@ services:
     build:
       context: .
       dockerfile: venue/bittrex-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -141,7 +141,7 @@ services:
     build:
       context: .
       dockerfile: venue/bybit-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -167,7 +167,7 @@ services:
     build:
       context: .
       dockerfile: venue/mexc-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -193,7 +193,7 @@ services:
     build:
       context: .
       dockerfile: venue/rain-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -219,7 +219,7 @@ services:
     build:
       context: .
       dockerfile: venue/coinbase-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -245,7 +245,7 @@ services:
     build:
       context: .
       dockerfile: venue/crypto-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -271,7 +271,7 @@ services:
     build:
       context: .
       dockerfile: venue/dextrade-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -297,7 +297,7 @@ services:
     build:
       context: .
       dockerfile: venue/ftx-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -322,7 +322,7 @@ services:
     build:
       context: .
       dockerfile: venue/gemini-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -348,7 +348,7 @@ services:
     build:
       context: .
       dockerfile: venue/huobi-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -374,7 +374,7 @@ services:
     build:
       context: .
       dockerfile: venue/kraken-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -400,7 +400,7 @@ services:
     build:
       context: .
       dockerfile: venue/kucoin-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}
@@ -426,7 +426,7 @@ services:
     build:
       context: .
       dockerfile: venue/xt-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_PULSAR_URL: ${OMIGA_PULSAR_URL:-pulsar://pulsar:6650}

@@ -40,8 +40,6 @@ func NewKucoinTradingPairSubscriber(
 		return nil, err
 	}
 
-	go instance.Run()
-
 	return instance, nil
 }
 

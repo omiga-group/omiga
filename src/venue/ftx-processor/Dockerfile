@@ -23,9 +23,6 @@ WORKDIR /src/venue/ftx-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/ftx-processor main.go
 
-FROM build AS local
-CMD ["/bin/ftx-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/ftx-processor /omiga
 COPY --from=build /src/venue/ftx-processor/config.yaml /omiga
+
+RUN /omiga/ftx-processor install-dependecies
+
 CMD ["/omiga/ftx-processor", "start"]

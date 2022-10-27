@@ -21,9 +21,6 @@ WORKDIR /src/shared/omigactl
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/omigactl main.go
 
-FROM build AS local
-CMD ["/bin/omigactl", "setup-pulsar"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -33,5 +30,8 @@ FROM base AS final
 
 WORKDIR /omiga
 COPY --from=build /bin/omigactl /omiga
-COPY --from=build /src/venue/omigactl/config.yaml /omiga
+COPY --from=build /src/shared/omigactl/config.yaml /omiga
+
+RUN /omiga/omigactl install-dependecies
+
 CMD ["/omiga/omigactl", "setup-pulsar"]

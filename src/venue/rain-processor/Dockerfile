@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.4.1
-ARG FINAL_IMAGE=alpine:3
+ARG FINAL_IMAGE=golang:1.19
 ARG BUILD_IMAGE=golang:1.19
 
 FROM $FINAL_IMAGE as base
@@ -23,9 +23,6 @@ WORKDIR /src/venue/rain-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/rain-processor main.go
 
-FROM build AS local
-CMD ["/bin/rain-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/rain-processor /omiga
 COPY --from=build /src/venue/rain-processor/config.yaml /omiga
+
+RUN /omiga/rain-processor install-dependecies
+
 CMD ["/omiga/rain-processor", "start"]

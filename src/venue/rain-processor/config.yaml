@@ -16,8 +16,8 @@ rain:
   id: "rain"
   websiteUrl: "https://www.rain.com"
   baseUrl: "https://smart-prod-0.rain.com/api/1"
-  username: "morteza.alizadeh@gmail.com"
-  password: "1qaz@WSXhjkl;'"
-  totpSecret: "W653BKW55ZICVOMPAV53T4HGG7JT235RQ3KI43IQ7EA2MBJD54UQ"
+  username: ""
+  password: ""
+  totpSecret: ""
   headless: true
   timeout: 30s

@@ -23,9 +23,6 @@ WORKDIR /src/venue/xt-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/xt-processor main.go
 
-FROM build AS local
-CMD ["/bin/xt-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/xt-processor /omiga
 COPY --from=build /src/venue/xt-processor/config.yaml /omiga
+
+RUN /omiga/xt-processor install-dependecies
+
 CMD ["/omiga/xt-processor", "start"]

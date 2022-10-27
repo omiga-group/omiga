@@ -23,9 +23,6 @@ WORKDIR /src/venue/dextrade-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/dextrade-processor main.go
 
-FROM build AS local
-CMD ["/bin/dextrade-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/dextrade-processor /omiga
 COPY --from=build /src/venue/dextrade-processor/config.yaml /omiga
+
+RUN /omiga/dextrade-processor install-dependecies
+
 CMD ["/omiga/dextrade-processor", "start"]

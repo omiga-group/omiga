@@ -23,9 +23,6 @@ WORKDIR /src/venue/bybit-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/bybit-processor main.go
 
-FROM build AS local
-CMD ["/bin/bybit-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/bybit-processor /omiga
 COPY --from=build /src/venue/bybit-processor/config.yaml /omiga
+
+RUN /omiga/bybit-processor install-dependecies
+
 CMD ["/omiga/bybit-processor", "start"]

@@ -23,9 +23,6 @@ WORKDIR /src/venue/huobi-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/huobi-processor main.go
 
-FROM build AS local
-CMD ["/bin/huobi-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/huobi-processor /omiga
 COPY --from=build /src/venue/huobi-processor/config.yaml /omiga
+
+RUN /omiga/huobi-processor install-dependecies
+
 CMD ["/omiga/huobi-processor", "start"]

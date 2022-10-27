@@ -40,8 +40,6 @@ func NewKrakenTradingPairSubscriber(
 		return nil, err
 	}
 
-	go instance.Run()
-
 	return instance, nil
 }
 

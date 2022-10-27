@@ -23,9 +23,6 @@ WORKDIR /src/venue/kucoin-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/kucoin-processor main.go
 
-FROM build AS local
-CMD ["/bin/kucoin-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/kucoin-processor /omiga
 COPY --from=build /src/venue/kucoin-processor/config.yaml /omiga
+
+RUN /omiga/kucoin-processor install-dependecies
+
 CMD ["/omiga/kucoin-processor", "start"]

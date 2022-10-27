@@ -40,8 +40,6 @@ func NewDextradeTradingPairSubscriber(
 		return nil, err
 	}
 
-	go instance.Run()
-
 	return instance, nil
 }
 

@@ -11,6 +11,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/security/authentication/passwordgeneration/totp"
 	"github.com/omiga-group/omiga/src/venue/rain-processor/configuration"
+	"github.com/omiga-group/omiga/src/venue/rain-processor/mappers"
 	rainv1 "github.com/omiga-group/omiga/src/venue/rain-processor/rainclient/v1"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"github.com/playwright-community/playwright-go"
@@ -66,11 +67,9 @@ func NewRainTradingPairSubscriber(
 	}
 
 	// Run at every minute from 0 through 59.
-	// if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
-	// 	return nil, err
-	// }
-
-	go instance.Run()
+	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
+		return nil, err
+	}
 
 	return instance, nil
 }
@@ -118,6 +117,7 @@ func (rtps *rainTradingPairSubscriber) Run() {
 	}()
 
 	headersChannel := make(chan map[string]string)
+	defer close(headersChannel)
 
 	signinPageInstance.On("request", func(request playwright.Request) {
 		configurationUrl := *rtps.baseUrl
@@ -212,6 +212,14 @@ func (rtps *rainTradingPairSubscriber) Run() {
 			return
 		}
 
+		if err = rtps.tradingPairRepository.CreateTradingPairs(
+			rtps.ctx,
+			rtps.rainConfig.Id,
+			mappers.RainCoinsToTradingPairs(response.JSON200.Coins)); err != nil {
+			rtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
+
+			return
+		}
 	case <-time.After(rtps.timeout):
 		rtps.logger.Errorf("Timed out, failed to receive headers required to call getAllCoins endpoint.")
 	}
