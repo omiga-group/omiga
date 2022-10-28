@@ -14,6 +14,10 @@ postgres:
 
 rain:
   id: "rain"
-  baseUrl: "https://api.rain.com/data/api/v1"
-  apiKey: ""
-  secretKey: ""
+  websiteUrl: "https://www.rain.com"
+  baseUrl: "https://smart-prod-0.rain.com/api/1"
+  username: ""
+  password: ""
+  totpSecret: ""
+  headless: true
+  timeout: 30s

@@ -21,10 +21,7 @@ COPY venue/coingecko-processor /src/venue/coingecko-processor
 
 WORKDIR /src/venue/coingecko-processor
 
-RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/coingecko main.go
-
-FROM build AS local
-CMD ["/bin/coingecko", "start"]
+RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/coingecko-processor main.go
 
 FROM build AS test
 
@@ -34,6 +31,9 @@ RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -coverpkg=./... -v -cove
 FROM base AS final
 
 WORKDIR /omiga
-COPY --from=build /bin/coingecko /omiga
+COPY --from=build /bin/coingecko-processor /omiga
 COPY --from=build /src/venue/coingecko-processor/config.yaml /omiga
-CMD ["/omiga/coingecko", "start"]
+
+RUN /omiga/coingecko-processor install-dependecies
+
+CMD ["/omiga/coingecko-processor", "start"]

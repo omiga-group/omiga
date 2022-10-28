@@ -14,8 +14,12 @@ type Config struct {
 }
 
 type RainConfig struct {
-	Id        string `yaml:"id" env:"OMIGA_RAIN_ID"`
-	BaseUrl   string `yaml:"baseUrl" env:"OMIGA_RAIN_BASEURL"`
-	ApiKey    string `yaml:"apiKey" env:"OMIGA_RAIN_APIKEY"`
-	SecretKey string `yaml:"secretKey" env:"OMIGA_RAIN_SECRETKEY"`
+	Id         string `yaml:"id" env:"OMIGA_RAIN_ID"`
+	WebsiteUrl string `yaml:"websiteUrl" env:"OMIGA_RAIN_WEBSITEURL"`
+	BaseUrl    string `yaml:"baseUrl" env:"OMIGA_RAIN_BASEURL"`
+	Username   string `yaml:"username" env:"OMIGA_RAIN_USERNAME"`
+	Password   string `yaml:"password" env:"OMIGA_RAIN_PASSWORD"`
+	TotpSecret string `yaml:"totpSecret" env:"OMIGA_RAIN_TOTPSECRET"`
+	Headless   bool   `yaml:"headless" env:"OMIGA_RAIN_HEADLESS"`
+	Timeout    string `yaml:"timeout" env:"OMIGA_RAIN_TIMEOUT"`
 }

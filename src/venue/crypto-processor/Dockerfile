@@ -23,9 +23,6 @@ WORKDIR /src/venue/crypto-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/crypto-processor main.go
 
-FROM build AS local
-CMD ["/bin/crypto-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/crypto-processor /omiga
 COPY --from=build /src/venue/crypto-processor/config.yaml /omiga
+
+RUN /omiga/crypto-processor install-dependecies
+
 CMD ["/omiga/crypto-processor", "start"]

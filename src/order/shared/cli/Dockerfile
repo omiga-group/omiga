@@ -21,9 +21,6 @@ WORKDIR /src/order/shared/cli
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/order-database-migration main.go
 
-FROM build AS local
-CMD ["/bin/order-database-migration", "migrate", "--post-migration-script-path", "post_migration_script.sql"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -35,4 +32,7 @@ WORKDIR /omiga
 COPY --from=build /bin/order-database-migration /omiga
 COPY --from=build /src/order/shared/cli/config.yaml /omiga
 COPY --from=build /src/order/shared/cli/post_migration_script.sql /omiga
+
+RUN /omiga/order-database-migration install-dependecies
+
 CMD ["/omiga/order-database-migration", "migrate", "--post-migration-script-path", "post_migration_script.sql"]

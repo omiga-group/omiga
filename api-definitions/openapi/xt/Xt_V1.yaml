@@ -1,8 +1,8 @@
 openapi: 3.0.1
 info:
-  title: Xt API V2
+  title: Xt API V1
   description: "Xt REST API"
-  version: 2.0.0
+  version: 1.0.0
 
 servers:
   - url: https://api.xt.com/data/api/v1

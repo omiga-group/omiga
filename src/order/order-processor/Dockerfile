@@ -23,9 +23,6 @@ WORKDIR /src/order/order-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/order-processor main.go
 
-FROM build AS local
-CMD ["/bin/order-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/order-processor /omiga
 COPY --from=build /src/order/order-processor/config.yaml /omiga
+
+RUN /omiga/order-processor install-dependecies
+
 CMD ["/omiga/order-processor", "start"]

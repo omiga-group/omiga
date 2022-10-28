@@ -23,9 +23,6 @@ WORKDIR /src/venue/kraken-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/kraken-processor main.go
 
-FROM build AS local
-CMD ["/bin/kraken-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/kraken-processor /omiga
 COPY --from=build /src/venue/kraken-processor/config.yaml /omiga
+
+RUN /omiga/kraken-processor install-dependecies
+
 CMD ["/omiga/kraken-processor", "start"]

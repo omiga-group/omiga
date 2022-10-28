@@ -35,12 +35,10 @@ func NewXtTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every minute from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
+	// Run at every 5th minute from 0 through 59..
+	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
 		return nil, err
 	}
-
-	go instance.Run()
 
 	return instance, nil
 }
@@ -75,7 +73,7 @@ func (mtps *xtTradingPairSubscriber) Run() {
 	if err = mtps.tradingPairRepository.CreateTradingPairs(
 		mtps.ctx,
 		mtps.xtConfig.Id,
-		mappers.XtMarketConfigsToTradingPairs(response.JSON200.AdditionalProperties)); err != nil {
+		mappers.XtMarketConfigsToTradingPairs(*response.JSON200)); err != nil {
 		mtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return

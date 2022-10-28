@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: order/shared/cli/Dockerfile
-      target: local
+      target: final
     restart: on-failure
     environment:
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/order"
@@ -24,7 +24,7 @@ services:
     build:
       context: .
       dockerfile: order/order-api/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_APP_LISTENINGINTERFACE: ":80"
@@ -53,7 +53,7 @@ services:
     build:
       context: .
       dockerfile: order/order-processor/Dockerfile
-      target: local
+      target: final
     restart: unless-stopped
     environment:
       OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/order"

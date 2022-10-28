@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.4.1
-ARG FINAL_IMAGE=alpine:3
+ARG FINAL_IMAGE=golang:1.19
 ARG BUILD_IMAGE=golang:1.19
 
 FROM $FINAL_IMAGE as base
@@ -53,9 +53,6 @@ WORKDIR /src/venue/venues-all-in-one
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/venues-all-in-one main.go
 
-FROM build AS local
-CMD ["/bin/venues-all-in-one", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -80,4 +77,7 @@ COPY --from=build /src/venue/kucoin-processor/config.yaml /omiga/kucoin-processo
 COPY --from=build /src/venue/mexc-processor/config.yaml /omiga/mexc-processor-config.yaml
 COPY --from=build /src/venue/rain-processor/config.yaml /omiga/rain-processor-config.yaml
 COPY --from=build /src/venue/xt-processor/config.yaml /omiga/xt-processor-config.yaml
+
+RUN /omiga/venues-all-in-one install-dependecies
+
 CMD ["/omiga/venues-all-in-one", "start"]

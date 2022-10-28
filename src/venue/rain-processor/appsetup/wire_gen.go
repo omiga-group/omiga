@@ -13,6 +13,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
+	"github.com/omiga-group/omiga/src/shared/enterprise/security/authentication/passwordgeneration/totp"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/rain-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/rain-processor/subscribers"
@@ -85,7 +86,11 @@ func NewRainTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	if err != nil {
 		return nil, err
 	}
-	rainTradingPairSubscriber, err := subscribers.NewRainTradingPairSubscriber(ctx, logger, rainConfig, cronService, tradingPairRepository)
+	totpHelper, err := totp.NewTotpHelper()
+	if err != nil {
+		return nil, err
+	}
+	rainTradingPairSubscriber, err := subscribers.NewRainTradingPairSubscriber(ctx, logger, rainConfig, cronService, tradingPairRepository, totpHelper)
 	if err != nil {
 		return nil, err
 	}

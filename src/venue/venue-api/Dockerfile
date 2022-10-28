@@ -23,9 +23,6 @@ WORKDIR /src/venue/venue-api
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/venue-api main.go
 
-FROM build AS local
-CMD ["/bin/venue-api", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/venue-api /omiga
 COPY --from=build /src/venue/venue-api/config.yaml /omiga
+
+RUN /omiga/venue-api install-dependecies
+
 CMD ["/omiga/venue-api", "start"]

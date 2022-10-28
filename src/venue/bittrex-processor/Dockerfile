@@ -23,9 +23,6 @@ WORKDIR /src/venue/bittrex-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/bittrex-processor main.go
 
-FROM build AS local
-CMD ["/bin/bittrex-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/bittrex-processor /omiga
 COPY --from=build /src/venue/bittrex-processor/config.yaml /omiga
+
+RUN /omiga/bittrex-processor install-dependecies
+
 CMD ["/omiga/bittrex-processor", "start"]

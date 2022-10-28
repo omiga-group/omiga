@@ -23,9 +23,6 @@ WORKDIR /src/venue/binance-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/binance-processor main.go
 
-FROM build AS local
-CMD ["/bin/binance-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/binance-processor /omiga
 COPY --from=build /src/venue/binance-processor/config.yaml /omiga
+
+RUN /omiga/binance-processor install-dependecies
+
 CMD ["/omiga/binance-processor", "start"]
