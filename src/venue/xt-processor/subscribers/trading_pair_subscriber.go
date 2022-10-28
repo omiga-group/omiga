@@ -73,7 +73,7 @@ func (mtps *xtTradingPairSubscriber) Run() {
 	if err = mtps.tradingPairRepository.CreateTradingPairs(
 		mtps.ctx,
 		mtps.xtConfig.Id,
-		mappers.XtMarketConfigsToTradingPairs(response.JSON200.AdditionalProperties)); err != nil {
+		mappers.XtMarketConfigsToTradingPairs(*response.JSON200)); err != nil {
 		mtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
