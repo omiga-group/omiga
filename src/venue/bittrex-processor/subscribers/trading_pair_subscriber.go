@@ -35,8 +35,8 @@ func NewBittrexTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every minute from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
+	// Run at every 5th minute from 0 through 59..
+	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
 		return nil, err
 	}
 
