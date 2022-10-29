@@ -7,7 +7,7 @@ import (
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"github.com/omiga-group/omiga/src/venue/xt-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/xt-processor/mappers"
-	xtv1 "github.com/omiga-group/omiga/src/venue/xt-processor/xtclient/v1"
+	xtv4 "github.com/omiga-group/omiga/src/venue/xt-processor/xtclient/v4"
 	"go.uber.org/zap"
 )
 
@@ -46,14 +46,14 @@ func NewXtTradingPairSubscriber(
 func (xtps *xtTradingPairSubscriber) Run() {
 	xtps.logger.Errorf("Start trading pairs sync for Venue: %s ...", xtps.venueConfig.Id)
 
-	client, err := xtv1.NewClientWithResponses(xtps.venueConfig.BaseUrl)
+	client, err := xtv4.NewClientWithResponses(xtps.venueConfig.BaseUrl)
 	if err != nil {
 		xtps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
 		return
 	}
 
-	response, err := client.GetAllMarketConfigWithResponse(xtps.ctx)
+	response, err := client.GetAllSymbolsWithResponse(xtps.ctx)
 	if err != nil {
 		xtps.logger.Errorf("Failed to call getAllMarketConfig endpoint. Error: %v", err)
 
@@ -75,7 +75,7 @@ func (xtps *xtTradingPairSubscriber) Run() {
 	if err = xtps.tradingPairRepository.CreateTradingPairs(
 		xtps.ctx,
 		xtps.venueConfig.Id,
-		mappers.XtMarketConfigsToTradingPairs(*response.JSON200)); err != nil {
+		mappers.XtSymbolsToTradingPairs(response.JSON200.Result.Symbols)); err != nil {
 		xtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return

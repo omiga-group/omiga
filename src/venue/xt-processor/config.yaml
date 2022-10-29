@@ -14,6 +14,6 @@ postgres:
 
 xt:
   id: "xt"
-  baseUrl: "https://api.xt.com/data/api/v1"
+  baseUrl: "https://sapi.xt.com/v4"
   apiKey: ""
   secretKey: ""

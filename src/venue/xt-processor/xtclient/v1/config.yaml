@@ -1,8 +1,0 @@
-package: xtv1
-generate:
-  client: true
-  models: true
-output-options:
-  skip-fmt: false
-  skip-prune: false
-output: xt_gen.go
