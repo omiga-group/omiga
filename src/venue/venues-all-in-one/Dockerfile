@@ -60,7 +60,10 @@ RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -coverpkg=./... -v -cove
 
 FROM base AS final
 
+RUN npx playwright install-deps
+
 WORKDIR /omiga
+
 COPY --from=build /bin/venues-all-in-one /omiga
 COPY --from=build /src/venue/binance-processor/config.yaml /omiga/binance-processor-config.yaml
 COPY --from=build /src/venue/bitmart-processor/config.yaml /omiga/bitmart-processor-config.yaml
@@ -79,6 +82,5 @@ COPY --from=build /src/venue/rain-processor/config.yaml /omiga/rain-processor-co
 COPY --from=build /src/venue/xt-processor/config.yaml /omiga/xt-processor-config.yaml
 
 RUN /omiga/venues-all-in-one install-dependecies
-RUN npx playwright install-deps
 
 CMD ["/omiga/venues-all-in-one", "start"]

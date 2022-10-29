@@ -31,10 +31,12 @@ RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -coverpkg=./... -v -cove
 FROM base AS final
 
 WORKDIR /omiga
+
+RUN npx playwright install-deps
+
 COPY --from=build /bin/rain-processor /omiga
 COPY --from=build /src/venue/rain-processor/config.yaml /omiga
 
 RUN /omiga/rain-processor install-dependecies
-RUN npx playwright install-deps
 
 CMD ["/omiga/rain-processor", "start"]
