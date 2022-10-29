@@ -34,9 +34,11 @@ func NewBitmartTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	jobScheduler.Every(5).Minutes().Do(func() {
+	if _, err := jobScheduler.Every(5).Minutes().Do(func() {
 		instance.Run()
-	})
+	}); err != nil {
+		return nil, err
+	}
 
 	return instance, nil
 }

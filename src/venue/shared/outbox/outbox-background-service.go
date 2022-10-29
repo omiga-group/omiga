@@ -44,9 +44,11 @@ func NewOutboxBackgroundService(
 		globalMutex:     sync.Mutex{},
 	}
 
-	jobScheduler.Every(1).Seconds().Do(func() {
+	if _, err := jobScheduler.Every(1).Seconds().Do(func() {
 		instance.Run()
-	})
+	}); err != nil {
+		return nil, err
+	}
 
 	return instance, nil
 }

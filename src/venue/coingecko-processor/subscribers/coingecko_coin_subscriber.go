@@ -44,9 +44,11 @@ func NewCoingeckoCoinSubscriber(
 		currencyRepository: currencyRepository,
 	}
 
-	jobScheduler.Every(5).Minutes().Do(func() {
+	if _, err := jobScheduler.Every(1).Minutes().Do(func() {
 		instance.Run()
-	})
+	}); err != nil {
+		return nil, err
+	}
 
 	return instance, nil
 }
