@@ -30,14 +30,14 @@ type krakenOrderBookSubscriber struct {
 func NewKrakenOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	krakenConfig configuration.KrakenConfig,
+	venueConfig configuration.KrakenConfig,
 	orderBookPublisher publishers.OrderBookPublisher,
 	coinHelper services.CurrencyHelper) (KrakenOrderBookSubscriber, error) {
 
 	instance := &krakenOrderBookSubscriber{
 		ctx:                ctx,
 		logger:             logger,
-		pairs:              krakenConfig.OrderBook.Pairs,
+		pairs:              venueConfig.OrderBook.Pairs,
 		orderBookPublisher: orderBookPublisher,
 		coinHelper:         coinHelper,
 	}

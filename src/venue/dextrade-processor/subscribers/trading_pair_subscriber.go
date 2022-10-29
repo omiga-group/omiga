@@ -17,21 +17,21 @@ type DextradeTradingPairSubscriber interface {
 type dexTradeTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	dextradeConfig        configuration.DextradeConfig
+	venueConfig           configuration.DextradeConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewDextradeTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	dextradeConfig configuration.DextradeConfig,
+	venueConfig configuration.DextradeConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (DextradeTradingPairSubscriber, error) {
 
 	instance := &dexTradeTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		dextradeConfig:        dextradeConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -44,7 +44,7 @@ func NewDextradeTradingPairSubscriber(
 }
 
 func (dtps *dexTradeTradingPairSubscriber) Run() {
-	client, err := dextradev1.NewClientWithResponses(dtps.dextradeConfig.BaseUrl)
+	client, err := dextradev1.NewClientWithResponses(dtps.venueConfig.BaseUrl)
 	if err != nil {
 		dtps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -72,7 +72,7 @@ func (dtps *dexTradeTradingPairSubscriber) Run() {
 
 	if err = dtps.tradingPairRepository.CreateTradingPairs(
 		dtps.ctx,
-		dtps.dextradeConfig.Id,
+		dtps.venueConfig.Id,
 		mappers.DextradeSymbolsToTradingPairs(response.JSON200.Data)); err != nil {
 		dtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

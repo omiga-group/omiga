@@ -67,7 +67,7 @@ func NewSyntheticOrderConsumer(
 func NewCoinbaseTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	coinbaseConfig configuration.CoinbaseConfig,
+	venueConfig configuration.CoinbaseConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.CoinbaseTradingPairSubscriber, error) {
 	wire.Build(

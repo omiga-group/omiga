@@ -17,21 +17,21 @@ type FtxTradingPairSubscriber interface {
 type ftxTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	ftxConfig             configuration.FtxConfig
+	venueConfig           configuration.FtxConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewFtxTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	ftxConfig configuration.FtxConfig,
+	venueConfig configuration.FtxConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (FtxTradingPairSubscriber, error) {
 
 	instance := &ftxTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		ftxConfig:             ftxConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -44,7 +44,7 @@ func NewFtxTradingPairSubscriber(
 }
 
 func (ftps *ftxTradingPairSubscriber) Run() {
-	client, err := ftxv1.NewClientWithResponses(ftps.ftxConfig.ApiUrl)
+	client, err := ftxv1.NewClientWithResponses(ftps.venueConfig.ApiUrl)
 	if err != nil {
 		ftps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -72,7 +72,7 @@ func (ftps *ftxTradingPairSubscriber) Run() {
 
 	if err = ftps.tradingPairRepository.CreateTradingPairs(
 		ftps.ctx,
-		ftps.ftxConfig.Id,
+		ftps.venueConfig.Id,
 		mappers.FtxMarketToTradingPairs(*response.JSON200.Result)); err != nil {
 		ftps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

@@ -17,21 +17,21 @@ type BinanceTradingPairSubscriber interface {
 type binanceTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	binanceConfig         configuration.BinanceConfig
+	venueConfig           configuration.BinanceConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewBinanceTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	binanceConfig configuration.BinanceConfig,
+	venueConfig configuration.BinanceConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (BinanceTradingPairSubscriber, error) {
 
 	instance := &binanceTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		binanceConfig:         binanceConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -45,7 +45,7 @@ func NewBinanceTradingPairSubscriber(
 
 func (btps *binanceTradingPairSubscriber) Run() {
 	exchangeInfo, err := binance.
-		NewClient(btps.binanceConfig.ApiKey, btps.binanceConfig.SecretKey).
+		NewClient(btps.venueConfig.ApiKey, btps.venueConfig.SecretKey).
 		NewExchangeInfoService().
 		Do(btps.ctx)
 	if err != nil {
@@ -56,7 +56,7 @@ func (btps *binanceTradingPairSubscriber) Run() {
 
 	if err = btps.tradingPairRepository.CreateTradingPairs(
 		btps.ctx,
-		btps.binanceConfig.Id,
+		btps.venueConfig.Id,
 		mappers.BinanceSymbolsToTradingPairs(exchangeInfo.Symbols)); err != nil {
 		btps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

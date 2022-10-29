@@ -17,21 +17,21 @@ type XtTradingPairSubscriber interface {
 type xtTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	xtConfig              configuration.XtConfig
+	venueConfig           configuration.XtConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewXtTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	xtConfig configuration.XtConfig,
+	venueConfig configuration.XtConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (XtTradingPairSubscriber, error) {
 
 	instance := &xtTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		xtConfig:              xtConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -44,7 +44,7 @@ func NewXtTradingPairSubscriber(
 }
 
 func (mtps *xtTradingPairSubscriber) Run() {
-	client, err := xtv1.NewClientWithResponses(mtps.xtConfig.BaseUrl)
+	client, err := xtv1.NewClientWithResponses(mtps.venueConfig.BaseUrl)
 	if err != nil {
 		mtps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -72,7 +72,7 @@ func (mtps *xtTradingPairSubscriber) Run() {
 
 	if err = mtps.tradingPairRepository.CreateTradingPairs(
 		mtps.ctx,
-		mtps.xtConfig.Id,
+		mtps.venueConfig.Id,
 		mappers.XtMarketConfigsToTradingPairs(*response.JSON200)); err != nil {
 		mtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

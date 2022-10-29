@@ -25,7 +25,7 @@ type RainTradingPairSubscriber interface {
 type rainTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	rainConfig            configuration.RainConfig
+	venueConfig           configuration.RainConfig
 	tradingPairRepository repositories.TradingPairRepository
 	totpHelper            totp.TotpHelper
 	baseUrl               *url.URL
@@ -37,22 +37,22 @@ type rainTradingPairSubscriber struct {
 func NewRainTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	rainConfig configuration.RainConfig,
+	venueConfig configuration.RainConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository,
 	totpHelper totp.TotpHelper) (RainTradingPairSubscriber, error) {
 
-	baseUrl, err := url.Parse(rainConfig.BaseUrl)
+	baseUrl, err := url.Parse(venueConfig.BaseUrl)
 	if err != nil {
 		return nil, err
 	}
 
-	websiteUrl, err := url.Parse(rainConfig.WebsiteUrl)
+	websiteUrl, err := url.Parse(venueConfig.WebsiteUrl)
 	if err != nil {
 		return nil, err
 	}
 
-	timeout, err := time.ParseDuration(rainConfig.Timeout)
+	timeout, err := time.ParseDuration(venueConfig.Timeout)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func NewRainTradingPairSubscriber(
 	instance := &rainTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		rainConfig:            rainConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 		totpHelper:            totpHelper,
 		baseUrl:               baseUrl,
@@ -112,7 +112,7 @@ func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, 
 	}()
 
 	browserInstance, err := playwrightInstance.Chromium.Launch(playwright.BrowserTypeLaunchOptions{
-		Headless: &rtps.rainConfig.Headless,
+		Headless: &rtps.venueConfig.Headless,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to start Chromium browser instance. Error: %v", err)
@@ -155,11 +155,11 @@ func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, 
 		return nil, fmt.Errorf("failed to navigate to /signin page. Error: %v", err)
 	}
 
-	if err = signinPageInstance.Fill("input[name=\"email\"]", rtps.rainConfig.Username); err != nil {
+	if err = signinPageInstance.Fill("input[name=\"email\"]", rtps.venueConfig.Username); err != nil {
 		return nil, fmt.Errorf("failed to fill email field. Error: %v", err)
 	}
 
-	if err = signinPageInstance.Fill("input[name=\"password\"]", rtps.rainConfig.Password); err != nil {
+	if err = signinPageInstance.Fill("input[name=\"password\"]", rtps.venueConfig.Password); err != nil {
 		return nil, fmt.Errorf("failed to fill password field. Error: %v", err)
 	}
 
@@ -167,7 +167,7 @@ func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, 
 		return nil, fmt.Errorf("failed to click on Sign In button. Error: %v", err)
 	}
 
-	totpCode, err := rtps.totpHelper.GenerateCodeUsingCurrentTime(rtps.rainConfig.TotpSecret)
+	totpCode, err := rtps.totpHelper.GenerateCodeUsingCurrentTime(rtps.venueConfig.TotpSecret)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate TOTP code. Error: %v", err)
 	}
@@ -189,7 +189,7 @@ func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, 
 }
 
 func (rtps *rainTradingPairSubscriber) saveTradingPairs(headers map[string]string) error {
-	client, err := rainv1.NewClientWithResponses(rtps.rainConfig.BaseUrl)
+	client, err := rainv1.NewClientWithResponses(rtps.venueConfig.BaseUrl)
 	if err != nil {
 		return fmt.Errorf("failed to create client with response. Error: %v", err)
 	}
@@ -215,7 +215,7 @@ func (rtps *rainTradingPairSubscriber) saveTradingPairs(headers map[string]strin
 
 	if err = rtps.tradingPairRepository.CreateTradingPairs(
 		rtps.ctx,
-		rtps.rainConfig.Id,
+		rtps.venueConfig.Id,
 		mappers.RainCoinsToTradingPairs(response.JSON200.Coins)); err != nil {
 		return fmt.Errorf("failed to create trading pairs. Error: %v", err)
 	}

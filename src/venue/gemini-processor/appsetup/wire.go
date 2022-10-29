@@ -73,7 +73,7 @@ func NewGeminiOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	appConfig enterpriseConfiguration.AppConfig,
-	geminiConfig configuration.GeminiConfig,
+	venueConfig configuration.GeminiConfig,
 	pulsarConfig pulsar.PulsarConfig,
 	topic string) (subscribers.GeminiOrderBookSubscriber, error) {
 	wire.Build(
@@ -92,7 +92,7 @@ func NewGeminiOrderBookSubscriber(
 func NewGeminiTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	geminiConfig configuration.GeminiConfig,
+	venueConfig configuration.GeminiConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.GeminiTradingPairSubscriber, error) {
 	wire.Build(

@@ -17,21 +17,21 @@ type KrakenTradingPairSubscriber interface {
 type krakenTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	krakenConfig          configuration.KrakenConfig
+	venueConfig           configuration.KrakenConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewKrakenTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	krakenConfig configuration.KrakenConfig,
+	venueConfig configuration.KrakenConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (KrakenTradingPairSubscriber, error) {
 
 	instance := &krakenTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		krakenConfig:          krakenConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -45,7 +45,7 @@ func NewKrakenTradingPairSubscriber(
 
 func (ktps *krakenTradingPairSubscriber) Run() {
 	assetPairs, err := rest.
-		New(ktps.krakenConfig.ApiKey, ktps.krakenConfig.SecretKey).
+		New(ktps.venueConfig.ApiKey, ktps.venueConfig.SecretKey).
 		AssetPairs()
 	if err != nil {
 		ktps.logger.Errorf("Failed to call assetPairs endpoint. Error: %v", err)
@@ -55,7 +55,7 @@ func (ktps *krakenTradingPairSubscriber) Run() {
 
 	if err = ktps.tradingPairRepository.CreateTradingPairs(
 		ktps.ctx,
-		ktps.krakenConfig.Id,
+		ktps.venueConfig.Id,
 		mappers.KrakenAssetPairsToTradingPairs(assetPairs)); err != nil {
 		ktps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

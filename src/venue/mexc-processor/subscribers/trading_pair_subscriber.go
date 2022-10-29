@@ -17,21 +17,21 @@ type MexcTradingPairSubscriber interface {
 type mexcTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	mexcConfig            configuration.MexcConfig
+	venueConfig           configuration.MexcConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewMexcTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	mexcConfig configuration.MexcConfig,
+	venueConfig configuration.MexcConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (MexcTradingPairSubscriber, error) {
 
 	instance := &mexcTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		mexcConfig:            mexcConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -44,7 +44,7 @@ func NewMexcTradingPairSubscriber(
 }
 
 func (mtps *mexcTradingPairSubscriber) Run() {
-	client, err := mexcpotv2.NewClientWithResponses(mtps.mexcConfig.BaseUrl)
+	client, err := mexcpotv2.NewClientWithResponses(mtps.venueConfig.BaseUrl)
 	if err != nil {
 		mtps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -72,7 +72,7 @@ func (mtps *mexcTradingPairSubscriber) Run() {
 
 	if err = mtps.tradingPairRepository.CreateTradingPairs(
 		mtps.ctx,
-		mtps.mexcConfig.Id,
+		mtps.venueConfig.Id,
 		mappers.MexcSymbolsToTradingPairs(response.JSON200.Data)); err != nil {
 		mtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

@@ -67,7 +67,7 @@ func NewSyntheticOrderConsumer(
 func NewBybitTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	bybitConfig configuration.BybitConfig,
+	venueConfig configuration.BybitConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.BybitTradingPairSubscriber, error) {
 	wire.Build(

@@ -17,21 +17,21 @@ type HuobiTradingPairSubscriber interface {
 type huobiTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	huobiConfig           configuration.HuobiConfig
+	venueConfig           configuration.HuobiConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewHuobiTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	huobiConfig configuration.HuobiConfig,
+	venueConfig configuration.HuobiConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (HuobiTradingPairSubscriber, error) {
 
 	instance := &huobiTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		huobiConfig:           huobiConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -40,13 +40,17 @@ func NewHuobiTradingPairSubscriber(
 		return nil, err
 	}
 
+	instance.Run()
+
 	return instance, nil
 }
 
 func (htps *huobiTradingPairSubscriber) Run() {
-	client := new(client.CommonClient).Init(htps.huobiConfig.BaseUrl)
+	client := &client.CommonClient{}
 
-	symbols, err := client.GetSymbols()
+	symbols, err := client.
+		Init(htps.venueConfig.BaseUrl).
+		GetSymbols()
 	if err != nil {
 		htps.logger.Errorf("Failed to call common/symbols endpoint. Error: %v", err)
 
@@ -55,7 +59,7 @@ func (htps *huobiTradingPairSubscriber) Run() {
 
 	if err = htps.tradingPairRepository.CreateTradingPairs(
 		htps.ctx,
-		htps.huobiConfig.Id,
+		htps.venueConfig.Id,
 		mappers.HuobiSymbolsToTradingPairs(symbols)); err != nil {
 		htps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

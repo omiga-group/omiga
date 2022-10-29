@@ -21,21 +21,21 @@ type GeminiTradingPairSubscriber interface {
 type geminiTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	geminiConfig          configuration.GeminiConfig
+	venueConfig           configuration.GeminiConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewGeminiTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	geminiConfig configuration.GeminiConfig,
+	venueConfig configuration.GeminiConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (GeminiTradingPairSubscriber, error) {
 
 	instance := &geminiTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		geminiConfig:          geminiConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -48,7 +48,7 @@ func NewGeminiTradingPairSubscriber(
 }
 
 func (gtps *geminiTradingPairSubscriber) Run() {
-	client, err := geminiv1.NewClientWithResponses(gtps.geminiConfig.ApiUrl)
+	client, err := geminiv1.NewClientWithResponses(gtps.venueConfig.ApiUrl)
 	if err != nil {
 		gtps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -103,7 +103,7 @@ func (gtps *geminiTradingPairSubscriber) Run() {
 
 	if err = gtps.tradingPairRepository.CreateTradingPairs(
 		gtps.ctx,
-		gtps.geminiConfig.Id,
+		gtps.venueConfig.Id,
 		mappers.GeminiTradingPairsToTradingPairs(maps.Values(all))); err != nil {
 		gtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

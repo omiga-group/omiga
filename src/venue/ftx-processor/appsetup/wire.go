@@ -73,7 +73,7 @@ func NewFtxOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	appConfig enterpriseConfiguration.AppConfig,
-	ftxConfig configuration.FtxConfig,
+	venueConfig configuration.FtxConfig,
 	pulsarConfig pulsar.PulsarConfig,
 	topic string) (subscribers.FtxOrderBookSubscriber, error) {
 	wire.Build(
@@ -91,7 +91,7 @@ func NewFtxOrderBookSubscriber(
 func NewFtxTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	ftxConfig configuration.FtxConfig,
+	venueConfig configuration.FtxConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.FtxTradingPairSubscriber, error) {
 	wire.Build(

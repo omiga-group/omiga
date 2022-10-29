@@ -68,7 +68,7 @@ func NewSyntheticOrderConsumer(
 func NewRainTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	rainConfig configuration.RainConfig,
+	venueConfig configuration.RainConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.RainTradingPairSubscriber, error) {
 	wire.Build(

@@ -17,21 +17,21 @@ type BybitTradingPairSubscriber interface {
 type bybitTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	bybitConfig           configuration.BybitConfig
+	venueConfig           configuration.BybitConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewBybitTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	bybitConfig configuration.BybitConfig,
+	venueConfig configuration.BybitConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (BybitTradingPairSubscriber, error) {
 
 	instance := &bybitTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		bybitConfig:           bybitConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -44,7 +44,7 @@ func NewBybitTradingPairSubscriber(
 }
 
 func (btps *bybitTradingPairSubscriber) Run() {
-	client, err := bybitpotv3.NewClientWithResponses(btps.bybitConfig.BaseUrl)
+	client, err := bybitpotv3.NewClientWithResponses(btps.venueConfig.BaseUrl)
 	if err != nil {
 		btps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -72,7 +72,7 @@ func (btps *bybitTradingPairSubscriber) Run() {
 
 	if err = btps.tradingPairRepository.CreateTradingPairs(
 		btps.ctx,
-		btps.bybitConfig.Id,
+		btps.venueConfig.Id,
 		mappers.BybitSymbolToTradingPairs(response.JSON200.Result.List)); err != nil {
 		btps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
