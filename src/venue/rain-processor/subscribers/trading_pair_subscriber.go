@@ -77,6 +77,8 @@ func NewRainTradingPairSubscriber(
 }
 
 func (rtps *rainTradingPairSubscriber) Run() {
+	rtps.logger.Errorf("Start trading pairs sync for Venue: %s ...", rtps.venueConfig.Id)
+
 	if rtps.cachedHeaders == nil {
 		headers, err := rtps.getRequiredHeaders()
 		if err != nil {
@@ -94,6 +96,8 @@ func (rtps *rainTradingPairSubscriber) Run() {
 
 		return
 	}
+
+	rtps.logger.Errorf("Finished syncing trading pairs for Venue: %s", rtps.venueConfig.Id)
 }
 
 func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, error) {

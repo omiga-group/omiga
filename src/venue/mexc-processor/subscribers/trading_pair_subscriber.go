@@ -44,6 +44,8 @@ func NewMexcTradingPairSubscriber(
 }
 
 func (mtps *mexcTradingPairSubscriber) Run() {
+	mtps.logger.Errorf("Start trading pairs sync for Venue: %s ...", mtps.venueConfig.Id)
+
 	client, err := mexcpotv2.NewClientWithResponses(mtps.venueConfig.BaseUrl)
 	if err != nil {
 		mtps.logger.Errorf("Failed to create client with response. Error: %v", err)
@@ -78,4 +80,6 @@ func (mtps *mexcTradingPairSubscriber) Run() {
 
 		return
 	}
+
+	mtps.logger.Errorf("Finished syncing trading pairs for Venue: %s", mtps.venueConfig.Id)
 }

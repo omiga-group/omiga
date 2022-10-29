@@ -44,6 +44,8 @@ func NewBittrexTradingPairSubscriber(
 }
 
 func (btps *bittrexTradingPairSubscriber) Run() {
+	btps.logger.Errorf("Start trading pairs sync for Venue: %s ...", btps.venueConfig.Id)
+
 	markets, err := bittrex.
 		New(btps.venueConfig.ApiKey, btps.venueConfig.SecretKey).
 		GetMarkets()
@@ -61,4 +63,6 @@ func (btps *bittrexTradingPairSubscriber) Run() {
 
 		return
 	}
+
+	btps.logger.Errorf("Finished syncing trading pairs for Venue: %s", btps.venueConfig.Id)
 }

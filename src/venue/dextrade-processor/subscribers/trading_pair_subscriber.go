@@ -44,6 +44,8 @@ func NewDextradeTradingPairSubscriber(
 }
 
 func (dtps *dexTradeTradingPairSubscriber) Run() {
+	dtps.logger.Errorf("Start trading pairs sync for Venue: %s ...", dtps.venueConfig.Id)
+
 	client, err := dextradev1.NewClientWithResponses(dtps.venueConfig.BaseUrl)
 	if err != nil {
 		dtps.logger.Errorf("Failed to create client with response. Error: %v", err)
@@ -78,4 +80,6 @@ func (dtps *dexTradeTradingPairSubscriber) Run() {
 
 		return
 	}
+
+	dtps.logger.Errorf("Finished syncing trading pairs for Venue: %s", dtps.venueConfig.Id)
 }

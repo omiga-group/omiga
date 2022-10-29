@@ -44,6 +44,8 @@ func NewBinanceTradingPairSubscriber(
 }
 
 func (btps *binanceTradingPairSubscriber) Run() {
+	btps.logger.Errorf("Start trading pairs sync for Venue: %s ...", btps.venueConfig.Id)
+
 	exchangeInfo, err := binance.
 		NewClient(btps.venueConfig.ApiKey, btps.venueConfig.SecretKey).
 		NewExchangeInfoService().
@@ -62,4 +64,6 @@ func (btps *binanceTradingPairSubscriber) Run() {
 
 		return
 	}
+
+	btps.logger.Errorf("Finished syncing trading pairs for Venue: %s", btps.venueConfig.Id)
 }

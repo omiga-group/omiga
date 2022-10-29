@@ -44,6 +44,8 @@ func NewCryptoTradingPairSubscriber(
 }
 
 func (ctps *cryptoTradingPairSubscriber) Run() {
+	ctps.logger.Errorf("Start trading pairs sync for Venue: %s ...", ctps.venueConfig.Id)
+
 	client, err := cryptov2.NewClientWithResponses(ctps.venueConfig.BaseUrl)
 	if err != nil {
 		ctps.logger.Errorf("Failed to create client with response. Error: %v", err)
@@ -78,4 +80,6 @@ func (ctps *cryptoTradingPairSubscriber) Run() {
 
 		return
 	}
+
+	ctps.logger.Errorf("Finished syncing trading pairs for Venue: %s", ctps.venueConfig.Id)
 }

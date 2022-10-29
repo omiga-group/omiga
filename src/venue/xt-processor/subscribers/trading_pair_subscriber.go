@@ -43,39 +43,43 @@ func NewXtTradingPairSubscriber(
 	return instance, nil
 }
 
-func (mtps *xtTradingPairSubscriber) Run() {
-	client, err := xtv1.NewClientWithResponses(mtps.venueConfig.BaseUrl)
+func (xtps *xtTradingPairSubscriber) Run() {
+	xtps.logger.Errorf("Start trading pairs sync for Venue: %s ...", xtps.venueConfig.Id)
+
+	client, err := xtv1.NewClientWithResponses(xtps.venueConfig.BaseUrl)
 	if err != nil {
-		mtps.logger.Errorf("Failed to create client with response. Error: %v", err)
+		xtps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
 		return
 	}
 
-	response, err := client.GetAllMarketConfigWithResponse(mtps.ctx)
+	response, err := client.GetAllMarketConfigWithResponse(xtps.ctx)
 	if err != nil {
-		mtps.logger.Errorf("Failed to call getAllMarketConfig endpoint. Error: %v", err)
+		xtps.logger.Errorf("Failed to call getAllMarketConfig endpoint. Error: %v", err)
 
 		return
 	}
 
 	if response.HTTPResponse.StatusCode != 200 {
-		mtps.logger.Errorf("Failed to call getAllMarketConfig endpoint. Return status code is %d", response.HTTPResponse.StatusCode)
+		xtps.logger.Errorf("Failed to call getAllMarketConfig endpoint. Return status code is %d", response.HTTPResponse.StatusCode)
 
 		return
 	}
 
 	if response.JSON200 == nil {
-		mtps.logger.Errorf("Returned JSON object is nil")
+		xtps.logger.Errorf("Returned JSON object is nil")
 
 		return
 	}
 
-	if err = mtps.tradingPairRepository.CreateTradingPairs(
-		mtps.ctx,
-		mtps.venueConfig.Id,
+	if err = xtps.tradingPairRepository.CreateTradingPairs(
+		xtps.ctx,
+		xtps.venueConfig.Id,
 		mappers.XtMarketConfigsToTradingPairs(*response.JSON200)); err != nil {
-		mtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
+		xtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
 	}
+
+	xtps.logger.Errorf("Finished syncing trading pairs for Venue: %s", xtps.venueConfig.Id)
 }
