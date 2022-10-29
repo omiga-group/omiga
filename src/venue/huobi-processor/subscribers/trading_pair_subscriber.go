@@ -40,8 +40,6 @@ func NewHuobiTradingPairSubscriber(
 		return nil, err
 	}
 
-	instance.Run()
-
 	return instance, nil
 }
 
