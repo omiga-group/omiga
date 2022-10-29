@@ -44,7 +44,7 @@ func NewKrakenTradingPairSubscriber(
 }
 
 func (ktps *krakenTradingPairSubscriber) Run() {
-	ktps.logger.Errorf("Start trading pairs sync for Venue: %s ...", ktps.venueConfig.Id)
+	ktps.logger.Infof("Start trading pairs sync for Venue: %s ...", ktps.venueConfig.Id)
 
 	assetPairs, err := rest.
 		New(ktps.venueConfig.ApiKey, ktps.venueConfig.SecretKey).
@@ -64,5 +64,5 @@ func (ktps *krakenTradingPairSubscriber) Run() {
 		return
 	}
 
-	ktps.logger.Errorf("Finished syncing trading pairs for Venue: %s", ktps.venueConfig.Id)
+	ktps.logger.Infof("Finished syncing trading pairs for Venue: %s", ktps.venueConfig.Id)
 }

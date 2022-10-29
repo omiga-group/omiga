@@ -68,8 +68,8 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewGeminiOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, geminiConfig configuration2.GeminiConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.GeminiOrderBookSubscriber, error) {
-	apiClient := client.NewGeminiApiClient(geminiConfig)
+func NewGeminiOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, venueConfig configuration2.GeminiConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.GeminiOrderBookSubscriber, error) {
+	apiClient := client.NewGeminiApiClient(venueConfig)
 	osHelper, err := os.NewOsHelper()
 	if err != nil {
 		return nil, err
@@ -87,14 +87,14 @@ func NewGeminiOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	if err != nil {
 		return nil, err
 	}
-	geminiOrderBookSubscriber, err := subscribers.NewGeminiOrderBookSubscriber(ctx, logger, apiClient, geminiConfig, orderBookPublisher)
+	geminiOrderBookSubscriber, err := subscribers.NewGeminiOrderBookSubscriber(ctx, logger, apiClient, venueConfig, orderBookPublisher)
 	if err != nil {
 		return nil, err
 	}
 	return geminiOrderBookSubscriber, nil
 }
 
-func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, geminiConfig configuration2.GeminiConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.GeminiTradingPairSubscriber, error) {
+func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration2.GeminiConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.GeminiTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -115,7 +115,7 @@ func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	geminiTradingPairSubscriber, err := subscribers.NewGeminiTradingPairSubscriber(ctx, logger, geminiConfig, cronService, tradingPairRepository)
+	geminiTradingPairSubscriber, err := subscribers.NewGeminiTradingPairSubscriber(ctx, logger, venueConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

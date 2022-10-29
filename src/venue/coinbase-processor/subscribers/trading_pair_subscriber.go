@@ -44,7 +44,7 @@ func NewCoinbaseTradingPairSubscriber(
 }
 
 func (ctps *coinbaseTradingPairSubscriber) Run() {
-	ctps.logger.Errorf("Start trading pairs sync for Venue: %s ...", ctps.venueConfig.Id)
+	ctps.logger.Infof("Start trading pairs sync for Venue: %s ...", ctps.venueConfig.Id)
 
 	client := coinbasepro.NewClient()
 
@@ -71,5 +71,5 @@ func (ctps *coinbaseTradingPairSubscriber) Run() {
 		return
 	}
 
-	ctps.logger.Errorf("Finished syncing trading pairs for Venue: %s", ctps.venueConfig.Id)
+	ctps.logger.Infof("Finished syncing trading pairs for Venue: %s", ctps.venueConfig.Id)
 }

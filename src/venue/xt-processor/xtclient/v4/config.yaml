@@ -1,4 +1,4 @@
-package: xtv1
+package: xtv4
 generate:
   client: true
   models: true

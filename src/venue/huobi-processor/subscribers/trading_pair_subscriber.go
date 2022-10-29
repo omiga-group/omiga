@@ -44,7 +44,7 @@ func NewHuobiTradingPairSubscriber(
 }
 
 func (htps *huobiTradingPairSubscriber) Run() {
-	htps.logger.Errorf("Start trading pairs sync for Venue: %s ...", htps.venueConfig.Id)
+	htps.logger.Infof("Start trading pairs sync for Venue: %s ...", htps.venueConfig.Id)
 
 	client := &client.CommonClient{}
 
@@ -66,5 +66,5 @@ func (htps *huobiTradingPairSubscriber) Run() {
 		return
 	}
 
-	htps.logger.Errorf("Finished syncing trading pairs for Venue: %s", htps.venueConfig.Id)
+	htps.logger.Infof("Finished syncing trading pairs for Venue: %s", htps.venueConfig.Id)
 }

@@ -48,7 +48,7 @@ func NewGeminiTradingPairSubscriber(
 }
 
 func (gtps *geminiTradingPairSubscriber) Run() {
-	gtps.logger.Errorf("Start trading pairs sync for Venue: %s ...", gtps.venueConfig.Id)
+	gtps.logger.Infof("Start trading pairs sync for Venue: %s ...", gtps.venueConfig.Id)
 
 	client, err := geminiv1.NewClientWithResponses(gtps.venueConfig.ApiUrl)
 	if err != nil {
@@ -112,5 +112,5 @@ func (gtps *geminiTradingPairSubscriber) Run() {
 		return
 	}
 
-	gtps.logger.Errorf("Finished syncing trading pairs for Venue: %s", gtps.venueConfig.Id)
+	gtps.logger.Infof("Finished syncing trading pairs for Venue: %s", gtps.venueConfig.Id)
 }

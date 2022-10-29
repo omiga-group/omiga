@@ -64,7 +64,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewBybitTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, bybitConfig configuration.BybitConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.BybitTradingPairSubscriber, error) {
+func NewBybitTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration.BybitConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.BybitTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func NewBybitTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogge
 	if err != nil {
 		return nil, err
 	}
-	bybitTradingPairSubscriber, err := subscribers.NewBybitTradingPairSubscriber(ctx, logger, bybitConfig, cronService, tradingPairRepository)
+	bybitTradingPairSubscriber, err := subscribers.NewBybitTradingPairSubscriber(ctx, logger, venueConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

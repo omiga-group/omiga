@@ -1,0 +1,155 @@
+openapi: 3.0.1
+info:
+  title: Xt API V1
+  description: "Xt REST API"
+  version: 4.0.0
+
+servers:
+  - url: https://sapi.xt.com/v4
+
+paths:
+  /public/symbol:
+    get:
+      tags:
+      - spot
+      summary: fetches the supported symbols
+      operationId: getAllSymbols
+      responses:
+        200:
+          description: list of symbols
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getSymbolsResponse"
+
+components:
+  schemas:
+    getSymbolsResponse:
+      type: object
+      additionalProperties: true
+      required:
+        - rc
+        - mc
+        - result
+      properties:
+        rc:
+          type: integer
+        mc:
+          type: string
+        result:
+          $ref: "#/components/schemas/result"
+
+    result:
+      type: object
+      additionalProperties: true
+      required:
+        - time
+        - version
+        - symbols
+      properties:
+        time:
+          type: integer
+        version:
+          type: string
+        symbols:
+          type: array
+          items:
+            $ref: "#/components/schemas/symbol"
+
+    symbol:
+      type: object
+      additionalProperties: true
+      required:
+        - id
+        - symbol
+        - state
+        - stateTime
+        - tradingEnabled
+        - depthMergePrecision
+        - baseCurrency
+        - baseCurrencyPrecision
+        - baseCurrencyId
+        - quoteCurrency
+        - quoteCurrencyPrecision
+        - quoteCurrencyId
+        - pricePrecision
+        - quantityPrecision
+        - orderTypes
+        - timeInForces
+        - displayWeight
+        - displayLevel
+        - plates
+        - filters
+      properties:
+        id:
+          type: integer
+        symbol:
+          type: string
+        state:
+          type: string
+        stateTime:
+          type: integer
+        tradingEnabled:
+          type: boolean
+        nextStateTime:
+          type: integer
+        nextState:
+          type: string
+        depthMergePrecision:
+          type: integer
+        baseCurrency:
+          type: string
+        baseCurrencyPrecision:
+          type: integer
+        baseCurrencyId:
+          type: integer
+        quoteCurrency:
+          type: string
+        quoteCurrencyPrecision:
+          type: integer
+        quoteCurrencyId:
+          type: integer
+        pricePrecision:
+          type: integer
+        quantityPrecision:
+          type: integer
+        orderTypes:
+          type: array
+          items:
+            type: string
+        timeInForces:
+          type: array
+          items:
+            type: string
+        displayWeight:
+          type: integer
+        displayLevel:
+          type: string
+        plates:
+          type: array
+          items:
+            type: integer
+        filters:
+          type: array
+          items:
+            $ref: "#/components/schemas/filter"
+
+    filter:
+      type: object
+      additionalProperties: true
+      required:
+        - filter
+        - min
+      properties:
+        filter:
+          type: string
+        min:
+          type: string
+        max:
+          type: string
+        tickSize:
+          type: string
+        durationSeconds:
+          type: string
+        maxPriceMultiple:
+          type: string

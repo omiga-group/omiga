@@ -44,7 +44,7 @@ func NewMexcTradingPairSubscriber(
 }
 
 func (mtps *mexcTradingPairSubscriber) Run() {
-	mtps.logger.Errorf("Start trading pairs sync for Venue: %s ...", mtps.venueConfig.Id)
+	mtps.logger.Infof("Start trading pairs sync for Venue: %s ...", mtps.venueConfig.Id)
 
 	client, err := mexcpotv2.NewClientWithResponses(mtps.venueConfig.BaseUrl)
 	if err != nil {
@@ -81,5 +81,5 @@ func (mtps *mexcTradingPairSubscriber) Run() {
 		return
 	}
 
-	mtps.logger.Errorf("Finished syncing trading pairs for Venue: %s", mtps.venueConfig.Id)
+	mtps.logger.Infof("Finished syncing trading pairs for Venue: %s", mtps.venueConfig.Id)
 }
