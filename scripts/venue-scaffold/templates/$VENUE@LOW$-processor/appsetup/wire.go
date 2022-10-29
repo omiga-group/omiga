@@ -72,7 +72,7 @@ func New$VENUE@PAS$OrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	appConfig enterpriseConfiguration.AppConfig,
-	$VENUE@LOW$Config configuration.$VENUE@PAS$Config,
+	venueConfig configuration.$VENUE@PAS$Config,
 	pairConfig configuration.PairConfig,
 	pulsarConfig pulsar.PulsarConfig,
 	postgresConfig postgres.PostgresConfig,
@@ -94,7 +94,7 @@ func New$VENUE@PAS$OrderBookSubscriber(
 func New$VENUE@PAS$TradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	$VENUE@LOW$Config configuration.$VENUE@PAS$Config,
+	venueConfig configuration.$VENUE@PAS$Config,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.$VENUE@PAS$TradingPairSubscriber, error) {
 	wire.Build(

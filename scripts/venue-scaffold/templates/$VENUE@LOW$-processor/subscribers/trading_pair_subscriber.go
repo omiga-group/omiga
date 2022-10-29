@@ -16,21 +16,21 @@ type $VENUE@PAS$TradingPairSubscriber interface {
 type $VENUE@LOW$TradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	$VENUE@LOW$Config         configuration.$VENUE@PAS$Config
+	venueConfig         configuration.$VENUE@PAS$Config
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func New$VENUE@PAS$TradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	$VENUE@LOW$Config configuration.$VENUE@PAS$Config,
+	venueConfig configuration.$VENUE@PAS$Config,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) ($VENUE@PAS$TradingPairSubscriber, error) {
 
 	instance := &$VENUE@LOW$TradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		$VENUE@LOW$Config:         $VENUE@LOW$Config,
+		venueConfig:         venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -45,8 +45,10 @@ func New$VENUE@PAS$TradingPairSubscriber(
 }
 
 func (btps *$VENUE@LOW$TradingPairSubscriber) Run() {
+	btps.logger.Infof("Start trading pairs sync for Venue: %s ...", btps.venueConfig.Id)
+
 	exchangeInfo, err := $VENUE@LOW$.
-		NewClient(btps.$VENUE@LOW$Config.ApiKey, btps.$VENUE@LOW$Config.SecretKey).
+		NewClient(btps.venueConfig.ApiKey, btps.venueConfig.SecretKey).
 		NewExchangeInfoService().
 		Do(btps.ctx)
 	if err != nil {
@@ -57,7 +59,7 @@ func (btps *$VENUE@LOW$TradingPairSubscriber) Run() {
 
 	if err = btps.tradingPairRepository.CreateTradingPairs(
 		btps.ctx,
-		btps.$VENUE@LOW$Config.Id,
+		btps.venueConfig.Id,
 		mappers.$VENUE@PAS$SymbolsToTradingPairs(exchangeInfo.Symbols)); err != nil {
 		btps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
