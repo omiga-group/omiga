@@ -3,7 +3,7 @@ package subscribers
 import (
 	"context"
 
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/venue/$VENUE@LOW$-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/$VENUE@LOW$-processor/mappers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
@@ -24,7 +24,7 @@ func New$VENUE@PAS$TradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.$VENUE@PAS$Config,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	tradingPairRepository repositories.TradingPairRepository) ($VENUE@PAS$TradingPairSubscriber, error) {
 
 	instance := &$VENUE@LOW$TradingPairSubscriber{
@@ -34,12 +34,11 @@ func New$VENUE@PAS$TradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every minute from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
+	if _, err := jobScheduler.Every(5).Minutes().Do(func() {
+		instance.Run()
+	}); err != nil {
 		return nil, err
 	}
-
-	go instance.Run()
 
 	return instance, nil
 }
