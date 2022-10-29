@@ -8,10 +8,10 @@ package appsetup
 
 import (
 	"context"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
@@ -25,18 +25,6 @@ import (
 )
 
 // Injectors from wire.go:
-
-func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
-	timeHelper, err := time.NewTimeHelper()
-	if err != nil {
-		return nil, err
-	}
-	cronService, err := cron.NewCronService(logger, timeHelper)
-	if err != nil {
-		return nil, err
-	}
-	return cronService, nil
-}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	timeHelper, err := time.NewTimeHelper()
@@ -92,7 +80,7 @@ func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, a
 	return ftxOrderBookSubscriber, nil
 }
 
-func NewFtxTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration2.FtxConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.FtxTradingPairSubscriber, error) {
+func NewFtxTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration2.FtxConfig, jobScheduler *gocron.Scheduler, postgresConfig postgres.PostgresConfig) (subscribers.FtxTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -113,7 +101,7 @@ func NewFtxTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger,
 	if err != nil {
 		return nil, err
 	}
-	ftxTradingPairSubscriber, err := subscribers.NewFtxTradingPairSubscriber(ctx, logger, venueConfig, cronService, tradingPairRepository)
+	ftxTradingPairSubscriber, err := subscribers.NewFtxTradingPairSubscriber(ctx, logger, venueConfig, jobScheduler, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

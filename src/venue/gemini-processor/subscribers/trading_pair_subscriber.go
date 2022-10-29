@@ -6,9 +6,9 @@ import (
 
 	"go.uber.org/zap"
 
+	"github.com/go-co-op/gocron"
 	"github.com/life4/genesis/maps"
 	"github.com/life4/genesis/slices"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/configuration"
 	geminiv1 "github.com/omiga-group/omiga/src/venue/gemini-processor/geminiclient/v1"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/mappers"
@@ -29,7 +29,7 @@ func NewGeminiTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.GeminiConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	tradingPairRepository repositories.TradingPairRepository) (GeminiTradingPairSubscriber, error) {
 
 	instance := &geminiTradingPairSubscriber{
@@ -39,8 +39,9 @@ func NewGeminiTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every 5th minute from 0 through 59..
-	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
+	if _, err := jobScheduler.Every(5).Minutes().Do(func() {
+		instance.Run()
+	}); err != nil {
 		return nil, err
 	}
 

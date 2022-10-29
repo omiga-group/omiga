@@ -3,7 +3,9 @@ package commands
 import (
 	"context"
 	"log"
+	"time"
 
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/order/order-api/appsetup"
 	"github.com/omiga-group/omiga/src/order/order-api/configuration"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
@@ -38,13 +40,9 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			cronService, err := appsetup.NewCronService(
-				sugarLogger)
-			if err != nil {
-				sugarLogger.Fatal(err)
-			}
-
-			defer cronService.Close()
+			jobScheduler := gocron.NewScheduler(time.UTC)
+			jobScheduler.StartAsync()
+			defer jobScheduler.Stop()
 
 			outboxBackgroundService, err := appsetup.NewOutboxBackgroundService(
 				ctx,
@@ -52,7 +50,7 @@ func startCommand() *cobra.Command {
 				config.Pulsar,
 				config.Outbox,
 				entgoClient,
-				cronService)
+				jobScheduler)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

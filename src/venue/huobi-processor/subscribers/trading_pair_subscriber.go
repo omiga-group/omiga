@@ -3,8 +3,8 @@ package subscribers
 import (
 	"context"
 
+	"github.com/go-co-op/gocron"
 	"github.com/huobirdcenter/huobi_golang/pkg/client"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/venue/huobi-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/huobi-processor/mappers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
@@ -25,7 +25,7 @@ func NewHuobiTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.HuobiConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	tradingPairRepository repositories.TradingPairRepository) (HuobiTradingPairSubscriber, error) {
 
 	instance := &huobiTradingPairSubscriber{
@@ -35,8 +35,9 @@ func NewHuobiTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every 5th minute from 0 through 59..
-	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
+	if _, err := jobScheduler.Every(5).Minutes().Do(func() {
+		instance.Run()
+	}); err != nil {
 		return nil, err
 	}
 

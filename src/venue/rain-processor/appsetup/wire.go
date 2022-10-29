@@ -21,9 +21,9 @@ package appsetup
 import (
 	"context"
 
+	"github.com/go-co-op/gocron"
 	"github.com/google/wire"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
@@ -35,15 +35,6 @@ import (
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 	"go.uber.org/zap"
 )
-
-func NewCronService(
-	logger *zap.SugaredLogger) (cron.CronService, error) {
-	wire.Build(
-		time.NewTimeHelper,
-		cron.NewCronService)
-
-	return nil, nil
-}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	wire.Build(
@@ -69,7 +60,7 @@ func NewRainTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.RainConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	postgresConfig postgres.PostgresConfig) (subscribers.RainTradingPairSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,

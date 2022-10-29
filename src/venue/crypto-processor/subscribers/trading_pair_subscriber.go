@@ -3,7 +3,7 @@ package subscribers
 import (
 	"context"
 
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/venue/crypto-processor/configuration"
 	cryptov2 "github.com/omiga-group/omiga/src/venue/crypto-processor/cryptoclient/v2"
 	"github.com/omiga-group/omiga/src/venue/crypto-processor/mappers"
@@ -25,7 +25,7 @@ func NewCryptoTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.CryptoConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	tradingPairRepository repositories.TradingPairRepository) (CryptoTradingPairSubscriber, error) {
 
 	instance := &cryptoTradingPairSubscriber{
@@ -35,8 +35,9 @@ func NewCryptoTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every 5th minute from 0 through 59..
-	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
+	if _, err := jobScheduler.Every(5).Minutes().Do(func() {
+		instance.Run()
+	}); err != nil {
 		return nil, err
 	}
 

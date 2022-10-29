@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
+	"github.com/go-co-op/gocron"
 	"github.com/life4/genesis/slices"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	coingeckov3 "github.com/omiga-group/omiga/src/venue/coingecko-processor/coingeckoclient/v3"
 	"github.com/omiga-group/omiga/src/venue/coingecko-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/coingecko-processor/mappers"
@@ -30,7 +30,7 @@ type coingeckoCoinSubscriber struct {
 func NewCoingeckoCoinSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	coingeckoConfig configuration.CoingeckoConfig,
 	exchanges map[string]configuration.Exchange,
 	entgoClient entities.EntgoClient,
@@ -44,8 +44,9 @@ func NewCoingeckoCoinSubscriber(
 		currencyRepository: currencyRepository,
 	}
 
-	// Run at every 5th minute from 0 through 59..
-	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
+	if _, err := jobScheduler.Every(1).Minutes().Do(func() {
+		instance.Run()
+	}); err != nil {
 		return nil, err
 	}
 

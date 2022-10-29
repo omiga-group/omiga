@@ -12,6 +12,7 @@ require (
 	github.com/aopoltorzhicky/go_kraken/websocket v0.1.10
 	github.com/apache/pulsar-client-go v0.9.0
 	github.com/deepmap/oapi-codegen v1.11.0
+	github.com/go-co-op/gocron v1.17.1
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
@@ -27,7 +28,6 @@ require (
 	github.com/playwright-community/playwright-go v0.2000.1
 	github.com/pquerna/otp v1.3.0
 	github.com/preichenberger/go-coinbasepro/v2 v2.1.0
-	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/cors v1.8.2
 	github.com/spf13/cobra v1.6.0
 	github.com/toorop/go-bittrex v0.0.5
@@ -93,6 +93,7 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.30.0 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect

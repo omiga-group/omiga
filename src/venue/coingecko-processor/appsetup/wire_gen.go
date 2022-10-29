@@ -8,7 +8,7 @@ package appsetup
 
 import (
 	"context"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/coingecko-processor/configuration"
@@ -20,18 +20,6 @@ import (
 
 // Injectors from wire.go:
 
-func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
-	timeHelper, err := time.NewTimeHelper()
-	if err != nil {
-		return nil, err
-	}
-	cronService, err := cron.NewCronService(logger, timeHelper)
-	if err != nil {
-		return nil, err
-	}
-	return cronService, nil
-}
-
 func NewTimeHelper() (time.TimeHelper, error) {
 	timeHelper, err := time.NewTimeHelper()
 	if err != nil {
@@ -40,7 +28,7 @@ func NewTimeHelper() (time.TimeHelper, error) {
 	return timeHelper, nil
 }
 
-func NewCoingeckoExchangeSubscriber(ctx context.Context, logger *zap.SugaredLogger, cronService cron.CronService, coingeckoConfig configuration.CoingeckoConfig, exchanges map[string]configuration.Exchange, postgresConfig postgres.PostgresConfig) (subscribers.CoingeckoExchangeSubscriber, error) {
+func NewCoingeckoExchangeSubscriber(ctx context.Context, logger *zap.SugaredLogger, jobScheduler *gocron.Scheduler, coingeckoConfig configuration.CoingeckoConfig, exchanges map[string]configuration.Exchange, postgresConfig postgres.PostgresConfig) (subscribers.CoingeckoExchangeSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -57,14 +45,14 @@ func NewCoingeckoExchangeSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	coingeckoExchangeSubscriber, err := subscribers.NewCoingeckoExchangeSubscriber(ctx, logger, cronService, coingeckoConfig, exchanges, entgoClient, timeHelper, venueRepository)
+	coingeckoExchangeSubscriber, err := subscribers.NewCoingeckoExchangeSubscriber(ctx, logger, jobScheduler, coingeckoConfig, exchanges, entgoClient, timeHelper, venueRepository)
 	if err != nil {
 		return nil, err
 	}
 	return coingeckoExchangeSubscriber, nil
 }
 
-func NewCoingeckoCoinSubscriber(ctx context.Context, logger *zap.SugaredLogger, cronService cron.CronService, coingeckoConfig configuration.CoingeckoConfig, exchanges map[string]configuration.Exchange, postgresConfig postgres.PostgresConfig) (subscribers.CoingeckoCoinSubscriber, error) {
+func NewCoingeckoCoinSubscriber(ctx context.Context, logger *zap.SugaredLogger, jobScheduler *gocron.Scheduler, coingeckoConfig configuration.CoingeckoConfig, exchanges map[string]configuration.Exchange, postgresConfig postgres.PostgresConfig) (subscribers.CoingeckoCoinSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -77,7 +65,7 @@ func NewCoingeckoCoinSubscriber(ctx context.Context, logger *zap.SugaredLogger, 
 	if err != nil {
 		return nil, err
 	}
-	coingeckoCoinSubscriber, err := subscribers.NewCoingeckoCoinSubscriber(ctx, logger, cronService, coingeckoConfig, exchanges, entgoClient, currencyRepository)
+	coingeckoCoinSubscriber, err := subscribers.NewCoingeckoCoinSubscriber(ctx, logger, jobScheduler, coingeckoConfig, exchanges, entgoClient, currencyRepository)
 	if err != nil {
 		return nil, err
 	}

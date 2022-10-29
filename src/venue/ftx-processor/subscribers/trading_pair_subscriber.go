@@ -3,7 +3,7 @@ package subscribers
 import (
 	"context"
 
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
 	ftxv1 "github.com/omiga-group/omiga/src/venue/ftx-processor/ftxclient/v1"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/mappers"
@@ -25,7 +25,7 @@ func NewFtxTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.FtxConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	tradingPairRepository repositories.TradingPairRepository) (FtxTradingPairSubscriber, error) {
 
 	instance := &ftxTradingPairSubscriber{
@@ -35,8 +35,9 @@ func NewFtxTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every 5th minute from 0 through 59..
-	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
+	if _, err := jobScheduler.Every(5).Minutes().Do(func() {
+		instance.Run()
+	}); err != nil {
 		return nil, err
 	}
 

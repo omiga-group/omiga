@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/aopoltorzhicky/go_kraken/rest"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/venue/kraken-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/kraken-processor/mappers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
@@ -25,7 +25,7 @@ func NewKrakenTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.KrakenConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	tradingPairRepository repositories.TradingPairRepository) (KrakenTradingPairSubscriber, error) {
 
 	instance := &krakenTradingPairSubscriber{
@@ -35,8 +35,9 @@ func NewKrakenTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every 5th minute from 0 through 59..
-	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
+	if _, err := jobScheduler.Every(5).Minutes().Do(func() {
+		instance.Run()
+	}); err != nil {
 		return nil, err
 	}
 

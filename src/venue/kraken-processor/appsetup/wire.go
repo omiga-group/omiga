@@ -21,11 +21,11 @@ package appsetup
 import (
 	"context"
 
+	"github.com/go-co-op/gocron"
 	"github.com/google/wire"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
@@ -38,15 +38,6 @@ import (
 	"github.com/omiga-group/omiga/src/venue/shared/services"
 	"go.uber.org/zap"
 )
-
-func NewCronService(
-	logger *zap.SugaredLogger) (cron.CronService, error) {
-	wire.Build(
-		time.NewTimeHelper,
-		cron.NewCronService)
-
-	return nil, nil
-}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	wire.Build(
@@ -94,7 +85,7 @@ func NewKrakenTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.KrakenConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,

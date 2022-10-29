@@ -6,7 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
+	"github.com/go-co-op/gocron"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/appsetup"
@@ -73,17 +75,15 @@ func startCommand() *cobra.Command {
 			}
 			defer geminiOrderBookSubscriber.Close()
 
-			cronService, err := appsetup.NewCronService(sugarLogger)
-			if err != nil {
-				sugarLogger.Fatal(err)
-			}
-			defer cronService.Close()
+			jobScheduler := gocron.NewScheduler(time.UTC)
+			jobScheduler.StartAsync()
+			defer jobScheduler.Stop()
 
 			if _, err = appsetup.NewGeminiTradingPairSubscriber(
 				ctx,
 				sugarLogger,
 				config.Gemini,
-				cronService,
+				jobScheduler,
 				config.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}

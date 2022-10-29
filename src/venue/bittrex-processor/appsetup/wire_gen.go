@@ -8,8 +8,8 @@ package appsetup
 
 import (
 	"context"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
@@ -22,18 +22,6 @@ import (
 )
 
 // Injectors from wire.go:
-
-func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
-	timeHelper, err := time.NewTimeHelper()
-	if err != nil {
-		return nil, err
-	}
-	cronService, err := cron.NewCronService(logger, timeHelper)
-	if err != nil {
-		return nil, err
-	}
-	return cronService, nil
-}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	timeHelper, err := time.NewTimeHelper()
@@ -64,7 +52,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewBittrexTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration.BittrexConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.BittrexTradingPairSubscriber, error) {
+func NewBittrexTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration.BittrexConfig, jobScheduler *gocron.Scheduler, postgresConfig postgres.PostgresConfig) (subscribers.BittrexTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -85,7 +73,7 @@ func NewBittrexTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLog
 	if err != nil {
 		return nil, err
 	}
-	bittrexTradingPairSubscriber, err := subscribers.NewBittrexTradingPairSubscriber(ctx, logger, venueConfig, cronService, tradingPairRepository)
+	bittrexTradingPairSubscriber, err := subscribers.NewBittrexTradingPairSubscriber(ctx, logger, venueConfig, jobScheduler, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

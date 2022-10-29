@@ -20,19 +20,8 @@ package appsetup
 
 import (
 	"github.com/google/wire"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
-	"go.uber.org/zap"
 )
-
-func NewCronService(
-	logger *zap.SugaredLogger) (cron.CronService, error) {
-	wire.Build(
-		time.NewTimeHelper,
-		cron.NewCronService)
-
-	return nil, nil
-}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	wire.Build(

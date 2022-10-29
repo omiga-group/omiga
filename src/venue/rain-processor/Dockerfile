@@ -1,9 +1,6 @@
 # syntax = docker/dockerfile:1.4.1
-ARG FINAL_IMAGE=node:18
+ARG FINAL_IMAGE=microbusiness/go-playwright:latest
 ARG BUILD_IMAGE=golang:1.19
-
-FROM $FINAL_IMAGE as base
-LABEL maintainer="morteza@omiga.com.au"
 
 FROM $BUILD_IMAGE as build
 
@@ -28,13 +25,14 @@ FROM build AS test
 RUN mkdir -p /coverage/reports
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -coverpkg=./... -v -covermode=count -coverprofile="/coverage/reports/coverage.out" ./...
 
-FROM base AS final
+FROM $FINAL_IMAGE as final
+LABEL maintainer="morteza@omiga.com.au"
 
 WORKDIR /omiga
+
 COPY --from=build /bin/rain-processor /omiga
 COPY --from=build /src/venue/rain-processor/config.yaml /omiga
 
 RUN /omiga/rain-processor install-dependecies
-RUN npx playwright install-deps
 
 CMD ["/omiga/rain-processor", "start"]

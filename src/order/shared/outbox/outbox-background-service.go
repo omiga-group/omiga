@@ -5,9 +5,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/order/shared/entities"
 	outboxmodel "github.com/omiga-group/omiga/src/order/shared/entities/outbox"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/outbox"
 	"go.uber.org/zap"
@@ -33,7 +33,7 @@ func NewOutboxBackgroundService(
 	outboxConfig outbox.OutboxConfig,
 	messageProducer messaging.MessageProducer,
 	entgoClient entities.EntgoClient,
-	cronService cron.CronService) (OutboxBackgroundService, error) {
+	jobScheduler *gocron.Scheduler) (OutboxBackgroundService, error) {
 
 	instance := &outboxBackgroundService{
 		ctx:             ctx,
@@ -44,8 +44,9 @@ func NewOutboxBackgroundService(
 		globalMutex:     sync.Mutex{},
 	}
 
-	// Run at every second from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("0/1 * * * * *", instance); err != nil {
+	if _, err := jobScheduler.Every(1).Seconds().Do(func() {
+		instance.Run()
+	}); err != nil {
 		return nil, err
 	}
 

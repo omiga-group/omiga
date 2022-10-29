@@ -2,9 +2,6 @@
 ARG FINAL_IMAGE=alpine:3
 ARG BUILD_IMAGE=golang:1.19
 
-FROM $FINAL_IMAGE as base
-LABEL maintainer="morteza@omiga.com.au"
-
 FROM $BUILD_IMAGE as build
 
 RUN mkdir -p /src/shared/enterprise \
@@ -26,7 +23,8 @@ FROM build AS test
 RUN mkdir -p /coverage/reports
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go test -coverpkg=./... -v -covermode=count -coverprofile="/coverage/reports/coverage.out" ./...
 
-FROM base AS final
+FROM $FINAL_IMAGE as final
+LABEL maintainer="morteza@omiga.com.au"
 
 WORKDIR /omiga
 COPY --from=build /bin/omigactl /omiga

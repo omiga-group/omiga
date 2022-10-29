@@ -21,6 +21,7 @@ package appsetup
 import (
 	"context"
 
+	"github.com/go-co-op/gocron"
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/order/order-api/graphql"
 	"github.com/omiga-group/omiga/src/order/order-api/http"
@@ -30,23 +31,12 @@ import (
 	"github.com/omiga-group/omiga/src/order/shared/outbox"
 	"github.com/omiga-group/omiga/src/order/shared/repositories"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	enterpriseOutbox "github.com/omiga-group/omiga/src/shared/enterprise/outbox"
-	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
-
-func NewCronService(
-	logger *zap.SugaredLogger) (cron.CronService, error) {
-	wire.Build(
-		cron.NewCronService,
-		time.NewTimeHelper)
-
-	return nil, nil
-}
 
 func NewEntgoClient(
 	logger *zap.SugaredLogger,
@@ -64,7 +54,7 @@ func NewOutboxBackgroundService(
 	pulsarConfig pulsar.PulsarConfig,
 	outboxConfig enterpriseOutbox.OutboxConfig,
 	entgoClient entities.EntgoClient,
-	cronService cron.CronService) (outbox.OutboxBackgroundService, error) {
+	jobScheduler *gocron.Scheduler) (outbox.OutboxBackgroundService, error) {
 	wire.Build(
 		os.NewOsHelper,
 		pulsar.NewPulsarClient,

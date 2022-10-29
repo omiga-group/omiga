@@ -6,7 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
+	"github.com/go-co-op/gocron"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/venue/coingecko-processor/appsetup"
 	"github.com/omiga-group/omiga/src/venue/coingecko-processor/configuration"
@@ -50,17 +52,14 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
-			cronService, err := appsetup.NewCronService(sugarLogger)
-			if err != nil {
-				sugarLogger.Fatal(err)
-			}
-
-			defer cronService.Close()
+			jobScheduler := gocron.NewScheduler(time.UTC)
+			jobScheduler.StartAsync()
+			defer jobScheduler.Stop()
 
 			if _, err = appsetup.NewCoingeckoExchangeSubscriber(
 				ctx,
 				sugarLogger,
-				cronService,
+				jobScheduler,
 				config.Coingecko,
 				config.Exchanges,
 				config.Postgres); err != nil {
@@ -70,7 +69,7 @@ func startCommand() *cobra.Command {
 			if _, err = appsetup.NewCoingeckoCoinSubscriber(
 				ctx,
 				sugarLogger,
-				cronService,
+				jobScheduler,
 				config.Coingecko,
 				config.Exchanges,
 				config.Postgres); err != nil {

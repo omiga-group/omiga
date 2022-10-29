@@ -8,10 +8,10 @@ package appsetup
 
 import (
 	"context"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
@@ -26,18 +26,6 @@ import (
 )
 
 // Injectors from wire.go:
-
-func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
-	timeHelper, err := time.NewTimeHelper()
-	if err != nil {
-		return nil, err
-	}
-	cronService, err := cron.NewCronService(logger, timeHelper)
-	if err != nil {
-		return nil, err
-	}
-	return cronService, nil
-}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	timeHelper, err := time.NewTimeHelper()
@@ -105,7 +93,7 @@ func NewKrakenOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	return krakenOrderBookSubscriber, nil
 }
 
-func NewKrakenTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration2.KrakenConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairSubscriber, error) {
+func NewKrakenTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration2.KrakenConfig, jobScheduler *gocron.Scheduler, postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -126,7 +114,7 @@ func NewKrakenTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	krakenTradingPairSubscriber, err := subscribers.NewKrakenTradingPairSubscriber(ctx, logger, venueConfig, cronService, tradingPairRepository)
+	krakenTradingPairSubscriber, err := subscribers.NewKrakenTradingPairSubscriber(ctx, logger, venueConfig, jobScheduler, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}
