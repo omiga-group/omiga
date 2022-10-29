@@ -21893,10 +21893,10 @@ components:
           type: boolean
         primitive:
           type: boolean
-        interfaces:
-          type: array
-          items:
-            $ref: '#/components/schemas/JavaType'
+        # interfaces:
+        #   type: array
+        #   items:
+        #     $ref: '#/components/schemas/JavaType'
         genericSignature:
           type: string
         final:
@@ -21907,8 +21907,8 @@ components:
           $ref: '#/components/schemas/TypeBindings'
         concrete:
           type: boolean
-        keyType:
-          $ref: '#/components/schemas/JavaType'
+        # keyType:
+        #   $ref: '#/components/schemas/JavaType'
         arrayType:
           type: boolean
         throwable:
@@ -21925,10 +21925,10 @@ components:
         typeHandler:
           type: object
           properties: {}
-        referencedType:
-          $ref: '#/components/schemas/JavaType'
-        superClass:
-          $ref: '#/components/schemas/JavaType'
+        # referencedType:
+        #   $ref: '#/components/schemas/JavaType'
+        # superClass:
+        #   $ref: '#/components/schemas/JavaType'
         contentValueHandler:
           type: object
           properties: {}
@@ -21941,8 +21941,8 @@ components:
           type: boolean
         mapLikeType:
           type: boolean
-        contentType:
-          $ref: '#/components/schemas/JavaType'
+        # contentType:
+        #   $ref: '#/components/schemas/JavaType'
         typeName:
           type: string
         referenceType:

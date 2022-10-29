@@ -67,7 +67,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, ftxConfig configuration2.FtxConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.FtxOrderBookSubscriber, error) {
+func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, venueConfig configuration2.FtxConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.FtxOrderBookSubscriber, error) {
 	osHelper, err := os.NewOsHelper()
 	if err != nil {
 		return nil, err
@@ -85,14 +85,14 @@ func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, a
 	if err != nil {
 		return nil, err
 	}
-	ftxOrderBookSubscriber, err := subscribers.NewFtxOrderBookSubscriber(ctx, logger, ftxConfig, orderBookPublisher)
+	ftxOrderBookSubscriber, err := subscribers.NewFtxOrderBookSubscriber(ctx, logger, venueConfig, orderBookPublisher)
 	if err != nil {
 		return nil, err
 	}
 	return ftxOrderBookSubscriber, nil
 }
 
-func NewFtxTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, ftxConfig configuration2.FtxConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.FtxTradingPairSubscriber, error) {
+func NewFtxTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration2.FtxConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.FtxTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -113,7 +113,7 @@ func NewFtxTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger,
 	if err != nil {
 		return nil, err
 	}
-	ftxTradingPairSubscriber, err := subscribers.NewFtxTradingPairSubscriber(ctx, logger, ftxConfig, cronService, tradingPairRepository)
+	ftxTradingPairSubscriber, err := subscribers.NewFtxTradingPairSubscriber(ctx, logger, venueConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

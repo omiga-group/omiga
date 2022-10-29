@@ -64,7 +64,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewMexcTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, mexcConfig configuration.MexcConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.MexcTradingPairSubscriber, error) {
+func NewMexcTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration.MexcConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.MexcTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func NewMexcTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	if err != nil {
 		return nil, err
 	}
-	mexcTradingPairSubscriber, err := subscribers.NewMexcTradingPairSubscriber(ctx, logger, mexcConfig, cronService, tradingPairRepository)
+	mexcTradingPairSubscriber, err := subscribers.NewMexcTradingPairSubscriber(ctx, logger, venueConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

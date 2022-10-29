@@ -68,7 +68,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewKrakenOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, krakenConfig configuration2.KrakenConfig, pulsarConfig pulsar.PulsarConfig, postgresConfig postgres.PostgresConfig, topic string) (subscribers.KrakenOrderBookSubscriber, error) {
+func NewKrakenOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, venueConfig configuration2.KrakenConfig, pulsarConfig pulsar.PulsarConfig, postgresConfig postgres.PostgresConfig, topic string) (subscribers.KrakenOrderBookSubscriber, error) {
 	osHelper, err := os.NewOsHelper()
 	if err != nil {
 		return nil, err
@@ -98,14 +98,14 @@ func NewKrakenOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	if err != nil {
 		return nil, err
 	}
-	krakenOrderBookSubscriber, err := subscribers.NewKrakenOrderBookSubscriber(ctx, logger, krakenConfig, orderBookPublisher, currencyHelper)
+	krakenOrderBookSubscriber, err := subscribers.NewKrakenOrderBookSubscriber(ctx, logger, venueConfig, orderBookPublisher, currencyHelper)
 	if err != nil {
 		return nil, err
 	}
 	return krakenOrderBookSubscriber, nil
 }
 
-func NewKrakenTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, krakenConfig configuration2.KrakenConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairSubscriber, error) {
+func NewKrakenTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration2.KrakenConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -126,7 +126,7 @@ func NewKrakenTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	krakenTradingPairSubscriber, err := subscribers.NewKrakenTradingPairSubscriber(ctx, logger, krakenConfig, cronService, tradingPairRepository)
+	krakenTradingPairSubscriber, err := subscribers.NewKrakenTradingPairSubscriber(ctx, logger, venueConfig, cronService, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

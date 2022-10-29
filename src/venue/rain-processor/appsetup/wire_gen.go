@@ -65,7 +65,7 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewRainTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, rainConfig configuration.RainConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.RainTradingPairSubscriber, error) {
+func NewRainTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration.RainConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.RainTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func NewRainTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	if err != nil {
 		return nil, err
 	}
-	rainTradingPairSubscriber, err := subscribers.NewRainTradingPairSubscriber(ctx, logger, rainConfig, cronService, tradingPairRepository, totpHelper)
+	rainTradingPairSubscriber, err := subscribers.NewRainTradingPairSubscriber(ctx, logger, venueConfig, cronService, tradingPairRepository, totpHelper)
 	if err != nil {
 		return nil, err
 	}
