@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.4.1
-ARG FINAL_IMAGE=golang:1.19
+ARG FINAL_IMAGE=node:18
 ARG BUILD_IMAGE=golang:1.19
 
 FROM $FINAL_IMAGE as base
@@ -35,5 +35,6 @@ COPY --from=build /bin/rain-processor /omiga
 COPY --from=build /src/venue/rain-processor/config.yaml /omiga
 
 RUN /omiga/rain-processor install-dependecies
+RUN npx playwright install-deps
 
 CMD ["/omiga/rain-processor", "start"]
