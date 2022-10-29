@@ -44,7 +44,7 @@ func NewXtTradingPairSubscriber(
 }
 
 func (xtps *xtTradingPairSubscriber) Run() {
-	xtps.logger.Errorf("Start trading pairs sync for Venue: %s ...", xtps.venueConfig.Id)
+	xtps.logger.Infof("Start trading pairs sync for Venue: %s ...", xtps.venueConfig.Id)
 
 	client, err := xtv4.NewClientWithResponses(xtps.venueConfig.BaseUrl)
 	if err != nil {
@@ -81,5 +81,5 @@ func (xtps *xtTradingPairSubscriber) Run() {
 		return
 	}
 
-	xtps.logger.Errorf("Finished syncing trading pairs for Venue: %s", xtps.venueConfig.Id)
+	xtps.logger.Infof("Finished syncing trading pairs for Venue: %s", xtps.venueConfig.Id)
 }

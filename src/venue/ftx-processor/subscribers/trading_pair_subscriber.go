@@ -44,7 +44,7 @@ func NewFtxTradingPairSubscriber(
 }
 
 func (ftps *ftxTradingPairSubscriber) Run() {
-	ftps.logger.Errorf("Start trading pairs sync for Venue: %s ...", ftps.venueConfig.Id)
+	ftps.logger.Infof("Start trading pairs sync for Venue: %s ...", ftps.venueConfig.Id)
 
 	client, err := ftxv1.NewClientWithResponses(ftps.venueConfig.ApiUrl)
 	if err != nil {
@@ -81,5 +81,5 @@ func (ftps *ftxTradingPairSubscriber) Run() {
 		return
 	}
 
-	ftps.logger.Errorf("Finished syncing trading pairs for Venue: %s", ftps.venueConfig.Id)
+	ftps.logger.Infof("Finished syncing trading pairs for Venue: %s", ftps.venueConfig.Id)
 }

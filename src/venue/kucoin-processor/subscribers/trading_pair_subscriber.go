@@ -44,7 +44,7 @@ func NewKucoinTradingPairSubscriber(
 }
 
 func (ktps *kuCoinTradingPairSubscriber) Run() {
-	ktps.logger.Errorf("Start trading pairs sync for Venue: %s ...", ktps.venueConfig.Id)
+	ktps.logger.Infof("Start trading pairs sync for Venue: %s ...", ktps.venueConfig.Id)
 
 	apiService := kucoin.NewApiService(
 		kucoin.ApiKeyOption(ktps.venueConfig.ApiKey),
@@ -75,5 +75,5 @@ func (ktps *kuCoinTradingPairSubscriber) Run() {
 		return
 	}
 
-	ktps.logger.Errorf("Finished syncing trading pairs for Venue: %s", ktps.venueConfig.Id)
+	ktps.logger.Infof("Finished syncing trading pairs for Venue: %s", ktps.venueConfig.Id)
 }

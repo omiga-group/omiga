@@ -43,7 +43,7 @@ func NewBitmartTradingPairSubscriber(
 }
 
 func (btps *bitMartTradingPairSubscriber) Run() {
-	btps.logger.Errorf("Start trading pairs sync for Venue: %s ...", btps.venueConfig.Id)
+	btps.logger.Infof("Start trading pairs sync for Venue: %s ...", btps.venueConfig.Id)
 
 	client, err := bitmartspotv1.NewClientWithResponses(btps.venueConfig.BaseUrl)
 	if err != nil {
@@ -80,5 +80,5 @@ func (btps *bitMartTradingPairSubscriber) Run() {
 		return
 	}
 
-	btps.logger.Errorf("Finished syncing trading pairs for Venue: %s", btps.venueConfig.Id)
+	btps.logger.Infof("Finished syncing trading pairs for Venue: %s", btps.venueConfig.Id)
 }
