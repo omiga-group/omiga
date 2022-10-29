@@ -17,20 +17,20 @@ type BitmartTradingPairSubscriber interface {
 type bitMartTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	bitMartConfig         configuration.BitmartConfig
+	bitmartConfig         configuration.BitmartConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewBitmartTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	bitMartConfig configuration.BitmartConfig,
+	bitmartConfig configuration.BitmartConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (BitmartTradingPairSubscriber, error) {
 	instance := &bitMartTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		bitMartConfig:         bitMartConfig,
+		bitmartConfig:         bitmartConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
@@ -43,7 +43,7 @@ func NewBitmartTradingPairSubscriber(
 }
 
 func (btps *bitMartTradingPairSubscriber) Run() {
-	client, err := bitmartspotv1.NewClientWithResponses(btps.bitMartConfig.BaseUrl)
+	client, err := bitmartspotv1.NewClientWithResponses(btps.bitmartConfig.BaseUrl)
 	if err != nil {
 		btps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -71,7 +71,7 @@ func (btps *bitMartTradingPairSubscriber) Run() {
 
 	if err = btps.tradingPairRepository.CreateTradingPairs(
 		btps.ctx,
-		btps.bitMartConfig.Id,
+		btps.bitmartConfig.Id,
 		mappers.BitmartSymbolsToTradingPairs(response.JSON200.Data.Symbols)); err != nil {
 		btps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 

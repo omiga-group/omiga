@@ -67,7 +67,7 @@ func NewSyntheticOrderConsumer(
 func NewDextradeTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	dexTradeConfig configuration.DextradeConfig,
+	dextradeConfig configuration.DextradeConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.DextradeTradingPairSubscriber, error) {
 	wire.Build(
