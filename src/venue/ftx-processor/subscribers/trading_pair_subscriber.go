@@ -17,36 +17,36 @@ type FtxTradingPairSubscriber interface {
 type ftxTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	ftxConfig             configuration.FtxConfig
+	venueConfig           configuration.FtxConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewFtxTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	ftxConfig configuration.FtxConfig,
+	venueConfig configuration.FtxConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (FtxTradingPairSubscriber, error) {
 
 	instance := &ftxTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		ftxConfig:             ftxConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every minute from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
+	// Run at every 5th minute from 0 through 59..
+	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
 		return nil, err
 	}
-
-	go instance.Run()
 
 	return instance, nil
 }
 
 func (ftps *ftxTradingPairSubscriber) Run() {
-	client, err := ftxv1.NewClientWithResponses(ftps.ftxConfig.ApiUrl)
+	ftps.logger.Errorf("Start trading pairs sync for Venue: %s ...", ftps.venueConfig.Id)
+
+	client, err := ftxv1.NewClientWithResponses(ftps.venueConfig.ApiUrl)
 	if err != nil {
 		ftps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -72,13 +72,14 @@ func (ftps *ftxTradingPairSubscriber) Run() {
 		return
 	}
 
-	m := *response.JSON200.Result
 	if err = ftps.tradingPairRepository.CreateTradingPairs(
 		ftps.ctx,
-		ftps.ftxConfig.Id,
-		mappers.FtxMarketToTradingPairs(m)); err != nil {
+		ftps.venueConfig.Id,
+		mappers.FtxMarketToTradingPairs(*response.JSON200.Result)); err != nil {
 		ftps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
 	}
+
+	ftps.logger.Errorf("Finished syncing trading pairs for Venue: %s", ftps.venueConfig.Id)
 }

@@ -23,9 +23,6 @@ WORKDIR /src/venue/gemini-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/gemini-processor main.go
 
-FROM build AS local
-CMD ["/bin/gemini-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/gemini-processor /omiga
 COPY --from=build /src/venue/gemini-processor/config.yaml /omiga
+
+RUN /omiga/gemini-processor install-dependecies
+
 CMD ["/omiga/gemini-processor", "start"]

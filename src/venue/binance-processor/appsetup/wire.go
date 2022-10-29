@@ -94,7 +94,7 @@ func NewBinanceOrderBookSubscriber(
 func NewBinanceTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	binanceConfig configuration.BinanceConfig,
+	venueConfig configuration.BinanceConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.BinanceTradingPairSubscriber, error) {
 	wire.Build(

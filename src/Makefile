@@ -44,6 +44,7 @@ generate-via-docker: ## Generate code
 	@./venue/kraken-processor/scripts/generate.sh
 	@./venue/kucoin-processor/scripts/generate.sh
 	@./venue/mexc-processor/scripts/generate.sh
+	@./venue/rain-processor/scripts/generate.sh
 	@./venue/xt-processor/scripts/generate.sh
 
 .PHONY: lint

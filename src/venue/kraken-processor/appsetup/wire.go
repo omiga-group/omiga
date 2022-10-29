@@ -72,7 +72,7 @@ func NewKrakenOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	appConfig enterpriseConfiguration.AppConfig,
-	krakenConfig configuration.KrakenConfig,
+	venueConfig configuration.KrakenConfig,
 	pulsarConfig pulsar.PulsarConfig,
 	postgresConfig postgres.PostgresConfig,
 	topic string) (subscribers.KrakenOrderBookSubscriber, error) {
@@ -93,7 +93,7 @@ func NewKrakenOrderBookSubscriber(
 func NewKrakenTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	krakenConfig configuration.KrakenConfig,
+	venueConfig configuration.KrakenConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.KrakenTradingPairSubscriber, error) {
 	wire.Build(

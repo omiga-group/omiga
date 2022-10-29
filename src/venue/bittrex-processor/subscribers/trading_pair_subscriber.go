@@ -17,38 +17,38 @@ type BittrexTradingPairSubscriber interface {
 type bittrexTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	bittrexConfig         configuration.BittrexConfig
+	venueConfig           configuration.BittrexConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewBittrexTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	bittrexConfig configuration.BittrexConfig,
+	venueConfig configuration.BittrexConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (BittrexTradingPairSubscriber, error) {
 
 	instance := &bittrexTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		bittrexConfig:         bittrexConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every minute from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
+	// Run at every 5th minute from 0 through 59..
+	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
 		return nil, err
 	}
-
-	go instance.Run()
 
 	return instance, nil
 }
 
 func (btps *bittrexTradingPairSubscriber) Run() {
-	client := bittrex.New(btps.bittrexConfig.ApiKey, btps.bittrexConfig.SecretKey)
+	btps.logger.Errorf("Start trading pairs sync for Venue: %s ...", btps.venueConfig.Id)
 
-	markets, err := client.GetMarkets()
+	markets, err := bittrex.
+		New(btps.venueConfig.ApiKey, btps.venueConfig.SecretKey).
+		GetMarkets()
 	if err != nil {
 		btps.logger.Errorf("Failed to call markets endpoint. Error: %v", err)
 
@@ -57,10 +57,12 @@ func (btps *bittrexTradingPairSubscriber) Run() {
 
 	if err = btps.tradingPairRepository.CreateTradingPairs(
 		btps.ctx,
-		btps.bittrexConfig.Id,
+		btps.venueConfig.Id,
 		mappers.BittrexMarketsToTradingPairs(markets)); err != nil {
 		btps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
 	}
+
+	btps.logger.Errorf("Finished syncing trading pairs for Venue: %s", btps.venueConfig.Id)
 }

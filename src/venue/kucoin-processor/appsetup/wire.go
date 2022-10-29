@@ -67,7 +67,7 @@ func NewSyntheticOrderConsumer(
 func NewKucoinTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	kuCoinConfig configuration.KucoinConfig,
+	venueConfig configuration.KucoinConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.KucoinTradingPairSubscriber, error) {
 	wire.Build(

@@ -23,20 +23,20 @@ type FtxOrderBookSubscriber interface {
 type ftxOrderBookSubscriber struct {
 	ctx                context.Context
 	logger             *zap.SugaredLogger
-	ftxConfig          configuration.FtxConfig
+	venueConfig        configuration.FtxConfig
 	orderBookPublisher publishers.OrderBookPublisher
 }
 
 func NewFtxOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	ftxConfig configuration.FtxConfig,
+	venueConfig configuration.FtxConfig,
 	orderBookPublisher publishers.OrderBookPublisher) (FtxOrderBookSubscriber, error) {
 
 	instance := &ftxOrderBookSubscriber{
 		ctx:                ctx,
 		logger:             logger,
-		ftxConfig:          ftxConfig,
+		venueConfig:        venueConfig,
 		orderBookPublisher: orderBookPublisher,
 	}
 
@@ -60,7 +60,7 @@ func (fobs *ftxOrderBookSubscriber) run() {
 }
 
 func (fobs *ftxOrderBookSubscriber) connectAndSubscribe() {
-	connection, _, err := websocket.DefaultDialer.DialContext(fobs.ctx, fobs.ftxConfig.WebsocketUrl, nil)
+	connection, _, err := websocket.DefaultDialer.DialContext(fobs.ctx, fobs.venueConfig.WebsocketUrl, nil)
 	if err != nil {
 		fobs.logger.Errorf("Failed to dial FTX websocket. Error: %v", err)
 		return
@@ -77,7 +77,7 @@ func (fobs *ftxOrderBookSubscriber) connectAndSubscribe() {
 		}
 	}()
 
-	client, err := ftxv1.NewClientWithResponses(fobs.ftxConfig.ApiUrl)
+	client, err := ftxv1.NewClientWithResponses(fobs.venueConfig.ApiUrl)
 	if err != nil {
 		fobs.logger.Errorf("Failed to create client with response. Error: %v", err)
 

@@ -23,9 +23,6 @@ WORKDIR /src/order/order-api
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/order-api main.go
 
-FROM build AS local
-CMD ["/bin/order-api", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/order-api /omiga
 COPY --from=build /src/order/order-api/config.yaml /omiga
+
+RUN /omiga/order-api install-dependecies
+
 CMD ["/omiga/order-api", "start"]

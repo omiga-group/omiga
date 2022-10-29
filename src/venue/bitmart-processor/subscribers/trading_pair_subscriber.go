@@ -17,35 +17,35 @@ type BitmartTradingPairSubscriber interface {
 type bitMartTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	bitMartConfig         configuration.BitmartConfig
+	venueConfig           configuration.BitmartConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewBitmartTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	bitMartConfig configuration.BitmartConfig,
+	venueConfig configuration.BitmartConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (BitmartTradingPairSubscriber, error) {
 	instance := &bitMartTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		bitMartConfig:         bitMartConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every minute from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
+	// Run at every 5th minute from 0 through 59..
+	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
 		return nil, err
 	}
-
-	go instance.Run()
 
 	return instance, nil
 }
 
 func (btps *bitMartTradingPairSubscriber) Run() {
-	client, err := bitmartspotv1.NewClientWithResponses(btps.bitMartConfig.BaseUrl)
+	btps.logger.Errorf("Start trading pairs sync for Venue: %s ...", btps.venueConfig.Id)
+
+	client, err := bitmartspotv1.NewClientWithResponses(btps.venueConfig.BaseUrl)
 	if err != nil {
 		btps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -73,10 +73,12 @@ func (btps *bitMartTradingPairSubscriber) Run() {
 
 	if err = btps.tradingPairRepository.CreateTradingPairs(
 		btps.ctx,
-		btps.bitMartConfig.Id,
+		btps.venueConfig.Id,
 		mappers.BitmartSymbolsToTradingPairs(response.JSON200.Data.Symbols)); err != nil {
 		btps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
 	}
+
+	btps.logger.Errorf("Finished syncing trading pairs for Venue: %s", btps.venueConfig.Id)
 }

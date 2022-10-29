@@ -74,6 +74,14 @@
       "args": ["start"]
     },
     {
+      "name": "Rain Processor",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/venue/rain-processor/main.go",
+      "args": ["start"]
+    },
+    {
       "name": "Coinbase Processor",
       "type": "go",
       "request": "launch",

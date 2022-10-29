@@ -67,7 +67,7 @@ func NewSyntheticOrderConsumer(
 func NewHuobiTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	huobiConfig configuration.HuobiConfig,
+	venueConfig configuration.HuobiConfig,
 	cronService cron.CronService,
 	postgresConfig postgres.PostgresConfig) (subscribers.HuobiTradingPairSubscriber, error) {
 	wire.Build(

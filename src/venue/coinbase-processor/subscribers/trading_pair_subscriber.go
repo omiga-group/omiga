@@ -17,42 +17,42 @@ type CoinbaseTradingPairSubscriber interface {
 type coinbaseTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	coinbaseConfig        configuration.CoinbaseConfig
+	venueConfig           configuration.CoinbaseConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewCoinbaseTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	coinbaseConfig configuration.CoinbaseConfig,
+	venueConfig configuration.CoinbaseConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (CoinbaseTradingPairSubscriber, error) {
 
 	instance := &coinbaseTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		coinbaseConfig:        coinbaseConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every minute from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
+	// Run at every 5th minute from 0 through 59..
+	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
 		return nil, err
 	}
-
-	go instance.Run()
 
 	return instance, nil
 }
 
 func (ctps *coinbaseTradingPairSubscriber) Run() {
+	ctps.logger.Errorf("Start trading pairs sync for Venue: %s ...", ctps.venueConfig.Id)
+
 	client := coinbasepro.NewClient()
 
 	client.UpdateConfig(&coinbasepro.ClientConfig{
-		BaseURL:    ctps.coinbaseConfig.BaseUrl,
-		Key:        ctps.coinbaseConfig.ApiKey,
-		Passphrase: ctps.coinbaseConfig.Passphrase,
-		Secret:     ctps.coinbaseConfig.SecretKey,
+		BaseURL:    ctps.venueConfig.BaseUrl,
+		Key:        ctps.venueConfig.ApiKey,
+		Passphrase: ctps.venueConfig.Passphrase,
+		Secret:     ctps.venueConfig.SecretKey,
 	})
 
 	products, err := client.GetProducts()
@@ -64,10 +64,12 @@ func (ctps *coinbaseTradingPairSubscriber) Run() {
 
 	if err = ctps.tradingPairRepository.CreateTradingPairs(
 		ctps.ctx,
-		ctps.coinbaseConfig.Id,
+		ctps.venueConfig.Id,
 		mappers.CoinbaseProductsToTradingPairs(products)); err != nil {
 		ctps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
 	}
+
+	ctps.logger.Errorf("Finished syncing trading pairs for Venue: %s", ctps.venueConfig.Id)
 }

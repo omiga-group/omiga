@@ -1,0 +1,121 @@
+openapi: 3.0.1
+info:
+  title: Rain API V1
+  description: "Rain REST API"
+  version: 1.0.0
+
+servers:
+  - url: https://smart-prod-0.rain.com/api/1
+
+paths:
+  /coins:
+    get:
+      summary: fetches the supported coins
+      operationId: getAllCoins
+      responses:
+        200:
+          description: list of coins
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getCoinsResponse"
+
+components:
+  schemas:
+    getCoinsResponse:
+      type: object
+      additionalProperties: true
+      required:
+        - coins
+      properties:
+        coins:
+          type: array
+          items:
+            $ref: "#/components/schemas/coin"
+
+    coin:
+      type: object
+      additionalProperties: true
+      required:
+        - name
+        - code
+        - icon_url
+        - precision
+        - fiat_precision
+        - block_explorer
+        - minimum_confirmations
+        - minimum_amount
+        - exchange_warning_minimum
+        - status
+        - status_changed_at
+        - extensions
+        - networks
+        - categories
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        icon_url:
+          type: string
+        precision:
+          type: integer
+        fiat_precision:
+          type: integer
+        block_explorer:
+          type: string
+        minimum_confirmations:
+          type: integer
+        minimum_amount:
+          type: string
+        exchange_warning_minimum:
+          type: string
+        status:
+          type: string
+        status_changed_at:
+          type: string
+          format: date-time
+        extensions:
+          type: array
+          items:
+            $ref: "#/components/schemas/extension"
+        networks:
+          type: array
+          items:
+            $ref: "#/components/schemas/network"
+        categories:
+          type: array
+          items:
+            type: string
+
+    extension:
+      type: object
+      additionalProperties: true
+      required:
+        - name
+        - type
+        - value
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        value:
+          type: string
+
+    network:
+      type: object
+      additionalProperties: true
+      required:
+        - name
+        - default_fee
+        - extensions
+      properties:
+        name:
+          type: string
+        default_fee:
+          type: string
+        extensions:
+          type: array
+          items:
+            $ref: "#/components/schemas/extension"

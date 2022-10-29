@@ -21,36 +21,36 @@ type GeminiTradingPairSubscriber interface {
 type geminiTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	geminiConfig          configuration.GeminiConfig
+	venueConfig           configuration.GeminiConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewGeminiTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	geminiConfig configuration.GeminiConfig,
+	venueConfig configuration.GeminiConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (GeminiTradingPairSubscriber, error) {
 
 	instance := &geminiTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		geminiConfig:          geminiConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every minute from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
+	// Run at every 5th minute from 0 through 59..
+	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
 		return nil, err
 	}
-
-	go instance.Run()
 
 	return instance, nil
 }
 
 func (gtps *geminiTradingPairSubscriber) Run() {
-	client, err := geminiv1.NewClientWithResponses(gtps.geminiConfig.ApiUrl)
+	gtps.logger.Errorf("Start trading pairs sync for Venue: %s ...", gtps.venueConfig.Id)
+
+	client, err := geminiv1.NewClientWithResponses(gtps.venueConfig.ApiUrl)
 	if err != nil {
 		gtps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -105,10 +105,12 @@ func (gtps *geminiTradingPairSubscriber) Run() {
 
 	if err = gtps.tradingPairRepository.CreateTradingPairs(
 		gtps.ctx,
-		gtps.geminiConfig.Id,
+		gtps.venueConfig.Id,
 		mappers.GeminiTradingPairsToTradingPairs(maps.Values(all))); err != nil {
 		gtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
 	}
+
+	gtps.logger.Errorf("Finished syncing trading pairs for Venue: %s", gtps.venueConfig.Id)
 }

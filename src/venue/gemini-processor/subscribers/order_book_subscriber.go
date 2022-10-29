@@ -23,7 +23,7 @@ type GeminiOrderBookSubscriber interface {
 type geminiOrderBookSubscriber struct {
 	ctx                context.Context
 	logger             *zap.SugaredLogger
-	geminiConfig       configuration.GeminiConfig
+	venueConfig        configuration.GeminiConfig
 	orderBookPublisher publishers.OrderBookPublisher
 	apiClient          client.ApiClient
 }
@@ -32,13 +32,13 @@ func NewGeminiOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	apiClient client.ApiClient,
-	geminiConfig configuration.GeminiConfig,
+	venueConfig configuration.GeminiConfig,
 	orderBookPublisher publishers.OrderBookPublisher) (GeminiOrderBookSubscriber, error) {
 
 	instance := &geminiOrderBookSubscriber{
 		ctx:                ctx,
 		logger:             logger,
-		geminiConfig:       geminiConfig,
+		venueConfig:        venueConfig,
 		orderBookPublisher: orderBookPublisher,
 		apiClient:          apiClient,
 	}
@@ -63,7 +63,7 @@ func (gobs *geminiOrderBookSubscriber) run() {
 }
 
 func (gobs *geminiOrderBookSubscriber) connectAndSubscribe() {
-	connection, _, err := websocket.DefaultDialer.DialContext(gobs.ctx, gobs.geminiConfig.WebsocketUrl, nil)
+	connection, _, err := websocket.DefaultDialer.DialContext(gobs.ctx, gobs.venueConfig.WebsocketUrl, nil)
 	if err != nil {
 		gobs.logger.Errorf("Failed to dial Gemini websocket. Error: %v", err)
 		return

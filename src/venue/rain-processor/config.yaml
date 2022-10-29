@@ -1,0 +1,23 @@
+app:
+  source: "urn::omiga::rain-processor"
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  subscriptionName: "rain-processor"
+  producerName: "rain-processor"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 5
+
+rain:
+  id: "rain"
+  websiteUrl: "https://www.rain.com"
+  baseUrl: "https://smart-prod-0.rain.com/api/1"
+  username: ""
+  password: ""
+  totpSecret: ""
+  headless: true
+  timeout: 30s

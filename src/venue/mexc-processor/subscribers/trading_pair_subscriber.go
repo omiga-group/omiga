@@ -17,36 +17,36 @@ type MexcTradingPairSubscriber interface {
 type mexcTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	mexcConfig            configuration.MexcConfig
+	venueConfig           configuration.MexcConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewMexcTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	mexcConfig configuration.MexcConfig,
+	venueConfig configuration.MexcConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (MexcTradingPairSubscriber, error) {
 
 	instance := &mexcTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		mexcConfig:            mexcConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every minute from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
+	// Run at every 5th minute from 0 through 59..
+	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
 		return nil, err
 	}
-
-	go instance.Run()
 
 	return instance, nil
 }
 
 func (mtps *mexcTradingPairSubscriber) Run() {
-	client, err := mexcpotv2.NewClientWithResponses(mtps.mexcConfig.BaseUrl)
+	mtps.logger.Errorf("Start trading pairs sync for Venue: %s ...", mtps.venueConfig.Id)
+
+	client, err := mexcpotv2.NewClientWithResponses(mtps.venueConfig.BaseUrl)
 	if err != nil {
 		mtps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -74,10 +74,12 @@ func (mtps *mexcTradingPairSubscriber) Run() {
 
 	if err = mtps.tradingPairRepository.CreateTradingPairs(
 		mtps.ctx,
-		mtps.mexcConfig.Id,
+		mtps.venueConfig.Id,
 		mappers.MexcSymbolsToTradingPairs(response.JSON200.Data)); err != nil {
 		mtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
 	}
+
+	mtps.logger.Errorf("Finished syncing trading pairs for Venue: %s", mtps.venueConfig.Id)
 }

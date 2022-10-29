@@ -21,9 +21,6 @@ WORKDIR /src/venue/shared/cli
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/venue-database-migration main.go
 
-FROM build AS local
-CMD ["/bin/venue-database-migration", "migrate", "--post-migration-script-path", "post_migration_script.sql"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -35,4 +32,7 @@ WORKDIR /omiga
 COPY --from=build /bin/venue-database-migration /omiga
 COPY --from=build /src/venue/shared/cli/config.yaml /omiga
 COPY --from=build /src/venue/shared/cli/post_migration_script.sql /omiga
+
+RUN /omiga/venue-database-migration install-dependecies
+
 CMD ["/omiga/venue-database-migration", "migrate", "--post-migration-script-path", "post_migration_script.sql"]

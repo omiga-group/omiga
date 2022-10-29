@@ -35,7 +35,7 @@ func NewPostgres(
 	}
 
 	logger.Infof(
-		"Connecting to Postgres: host: %s, port: %s, databaseName: %s",
+		"Setting up Postgres connection string to connect to Postgres: host: %s, port: %s, databaseName: %s",
 		brokenConnectiongString.host,
 		brokenConnectiongString.port,
 		brokenConnectiongString.databaseName)

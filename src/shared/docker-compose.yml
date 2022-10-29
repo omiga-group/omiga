@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: shared/omigactl/Dockerfile
-      target: local
+      target: final
     restart: on-failure
     environment:
       OMIGA_PULSAR_HTTPURL: ${OMIGA_PULSAR_HTTPURL:-http://pulsar:8080/admin/v2}

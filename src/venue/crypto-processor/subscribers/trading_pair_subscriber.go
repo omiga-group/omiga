@@ -17,36 +17,36 @@ type CryptoTradingPairSubscriber interface {
 type cryptoTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	cryptoConfig          configuration.CryptoConfig
+	venueConfig           configuration.CryptoConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewCryptoTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	cryptoConfig configuration.CryptoConfig,
+	venueConfig configuration.CryptoConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (CryptoTradingPairSubscriber, error) {
 
 	instance := &cryptoTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		cryptoConfig:          cryptoConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every minute from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
+	// Run at every 5th minute from 0 through 59..
+	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
 		return nil, err
 	}
-
-	go instance.Run()
 
 	return instance, nil
 }
 
 func (ctps *cryptoTradingPairSubscriber) Run() {
-	client, err := cryptov2.NewClientWithResponses(ctps.cryptoConfig.BaseUrl)
+	ctps.logger.Errorf("Start trading pairs sync for Venue: %s ...", ctps.venueConfig.Id)
+
+	client, err := cryptov2.NewClientWithResponses(ctps.venueConfig.BaseUrl)
 	if err != nil {
 		ctps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -74,10 +74,12 @@ func (ctps *cryptoTradingPairSubscriber) Run() {
 
 	if err = ctps.tradingPairRepository.CreateTradingPairs(
 		ctps.ctx,
-		ctps.cryptoConfig.Id,
+		ctps.venueConfig.Id,
 		mappers.CryptoInstrumentsToTradingPairs(response.JSON200.Result.Instruments)); err != nil {
 		ctps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
 	}
+
+	ctps.logger.Errorf("Finished syncing trading pairs for Venue: %s", ctps.venueConfig.Id)
 }

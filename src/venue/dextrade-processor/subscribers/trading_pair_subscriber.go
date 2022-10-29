@@ -17,36 +17,36 @@ type DextradeTradingPairSubscriber interface {
 type dexTradeTradingPairSubscriber struct {
 	ctx                   context.Context
 	logger                *zap.SugaredLogger
-	dexTradeConfig        configuration.DextradeConfig
+	venueConfig           configuration.DextradeConfig
 	tradingPairRepository repositories.TradingPairRepository
 }
 
 func NewDextradeTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	dexTradeConfig configuration.DextradeConfig,
+	venueConfig configuration.DextradeConfig,
 	cronService cron.CronService,
 	tradingPairRepository repositories.TradingPairRepository) (DextradeTradingPairSubscriber, error) {
 
 	instance := &dexTradeTradingPairSubscriber{
 		ctx:                   ctx,
 		logger:                logger,
-		dexTradeConfig:        dexTradeConfig,
+		venueConfig:           venueConfig,
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every minute from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("* 0/1 * * * *", instance); err != nil {
+	// Run at every 5th minute from 0 through 59..
+	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
 		return nil, err
 	}
-
-	go instance.Run()
 
 	return instance, nil
 }
 
 func (dtps *dexTradeTradingPairSubscriber) Run() {
-	client, err := dextradev1.NewClientWithResponses(dtps.dexTradeConfig.BaseUrl)
+	dtps.logger.Errorf("Start trading pairs sync for Venue: %s ...", dtps.venueConfig.Id)
+
+	client, err := dextradev1.NewClientWithResponses(dtps.venueConfig.BaseUrl)
 	if err != nil {
 		dtps.logger.Errorf("Failed to create client with response. Error: %v", err)
 
@@ -74,10 +74,12 @@ func (dtps *dexTradeTradingPairSubscriber) Run() {
 
 	if err = dtps.tradingPairRepository.CreateTradingPairs(
 		dtps.ctx,
-		dtps.dexTradeConfig.Id,
+		dtps.venueConfig.Id,
 		mappers.DextradeSymbolsToTradingPairs(response.JSON200.Data)); err != nil {
 		dtps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
 	}
+
+	dtps.logger.Errorf("Finished syncing trading pairs for Venue: %s", dtps.venueConfig.Id)
 }
