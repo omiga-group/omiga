@@ -77,28 +77,22 @@ func NewRainTradingPairSubscriber(
 }
 
 func (rtps *rainTradingPairSubscriber) Run() {
-	if rtps.cachedHeaders != nil {
-		if err := rtps.saveTradingPairs(rtps.cachedHeaders); err == nil {
-			return
-		} else {
-			rtps.cachedHeaders = nil
-		}
-	}
-
-	if headers, err := rtps.getRequiredHeaders(); err != nil {
-		rtps.cachedHeaders = nil
-		rtps.logger.Error(err)
-
-		return
-	} else {
-		if err := rtps.saveTradingPairs(headers); err != nil {
-			rtps.cachedHeaders = nil
+	if rtps.cachedHeaders == nil {
+		headers, err := rtps.getRequiredHeaders()
+		if err != nil {
 			rtps.logger.Error(err)
 
 			return
 		}
 
 		rtps.cachedHeaders = headers
+	}
+
+	if err := rtps.saveTradingPairs(rtps.cachedHeaders); err != nil {
+		rtps.cachedHeaders = nil
+		rtps.logger.Error(err)
+
+		return
 	}
 }
 

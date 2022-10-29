@@ -70,11 +70,10 @@ func (ftps *ftxTradingPairSubscriber) Run() {
 		return
 	}
 
-	m := *response.JSON200.Result
 	if err = ftps.tradingPairRepository.CreateTradingPairs(
 		ftps.ctx,
 		ftps.ftxConfig.Id,
-		mappers.FtxMarketToTradingPairs(m)); err != nil {
+		mappers.FtxMarketToTradingPairs(*response.JSON200.Result)); err != nil {
 		ftps.logger.Errorf("Failed to create trading pairs. Error: %v", err)
 
 		return
