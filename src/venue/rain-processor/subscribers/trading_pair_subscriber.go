@@ -116,8 +116,10 @@ func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, 
 		}
 	}()
 
+	var timeout float64 = 0
 	browserInstance, err := playwrightInstance.Chromium.Launch(playwright.BrowserTypeLaunchOptions{
 		Headless: &rtps.venueConfig.Headless,
+		Timeout:  &timeout,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to start Chromium browser instance. Error: %v", err)
