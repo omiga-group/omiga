@@ -23,9 +23,6 @@ WORKDIR /src/venue/$VENUE@LOW$-processor
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/$VENUE@LOW$-processor main.go
 
-FROM build AS local
-CMD ["/bin/$VENUE@LOW$-processor", "start"]
-
 FROM build AS test
 
 RUN mkdir -p /coverage/reports
@@ -36,4 +33,7 @@ FROM base AS final
 WORKDIR /omiga
 COPY --from=build /bin/$VENUE@LOW$-processor /omiga
 COPY --from=build /src/venue/$VENUE@LOW$-processor/config.yaml /omiga
+
+RUN /omiga/$VENUE@LOW$-processor install-dependecies
+
 CMD ["/omiga/$VENUE@LOW$-processor", "start"]
