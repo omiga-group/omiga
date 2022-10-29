@@ -102,8 +102,6 @@ func (rtps *rainTradingPairSubscriber) Run() {
 }
 
 func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, error) {
-	var timeout float64 = 3 * 60 * 1000
-
 	headersChannel := make(chan map[string]string)
 	defer close(headersChannel)
 
@@ -120,8 +118,7 @@ func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, 
 
 	browserInstance, err := playwrightInstance.Chromium.Launch(
 		playwright.BrowserTypeLaunchOptions{
-			Headless: &rtps.venueConfig.Headless,
-			Timeout:  &timeout,
+			Headless: playwright.Bool(rtps.venueConfig.Headless),
 		})
 	if err != nil {
 		return nil, fmt.Errorf("failed to start Chromium browser instance. Error: %v", err)
@@ -133,7 +130,17 @@ func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, 
 		}
 	}()
 
-	signinPageInstance, err := browserInstance.NewPage()
+	var recordVideoOption *playwright.BrowserNewContextOptionsRecordVideo
+
+	if len(rtps.venueConfig.RecordedVideoDirPath) > 0 {
+		recordVideoOption = &playwright.BrowserNewContextOptionsRecordVideo{
+			Dir: playwright.String(rtps.venueConfig.RecordedVideoDirPath),
+		}
+	}
+
+	signinPageInstance, err := browserInstance.NewPage(playwright.BrowserNewContextOptions{
+		RecordVideo: recordVideoOption,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to start signin page instance. Error: %v", err)
 	}
@@ -160,37 +167,19 @@ func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, 
 	signinUrl := *rtps.websiteUrl
 	signinUrl.Path = path.Join(rtps.websiteUrl.Path, "signin")
 
-	if _, err = signinPageInstance.Goto(
-		signinUrl.String(),
-		playwright.PageGotoOptions{
-			Timeout: &timeout,
-		}); err != nil {
+	if _, err = signinPageInstance.Goto(signinUrl.String()); err != nil {
 		return nil, fmt.Errorf("failed to navigate to /signin page. Error: %v", err)
 	}
 
-	if err = signinPageInstance.Fill(
-		"input[name=\"email\"]",
-		rtps.venueConfig.Username,
-		playwright.FrameFillOptions{
-			Timeout: &timeout,
-		}); err != nil {
+	if err = signinPageInstance.Fill("input[name=\"email\"]", rtps.venueConfig.Username); err != nil {
 		return nil, fmt.Errorf("failed to fill email field. Error: %v", err)
 	}
 
-	if err = signinPageInstance.Fill(
-		"input[name=\"password\"]",
-		rtps.venueConfig.Password,
-		playwright.FrameFillOptions{
-			Timeout: &timeout,
-		}); err != nil {
+	if err = signinPageInstance.Fill("input[name=\"password\"]", rtps.venueConfig.Password); err != nil {
 		return nil, fmt.Errorf("failed to fill password field. Error: %v", err)
 	}
 
-	if err = signinPageInstance.Click(
-		"text=Sign In",
-		playwright.PageClickOptions{
-			Timeout: &timeout,
-		}); err != nil {
+	if err = signinPageInstance.Click("text=Sign In"); err != nil {
 		return nil, fmt.Errorf("failed to click on Sign In button. Error: %v", err)
 	}
 
@@ -199,20 +188,11 @@ func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, 
 		return nil, fmt.Errorf("failed to generate TOTP code. Error: %v", err)
 	}
 
-	if err = signinPageInstance.Fill(
-		"input[id=\"code\"]",
-		totpCode,
-		playwright.FrameFillOptions{
-			Timeout: &timeout,
-		}); err != nil {
+	if err = signinPageInstance.Fill("input[id=\"code\"]", totpCode); err != nil {
 		return nil, fmt.Errorf("failed to fill code field. Error: %v", err)
 	}
 
-	if err = signinPageInstance.Click(
-		"text=Submit",
-		playwright.PageClickOptions{
-			Timeout: &timeout,
-		}); err != nil {
+	if err = signinPageInstance.Click("text=Submit"); err != nil {
 		return nil, fmt.Errorf("failed to click on Submit button. Error: %v", err)
 	}
 

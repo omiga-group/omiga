@@ -21,3 +21,4 @@ rain:
   totpSecret: ""
   headless: true
   timeout: 30s
+  recordedVideoDirPath: ""
