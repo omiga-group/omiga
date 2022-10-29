@@ -3,7 +3,7 @@ package subscribers
 import (
 	"context"
 
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/venue/dextrade-processor/configuration"
 	dextradev1 "github.com/omiga-group/omiga/src/venue/dextrade-processor/dextradeclient/v1"
 	"github.com/omiga-group/omiga/src/venue/dextrade-processor/mappers"
@@ -25,7 +25,7 @@ func NewDextradeTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.DextradeConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	tradingPairRepository repositories.TradingPairRepository) (DextradeTradingPairSubscriber, error) {
 
 	instance := &dexTradeTradingPairSubscriber{
@@ -35,10 +35,9 @@ func NewDextradeTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every 5th minute from 0 through 59..
-	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
-		return nil, err
-	}
+	jobScheduler.Every(5).Minutes().Do(func() {
+		instance.Run()
+	})
 
 	return instance, nil
 }

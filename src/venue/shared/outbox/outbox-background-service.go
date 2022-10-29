@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
 	"github.com/omiga-group/omiga/src/shared/enterprise/outbox"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -33,7 +33,7 @@ func NewOutboxBackgroundService(
 	outboxConfig outbox.OutboxConfig,
 	messageProducer messaging.MessageProducer,
 	entgoClient entities.EntgoClient,
-	cronService cron.CronService) (OutboxBackgroundService, error) {
+	jobScheduler *gocron.Scheduler) (OutboxBackgroundService, error) {
 
 	instance := &outboxBackgroundService{
 		ctx:             ctx,
@@ -44,10 +44,9 @@ func NewOutboxBackgroundService(
 		globalMutex:     sync.Mutex{},
 	}
 
-	// Run at every second from 0 through 59.
-	if _, err := cronService.GetCron().AddJob("0/1 * * * * *", instance); err != nil {
-		return nil, err
-	}
+	jobScheduler.Every(1).Seconds().Do(func() {
+		instance.Run()
+	})
 
 	return instance, nil
 }

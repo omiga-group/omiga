@@ -7,24 +7,10 @@
 package appsetup
 
 import (
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
-	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
-
-func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
-	timeHelper, err := time.NewTimeHelper()
-	if err != nil {
-		return nil, err
-	}
-	cronService, err := cron.NewCronService(logger, timeHelper)
-	if err != nil {
-		return nil, err
-	}
-	return cronService, nil
-}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	timeHelper, err := time.NewTimeHelper()

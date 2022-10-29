@@ -3,7 +3,7 @@ package subscribers
 import (
 	"context"
 
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/go-co-op/gocron"
 	bybitpotv3 "github.com/omiga-group/omiga/src/venue/bybit-processor/bybitclient/spot/v3"
 	"github.com/omiga-group/omiga/src/venue/bybit-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/bybit-processor/mappers"
@@ -25,7 +25,7 @@ func NewBybitTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.BybitConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	tradingPairRepository repositories.TradingPairRepository) (BybitTradingPairSubscriber, error) {
 
 	instance := &bybitTradingPairSubscriber{
@@ -35,10 +35,9 @@ func NewBybitTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every 5th minute from 0 through 59..
-	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
-		return nil, err
-	}
+	jobScheduler.Every(5).Minutes().Do(func() {
+		instance.Run()
+	})
 
 	return instance, nil
 }

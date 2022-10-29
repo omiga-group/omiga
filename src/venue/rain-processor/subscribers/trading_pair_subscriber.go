@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/security/authentication/passwordgeneration/totp"
 	"github.com/omiga-group/omiga/src/venue/rain-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/rain-processor/mappers"
@@ -38,7 +38,7 @@ func NewRainTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.RainConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	tradingPairRepository repositories.TradingPairRepository,
 	totpHelper totp.TotpHelper) (RainTradingPairSubscriber, error) {
 
@@ -68,10 +68,9 @@ func NewRainTradingPairSubscriber(
 		timeout:               timeout,
 	}
 
-	// Run at every 5th minute from 0 through 59..
-	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
-		return nil, err
-	}
+	jobScheduler.Every(5).Minutes().Do(func() {
+		instance.Run()
+	})
 
 	return instance, nil
 }

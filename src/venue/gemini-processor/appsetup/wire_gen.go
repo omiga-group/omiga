@@ -8,10 +8,10 @@ package appsetup
 
 import (
 	"context"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
@@ -26,18 +26,6 @@ import (
 )
 
 // Injectors from wire.go:
-
-func NewCronService(logger *zap.SugaredLogger) (cron.CronService, error) {
-	timeHelper, err := time.NewTimeHelper()
-	if err != nil {
-		return nil, err
-	}
-	cronService, err := cron.NewCronService(logger, timeHelper)
-	if err != nil {
-		return nil, err
-	}
-	return cronService, nil
-}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	timeHelper, err := time.NewTimeHelper()
@@ -94,7 +82,7 @@ func NewGeminiOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger
 	return geminiOrderBookSubscriber, nil
 }
 
-func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration2.GeminiConfig, cronService cron.CronService, postgresConfig postgres.PostgresConfig) (subscribers.GeminiTradingPairSubscriber, error) {
+func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogger, venueConfig configuration2.GeminiConfig, jobScheduler *gocron.Scheduler, postgresConfig postgres.PostgresConfig) (subscribers.GeminiTradingPairSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {
 		return nil, err
@@ -115,7 +103,7 @@ func NewGeminiTradingPairSubscriber(ctx context.Context, logger *zap.SugaredLogg
 	if err != nil {
 		return nil, err
 	}
-	geminiTradingPairSubscriber, err := subscribers.NewGeminiTradingPairSubscriber(ctx, logger, venueConfig, cronService, tradingPairRepository)
+	geminiTradingPairSubscriber, err := subscribers.NewGeminiTradingPairSubscriber(ctx, logger, venueConfig, jobScheduler, tradingPairRepository)
 	if err != nil {
 		return nil, err
 	}

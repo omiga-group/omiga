@@ -24,10 +24,10 @@ import (
 	"github.com/google/wire"
 	"go.uber.org/zap"
 
+	"github.com/go-co-op/gocron"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
@@ -39,15 +39,6 @@ import (
 	"github.com/omiga-group/omiga/src/venue/shared/publishers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
 )
-
-func NewCronService(
-	logger *zap.SugaredLogger) (cron.CronService, error) {
-	wire.Build(
-		time.NewTimeHelper,
-		cron.NewCronService)
-
-	return nil, nil
-}
 
 func NewTimeHelper() (time.TimeHelper, error) {
 	wire.Build(
@@ -93,7 +84,7 @@ func NewGeminiTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.GeminiConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	postgresConfig postgres.PostgresConfig) (subscribers.GeminiTradingPairSubscriber, error) {
 	wire.Build(
 		postgres.NewPostgres,

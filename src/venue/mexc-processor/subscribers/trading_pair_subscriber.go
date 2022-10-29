@@ -3,7 +3,7 @@ package subscribers
 import (
 	"context"
 
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/venue/mexc-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/mexc-processor/mappers"
 	mexcpotv2 "github.com/omiga-group/omiga/src/venue/mexc-processor/mexcclient/spot/v2"
@@ -25,7 +25,7 @@ func NewMexcTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.MexcConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	tradingPairRepository repositories.TradingPairRepository) (MexcTradingPairSubscriber, error) {
 
 	instance := &mexcTradingPairSubscriber{
@@ -35,10 +35,9 @@ func NewMexcTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every 5th minute from 0 through 59..
-	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
-		return nil, err
-	}
+	jobScheduler.Every(5).Minutes().Do(func() {
+		instance.Run()
+	})
 
 	return instance, nil
 }

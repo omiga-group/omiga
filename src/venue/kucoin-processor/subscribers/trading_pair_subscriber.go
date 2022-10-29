@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/Kucoin/kucoin-go-sdk"
-	"github.com/omiga-group/omiga/src/shared/enterprise/cron"
+	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/venue/kucoin-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/kucoin-processor/mappers"
 	"github.com/omiga-group/omiga/src/venue/shared/repositories"
@@ -25,7 +25,7 @@ func NewKucoinTradingPairSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
 	venueConfig configuration.KucoinConfig,
-	cronService cron.CronService,
+	jobScheduler *gocron.Scheduler,
 	tradingPairRepository repositories.TradingPairRepository) (KucoinTradingPairSubscriber, error) {
 
 	instance := &kuCoinTradingPairSubscriber{
@@ -35,10 +35,9 @@ func NewKucoinTradingPairSubscriber(
 		tradingPairRepository: tradingPairRepository,
 	}
 
-	// Run at every 5th minute from 0 through 59..
-	if _, err := cronService.GetCron().AddJob("* 0/5 * * * *", instance); err != nil {
-		return nil, err
-	}
+	jobScheduler.Every(5).Minutes().Do(func() {
+		instance.Run()
+	})
 
 	return instance, nil
 }

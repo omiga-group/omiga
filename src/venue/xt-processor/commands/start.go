@@ -63,6 +63,7 @@ func startCommand() *cobra.Command {
 
 			jobScheduler := gocron.NewScheduler(time.UTC)
 			jobScheduler.StartAsync()
+			defer jobScheduler.Stop()
 
 			if _, err = appsetup.NewXtTradingPairSubscriber(
 				ctx,

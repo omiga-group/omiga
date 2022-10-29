@@ -6,7 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
+	"github.com/go-co-op/gocron"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/venue/bitmart-processor/appsetup"
 	"github.com/omiga-group/omiga/src/venue/bitmart-processor/configuration"
@@ -59,18 +61,15 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			cronService, err := appsetup.NewCronService(sugarLogger)
-			if err != nil {
-				sugarLogger.Fatal(err)
-			}
-
-			defer cronService.Close()
+			jobScheduler := gocron.NewScheduler(time.UTC)
+			jobScheduler.StartAsync()
+			defer jobScheduler.Stop()
 
 			if _, err = appsetup.NewBitmartTradingPairSubscriber(
 				ctx,
 				sugarLogger,
 				config.Bitmart,
-				cronService,
+				jobScheduler,
 				config.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}

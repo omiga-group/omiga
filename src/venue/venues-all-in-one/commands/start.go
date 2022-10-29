@@ -148,19 +148,13 @@ func startCommand() *cobra.Command {
 
 			jobScheduler := gocron.NewScheduler(time.UTC)
 			jobScheduler.StartAsync()
-
-			cronService, err := appsetup.NewCronService(sugarLogger)
-			if err != nil {
-				sugarLogger.Fatal(err)
-			}
-
-			defer cronService.Close()
+			defer jobScheduler.Stop()
 
 			if _, err = binanceprocessorappsetup.NewBinanceTradingPairSubscriber(
 				ctx,
 				sugarLogger,
 				binanceProcessorConfig.Binance,
-				cronService,
+				jobScheduler,
 				binanceProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -169,7 +163,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				bitmartProcessorConfig.Bitmart,
-				cronService,
+				jobScheduler,
 				bitmartProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -178,7 +172,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				bittrexProcessorConfig.Bittrex,
-				cronService,
+				jobScheduler,
 				bittrexProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -187,7 +181,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				bybitProcessorConfig.Bybit,
-				cronService,
+				jobScheduler,
 				bybitProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -196,7 +190,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				coinbaseProcessorConfig.Coinbase,
-				cronService,
+				jobScheduler,
 				coinbaseProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -205,7 +199,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				cryptoProcessorConfig.Crypto,
-				cronService,
+				jobScheduler,
 				cryptoProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -214,7 +208,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				dextradeProcessorConfig.Dextrade,
-				cronService,
+				jobScheduler,
 				dextradeProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -223,7 +217,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				geminiProcessorConfig.Gemini,
-				cronService,
+				jobScheduler,
 				geminiProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -232,7 +226,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				huobiProcessorConfig.Huobi,
-				cronService,
+				jobScheduler,
 				huobiProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -241,7 +235,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				krakenProcessorConfig.Kraken,
-				cronService,
+				jobScheduler,
 				krakenProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -250,7 +244,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				kucoinProcessorConfig.Kucoin,
-				cronService,
+				jobScheduler,
 				kucoinProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -259,7 +253,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				mexcProcessorConfig.Mexc,
-				cronService,
+				jobScheduler,
 				mexcProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -268,7 +262,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				rainProcessorConfig.Rain,
-				cronService,
+				jobScheduler,
 				rainProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -286,7 +280,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				ftxProcessorConfig.Ftx,
-				cronService,
+				jobScheduler,
 				ftxProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}
