@@ -6,7 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
+	"github.com/go-co-op/gocron"
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	binanceprocessorappsetup "github.com/omiga-group/omiga/src/venue/binance-processor/appsetup"
 	binanceprocessorconfiguration "github.com/omiga-group/omiga/src/venue/binance-processor/configuration"
@@ -144,6 +146,9 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
+			jobScheduler := gocron.NewScheduler(time.UTC)
+			jobScheduler.StartAsync()
+
 			cronService, err := appsetup.NewCronService(sugarLogger)
 			if err != nil {
 				sugarLogger.Fatal(err)
@@ -272,7 +277,7 @@ func startCommand() *cobra.Command {
 				ctx,
 				sugarLogger,
 				xtProcessorConfig.Xt,
-				cronService,
+				jobScheduler,
 				xtProcessorConfig.Postgres); err != nil {
 				sugarLogger.Fatal(err)
 			}

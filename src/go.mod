@@ -12,6 +12,7 @@ require (
 	github.com/aopoltorzhicky/go_kraken/websocket v0.1.10
 	github.com/apache/pulsar-client-go v0.9.0
 	github.com/deepmap/oapi-codegen v1.11.0
+	github.com/go-co-op/gocron v1.17.1
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
