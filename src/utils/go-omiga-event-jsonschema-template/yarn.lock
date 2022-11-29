@@ -21,6 +21,16 @@
     call-me-maybe "^1.0.1"
     js-yaml "^4.1.0"
 
+"@apidevtools/json-schema-ref-parser@^9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@apidevtools/json-schema-ref-parser/-/json-schema-ref-parser-9.1.0.tgz#a28015be4693af1b02bb955eb2dc2f27918f0090"
+  integrity sha512-teB30tFooE3iQs2HQIKJ02D8UZA1Xy1zaczzhUjJs0CymYxeC0g+y5rCY2p8NHBM6DBUVoR8rSM4kHLj1WE9mQ==
+  dependencies:
+    "@jsdevtools/ono" "^7.1.3"
+    "@types/json-schema" "^7.0.6"
+    call-me-maybe "^1.0.1"
+    js-yaml "^4.1.0"
+
 "@apidevtools/openapi-schemas@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@apidevtools/openapi-schemas/-/openapi-schemas-2.1.0.tgz#9fa08017fb59d80538812f03fc7cac5992caaa17"
@@ -76,19 +86,19 @@
     rollup "^2.60.1"
     source-map-support "^0.5.19"
 
-"@asyncapi/modelina@^0.59.7":
-  version "0.59.7"
-  resolved "https://registry.yarnpkg.com/@asyncapi/modelina/-/modelina-0.59.7.tgz#cf2a3bc4929caa5481e43234874f139f559d4bea"
-  integrity sha512-IruuUTJ6HOJ7LRlVZcLypouas/0oWBTvdls2S+d49ixjV8OeDZc04827uJyE3jyfQvWEdsNHcQ4vxnoVe2os+A==
+"@asyncapi/modelina@^0.59.8":
+  version "0.59.8"
+  resolved "https://registry.yarnpkg.com/@asyncapi/modelina/-/modelina-0.59.8.tgz#27707ce819d31137e99adb1cd3b4482eae18477b"
+  integrity sha512-QAzmFI2sL2+5K5aySfobUb23MsSWZwBgcY0IJfd0Logai5D5SxdTOpAADvLEVJtpdyBokHF9NCSEeQGn1t8IXw==
   dependencies:
     "@apidevtools/json-schema-ref-parser" "^9.0.9"
     "@apidevtools/swagger-parser" "^10.0.3"
-    "@asyncapi/parser" "^1.16.0"
+    "@asyncapi/parser" "^1.17.0"
     change-case "^4.1.2"
     openapi-types "9.3.0"
     typescript-json-schema "^0.53.0"
 
-"@asyncapi/parser@^1.15.1", "@asyncapi/parser@^1.16.0":
+"@asyncapi/parser@^1.15.1":
   version "1.16.0"
   resolved "https://registry.yarnpkg.com/@asyncapi/parser/-/parser-1.16.0.tgz#f40bc80e7f9e3a6901fdb61fc2f1ad015bfb23b8"
   integrity sha512-uqW5YfkpQV13tplqXE66FbMfqLv17AkmVtU4PZWgh2XjzeEMnmb5Vpxdob3vNtO0I3pB1A/Hl06ouWDSR+hTMA==
@@ -103,10 +113,32 @@
     node-fetch "^2.6.0"
     tiny-merge-patch "^0.1.2"
 
+"@asyncapi/parser@^1.17.0":
+  version "1.17.2"
+  resolved "https://registry.yarnpkg.com/@asyncapi/parser/-/parser-1.17.2.tgz#be8e70c9bbf917fc8ec353ecd99b7164a4b7f799"
+  integrity sha512-xI9GShIuQVfBz5IZ2c9h6cxcPTnfzI1fch6kYL+nF68Q3U669Un0K0TSeyEa57EfhTap53UIRTj7gFIM9QZTNQ==
+  dependencies:
+    "@apidevtools/json-schema-ref-parser" "^9.0.6"
+    "@asyncapi/specs" "^4.0.1"
+    "@fmvilas/pseudo-yaml-ast" "^0.3.1"
+    ajv "^6.10.1"
+    js-yaml "^3.13.1"
+    json-to-ast "^2.1.0"
+    lodash.clonedeep "^4.5.0"
+    node-fetch "^2.6.0"
+    tiny-merge-patch "^0.1.2"
+
 "@asyncapi/specs@^3.0.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@asyncapi/specs/-/specs-3.1.0.tgz#f1360f58300b7fc15e28770327df383c6af9ad68"
   integrity sha512-6xFvzDd54+M9g6EM259Y4a4iiFb2VzPr6eoxA/ttwTu7NRxaGScocXskXtuz53ZWx9BWZWuzwDYKfM3KBkDfiQ==
+
+"@asyncapi/specs@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@asyncapi/specs/-/specs-4.0.1.tgz#bbf2e704845422262ab66f196e6c77aa71b67aa6"
+  integrity sha512-3sKw49Y/TeKT/FO2YX/DlyOekytko5KFwNJ3zMPmai+pyhz3gux2p5zV5kGJRCwApI1gX0GJw6p15a6CZgg01w==
+  dependencies:
+    "@types/json-schema" "^7.0.11"
 
 "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.18.6":
   version "7.18.6"
@@ -1155,7 +1187,7 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
 
-"@types/json-schema@^7.0.6", "@types/json-schema@^7.0.9":
+"@types/json-schema@^7.0.11", "@types/json-schema@^7.0.6", "@types/json-schema@^7.0.9":
   version "7.0.11"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.11.tgz#d421b6c527a3037f7c84433fd2c4229e016863d3"
   integrity sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==

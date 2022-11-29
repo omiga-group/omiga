@@ -199,18 +199,10 @@ func (mu *MarketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := mu.mutation.Name(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: market.FieldName,
-		})
+		_spec.SetField(market.FieldName, field.TypeString, value)
 	}
 	if value, ok := mu.mutation.GetType(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: market.FieldType,
-		})
+		_spec.SetField(market.FieldType, field.TypeEnum, value)
 	}
 	if mu.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -527,18 +519,10 @@ func (muo *MarketUpdateOne) sqlSave(ctx context.Context) (_node *Market, err err
 		}
 	}
 	if value, ok := muo.mutation.Name(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: market.FieldName,
-		})
+		_spec.SetField(market.FieldName, field.TypeString, value)
 	}
 	if value, ok := muo.mutation.GetType(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: market.FieldType,
-		})
+		_spec.SetField(market.FieldType, field.TypeEnum, value)
 	}
 	if muo.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{

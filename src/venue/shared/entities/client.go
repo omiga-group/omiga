@@ -216,7 +216,7 @@ func (c *CurrencyClient) DeleteOne(cu *Currency) *CurrencyDeleteOne {
 	return c.DeleteOneID(cu.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *CurrencyClient) DeleteOneID(id int) *CurrencyDeleteOne {
 	builder := c.Delete().Where(currency.ID(id))
 	builder.mutation.id = &id
@@ -248,7 +248,7 @@ func (c *CurrencyClient) GetX(ctx context.Context, id int) *Currency {
 // QueryCurrencyBase queries the currency_base edge of a Currency.
 func (c *CurrencyClient) QueryCurrencyBase(cu *Currency) *TradingPairQuery {
 	query := &TradingPairQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := cu.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(currency.Table, currency.FieldID, id),
@@ -267,7 +267,7 @@ func (c *CurrencyClient) QueryCurrencyBase(cu *Currency) *TradingPairQuery {
 // QueryCurrencyCounter queries the currency_counter edge of a Currency.
 func (c *CurrencyClient) QueryCurrencyCounter(cu *Currency) *TradingPairQuery {
 	query := &TradingPairQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := cu.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(currency.Table, currency.FieldID, id),
@@ -344,7 +344,7 @@ func (c *MarketClient) DeleteOne(m *Market) *MarketDeleteOne {
 	return c.DeleteOneID(m.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *MarketClient) DeleteOneID(id int) *MarketDeleteOne {
 	builder := c.Delete().Where(market.ID(id))
 	builder.mutation.id = &id
@@ -376,7 +376,7 @@ func (c *MarketClient) GetX(ctx context.Context, id int) *Market {
 // QueryVenue queries the venue edge of a Market.
 func (c *MarketClient) QueryVenue(m *Market) *VenueQuery {
 	query := &VenueQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(market.Table, market.FieldID, id),
@@ -395,7 +395,7 @@ func (c *MarketClient) QueryVenue(m *Market) *VenueQuery {
 // QueryTradingPair queries the trading_pair edge of a Market.
 func (c *MarketClient) QueryTradingPair(m *Market) *TradingPairQuery {
 	query := &TradingPairQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(market.Table, market.FieldID, id),
@@ -472,7 +472,7 @@ func (c *OutboxClient) DeleteOne(o *Outbox) *OutboxDeleteOne {
 	return c.DeleteOneID(o.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *OutboxClient) DeleteOneID(id int) *OutboxDeleteOne {
 	builder := c.Delete().Where(outbox.ID(id))
 	builder.mutation.id = &id
@@ -562,7 +562,7 @@ func (c *TickerClient) DeleteOne(t *Ticker) *TickerDeleteOne {
 	return c.DeleteOneID(t.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *TickerClient) DeleteOneID(id int) *TickerDeleteOne {
 	builder := c.Delete().Where(ticker.ID(id))
 	builder.mutation.id = &id
@@ -594,7 +594,7 @@ func (c *TickerClient) GetX(ctx context.Context, id int) *Ticker {
 // QueryVenue queries the venue edge of a Ticker.
 func (c *TickerClient) QueryVenue(t *Ticker) *VenueQuery {
 	query := &VenueQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(ticker.Table, ticker.FieldID, id),
@@ -671,7 +671,7 @@ func (c *TradingPairClient) DeleteOne(tp *TradingPair) *TradingPairDeleteOne {
 	return c.DeleteOneID(tp.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *TradingPairClient) DeleteOneID(id int) *TradingPairDeleteOne {
 	builder := c.Delete().Where(tradingpair.ID(id))
 	builder.mutation.id = &id
@@ -703,7 +703,7 @@ func (c *TradingPairClient) GetX(ctx context.Context, id int) *TradingPair {
 // QueryVenue queries the venue edge of a TradingPair.
 func (c *TradingPairClient) QueryVenue(tp *TradingPair) *VenueQuery {
 	query := &VenueQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := tp.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, id),
@@ -722,7 +722,7 @@ func (c *TradingPairClient) QueryVenue(tp *TradingPair) *VenueQuery {
 // QueryBase queries the base edge of a TradingPair.
 func (c *TradingPairClient) QueryBase(tp *TradingPair) *CurrencyQuery {
 	query := &CurrencyQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := tp.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, id),
@@ -741,7 +741,7 @@ func (c *TradingPairClient) QueryBase(tp *TradingPair) *CurrencyQuery {
 // QueryCounter queries the counter edge of a TradingPair.
 func (c *TradingPairClient) QueryCounter(tp *TradingPair) *CurrencyQuery {
 	query := &CurrencyQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := tp.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, id),
@@ -760,7 +760,7 @@ func (c *TradingPairClient) QueryCounter(tp *TradingPair) *CurrencyQuery {
 // QueryMarket queries the market edge of a TradingPair.
 func (c *TradingPairClient) QueryMarket(tp *TradingPair) *MarketQuery {
 	query := &MarketQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := tp.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tradingpair.Table, tradingpair.FieldID, id),
@@ -837,7 +837,7 @@ func (c *VenueClient) DeleteOne(v *Venue) *VenueDeleteOne {
 	return c.DeleteOneID(v.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *VenueClient) DeleteOneID(id int) *VenueDeleteOne {
 	builder := c.Delete().Where(venue.ID(id))
 	builder.mutation.id = &id
@@ -869,7 +869,7 @@ func (c *VenueClient) GetX(ctx context.Context, id int) *Venue {
 // QueryTicker queries the ticker edge of a Venue.
 func (c *VenueClient) QueryTicker(v *Venue) *TickerQuery {
 	query := &TickerQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := v.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(venue.Table, venue.FieldID, id),
@@ -888,7 +888,7 @@ func (c *VenueClient) QueryTicker(v *Venue) *TickerQuery {
 // QueryTradingPair queries the trading_pair edge of a Venue.
 func (c *VenueClient) QueryTradingPair(v *Venue) *TradingPairQuery {
 	query := &TradingPairQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := v.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(venue.Table, venue.FieldID, id),
@@ -907,7 +907,7 @@ func (c *VenueClient) QueryTradingPair(v *Venue) *TradingPairQuery {
 // QueryMarket queries the market edge of a Venue.
 func (c *VenueClient) QueryMarket(v *Venue) *MarketQuery {
 	query := &MarketQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := v.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(venue.Table, venue.FieldID, id),
