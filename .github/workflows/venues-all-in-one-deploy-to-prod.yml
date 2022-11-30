@@ -1,7 +1,7 @@
 name: "Venues all-in-one - Deploy to Prod"
 
 on:
-  - workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   deploy-to-prod:
