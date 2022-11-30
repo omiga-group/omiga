@@ -445,171 +445,79 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := tpu.mutation.Symbol(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: tradingpair.FieldSymbol,
-		})
+		_spec.SetField(tradingpair.FieldSymbol, field.TypeString, value)
 	}
 	if value, ok := tpu.mutation.BasePriceMinPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBasePriceMinPrecision,
-		})
+		_spec.SetField(tradingpair.FieldBasePriceMinPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpu.mutation.AddedBasePriceMinPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBasePriceMinPrecision,
-		})
+		_spec.AddField(tradingpair.FieldBasePriceMinPrecision, field.TypeInt, value)
 	}
 	if tpu.mutation.BasePriceMinPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldBasePriceMinPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldBasePriceMinPrecision, field.TypeInt)
 	}
 	if value, ok := tpu.mutation.BasePriceMaxPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBasePriceMaxPrecision,
-		})
+		_spec.SetField(tradingpair.FieldBasePriceMaxPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpu.mutation.AddedBasePriceMaxPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBasePriceMaxPrecision,
-		})
+		_spec.AddField(tradingpair.FieldBasePriceMaxPrecision, field.TypeInt, value)
 	}
 	if tpu.mutation.BasePriceMaxPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldBasePriceMaxPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldBasePriceMaxPrecision, field.TypeInt)
 	}
 	if value, ok := tpu.mutation.BaseQuantityMinPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBaseQuantityMinPrecision,
-		})
+		_spec.SetField(tradingpair.FieldBaseQuantityMinPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpu.mutation.AddedBaseQuantityMinPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBaseQuantityMinPrecision,
-		})
+		_spec.AddField(tradingpair.FieldBaseQuantityMinPrecision, field.TypeInt, value)
 	}
 	if tpu.mutation.BaseQuantityMinPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldBaseQuantityMinPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldBaseQuantityMinPrecision, field.TypeInt)
 	}
 	if value, ok := tpu.mutation.BaseQuantityMaxPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBaseQuantityMaxPrecision,
-		})
+		_spec.SetField(tradingpair.FieldBaseQuantityMaxPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpu.mutation.AddedBaseQuantityMaxPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBaseQuantityMaxPrecision,
-		})
+		_spec.AddField(tradingpair.FieldBaseQuantityMaxPrecision, field.TypeInt, value)
 	}
 	if tpu.mutation.BaseQuantityMaxPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldBaseQuantityMaxPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldBaseQuantityMaxPrecision, field.TypeInt)
 	}
 	if value, ok := tpu.mutation.CounterPriceMinPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterPriceMinPrecision,
-		})
+		_spec.SetField(tradingpair.FieldCounterPriceMinPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpu.mutation.AddedCounterPriceMinPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterPriceMinPrecision,
-		})
+		_spec.AddField(tradingpair.FieldCounterPriceMinPrecision, field.TypeInt, value)
 	}
 	if tpu.mutation.CounterPriceMinPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldCounterPriceMinPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldCounterPriceMinPrecision, field.TypeInt)
 	}
 	if value, ok := tpu.mutation.CounterPriceMaxPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterPriceMaxPrecision,
-		})
+		_spec.SetField(tradingpair.FieldCounterPriceMaxPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpu.mutation.AddedCounterPriceMaxPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterPriceMaxPrecision,
-		})
+		_spec.AddField(tradingpair.FieldCounterPriceMaxPrecision, field.TypeInt, value)
 	}
 	if tpu.mutation.CounterPriceMaxPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldCounterPriceMaxPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldCounterPriceMaxPrecision, field.TypeInt)
 	}
 	if value, ok := tpu.mutation.CounterQuantityMinPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterQuantityMinPrecision,
-		})
+		_spec.SetField(tradingpair.FieldCounterQuantityMinPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpu.mutation.AddedCounterQuantityMinPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterQuantityMinPrecision,
-		})
+		_spec.AddField(tradingpair.FieldCounterQuantityMinPrecision, field.TypeInt, value)
 	}
 	if tpu.mutation.CounterQuantityMinPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldCounterQuantityMinPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldCounterQuantityMinPrecision, field.TypeInt)
 	}
 	if value, ok := tpu.mutation.CounterQuantityMaxPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterQuantityMaxPrecision,
-		})
+		_spec.SetField(tradingpair.FieldCounterQuantityMaxPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpu.mutation.AddedCounterQuantityMaxPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterQuantityMaxPrecision,
-		})
+		_spec.AddField(tradingpair.FieldCounterQuantityMaxPrecision, field.TypeInt, value)
 	}
 	if tpu.mutation.CounterQuantityMaxPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldCounterQuantityMaxPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldCounterQuantityMaxPrecision, field.TypeInt)
 	}
 	if tpu.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1245,171 +1153,79 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 		}
 	}
 	if value, ok := tpuo.mutation.Symbol(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: tradingpair.FieldSymbol,
-		})
+		_spec.SetField(tradingpair.FieldSymbol, field.TypeString, value)
 	}
 	if value, ok := tpuo.mutation.BasePriceMinPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBasePriceMinPrecision,
-		})
+		_spec.SetField(tradingpair.FieldBasePriceMinPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpuo.mutation.AddedBasePriceMinPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBasePriceMinPrecision,
-		})
+		_spec.AddField(tradingpair.FieldBasePriceMinPrecision, field.TypeInt, value)
 	}
 	if tpuo.mutation.BasePriceMinPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldBasePriceMinPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldBasePriceMinPrecision, field.TypeInt)
 	}
 	if value, ok := tpuo.mutation.BasePriceMaxPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBasePriceMaxPrecision,
-		})
+		_spec.SetField(tradingpair.FieldBasePriceMaxPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpuo.mutation.AddedBasePriceMaxPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBasePriceMaxPrecision,
-		})
+		_spec.AddField(tradingpair.FieldBasePriceMaxPrecision, field.TypeInt, value)
 	}
 	if tpuo.mutation.BasePriceMaxPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldBasePriceMaxPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldBasePriceMaxPrecision, field.TypeInt)
 	}
 	if value, ok := tpuo.mutation.BaseQuantityMinPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBaseQuantityMinPrecision,
-		})
+		_spec.SetField(tradingpair.FieldBaseQuantityMinPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpuo.mutation.AddedBaseQuantityMinPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBaseQuantityMinPrecision,
-		})
+		_spec.AddField(tradingpair.FieldBaseQuantityMinPrecision, field.TypeInt, value)
 	}
 	if tpuo.mutation.BaseQuantityMinPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldBaseQuantityMinPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldBaseQuantityMinPrecision, field.TypeInt)
 	}
 	if value, ok := tpuo.mutation.BaseQuantityMaxPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBaseQuantityMaxPrecision,
-		})
+		_spec.SetField(tradingpair.FieldBaseQuantityMaxPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpuo.mutation.AddedBaseQuantityMaxPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldBaseQuantityMaxPrecision,
-		})
+		_spec.AddField(tradingpair.FieldBaseQuantityMaxPrecision, field.TypeInt, value)
 	}
 	if tpuo.mutation.BaseQuantityMaxPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldBaseQuantityMaxPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldBaseQuantityMaxPrecision, field.TypeInt)
 	}
 	if value, ok := tpuo.mutation.CounterPriceMinPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterPriceMinPrecision,
-		})
+		_spec.SetField(tradingpair.FieldCounterPriceMinPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpuo.mutation.AddedCounterPriceMinPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterPriceMinPrecision,
-		})
+		_spec.AddField(tradingpair.FieldCounterPriceMinPrecision, field.TypeInt, value)
 	}
 	if tpuo.mutation.CounterPriceMinPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldCounterPriceMinPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldCounterPriceMinPrecision, field.TypeInt)
 	}
 	if value, ok := tpuo.mutation.CounterPriceMaxPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterPriceMaxPrecision,
-		})
+		_spec.SetField(tradingpair.FieldCounterPriceMaxPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpuo.mutation.AddedCounterPriceMaxPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterPriceMaxPrecision,
-		})
+		_spec.AddField(tradingpair.FieldCounterPriceMaxPrecision, field.TypeInt, value)
 	}
 	if tpuo.mutation.CounterPriceMaxPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldCounterPriceMaxPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldCounterPriceMaxPrecision, field.TypeInt)
 	}
 	if value, ok := tpuo.mutation.CounterQuantityMinPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterQuantityMinPrecision,
-		})
+		_spec.SetField(tradingpair.FieldCounterQuantityMinPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpuo.mutation.AddedCounterQuantityMinPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterQuantityMinPrecision,
-		})
+		_spec.AddField(tradingpair.FieldCounterQuantityMinPrecision, field.TypeInt, value)
 	}
 	if tpuo.mutation.CounterQuantityMinPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldCounterQuantityMinPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldCounterQuantityMinPrecision, field.TypeInt)
 	}
 	if value, ok := tpuo.mutation.CounterQuantityMaxPrecision(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterQuantityMaxPrecision,
-		})
+		_spec.SetField(tradingpair.FieldCounterQuantityMaxPrecision, field.TypeInt, value)
 	}
 	if value, ok := tpuo.mutation.AddedCounterQuantityMaxPrecision(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: tradingpair.FieldCounterQuantityMaxPrecision,
-		})
+		_spec.AddField(tradingpair.FieldCounterQuantityMaxPrecision, field.TypeInt, value)
 	}
 	if tpuo.mutation.CounterQuantityMaxPrecisionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: tradingpair.FieldCounterQuantityMaxPrecision,
-		})
+		_spec.ClearField(tradingpair.FieldCounterQuantityMaxPrecision, field.TypeInt)
 	}
 	if tpuo.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -299,6 +299,11 @@ func (oq *OutboxQuery) Select(fields ...string) *OutboxSelect {
 	return selbuild
 }
 
+// Aggregate returns a OutboxSelect configured with the given aggregations.
+func (oq *OutboxQuery) Aggregate(fns ...AggregateFunc) *OutboxSelect {
+	return oq.Select().Aggregate(fns...)
+}
+
 func (oq *OutboxQuery) prepareQuery(ctx context.Context) error {
 	for _, f := range oq.fields {
 		if !outbox.ValidColumn(f) {
@@ -545,8 +550,6 @@ func (ogb *OutboxGroupBy) sqlQuery() *sql.Selector {
 	for _, fn := range ogb.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
-	// If no columns were selected in a custom aggregation function, the default
-	// selection is the fields used for "group-by", and the aggregation functions.
 	if len(selector.SelectedColumns()) == 0 {
 		columns := make([]string, 0, len(ogb.fields)+len(ogb.fns))
 		for _, f := range ogb.fields {
@@ -566,6 +569,12 @@ type OutboxSelect struct {
 	sql *sql.Selector
 }
 
+// Aggregate adds the given aggregation functions to the selector query.
+func (os *OutboxSelect) Aggregate(fns ...AggregateFunc) *OutboxSelect {
+	os.fns = append(os.fns, fns...)
+	return os
+}
+
 // Scan applies the selector query and scans the result into the given value.
 func (os *OutboxSelect) Scan(ctx context.Context, v any) error {
 	if err := os.prepareQuery(ctx); err != nil {
@@ -576,6 +585,16 @@ func (os *OutboxSelect) Scan(ctx context.Context, v any) error {
 }
 
 func (os *OutboxSelect) sqlScan(ctx context.Context, v any) error {
+	aggregation := make([]string, 0, len(os.fns))
+	for _, fn := range os.fns {
+		aggregation = append(aggregation, fn(os.sql))
+	}
+	switch n := len(*os.selector.flds); {
+	case n == 0 && len(aggregation) > 0:
+		os.sql.Select(aggregation...)
+	case n != 0 && len(aggregation) > 0:
+		os.sql.AppendSelect(aggregation...)
+	}
 	rows := &sql.Rows{}
 	query, args := os.sql.Query()
 	if err := os.driver.Query(ctx, query, args, rows); err != nil {

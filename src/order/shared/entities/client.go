@@ -187,7 +187,7 @@ func (c *OrderClient) DeleteOne(o *Order) *OrderDeleteOne {
 	return c.DeleteOneID(o.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *OrderClient) DeleteOneID(id int) *OrderDeleteOne {
 	builder := c.Delete().Where(order.ID(id))
 	builder.mutation.id = &id
@@ -277,7 +277,7 @@ func (c *OutboxClient) DeleteOne(o *Outbox) *OutboxDeleteOne {
 	return c.DeleteOneID(o.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *OutboxClient) DeleteOneID(id int) *OutboxDeleteOne {
 	builder := c.Delete().Where(outbox.ID(id))
 	builder.mutation.id = &id

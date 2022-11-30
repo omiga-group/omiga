@@ -633,288 +633,133 @@ func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := vu.mutation.VenueID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldVenueID,
-		})
+		_spec.SetField(venue.FieldVenueID, field.TypeString, value)
 	}
 	if value, ok := vu.mutation.GetType(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: venue.FieldType,
-		})
+		_spec.SetField(venue.FieldType, field.TypeEnum, value)
 	}
 	if value, ok := vu.mutation.Name(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldName,
-		})
+		_spec.SetField(venue.FieldName, field.TypeString, value)
 	}
 	if vu.mutation.NameCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: venue.FieldName,
-		})
+		_spec.ClearField(venue.FieldName, field.TypeString)
 	}
 	if value, ok := vu.mutation.YearEstablished(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldYearEstablished,
-		})
+		_spec.SetField(venue.FieldYearEstablished, field.TypeInt, value)
 	}
 	if value, ok := vu.mutation.AddedYearEstablished(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldYearEstablished,
-		})
+		_spec.AddField(venue.FieldYearEstablished, field.TypeInt, value)
 	}
 	if vu.mutation.YearEstablishedCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: venue.FieldYearEstablished,
-		})
+		_spec.ClearField(venue.FieldYearEstablished, field.TypeInt)
 	}
 	if value, ok := vu.mutation.Country(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldCountry,
-		})
+		_spec.SetField(venue.FieldCountry, field.TypeString, value)
 	}
 	if vu.mutation.CountryCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: venue.FieldCountry,
-		})
+		_spec.ClearField(venue.FieldCountry, field.TypeString)
 	}
 	if value, ok := vu.mutation.Image(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldImage,
-		})
+		_spec.SetField(venue.FieldImage, field.TypeString, value)
 	}
 	if vu.mutation.ImageCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: venue.FieldImage,
-		})
+		_spec.ClearField(venue.FieldImage, field.TypeString)
 	}
 	if value, ok := vu.mutation.Links(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: venue.FieldLinks,
-		})
+		_spec.SetField(venue.FieldLinks, field.TypeJSON, value)
 	}
 	if vu.mutation.LinksCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: venue.FieldLinks,
-		})
+		_spec.ClearField(venue.FieldLinks, field.TypeJSON)
 	}
 	if value, ok := vu.mutation.HasTradingIncentive(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: venue.FieldHasTradingIncentive,
-		})
+		_spec.SetField(venue.FieldHasTradingIncentive, field.TypeBool, value)
 	}
 	if vu.mutation.HasTradingIncentiveCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: venue.FieldHasTradingIncentive,
-		})
+		_spec.ClearField(venue.FieldHasTradingIncentive, field.TypeBool)
 	}
 	if value, ok := vu.mutation.Centralized(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: venue.FieldCentralized,
-		})
+		_spec.SetField(venue.FieldCentralized, field.TypeBool, value)
 	}
 	if vu.mutation.CentralizedCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: venue.FieldCentralized,
-		})
+		_spec.ClearField(venue.FieldCentralized, field.TypeBool)
 	}
 	if value, ok := vu.mutation.PublicNotice(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldPublicNotice,
-		})
+		_spec.SetField(venue.FieldPublicNotice, field.TypeString, value)
 	}
 	if vu.mutation.PublicNoticeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: venue.FieldPublicNotice,
-		})
+		_spec.ClearField(venue.FieldPublicNotice, field.TypeString)
 	}
 	if value, ok := vu.mutation.AlertNotice(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldAlertNotice,
-		})
+		_spec.SetField(venue.FieldAlertNotice, field.TypeString, value)
 	}
 	if vu.mutation.AlertNoticeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: venue.FieldAlertNotice,
-		})
+		_spec.ClearField(venue.FieldAlertNotice, field.TypeString)
 	}
 	if value, ok := vu.mutation.TrustScore(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldTrustScore,
-		})
+		_spec.SetField(venue.FieldTrustScore, field.TypeInt, value)
 	}
 	if value, ok := vu.mutation.AddedTrustScore(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldTrustScore,
-		})
+		_spec.AddField(venue.FieldTrustScore, field.TypeInt, value)
 	}
 	if vu.mutation.TrustScoreCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: venue.FieldTrustScore,
-		})
+		_spec.ClearField(venue.FieldTrustScore, field.TypeInt)
 	}
 	if value, ok := vu.mutation.TrustScoreRank(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldTrustScoreRank,
-		})
+		_spec.SetField(venue.FieldTrustScoreRank, field.TypeInt, value)
 	}
 	if value, ok := vu.mutation.AddedTrustScoreRank(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldTrustScoreRank,
-		})
+		_spec.AddField(venue.FieldTrustScoreRank, field.TypeInt, value)
 	}
 	if vu.mutation.TrustScoreRankCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: venue.FieldTrustScoreRank,
-		})
+		_spec.ClearField(venue.FieldTrustScoreRank, field.TypeInt)
 	}
 	if value, ok := vu.mutation.TradeVolume24hBtc(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTradeVolume24hBtc,
-		})
+		_spec.SetField(venue.FieldTradeVolume24hBtc, field.TypeFloat64, value)
 	}
 	if value, ok := vu.mutation.AddedTradeVolume24hBtc(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTradeVolume24hBtc,
-		})
+		_spec.AddField(venue.FieldTradeVolume24hBtc, field.TypeFloat64, value)
 	}
 	if vu.mutation.TradeVolume24hBtcCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: venue.FieldTradeVolume24hBtc,
-		})
+		_spec.ClearField(venue.FieldTradeVolume24hBtc, field.TypeFloat64)
 	}
 	if value, ok := vu.mutation.TradeVolume24hBtcNormalized(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTradeVolume24hBtcNormalized,
-		})
+		_spec.SetField(venue.FieldTradeVolume24hBtcNormalized, field.TypeFloat64, value)
 	}
 	if value, ok := vu.mutation.AddedTradeVolume24hBtcNormalized(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTradeVolume24hBtcNormalized,
-		})
+		_spec.AddField(venue.FieldTradeVolume24hBtcNormalized, field.TypeFloat64, value)
 	}
 	if vu.mutation.TradeVolume24hBtcNormalizedCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: venue.FieldTradeVolume24hBtcNormalized,
-		})
+		_spec.ClearField(venue.FieldTradeVolume24hBtcNormalized, field.TypeFloat64)
 	}
 	if value, ok := vu.mutation.MakerFee(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldMakerFee,
-		})
+		_spec.SetField(venue.FieldMakerFee, field.TypeFloat64, value)
 	}
 	if value, ok := vu.mutation.AddedMakerFee(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldMakerFee,
-		})
+		_spec.AddField(venue.FieldMakerFee, field.TypeFloat64, value)
 	}
 	if vu.mutation.MakerFeeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: venue.FieldMakerFee,
-		})
+		_spec.ClearField(venue.FieldMakerFee, field.TypeFloat64)
 	}
 	if value, ok := vu.mutation.TakerFee(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTakerFee,
-		})
+		_spec.SetField(venue.FieldTakerFee, field.TypeFloat64, value)
 	}
 	if value, ok := vu.mutation.AddedTakerFee(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTakerFee,
-		})
+		_spec.AddField(venue.FieldTakerFee, field.TypeFloat64, value)
 	}
 	if vu.mutation.TakerFeeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: venue.FieldTakerFee,
-		})
+		_spec.ClearField(venue.FieldTakerFee, field.TypeFloat64)
 	}
 	if value, ok := vu.mutation.SpreadFee(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: venue.FieldSpreadFee,
-		})
+		_spec.SetField(venue.FieldSpreadFee, field.TypeBool, value)
 	}
 	if vu.mutation.SpreadFeeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: venue.FieldSpreadFee,
-		})
+		_spec.ClearField(venue.FieldSpreadFee, field.TypeBool)
 	}
 	if value, ok := vu.mutation.SupportAPI(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: venue.FieldSupportAPI,
-		})
+		_spec.SetField(venue.FieldSupportAPI, field.TypeBool, value)
 	}
 	if vu.mutation.SupportAPICleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: venue.FieldSupportAPI,
-		})
+		_spec.ClearField(venue.FieldSupportAPI, field.TypeBool)
 	}
 	if vu.mutation.TickerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1741,288 +1586,133 @@ func (vuo *VenueUpdateOne) sqlSave(ctx context.Context) (_node *Venue, err error
 		}
 	}
 	if value, ok := vuo.mutation.VenueID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldVenueID,
-		})
+		_spec.SetField(venue.FieldVenueID, field.TypeString, value)
 	}
 	if value, ok := vuo.mutation.GetType(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: venue.FieldType,
-		})
+		_spec.SetField(venue.FieldType, field.TypeEnum, value)
 	}
 	if value, ok := vuo.mutation.Name(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldName,
-		})
+		_spec.SetField(venue.FieldName, field.TypeString, value)
 	}
 	if vuo.mutation.NameCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: venue.FieldName,
-		})
+		_spec.ClearField(venue.FieldName, field.TypeString)
 	}
 	if value, ok := vuo.mutation.YearEstablished(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldYearEstablished,
-		})
+		_spec.SetField(venue.FieldYearEstablished, field.TypeInt, value)
 	}
 	if value, ok := vuo.mutation.AddedYearEstablished(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldYearEstablished,
-		})
+		_spec.AddField(venue.FieldYearEstablished, field.TypeInt, value)
 	}
 	if vuo.mutation.YearEstablishedCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: venue.FieldYearEstablished,
-		})
+		_spec.ClearField(venue.FieldYearEstablished, field.TypeInt)
 	}
 	if value, ok := vuo.mutation.Country(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldCountry,
-		})
+		_spec.SetField(venue.FieldCountry, field.TypeString, value)
 	}
 	if vuo.mutation.CountryCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: venue.FieldCountry,
-		})
+		_spec.ClearField(venue.FieldCountry, field.TypeString)
 	}
 	if value, ok := vuo.mutation.Image(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldImage,
-		})
+		_spec.SetField(venue.FieldImage, field.TypeString, value)
 	}
 	if vuo.mutation.ImageCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: venue.FieldImage,
-		})
+		_spec.ClearField(venue.FieldImage, field.TypeString)
 	}
 	if value, ok := vuo.mutation.Links(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: venue.FieldLinks,
-		})
+		_spec.SetField(venue.FieldLinks, field.TypeJSON, value)
 	}
 	if vuo.mutation.LinksCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: venue.FieldLinks,
-		})
+		_spec.ClearField(venue.FieldLinks, field.TypeJSON)
 	}
 	if value, ok := vuo.mutation.HasTradingIncentive(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: venue.FieldHasTradingIncentive,
-		})
+		_spec.SetField(venue.FieldHasTradingIncentive, field.TypeBool, value)
 	}
 	if vuo.mutation.HasTradingIncentiveCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: venue.FieldHasTradingIncentive,
-		})
+		_spec.ClearField(venue.FieldHasTradingIncentive, field.TypeBool)
 	}
 	if value, ok := vuo.mutation.Centralized(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: venue.FieldCentralized,
-		})
+		_spec.SetField(venue.FieldCentralized, field.TypeBool, value)
 	}
 	if vuo.mutation.CentralizedCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: venue.FieldCentralized,
-		})
+		_spec.ClearField(venue.FieldCentralized, field.TypeBool)
 	}
 	if value, ok := vuo.mutation.PublicNotice(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldPublicNotice,
-		})
+		_spec.SetField(venue.FieldPublicNotice, field.TypeString, value)
 	}
 	if vuo.mutation.PublicNoticeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: venue.FieldPublicNotice,
-		})
+		_spec.ClearField(venue.FieldPublicNotice, field.TypeString)
 	}
 	if value, ok := vuo.mutation.AlertNotice(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldAlertNotice,
-		})
+		_spec.SetField(venue.FieldAlertNotice, field.TypeString, value)
 	}
 	if vuo.mutation.AlertNoticeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: venue.FieldAlertNotice,
-		})
+		_spec.ClearField(venue.FieldAlertNotice, field.TypeString)
 	}
 	if value, ok := vuo.mutation.TrustScore(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldTrustScore,
-		})
+		_spec.SetField(venue.FieldTrustScore, field.TypeInt, value)
 	}
 	if value, ok := vuo.mutation.AddedTrustScore(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldTrustScore,
-		})
+		_spec.AddField(venue.FieldTrustScore, field.TypeInt, value)
 	}
 	if vuo.mutation.TrustScoreCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: venue.FieldTrustScore,
-		})
+		_spec.ClearField(venue.FieldTrustScore, field.TypeInt)
 	}
 	if value, ok := vuo.mutation.TrustScoreRank(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldTrustScoreRank,
-		})
+		_spec.SetField(venue.FieldTrustScoreRank, field.TypeInt, value)
 	}
 	if value, ok := vuo.mutation.AddedTrustScoreRank(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldTrustScoreRank,
-		})
+		_spec.AddField(venue.FieldTrustScoreRank, field.TypeInt, value)
 	}
 	if vuo.mutation.TrustScoreRankCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: venue.FieldTrustScoreRank,
-		})
+		_spec.ClearField(venue.FieldTrustScoreRank, field.TypeInt)
 	}
 	if value, ok := vuo.mutation.TradeVolume24hBtc(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTradeVolume24hBtc,
-		})
+		_spec.SetField(venue.FieldTradeVolume24hBtc, field.TypeFloat64, value)
 	}
 	if value, ok := vuo.mutation.AddedTradeVolume24hBtc(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTradeVolume24hBtc,
-		})
+		_spec.AddField(venue.FieldTradeVolume24hBtc, field.TypeFloat64, value)
 	}
 	if vuo.mutation.TradeVolume24hBtcCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: venue.FieldTradeVolume24hBtc,
-		})
+		_spec.ClearField(venue.FieldTradeVolume24hBtc, field.TypeFloat64)
 	}
 	if value, ok := vuo.mutation.TradeVolume24hBtcNormalized(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTradeVolume24hBtcNormalized,
-		})
+		_spec.SetField(venue.FieldTradeVolume24hBtcNormalized, field.TypeFloat64, value)
 	}
 	if value, ok := vuo.mutation.AddedTradeVolume24hBtcNormalized(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTradeVolume24hBtcNormalized,
-		})
+		_spec.AddField(venue.FieldTradeVolume24hBtcNormalized, field.TypeFloat64, value)
 	}
 	if vuo.mutation.TradeVolume24hBtcNormalizedCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: venue.FieldTradeVolume24hBtcNormalized,
-		})
+		_spec.ClearField(venue.FieldTradeVolume24hBtcNormalized, field.TypeFloat64)
 	}
 	if value, ok := vuo.mutation.MakerFee(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldMakerFee,
-		})
+		_spec.SetField(venue.FieldMakerFee, field.TypeFloat64, value)
 	}
 	if value, ok := vuo.mutation.AddedMakerFee(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldMakerFee,
-		})
+		_spec.AddField(venue.FieldMakerFee, field.TypeFloat64, value)
 	}
 	if vuo.mutation.MakerFeeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: venue.FieldMakerFee,
-		})
+		_spec.ClearField(venue.FieldMakerFee, field.TypeFloat64)
 	}
 	if value, ok := vuo.mutation.TakerFee(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTakerFee,
-		})
+		_spec.SetField(venue.FieldTakerFee, field.TypeFloat64, value)
 	}
 	if value, ok := vuo.mutation.AddedTakerFee(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTakerFee,
-		})
+		_spec.AddField(venue.FieldTakerFee, field.TypeFloat64, value)
 	}
 	if vuo.mutation.TakerFeeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: venue.FieldTakerFee,
-		})
+		_spec.ClearField(venue.FieldTakerFee, field.TypeFloat64)
 	}
 	if value, ok := vuo.mutation.SpreadFee(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: venue.FieldSpreadFee,
-		})
+		_spec.SetField(venue.FieldSpreadFee, field.TypeBool, value)
 	}
 	if vuo.mutation.SpreadFeeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: venue.FieldSpreadFee,
-		})
+		_spec.ClearField(venue.FieldSpreadFee, field.TypeBool)
 	}
 	if value, ok := vuo.mutation.SupportAPI(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: venue.FieldSupportAPI,
-		})
+		_spec.SetField(venue.FieldSupportAPI, field.TypeBool, value)
 	}
 	if vuo.mutation.SupportAPICleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: venue.FieldSupportAPI,
-		})
+		_spec.ClearField(venue.FieldSupportAPI, field.TypeBool)
 	}
 	if vuo.mutation.TickerCleared() {
 		edge := &sqlgraph.EdgeSpec{

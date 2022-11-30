@@ -234,31 +234,16 @@ func (cu *CurrencyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := cu.mutation.Symbol(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: currency.FieldSymbol,
-		})
+		_spec.SetField(currency.FieldSymbol, field.TypeString, value)
 	}
 	if value, ok := cu.mutation.Name(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: currency.FieldName,
-		})
+		_spec.SetField(currency.FieldName, field.TypeString, value)
 	}
 	if cu.mutation.NameCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: currency.FieldName,
-		})
+		_spec.ClearField(currency.FieldName, field.TypeString)
 	}
 	if value, ok := cu.mutation.GetType(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: currency.FieldType,
-		})
+		_spec.SetField(currency.FieldType, field.TypeEnum, value)
 	}
 	if cu.mutation.CurrencyBaseCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -631,31 +616,16 @@ func (cuo *CurrencyUpdateOne) sqlSave(ctx context.Context) (_node *Currency, err
 		}
 	}
 	if value, ok := cuo.mutation.Symbol(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: currency.FieldSymbol,
-		})
+		_spec.SetField(currency.FieldSymbol, field.TypeString, value)
 	}
 	if value, ok := cuo.mutation.Name(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: currency.FieldName,
-		})
+		_spec.SetField(currency.FieldName, field.TypeString, value)
 	}
 	if cuo.mutation.NameCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: currency.FieldName,
-		})
+		_spec.ClearField(currency.FieldName, field.TypeString)
 	}
 	if value, ok := cuo.mutation.GetType(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: currency.FieldType,
-		})
+		_spec.SetField(currency.FieldType, field.TypeEnum, value)
 	}
 	if cuo.mutation.CurrencyBaseCleared() {
 		edge := &sqlgraph.EdgeSpec{

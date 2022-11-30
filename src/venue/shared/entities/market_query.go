@@ -380,6 +380,11 @@ func (mq *MarketQuery) Select(fields ...string) *MarketSelect {
 	return selbuild
 }
 
+// Aggregate returns a MarketSelect configured with the given aggregations.
+func (mq *MarketQuery) Aggregate(fns ...AggregateFunc) *MarketSelect {
+	return mq.Select().Aggregate(fns...)
+}
+
 func (mq *MarketQuery) prepareQuery(ctx context.Context) error {
 	for _, f := range mq.fields {
 		if !market.ValidColumn(f) {
@@ -529,7 +534,7 @@ func (mq *MarketQuery) loadTradingPair(ctx context.Context, query *TradingPairQu
 			outValue := int(values[0].(*sql.NullInt64).Int64)
 			inValue := int(values[1].(*sql.NullInt64).Int64)
 			if nids[inValue] == nil {
-				nids[inValue] = map[*Market]struct{}{byID[outValue]: struct{}{}}
+				nids[inValue] = map[*Market]struct{}{byID[outValue]: {}}
 				return assign(columns[1:], values[1:])
 			}
 			nids[inValue][byID[outValue]] = struct{}{}
@@ -760,8 +765,6 @@ func (mgb *MarketGroupBy) sqlQuery() *sql.Selector {
 	for _, fn := range mgb.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
-	// If no columns were selected in a custom aggregation function, the default
-	// selection is the fields used for "group-by", and the aggregation functions.
 	if len(selector.SelectedColumns()) == 0 {
 		columns := make([]string, 0, len(mgb.fields)+len(mgb.fns))
 		for _, f := range mgb.fields {
@@ -781,6 +784,12 @@ type MarketSelect struct {
 	sql *sql.Selector
 }
 
+// Aggregate adds the given aggregation functions to the selector query.
+func (ms *MarketSelect) Aggregate(fns ...AggregateFunc) *MarketSelect {
+	ms.fns = append(ms.fns, fns...)
+	return ms
+}
+
 // Scan applies the selector query and scans the result into the given value.
 func (ms *MarketSelect) Scan(ctx context.Context, v any) error {
 	if err := ms.prepareQuery(ctx); err != nil {
@@ -791,6 +800,16 @@ func (ms *MarketSelect) Scan(ctx context.Context, v any) error {
 }
 
 func (ms *MarketSelect) sqlScan(ctx context.Context, v any) error {
+	aggregation := make([]string, 0, len(ms.fns))
+	for _, fn := range ms.fns {
+		aggregation = append(aggregation, fn(ms.sql))
+	}
+	switch n := len(*ms.selector.flds); {
+	case n == 0 && len(aggregation) > 0:
+		ms.sql.Select(aggregation...)
+	case n != 0 && len(aggregation) > 0:
+		ms.sql.AppendSelect(aggregation...)
+	}
 	rows := &sql.Rows{}
 	query, args := ms.sql.Query()
 	if err := ms.driver.Query(ctx, query, args, rows); err != nil {

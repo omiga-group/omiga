@@ -195,27 +195,15 @@ func (cc *CurrencyCreate) createSpec() (*Currency, *sqlgraph.CreateSpec) {
 	_spec.Schema = cc.schemaConfig.Currency
 	_spec.OnConflict = cc.conflict
 	if value, ok := cc.mutation.Symbol(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: currency.FieldSymbol,
-		})
+		_spec.SetField(currency.FieldSymbol, field.TypeString, value)
 		_node.Symbol = value
 	}
 	if value, ok := cc.mutation.Name(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: currency.FieldName,
-		})
+		_spec.SetField(currency.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
 	if value, ok := cc.mutation.GetType(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: currency.FieldType,
-		})
+		_spec.SetField(currency.FieldType, field.TypeEnum, value)
 		_node.Type = value
 	}
 	if nodes := cc.mutation.CurrencyBaseIDs(); len(nodes) > 0 {

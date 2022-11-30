@@ -216,75 +216,39 @@ func (oc *OutboxCreate) createSpec() (*Outbox, *sqlgraph.CreateSpec) {
 	_spec.Schema = oc.schemaConfig.Outbox
 	_spec.OnConflict = oc.conflict
 	if value, ok := oc.mutation.Timestamp(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: outbox.FieldTimestamp,
-		})
+		_spec.SetField(outbox.FieldTimestamp, field.TypeTime, value)
 		_node.Timestamp = value
 	}
 	if value, ok := oc.mutation.Topic(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: outbox.FieldTopic,
-		})
+		_spec.SetField(outbox.FieldTopic, field.TypeString, value)
 		_node.Topic = value
 	}
 	if value, ok := oc.mutation.Key(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: outbox.FieldKey,
-		})
+		_spec.SetField(outbox.FieldKey, field.TypeString, value)
 		_node.Key = value
 	}
 	if value, ok := oc.mutation.Payload(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBytes,
-			Value:  value,
-			Column: outbox.FieldPayload,
-		})
+		_spec.SetField(outbox.FieldPayload, field.TypeBytes, value)
 		_node.Payload = value
 	}
 	if value, ok := oc.mutation.Headers(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: outbox.FieldHeaders,
-		})
+		_spec.SetField(outbox.FieldHeaders, field.TypeJSON, value)
 		_node.Headers = value
 	}
 	if value, ok := oc.mutation.RetryCount(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: outbox.FieldRetryCount,
-		})
+		_spec.SetField(outbox.FieldRetryCount, field.TypeInt, value)
 		_node.RetryCount = value
 	}
 	if value, ok := oc.mutation.Status(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: outbox.FieldStatus,
-		})
+		_spec.SetField(outbox.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
 	}
 	if value, ok := oc.mutation.LastRetry(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: outbox.FieldLastRetry,
-		})
+		_spec.SetField(outbox.FieldLastRetry, field.TypeTime, value)
 		_node.LastRetry = value
 	}
 	if value, ok := oc.mutation.ProcessingErrors(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: outbox.FieldProcessingErrors,
-		})
+		_spec.SetField(outbox.FieldProcessingErrors, field.TypeJSON, value)
 		_node.ProcessingErrors = value
 	}
 	return _node, _spec

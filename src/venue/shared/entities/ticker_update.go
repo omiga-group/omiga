@@ -500,247 +500,115 @@ func (tu *TickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := tu.mutation.Base(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldBase,
-		})
+		_spec.SetField(ticker.FieldBase, field.TypeString, value)
 	}
 	if value, ok := tu.mutation.BaseCoinID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldBaseCoinID,
-		})
+		_spec.SetField(ticker.FieldBaseCoinID, field.TypeString, value)
 	}
 	if tu.mutation.BaseCoinIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldBaseCoinID,
-		})
+		_spec.ClearField(ticker.FieldBaseCoinID, field.TypeString)
 	}
 	if value, ok := tu.mutation.Counter(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldCounter,
-		})
+		_spec.SetField(ticker.FieldCounter, field.TypeString, value)
 	}
 	if value, ok := tu.mutation.CounterCoinID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldCounterCoinID,
-		})
+		_spec.SetField(ticker.FieldCounterCoinID, field.TypeString, value)
 	}
 	if tu.mutation.CounterCoinIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldCounterCoinID,
-		})
+		_spec.ClearField(ticker.FieldCounterCoinID, field.TypeString)
 	}
 	if value, ok := tu.mutation.Market(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: ticker.FieldMarket,
-		})
+		_spec.SetField(ticker.FieldMarket, field.TypeJSON, value)
 	}
 	if tu.mutation.MarketCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: ticker.FieldMarket,
-		})
+		_spec.ClearField(ticker.FieldMarket, field.TypeJSON)
 	}
 	if value, ok := tu.mutation.Last(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldLast,
-		})
+		_spec.SetField(ticker.FieldLast, field.TypeFloat64, value)
 	}
 	if value, ok := tu.mutation.AddedLast(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldLast,
-		})
+		_spec.AddField(ticker.FieldLast, field.TypeFloat64, value)
 	}
 	if tu.mutation.LastCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: ticker.FieldLast,
-		})
+		_spec.ClearField(ticker.FieldLast, field.TypeFloat64)
 	}
 	if value, ok := tu.mutation.Volume(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldVolume,
-		})
+		_spec.SetField(ticker.FieldVolume, field.TypeFloat64, value)
 	}
 	if value, ok := tu.mutation.AddedVolume(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldVolume,
-		})
+		_spec.AddField(ticker.FieldVolume, field.TypeFloat64, value)
 	}
 	if tu.mutation.VolumeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: ticker.FieldVolume,
-		})
+		_spec.ClearField(ticker.FieldVolume, field.TypeFloat64)
 	}
 	if value, ok := tu.mutation.ConvertedLast(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: ticker.FieldConvertedLast,
-		})
+		_spec.SetField(ticker.FieldConvertedLast, field.TypeJSON, value)
 	}
 	if tu.mutation.ConvertedLastCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: ticker.FieldConvertedLast,
-		})
+		_spec.ClearField(ticker.FieldConvertedLast, field.TypeJSON)
 	}
 	if value, ok := tu.mutation.ConvertedVolume(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: ticker.FieldConvertedVolume,
-		})
+		_spec.SetField(ticker.FieldConvertedVolume, field.TypeJSON, value)
 	}
 	if tu.mutation.ConvertedVolumeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: ticker.FieldConvertedVolume,
-		})
+		_spec.ClearField(ticker.FieldConvertedVolume, field.TypeJSON)
 	}
 	if value, ok := tu.mutation.TrustScore(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldTrustScore,
-		})
+		_spec.SetField(ticker.FieldTrustScore, field.TypeString, value)
 	}
 	if tu.mutation.TrustScoreCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldTrustScore,
-		})
+		_spec.ClearField(ticker.FieldTrustScore, field.TypeString)
 	}
 	if value, ok := tu.mutation.BidAskSpreadPercentage(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldBidAskSpreadPercentage,
-		})
+		_spec.SetField(ticker.FieldBidAskSpreadPercentage, field.TypeFloat64, value)
 	}
 	if value, ok := tu.mutation.AddedBidAskSpreadPercentage(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldBidAskSpreadPercentage,
-		})
+		_spec.AddField(ticker.FieldBidAskSpreadPercentage, field.TypeFloat64, value)
 	}
 	if tu.mutation.BidAskSpreadPercentageCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: ticker.FieldBidAskSpreadPercentage,
-		})
+		_spec.ClearField(ticker.FieldBidAskSpreadPercentage, field.TypeFloat64)
 	}
 	if value, ok := tu.mutation.Timestamp(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: ticker.FieldTimestamp,
-		})
+		_spec.SetField(ticker.FieldTimestamp, field.TypeTime, value)
 	}
 	if tu.mutation.TimestampCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Column: ticker.FieldTimestamp,
-		})
+		_spec.ClearField(ticker.FieldTimestamp, field.TypeTime)
 	}
 	if value, ok := tu.mutation.LastTradedAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: ticker.FieldLastTradedAt,
-		})
+		_spec.SetField(ticker.FieldLastTradedAt, field.TypeTime, value)
 	}
 	if tu.mutation.LastTradedAtCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Column: ticker.FieldLastTradedAt,
-		})
+		_spec.ClearField(ticker.FieldLastTradedAt, field.TypeTime)
 	}
 	if value, ok := tu.mutation.LastFetchAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: ticker.FieldLastFetchAt,
-		})
+		_spec.SetField(ticker.FieldLastFetchAt, field.TypeTime, value)
 	}
 	if tu.mutation.LastFetchAtCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Column: ticker.FieldLastFetchAt,
-		})
+		_spec.ClearField(ticker.FieldLastFetchAt, field.TypeTime)
 	}
 	if value, ok := tu.mutation.IsAnomaly(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: ticker.FieldIsAnomaly,
-		})
+		_spec.SetField(ticker.FieldIsAnomaly, field.TypeBool, value)
 	}
 	if tu.mutation.IsAnomalyCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: ticker.FieldIsAnomaly,
-		})
+		_spec.ClearField(ticker.FieldIsAnomaly, field.TypeBool)
 	}
 	if value, ok := tu.mutation.IsStale(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: ticker.FieldIsStale,
-		})
+		_spec.SetField(ticker.FieldIsStale, field.TypeBool, value)
 	}
 	if tu.mutation.IsStaleCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: ticker.FieldIsStale,
-		})
+		_spec.ClearField(ticker.FieldIsStale, field.TypeBool)
 	}
 	if value, ok := tu.mutation.TradeURL(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldTradeURL,
-		})
+		_spec.SetField(ticker.FieldTradeURL, field.TypeString, value)
 	}
 	if tu.mutation.TradeURLCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldTradeURL,
-		})
+		_spec.ClearField(ticker.FieldTradeURL, field.TypeString)
 	}
 	if value, ok := tu.mutation.TokenInfoURL(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldTokenInfoURL,
-		})
+		_spec.SetField(ticker.FieldTokenInfoURL, field.TypeString, value)
 	}
 	if tu.mutation.TokenInfoURLCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldTokenInfoURL,
-		})
+		_spec.ClearField(ticker.FieldTokenInfoURL, field.TypeString)
 	}
 	if tu.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1300,247 +1168,115 @@ func (tuo *TickerUpdateOne) sqlSave(ctx context.Context) (_node *Ticker, err err
 		}
 	}
 	if value, ok := tuo.mutation.Base(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldBase,
-		})
+		_spec.SetField(ticker.FieldBase, field.TypeString, value)
 	}
 	if value, ok := tuo.mutation.BaseCoinID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldBaseCoinID,
-		})
+		_spec.SetField(ticker.FieldBaseCoinID, field.TypeString, value)
 	}
 	if tuo.mutation.BaseCoinIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldBaseCoinID,
-		})
+		_spec.ClearField(ticker.FieldBaseCoinID, field.TypeString)
 	}
 	if value, ok := tuo.mutation.Counter(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldCounter,
-		})
+		_spec.SetField(ticker.FieldCounter, field.TypeString, value)
 	}
 	if value, ok := tuo.mutation.CounterCoinID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldCounterCoinID,
-		})
+		_spec.SetField(ticker.FieldCounterCoinID, field.TypeString, value)
 	}
 	if tuo.mutation.CounterCoinIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldCounterCoinID,
-		})
+		_spec.ClearField(ticker.FieldCounterCoinID, field.TypeString)
 	}
 	if value, ok := tuo.mutation.Market(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: ticker.FieldMarket,
-		})
+		_spec.SetField(ticker.FieldMarket, field.TypeJSON, value)
 	}
 	if tuo.mutation.MarketCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: ticker.FieldMarket,
-		})
+		_spec.ClearField(ticker.FieldMarket, field.TypeJSON)
 	}
 	if value, ok := tuo.mutation.Last(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldLast,
-		})
+		_spec.SetField(ticker.FieldLast, field.TypeFloat64, value)
 	}
 	if value, ok := tuo.mutation.AddedLast(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldLast,
-		})
+		_spec.AddField(ticker.FieldLast, field.TypeFloat64, value)
 	}
 	if tuo.mutation.LastCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: ticker.FieldLast,
-		})
+		_spec.ClearField(ticker.FieldLast, field.TypeFloat64)
 	}
 	if value, ok := tuo.mutation.Volume(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldVolume,
-		})
+		_spec.SetField(ticker.FieldVolume, field.TypeFloat64, value)
 	}
 	if value, ok := tuo.mutation.AddedVolume(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldVolume,
-		})
+		_spec.AddField(ticker.FieldVolume, field.TypeFloat64, value)
 	}
 	if tuo.mutation.VolumeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: ticker.FieldVolume,
-		})
+		_spec.ClearField(ticker.FieldVolume, field.TypeFloat64)
 	}
 	if value, ok := tuo.mutation.ConvertedLast(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: ticker.FieldConvertedLast,
-		})
+		_spec.SetField(ticker.FieldConvertedLast, field.TypeJSON, value)
 	}
 	if tuo.mutation.ConvertedLastCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: ticker.FieldConvertedLast,
-		})
+		_spec.ClearField(ticker.FieldConvertedLast, field.TypeJSON)
 	}
 	if value, ok := tuo.mutation.ConvertedVolume(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: ticker.FieldConvertedVolume,
-		})
+		_spec.SetField(ticker.FieldConvertedVolume, field.TypeJSON, value)
 	}
 	if tuo.mutation.ConvertedVolumeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: ticker.FieldConvertedVolume,
-		})
+		_spec.ClearField(ticker.FieldConvertedVolume, field.TypeJSON)
 	}
 	if value, ok := tuo.mutation.TrustScore(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldTrustScore,
-		})
+		_spec.SetField(ticker.FieldTrustScore, field.TypeString, value)
 	}
 	if tuo.mutation.TrustScoreCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldTrustScore,
-		})
+		_spec.ClearField(ticker.FieldTrustScore, field.TypeString)
 	}
 	if value, ok := tuo.mutation.BidAskSpreadPercentage(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldBidAskSpreadPercentage,
-		})
+		_spec.SetField(ticker.FieldBidAskSpreadPercentage, field.TypeFloat64, value)
 	}
 	if value, ok := tuo.mutation.AddedBidAskSpreadPercentage(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldBidAskSpreadPercentage,
-		})
+		_spec.AddField(ticker.FieldBidAskSpreadPercentage, field.TypeFloat64, value)
 	}
 	if tuo.mutation.BidAskSpreadPercentageCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Column: ticker.FieldBidAskSpreadPercentage,
-		})
+		_spec.ClearField(ticker.FieldBidAskSpreadPercentage, field.TypeFloat64)
 	}
 	if value, ok := tuo.mutation.Timestamp(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: ticker.FieldTimestamp,
-		})
+		_spec.SetField(ticker.FieldTimestamp, field.TypeTime, value)
 	}
 	if tuo.mutation.TimestampCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Column: ticker.FieldTimestamp,
-		})
+		_spec.ClearField(ticker.FieldTimestamp, field.TypeTime)
 	}
 	if value, ok := tuo.mutation.LastTradedAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: ticker.FieldLastTradedAt,
-		})
+		_spec.SetField(ticker.FieldLastTradedAt, field.TypeTime, value)
 	}
 	if tuo.mutation.LastTradedAtCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Column: ticker.FieldLastTradedAt,
-		})
+		_spec.ClearField(ticker.FieldLastTradedAt, field.TypeTime)
 	}
 	if value, ok := tuo.mutation.LastFetchAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: ticker.FieldLastFetchAt,
-		})
+		_spec.SetField(ticker.FieldLastFetchAt, field.TypeTime, value)
 	}
 	if tuo.mutation.LastFetchAtCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Column: ticker.FieldLastFetchAt,
-		})
+		_spec.ClearField(ticker.FieldLastFetchAt, field.TypeTime)
 	}
 	if value, ok := tuo.mutation.IsAnomaly(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: ticker.FieldIsAnomaly,
-		})
+		_spec.SetField(ticker.FieldIsAnomaly, field.TypeBool, value)
 	}
 	if tuo.mutation.IsAnomalyCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: ticker.FieldIsAnomaly,
-		})
+		_spec.ClearField(ticker.FieldIsAnomaly, field.TypeBool)
 	}
 	if value, ok := tuo.mutation.IsStale(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: ticker.FieldIsStale,
-		})
+		_spec.SetField(ticker.FieldIsStale, field.TypeBool, value)
 	}
 	if tuo.mutation.IsStaleCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: ticker.FieldIsStale,
-		})
+		_spec.ClearField(ticker.FieldIsStale, field.TypeBool)
 	}
 	if value, ok := tuo.mutation.TradeURL(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldTradeURL,
-		})
+		_spec.SetField(ticker.FieldTradeURL, field.TypeString, value)
 	}
 	if tuo.mutation.TradeURLCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldTradeURL,
-		})
+		_spec.ClearField(ticker.FieldTradeURL, field.TypeString)
 	}
 	if value, ok := tuo.mutation.TokenInfoURL(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldTokenInfoURL,
-		})
+		_spec.SetField(ticker.FieldTokenInfoURL, field.TypeString, value)
 	}
 	if tuo.mutation.TokenInfoURLCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: ticker.FieldTokenInfoURL,
-		})
+		_spec.ClearField(ticker.FieldTokenInfoURL, field.TypeString)
 	}
 	if tuo.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -386,147 +386,75 @@ func (tc *TickerCreate) createSpec() (*Ticker, *sqlgraph.CreateSpec) {
 	_spec.Schema = tc.schemaConfig.Ticker
 	_spec.OnConflict = tc.conflict
 	if value, ok := tc.mutation.Base(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldBase,
-		})
+		_spec.SetField(ticker.FieldBase, field.TypeString, value)
 		_node.Base = value
 	}
 	if value, ok := tc.mutation.BaseCoinID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldBaseCoinID,
-		})
+		_spec.SetField(ticker.FieldBaseCoinID, field.TypeString, value)
 		_node.BaseCoinID = value
 	}
 	if value, ok := tc.mutation.Counter(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldCounter,
-		})
+		_spec.SetField(ticker.FieldCounter, field.TypeString, value)
 		_node.Counter = value
 	}
 	if value, ok := tc.mutation.CounterCoinID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldCounterCoinID,
-		})
+		_spec.SetField(ticker.FieldCounterCoinID, field.TypeString, value)
 		_node.CounterCoinID = value
 	}
 	if value, ok := tc.mutation.Market(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: ticker.FieldMarket,
-		})
+		_spec.SetField(ticker.FieldMarket, field.TypeJSON, value)
 		_node.Market = value
 	}
 	if value, ok := tc.mutation.Last(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldLast,
-		})
+		_spec.SetField(ticker.FieldLast, field.TypeFloat64, value)
 		_node.Last = value
 	}
 	if value, ok := tc.mutation.Volume(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldVolume,
-		})
+		_spec.SetField(ticker.FieldVolume, field.TypeFloat64, value)
 		_node.Volume = value
 	}
 	if value, ok := tc.mutation.ConvertedLast(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: ticker.FieldConvertedLast,
-		})
+		_spec.SetField(ticker.FieldConvertedLast, field.TypeJSON, value)
 		_node.ConvertedLast = value
 	}
 	if value, ok := tc.mutation.ConvertedVolume(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: ticker.FieldConvertedVolume,
-		})
+		_spec.SetField(ticker.FieldConvertedVolume, field.TypeJSON, value)
 		_node.ConvertedVolume = value
 	}
 	if value, ok := tc.mutation.TrustScore(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldTrustScore,
-		})
+		_spec.SetField(ticker.FieldTrustScore, field.TypeString, value)
 		_node.TrustScore = value
 	}
 	if value, ok := tc.mutation.BidAskSpreadPercentage(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: ticker.FieldBidAskSpreadPercentage,
-		})
+		_spec.SetField(ticker.FieldBidAskSpreadPercentage, field.TypeFloat64, value)
 		_node.BidAskSpreadPercentage = value
 	}
 	if value, ok := tc.mutation.Timestamp(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: ticker.FieldTimestamp,
-		})
+		_spec.SetField(ticker.FieldTimestamp, field.TypeTime, value)
 		_node.Timestamp = value
 	}
 	if value, ok := tc.mutation.LastTradedAt(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: ticker.FieldLastTradedAt,
-		})
+		_spec.SetField(ticker.FieldLastTradedAt, field.TypeTime, value)
 		_node.LastTradedAt = value
 	}
 	if value, ok := tc.mutation.LastFetchAt(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: ticker.FieldLastFetchAt,
-		})
+		_spec.SetField(ticker.FieldLastFetchAt, field.TypeTime, value)
 		_node.LastFetchAt = value
 	}
 	if value, ok := tc.mutation.IsAnomaly(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: ticker.FieldIsAnomaly,
-		})
+		_spec.SetField(ticker.FieldIsAnomaly, field.TypeBool, value)
 		_node.IsAnomaly = value
 	}
 	if value, ok := tc.mutation.IsStale(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: ticker.FieldIsStale,
-		})
+		_spec.SetField(ticker.FieldIsStale, field.TypeBool, value)
 		_node.IsStale = value
 	}
 	if value, ok := tc.mutation.TradeURL(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldTradeURL,
-		})
+		_spec.SetField(ticker.FieldTradeURL, field.TypeString, value)
 		_node.TradeURL = value
 	}
 	if value, ok := tc.mutation.TokenInfoURL(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: ticker.FieldTokenInfoURL,
-		})
+		_spec.SetField(ticker.FieldTokenInfoURL, field.TypeString, value)
 		_node.TokenInfoURL = value
 	}
 	if nodes := tc.mutation.VenueIDs(); len(nodes) > 0 {
