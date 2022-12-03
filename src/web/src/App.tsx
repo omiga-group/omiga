@@ -1,17 +1,17 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
-import { Provider } from 'react-redux';
-import { I18nextProvider } from 'react-i18next';
-import { BrowserRouter } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
+import { I18nextProvider } from 'react-i18next';
+import { Provider } from 'react-redux';
 import { RelayEnvironmentProvider } from 'react-relay';
+import { BrowserRouter } from 'react-router-dom';
 
 import './App.css';
-import i18n from './i18n';
-import { store } from './framework/redux/Store';
-import theme from './theme';
 import AppRoutes from './AppRoutes';
+import { store } from './framework/redux/Store';
 import { default as createEnvironment } from './framework/relay/Environment';
+import i18n from './i18n';
+import theme from './theme';
 
 const Environment = createEnvironment();
 
@@ -28,9 +28,9 @@ const App = () => {
       <Provider store={store}>
         <BrowserRouter basename={baseUrl}>
           <ThemeProvider theme={theme}>
+            <CssBaseline />
             <RelayEnvironmentProvider environment={Environment}>
               <SnackbarProvider maxSnack={5}>
-                <CssBaseline />
                 <AppRoutes />
               </SnackbarProvider>
             </RelayEnvironmentProvider>

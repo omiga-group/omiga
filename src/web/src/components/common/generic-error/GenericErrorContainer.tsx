@@ -1,6 +1,6 @@
-import React from 'react';
-import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import React from 'react';
 
 interface GenericErrorContainerProps {
   message: string;
