@@ -1,9 +1,9 @@
+import { reduxBatch } from '@manaflair/redux-batch';
+import { addListener, configureStore, createListenerMiddleware, ListenerEffectAPI, TypedAddListener, TypedStartListening } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import { configureStore, createListenerMiddleware, TypedStartListening, TypedAddListener, ListenerEffectAPI, addListener } from '@reduxjs/toolkit';
+import logger from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
 import { all } from 'redux-saga/effects';
-import logger from 'redux-logger';
-import { reduxBatch } from '@manaflair/redux-batch';
 
 import getRootReducer from './Reducer';
 

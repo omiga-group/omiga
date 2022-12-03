@@ -1,4 +1,4 @@
-import { Environment, Network, RecordSource, Store, RequestParameters, Variables } from 'relay-runtime';
+import { Environment, Network, RecordSource, RequestParameters, Store, Variables } from 'relay-runtime';
 
 // Create a network layer from the fetch function
 
