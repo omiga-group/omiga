@@ -20,25 +20,33 @@ package appsetup
 
 import (
 	"github.com/google/wire"
+	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
-	"github.com/omiga-group/omiga/src/venue/shared/entities"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
+
+func NewConfigurationHelper(logger *zap.SugaredLogger) (configuration.ConfigurationHelper, error) {
+	wire.Build(
+		os.NewOsHelper,
+		configuration.NewConfigurationHelper)
+
+	return nil, nil
+}
+
+func NewTimeHelper() (time.TimeHelper, error) {
+	wire.Build(
+		time.NewTimeHelper)
+
+	return nil, nil
+}
 
 func NewDatabase(
 	logger *zap.SugaredLogger,
 	postgresConfig postgres.PostgresConfig) (database.Database, error) {
 	wire.Build(postgres.NewPostgres)
-
-	return nil, nil
-}
-
-func NewEntgoClient(
-	logger *zap.SugaredLogger,
-	postgresConfig postgres.PostgresConfig) (entities.EntgoClient, error) {
-	wire.Build(postgres.NewPostgres, entities.NewEntgoClient)
 
 	return nil, nil
 }

@@ -2,14 +2,14 @@ package commands
 
 import (
 	"context"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/go-co-op/gocron"
-	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	enterpriseappsetup "github.com/omiga-group/omiga/src/shared/enterprise/appsetup"
+	"github.com/omiga-group/omiga/src/shared/enterprise/logger"
 	binanceprocessorappsetup "github.com/omiga-group/omiga/src/venue/binance-processor/appsetup"
 	binanceprocessorconfiguration "github.com/omiga-group/omiga/src/venue/binance-processor/configuration"
 	bitmartprocessorappsetup "github.com/omiga-group/omiga/src/venue/bitmart-processor/appsetup"
@@ -38,11 +38,9 @@ import (
 	mexcprocessorconfiguration "github.com/omiga-group/omiga/src/venue/mexc-processor/configuration"
 	rainprocessorappsetup "github.com/omiga-group/omiga/src/venue/rain-processor/appsetup"
 	rainprocessorconfiguration "github.com/omiga-group/omiga/src/venue/rain-processor/configuration"
-	"github.com/omiga-group/omiga/src/venue/venues-all-in-one/appsetup"
 	xtprocessorappsetup "github.com/omiga-group/omiga/src/venue/xt-processor/appsetup"
 	xtprocessorconfiguration "github.com/omiga-group/omiga/src/venue/xt-processor/configuration"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
 
 func startCommand() *cobra.Command {
@@ -51,85 +49,85 @@ func startCommand() *cobra.Command {
 		Short: "Start venues-all-in-one",
 		Long:  "Start venues-all-in-one",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger, err := zap.NewDevelopment()
+			sugarLogger := logger.CreateLogger()
+
+			configurationHelper, err := enterpriseappsetup.NewConfigurationHelper(sugarLogger)
 			if err != nil {
-				log.Fatal(err)
+				sugarLogger.Fatal(err)
 			}
 
-			sugarLogger := logger.Sugar()
-
 			var binanceProcessorConfig binanceprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("binance-processor-config.yaml", &binanceProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("binance-processor-config.yaml", &binanceProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var bitmartProcessorConfig bitmartprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("bitmart-processor-config.yaml", &bitmartProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("bitmart-processor-config.yaml", &bitmartProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var bittrexProcessorConfig bittrexprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("bittrex-processor-config.yaml", &bittrexProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("bittrex-processor-config.yaml", &bittrexProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var bybitProcessorConfig bybitprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("bybit-processor-config.yaml", &bybitProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("bybit-processor-config.yaml", &bybitProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var coinbaseProcessorConfig coinbaseprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("coinbase-processor-config.yaml", &coinbaseProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("coinbase-processor-config.yaml", &coinbaseProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var cryptoProcessorConfig cryptoprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("crypto-processor-config.yaml", &cryptoProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("crypto-processor-config.yaml", &cryptoProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var dextradeProcessorConfig dextradeprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("dextrade-processor-config.yaml", &dextradeProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("dextrade-processor-config.yaml", &dextradeProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var geminiProcessorConfig geminiprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("gemini-processor-config.yaml", &geminiProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("gemini-processor-config.yaml", &geminiProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var huobiProcessorConfig huobiprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("huobi-processor-config.yaml", &huobiProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("huobi-processor-config.yaml", &huobiProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var krakenProcessorConfig krakenprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("kraken-processor-config.yaml", &krakenProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("kraken-processor-config.yaml", &krakenProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var kucoinProcessorConfig kucoinprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("kucoin-processor-config.yaml", &kucoinProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("kucoin-processor-config.yaml", &kucoinProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var mexcProcessorConfig mexcprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("mexc-processor-config.yaml", &mexcProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("mexc-processor-config.yaml", &mexcProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var rainProcessorConfig rainprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("rain-processor-config.yaml", &rainProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("rain-processor-config.yaml", &rainProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var xtProcessorConfig xtprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("xt-processor-config.yaml", &xtProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("xt-processor-config.yaml", &xtProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
 			var ftxProcessorConfig ftxprocessorconfiguration.Config
-			if err := entconfiguration.LoadConfig("ftx-processor-config.yaml", &ftxProcessorConfig); err != nil {
+			if err := configurationHelper.LoadYaml("ftx-processor-config.yaml", &ftxProcessorConfig); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
@@ -285,7 +283,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			timeHelper, err := appsetup.NewTimeHelper()
+			timeHelper, err := enterpriseappsetup.NewTimeHelper()
 
 			if err != nil {
 				sugarLogger.Fatal(err)

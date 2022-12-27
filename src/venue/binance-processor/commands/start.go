@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,11 +10,11 @@ import (
 	"github.com/adshao/go-binance/v2"
 	"github.com/go-co-op/gocron"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
-	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	enterpriseappsetup "github.com/omiga-group/omiga/src/shared/enterprise/appsetup"
+	"github.com/omiga-group/omiga/src/shared/enterprise/logger"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/appsetup"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/configuration"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
 
 func startCommand() *cobra.Command {
@@ -24,15 +23,15 @@ func startCommand() *cobra.Command {
 		Short: "Start binance-processor",
 		Long:  "Start binance-processor",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger, err := zap.NewDevelopment()
+			sugarLogger := logger.CreateLogger()
+
+			configurationHelper, err := enterpriseappsetup.NewConfigurationHelper(sugarLogger)
 			if err != nil {
-				log.Fatal(err)
+				sugarLogger.Fatal(err)
 			}
 
-			sugarLogger := logger.Sugar()
-
 			var config configuration.Config
-			if err := entconfiguration.LoadConfig("config.yaml", &config); err != nil {
+			if err := configurationHelper.LoadYaml("config.yaml", &config); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
@@ -95,7 +94,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			timeHelper, err := appsetup.NewTimeHelper()
+			timeHelper, err := enterpriseappsetup.NewTimeHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

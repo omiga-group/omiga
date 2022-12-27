@@ -11,19 +11,10 @@ import (
 	"github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
-	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
-
-func NewTimeHelper() (time.TimeHelper, error) {
-	timeHelper, err := time.NewTimeHelper()
-	if err != nil {
-		return nil, err
-	}
-	return timeHelper, nil
-}
 
 func NewOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig) (orderv1.Consumer, error) {
 	subscriber, err := subscribers.NewOrderSubscriber(logger)

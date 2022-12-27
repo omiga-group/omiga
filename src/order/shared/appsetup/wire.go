@@ -19,23 +19,41 @@
 package appsetup
 
 import (
+	"context"
+
+	"github.com/go-co-op/gocron"
 	"github.com/google/wire"
-	"github.com/omiga-group/omiga/src/order/order-processor/subscribers"
-	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
+	"github.com/omiga-group/omiga/src/order/shared/entities"
+	"github.com/omiga-group/omiga/src/order/shared/outbox"
+	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
+	enterpriseOutbox "github.com/omiga-group/omiga/src/shared/enterprise/outbox"
 	"go.uber.org/zap"
 )
 
-func NewOrderConsumer(
+func NewEntgoClient(
 	logger *zap.SugaredLogger,
-	pulsarConfig pulsar.PulsarConfig) (orderv1.Consumer, error) {
+	postgresConfig postgres.PostgresConfig) (entities.EntgoClient, error) {
+	wire.Build(
+		postgres.NewPostgres,
+		entities.NewEntgoClient)
+
+	return nil, nil
+}
+
+func NewOutboxBackgroundService(
+	ctx context.Context,
+	logger *zap.SugaredLogger,
+	pulsarConfig pulsar.PulsarConfig,
+	outboxConfig enterpriseOutbox.OutboxConfig,
+	entgoClient entities.EntgoClient,
+	jobScheduler *gocron.Scheduler) (outbox.OutboxBackgroundService, error) {
 	wire.Build(
 		os.NewOsHelper,
 		pulsar.NewPulsarClient,
-		pulsar.NewPulsarMessageConsumer,
-		orderv1.NewConsumer,
-		subscribers.NewOrderSubscriber)
+		pulsar.NewPulsarMessageProducer,
+		outbox.NewOutboxBackgroundService)
 
 	return nil, nil
 }
