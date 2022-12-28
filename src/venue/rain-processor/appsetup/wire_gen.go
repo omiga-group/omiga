@@ -14,7 +14,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/security/authentication/passwordgeneration/totp"
-	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/rain-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/rain-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -23,14 +22,6 @@ import (
 )
 
 // Injectors from wire.go:
-
-func NewTimeHelper() (time.TimeHelper, error) {
-	timeHelper, err := time.NewTimeHelper()
-	if err != nil {
-		return nil, err
-	}
-	return timeHelper, nil
-}
 
 func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig) (syntheticorderv1.Consumer, error) {
 	subscriber, err := subscribers.NewSyntheticOrderSubscriber(logger)

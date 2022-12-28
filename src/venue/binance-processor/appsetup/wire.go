@@ -25,11 +25,10 @@ import (
 	"github.com/google/wire"
 	orderbookv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order-book/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
-	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
-	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -38,13 +37,6 @@ import (
 	"github.com/omiga-group/omiga/src/venue/shared/services"
 	"go.uber.org/zap"
 )
-
-func NewTimeHelper() (time.TimeHelper, error) {
-	wire.Build(
-		time.NewTimeHelper)
-
-	return nil, nil
-}
 
 func NewSyntheticOrderConsumer(
 	logger *zap.SugaredLogger,
@@ -62,7 +54,7 @@ func NewSyntheticOrderConsumer(
 func NewBinanceOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
-	appConfig enterpriseConfiguration.AppConfig,
+	appConfig entconfiguration.AppConfig,
 	binanceConfig configuration.BinanceConfig,
 	pairConfig configuration.PairConfig,
 	pulsarConfig pulsar.PulsarConfig,

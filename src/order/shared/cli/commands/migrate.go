@@ -4,17 +4,16 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
-	"github.com/omiga-group/omiga/src/order/shared/cli/appsetup"
+	orderappsetup "github.com/omiga-group/omiga/src/order/shared/appsetup"
 	"github.com/omiga-group/omiga/src/order/shared/cli/configuration"
 	"github.com/omiga-group/omiga/src/order/shared/entities/migrate"
-	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	enterpriseappsetup "github.com/omiga-group/omiga/src/shared/enterprise/appsetup"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
+	"github.com/omiga-group/omiga/src/shared/enterprise/logger"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
 
 type migrateDBOptions struct {
@@ -29,16 +28,15 @@ func migrateCommand() *cobra.Command {
 		Long:  "Migrate database to the latest version",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
+			sugarLogger := logger.CreateLogger()
 
-			logger, err := zap.NewDevelopment()
+			configurationHelper, err := enterpriseappsetup.NewConfigurationHelper(sugarLogger)
 			if err != nil {
-				log.Fatal(err)
+				sugarLogger.Fatal(err)
 			}
 
-			sugarLogger := logger.Sugar()
-
 			var config configuration.Config
-			if err := entconfiguration.LoadConfig("config.yaml", &config); err != nil {
+			if err := configurationHelper.LoadYaml("config.yaml", &config); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
@@ -46,7 +44,7 @@ func migrateCommand() *cobra.Command {
 			connectionStringWithoutDatabase := config.Postgres.ConnectionString[:index]
 			databaseName := config.Postgres.ConnectionString[index+1:]
 
-			database, err := appsetup.NewDatabase(
+			database, err := enterpriseappsetup.NewDatabase(
 				sugarLogger,
 				postgres.PostgresConfig{
 					ConnectionString: connectionStringWithoutDatabase,
@@ -76,7 +74,7 @@ func migrateCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			entgoClient, err := appsetup.NewEntgoClient(
+			entgoClient, err := orderappsetup.NewEntgoClient(
 				sugarLogger,
 				config.Postgres)
 			if err != nil {
@@ -85,7 +83,7 @@ func migrateCommand() *cobra.Command {
 
 			defer entgoClient.Close()
 
-			osHelper, err := appsetup.NewOsHelper()
+			osHelper, err := enterpriseappsetup.NewOsHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}
@@ -119,7 +117,7 @@ func migrateCommand() *cobra.Command {
 
 				sugarLogger.Info("Applying post migration script...")
 
-				database, err = appsetup.NewDatabase(
+				database, err = enterpriseappsetup.NewDatabase(
 					sugarLogger,
 					config.Postgres)
 				if err != nil {

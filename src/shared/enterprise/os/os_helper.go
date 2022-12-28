@@ -10,6 +10,7 @@ type OsHelper interface {
 	GetFileAsByteArray(path string) ([]byte, error)
 	GetFileAsString(path string) (string, error)
 	CreateTemporaryTextFile(content string) (string, error)
+	GetEnvironmentVariable(key string) string
 }
 
 type osHelper struct {
@@ -75,4 +76,8 @@ func (oh *osHelper) CreateTemporaryTextFile(content string) (string, error) {
 	}
 
 	return file.Name(), nil
+}
+
+func (oh *osHelper) GetEnvironmentVariable(key string) string {
+	return os.Getenv(key)
 }

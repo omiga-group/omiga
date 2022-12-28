@@ -29,7 +29,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
-	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/kraken-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/kraken-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -38,13 +37,6 @@ import (
 	"github.com/omiga-group/omiga/src/venue/shared/services"
 	"go.uber.org/zap"
 )
-
-func NewTimeHelper() (time.TimeHelper, error) {
-	wire.Build(
-		time.NewTimeHelper)
-
-	return nil, nil
-}
 
 func NewSyntheticOrderConsumer(
 	logger *zap.SugaredLogger,
