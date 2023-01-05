@@ -18,13 +18,14 @@ type createDatabaseOptions struct {
 
 func CreateCommand(databaseCommand *cobra.Command) *cobra.Command {
 	options := createDatabaseOptions{}
+	sugarLogger := logger.CreateLogger()
+
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create Database",
 		Long:  "Create Database",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
-			sugarLogger := logger.CreateLogger()
 
 			configurationHelper, err := appsetup.NewConfigurationHelper(sugarLogger)
 			if err != nil {
@@ -81,7 +82,9 @@ func CreateCommand(databaseCommand *cobra.Command) *cobra.Command {
 
 	cmd.Flags().StringVar(&options.name, "name", "", "Specify the database name to create")
 
-	cmd.MarkFlagRequired("name")
+	if err := cmd.MarkFlagRequired("name"); err != nil {
+		sugarLogger.Fatal(err)
+	}
 
 	return cmd
 }
