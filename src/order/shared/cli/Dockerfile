@@ -33,4 +33,7 @@ COPY --from=build /src/order/shared/cli/post_migration_script.sql /omiga
 
 RUN /omiga/order-database-migration install-dependecies
 
+# Fix CVE-2022-3996
+RUN apk upgrade libssl3 libcrypto3
+
 CMD ["/omiga/order-database-migration", "migrate", "--post-migration-script-path", "post_migration_script.sql"]

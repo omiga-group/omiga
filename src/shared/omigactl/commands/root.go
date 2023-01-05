@@ -8,7 +8,7 @@ import (
 // RootCommand returns root CLI application command interface
 func Root() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use: "omiga-cli",
+		Use: "omigactl",
 		PreRun: func(cmd *cobra.Command, args []string) {
 			printHeader()
 		},
@@ -21,6 +21,7 @@ func Root() *cobra.Command {
 	cmd.AddCommand(
 		versionCommand(),
 		setupPulsarCommand(),
+		databaseCommand(),
 	)
 
 	return cmd

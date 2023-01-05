@@ -34,4 +34,7 @@ COPY --from=build /src/venue/gemini-processor/config.yaml /omiga
 
 RUN /omiga/gemini-processor install-dependecies
 
+# Fix CVE-2022-3996
+RUN apk upgrade libssl3 libcrypto3
+
 CMD ["/omiga/gemini-processor", "start"]

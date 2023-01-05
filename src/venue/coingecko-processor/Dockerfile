@@ -34,4 +34,7 @@ COPY --from=build /src/venue/coingecko-processor/config.yaml /omiga
 
 RUN /omiga/coingecko-processor install-dependecies
 
+# Fix CVE-2022-3996
+RUN apk upgrade libssl3 libcrypto3
+
 CMD ["/omiga/coingecko-processor", "start"]

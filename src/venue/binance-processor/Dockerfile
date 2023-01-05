@@ -34,4 +34,7 @@ COPY --from=build /src/venue/binance-processor/config.yaml /omiga
 
 RUN /omiga/binance-processor install-dependecies
 
+# Fix CVE-2022-3996
+RUN apk upgrade libssl3 libcrypto3
+
 CMD ["/omiga/binance-processor", "start"]

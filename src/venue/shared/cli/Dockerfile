@@ -33,4 +33,7 @@ COPY --from=build /src/venue/shared/cli/post_migration_script.sql /omiga
 
 RUN /omiga/venue-database-migration install-dependecies
 
+# Fix CVE-2022-3996
+RUN apk upgrade libssl3 libcrypto3
+
 CMD ["/omiga/venue-database-migration", "migrate", "--post-migration-script-path", "post_migration_script.sql"]

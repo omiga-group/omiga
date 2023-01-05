@@ -34,4 +34,7 @@ COPY --from=build /src/venue/huobi-processor/config.yaml /omiga
 
 RUN /omiga/huobi-processor install-dependecies
 
+# Fix CVE-2022-3996
+RUN apk upgrade libssl3 libcrypto3
+
 CMD ["/omiga/huobi-processor", "start"]

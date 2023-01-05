@@ -34,4 +34,7 @@ COPY --from=build /src/venue/coinbase-processor/config.yaml /omiga
 
 RUN /omiga/coinbase-processor install-dependecies
 
+# Fix CVE-2022-3996
+RUN apk upgrade libssl3 libcrypto3
+
 CMD ["/omiga/coinbase-processor", "start"]
