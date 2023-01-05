@@ -21,22 +21,11 @@ package appsetup
 import (
 	"github.com/google/wire"
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
-	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	"github.com/omiga-group/omiga/src/venue/venue-api/graphql"
 	"github.com/omiga-group/omiga/src/venue/venue-api/http"
 	"go.uber.org/zap"
 )
-
-func NewEntgoClient(
-	logger *zap.SugaredLogger,
-	postgresConfig postgres.PostgresConfig) (entities.EntgoClient, error) {
-	wire.Build(
-		postgres.NewPostgres,
-		entities.NewEntgoClient)
-
-	return nil, nil
-}
 
 func NewHttpServer(
 	logger *zap.SugaredLogger,

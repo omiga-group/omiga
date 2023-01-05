@@ -34,4 +34,7 @@ COPY --from=build /src/order/order-api/config.yaml /omiga
 
 RUN /omiga/order-api install-dependecies
 
+# Fix CVE-2022-3996
+RUN apk upgrade libssl3 libcrypto3
+
 CMD ["/omiga/order-api", "start"]

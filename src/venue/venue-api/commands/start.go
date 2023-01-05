@@ -1,13 +1,12 @@
 package commands
 
 import (
-	"log"
-
-	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	enterpriseappsetup "github.com/omiga-group/omiga/src/shared/enterprise/appsetup"
+	"github.com/omiga-group/omiga/src/shared/enterprise/logger"
+	venueappsetup "github.com/omiga-group/omiga/src/venue/shared/appsetup"
 	"github.com/omiga-group/omiga/src/venue/venue-api/appsetup"
 	"github.com/omiga-group/omiga/src/venue/venue-api/configuration"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
 
 func startCommand() *cobra.Command {
@@ -16,19 +15,19 @@ func startCommand() *cobra.Command {
 		Short: "Start venue-api",
 		Long:  "Start venue-api",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger, err := zap.NewDevelopment()
+			sugarLogger := logger.CreateLogger()
+
+			configurationHelper, err := enterpriseappsetup.NewConfigurationHelper(sugarLogger)
 			if err != nil {
-				log.Fatal(err)
-			}
-
-			sugarLogger := logger.Sugar()
-
-			var config configuration.Config
-			if err := entconfiguration.LoadConfig("config.yaml", &config); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
-			entgoClient, err := appsetup.NewEntgoClient(
+			var config configuration.Config
+			if err := configurationHelper.LoadYaml("config.yaml", &config); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			entgoClient, err := venueappsetup.NewEntgoClient(
 				sugarLogger,
 				config.Postgres)
 			if err != nil {

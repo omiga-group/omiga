@@ -146,19 +146,11 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 	_spec.Schema = oc.schemaConfig.Order
 	_spec.OnConflict = oc.conflict
 	if value, ok := oc.mutation.OrderDetails(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: order.FieldOrderDetails,
-		})
+		_spec.SetField(order.FieldOrderDetails, field.TypeJSON, value)
 		_node.OrderDetails = value
 	}
 	if value, ok := oc.mutation.PreferredExchanges(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: order.FieldPreferredExchanges,
-		})
+		_spec.SetField(order.FieldPreferredExchanges, field.TypeJSON, value)
 		_node.PreferredExchanges = value
 	}
 	return _node, _spec

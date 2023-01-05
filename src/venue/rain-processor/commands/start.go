@@ -2,18 +2,17 @@ package commands
 
 import (
 	"context"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/go-co-op/gocron"
-	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	enterpriseappsetup "github.com/omiga-group/omiga/src/shared/enterprise/appsetup"
+	"github.com/omiga-group/omiga/src/shared/enterprise/logger"
 	"github.com/omiga-group/omiga/src/venue/rain-processor/appsetup"
 	"github.com/omiga-group/omiga/src/venue/rain-processor/configuration"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
 
 func startCommand() *cobra.Command {
@@ -22,15 +21,15 @@ func startCommand() *cobra.Command {
 		Short: "Start rain-processor",
 		Long:  "Start rain-processor",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger, err := zap.NewDevelopment()
+			sugarLogger := logger.CreateLogger()
+
+			configurationHelper, err := enterpriseappsetup.NewConfigurationHelper(sugarLogger)
 			if err != nil {
-				log.Fatal(err)
+				sugarLogger.Fatal(err)
 			}
 
-			sugarLogger := logger.Sugar()
-
 			var config configuration.Config
-			if err := entconfiguration.LoadConfig("config.yaml", &config); err != nil {
+			if err := configurationHelper.LoadYaml("config.yaml", &config); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
@@ -74,7 +73,7 @@ func startCommand() *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			timeHelper, err := appsetup.NewTimeHelper()
+			timeHelper, err := enterpriseappsetup.NewTimeHelper()
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

@@ -20,14 +20,6 @@ import (
 
 // Injectors from wire.go:
 
-func NewTimeHelper() (time.TimeHelper, error) {
-	timeHelper, err := time.NewTimeHelper()
-	if err != nil {
-		return nil, err
-	}
-	return timeHelper, nil
-}
-
 func NewCoingeckoExchangeSubscriber(ctx context.Context, logger *zap.SugaredLogger, jobScheduler *gocron.Scheduler, coingeckoConfig configuration.CoingeckoConfig, exchanges map[string]configuration.Exchange, postgresConfig postgres.PostgresConfig) (subscribers.CoingeckoExchangeSubscriber, error) {
 	database, err := postgres.NewPostgres(logger, postgresConfig)
 	if err != nil {

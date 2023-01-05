@@ -34,4 +34,7 @@ COPY --from=build /src/venue/mexc-processor/config.yaml /omiga
 
 RUN /omiga/mexc-processor install-dependecies
 
+# Fix CVE-2022-3996
+RUN apk upgrade libssl3 libcrypto3
+
 CMD ["/omiga/mexc-processor", "start"]

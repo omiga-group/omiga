@@ -3,7 +3,6 @@ package commands
 import (
 	"context"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 
@@ -11,10 +10,10 @@ import (
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	pulsaradminv2 "github.com/omiga-group/omiga/src/shared/clients/openapi/pulsar/admin/v2"
-	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	enterpriseappsetup "github.com/omiga-group/omiga/src/shared/enterprise/appsetup"
+	"github.com/omiga-group/omiga/src/shared/enterprise/logger"
 	"github.com/omiga-group/omiga/src/shared/omigactl/configuration"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
 
 type setupPulsarOptions struct {
@@ -31,16 +30,15 @@ func setupPulsarCommand() *cobra.Command {
 		Long:  "Setup pulsar",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
+			sugarLogger := logger.CreateLogger()
 
-			logger, err := zap.NewDevelopment()
+			configurationHelper, err := enterpriseappsetup.NewConfigurationHelper(sugarLogger)
 			if err != nil {
-				log.Fatal(err)
+				sugarLogger.Fatal(err)
 			}
 
-			sugarLogger := logger.Sugar()
-
 			var config configuration.Config
-			if err := entconfiguration.LoadConfig("config.yaml", &config); err != nil {
+			if err := configurationHelper.LoadYaml("config.yaml", &config); err != nil {
 				sugarLogger.Fatal(err)
 			}
 

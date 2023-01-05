@@ -428,155 +428,79 @@ func (vc *VenueCreate) createSpec() (*Venue, *sqlgraph.CreateSpec) {
 	_spec.Schema = vc.schemaConfig.Venue
 	_spec.OnConflict = vc.conflict
 	if value, ok := vc.mutation.VenueID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldVenueID,
-		})
+		_spec.SetField(venue.FieldVenueID, field.TypeString, value)
 		_node.VenueID = value
 	}
 	if value, ok := vc.mutation.GetType(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: venue.FieldType,
-		})
+		_spec.SetField(venue.FieldType, field.TypeEnum, value)
 		_node.Type = value
 	}
 	if value, ok := vc.mutation.Name(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldName,
-		})
+		_spec.SetField(venue.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
 	if value, ok := vc.mutation.YearEstablished(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldYearEstablished,
-		})
+		_spec.SetField(venue.FieldYearEstablished, field.TypeInt, value)
 		_node.YearEstablished = value
 	}
 	if value, ok := vc.mutation.Country(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldCountry,
-		})
+		_spec.SetField(venue.FieldCountry, field.TypeString, value)
 		_node.Country = value
 	}
 	if value, ok := vc.mutation.Image(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldImage,
-		})
+		_spec.SetField(venue.FieldImage, field.TypeString, value)
 		_node.Image = value
 	}
 	if value, ok := vc.mutation.Links(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: venue.FieldLinks,
-		})
+		_spec.SetField(venue.FieldLinks, field.TypeJSON, value)
 		_node.Links = value
 	}
 	if value, ok := vc.mutation.HasTradingIncentive(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: venue.FieldHasTradingIncentive,
-		})
+		_spec.SetField(venue.FieldHasTradingIncentive, field.TypeBool, value)
 		_node.HasTradingIncentive = value
 	}
 	if value, ok := vc.mutation.Centralized(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: venue.FieldCentralized,
-		})
+		_spec.SetField(venue.FieldCentralized, field.TypeBool, value)
 		_node.Centralized = value
 	}
 	if value, ok := vc.mutation.PublicNotice(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldPublicNotice,
-		})
+		_spec.SetField(venue.FieldPublicNotice, field.TypeString, value)
 		_node.PublicNotice = value
 	}
 	if value, ok := vc.mutation.AlertNotice(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: venue.FieldAlertNotice,
-		})
+		_spec.SetField(venue.FieldAlertNotice, field.TypeString, value)
 		_node.AlertNotice = value
 	}
 	if value, ok := vc.mutation.TrustScore(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldTrustScore,
-		})
+		_spec.SetField(venue.FieldTrustScore, field.TypeInt, value)
 		_node.TrustScore = value
 	}
 	if value, ok := vc.mutation.TrustScoreRank(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: venue.FieldTrustScoreRank,
-		})
+		_spec.SetField(venue.FieldTrustScoreRank, field.TypeInt, value)
 		_node.TrustScoreRank = value
 	}
 	if value, ok := vc.mutation.TradeVolume24hBtc(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTradeVolume24hBtc,
-		})
+		_spec.SetField(venue.FieldTradeVolume24hBtc, field.TypeFloat64, value)
 		_node.TradeVolume24hBtc = value
 	}
 	if value, ok := vc.mutation.TradeVolume24hBtcNormalized(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTradeVolume24hBtcNormalized,
-		})
+		_spec.SetField(venue.FieldTradeVolume24hBtcNormalized, field.TypeFloat64, value)
 		_node.TradeVolume24hBtcNormalized = value
 	}
 	if value, ok := vc.mutation.MakerFee(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldMakerFee,
-		})
+		_spec.SetField(venue.FieldMakerFee, field.TypeFloat64, value)
 		_node.MakerFee = value
 	}
 	if value, ok := vc.mutation.TakerFee(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: venue.FieldTakerFee,
-		})
+		_spec.SetField(venue.FieldTakerFee, field.TypeFloat64, value)
 		_node.TakerFee = value
 	}
 	if value, ok := vc.mutation.SpreadFee(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: venue.FieldSpreadFee,
-		})
+		_spec.SetField(venue.FieldSpreadFee, field.TypeBool, value)
 		_node.SpreadFee = value
 	}
 	if value, ok := vc.mutation.SupportAPI(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: venue.FieldSupportAPI,
-		})
+		_spec.SetField(venue.FieldSupportAPI, field.TypeBool, value)
 		_node.SupportAPI = value
 	}
 	if nodes := vc.mutation.TickerIDs(); len(nodes) > 0 {

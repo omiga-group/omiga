@@ -1,6 +1,7 @@
 name: "Venues all-in-one"
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - "main"

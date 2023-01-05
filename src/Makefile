@@ -11,41 +11,17 @@ all: dep generate ## Runs dep generate
 dep: ## Install dependencies
 	@go mod tidy
 
-.PHONY: generate
-generate: ## Generate code
-	@../api-definitions/asyncapi/events/scripts/generate-all.sh
+.PHONY: gen-dep
+gen-dep: ## Install code generation dependencies
 	@go install github.com/google/wire/cmd/wire@latest
 	@go install entgo.io/ent/cmd/ent@latest
 	@go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
 	@go install github.com/golang/mock/mockgen@latest
-	@GOFLAGS=-mod=mod go generate ./...
 
-.PHONY: generate-via-docker
-generate-via-docker: ## Generate code
+.PHONY: generate
+generate: ## Generate code
 	@../api-definitions/asyncapi/events/scripts/generate-all.sh
-	@./shared/scripts/generate.sh
-	@./order/shared/scripts/generate.sh
-	@./order/order-api/scripts/generate.sh
-	@./order/order-processor/scripts/generate.sh
-	@./venue/shared/scripts/generate.sh
-	@./venue/venues-all-in-one/scripts/generate.sh
-	@./venue/venue-api/scripts/generate.sh
-	@./venue/binance-processor/scripts/generate.sh
-	@./venue/bitmart-processor/scripts/generate.sh
-	@./venue/bittrext-processor/scripts/generate.sh
-	@./venue/bybit-processor/scripts/generate.sh
-	@./venue/coinbase-processor/scripts/generate.sh
-	@./venue/coingecko-processor/scripts/generate.sh
-	@./venue/crypto-processor/scripts/generate.sh
-	@./venue/dextrade-processor/scripts/generate.sh
-	@./venue/ftx-processor/scripts/generate.sh
-	@./venue/gemini-processor/scripts/generate.sh
-	@./venue/huobi-processor/scripts/generate.sh
-	@./venue/kraken-processor/scripts/generate.sh
-	@./venue/kucoin-processor/scripts/generate.sh
-	@./venue/mexc-processor/scripts/generate.sh
-	@./venue/rain-processor/scripts/generate.sh
-	@./venue/xt-processor/scripts/generate.sh
+	@GOFLAGS=-mod=mod go generate ./...
 
 .PHONY: lint
 lint: ## run golanci-lint locally

@@ -1,7 +1,7 @@
 name: "Venue API - Deploy to Prod"
 
 on:
-  - workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   deploy-to-prod:

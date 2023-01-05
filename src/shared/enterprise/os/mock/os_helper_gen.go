@@ -76,6 +76,20 @@ func (mr *MockOsHelperMockRecorder) FileExist(path interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FileExist", reflect.TypeOf((*MockOsHelper)(nil).FileExist), path)
 }
 
+// GetEnvironmentVariable mocks base method.
+func (m *MockOsHelper) GetEnvironmentVariable(key string) string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetEnvironmentVariable", key)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// GetEnvironmentVariable indicates an expected call of GetEnvironmentVariable.
+func (mr *MockOsHelperMockRecorder) GetEnvironmentVariable(key interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnvironmentVariable", reflect.TypeOf((*MockOsHelper)(nil).GetEnvironmentVariable), key)
+}
+
 // GetFileAsByteArray mocks base method.
 func (m *MockOsHelper) GetFileAsByteArray(path string) ([]byte, error) {
 	m.ctrl.T.Helper()

@@ -116,9 +116,10 @@ func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, 
 		}
 	}()
 
-	browserInstance, err := playwrightInstance.Chromium.Launch(playwright.BrowserTypeLaunchOptions{
-		Headless: &rtps.venueConfig.Headless,
-	})
+	browserInstance, err := playwrightInstance.Chromium.Launch(
+		playwright.BrowserTypeLaunchOptions{
+			Headless: playwright.Bool(rtps.venueConfig.Headless),
+		})
 	if err != nil {
 		return nil, fmt.Errorf("failed to start Chromium browser instance. Error: %v", err)
 	}
@@ -129,7 +130,17 @@ func (rtps *rainTradingPairSubscriber) getRequiredHeaders() (map[string]string, 
 		}
 	}()
 
-	signinPageInstance, err := browserInstance.NewPage()
+	var recordVideoOption *playwright.BrowserNewContextOptionsRecordVideo
+
+	if len(rtps.venueConfig.RecordedVideoDirPath) > 0 {
+		recordVideoOption = &playwright.BrowserNewContextOptionsRecordVideo{
+			Dir: playwright.String(rtps.venueConfig.RecordedVideoDirPath),
+		}
+	}
+
+	signinPageInstance, err := browserInstance.NewPage(playwright.BrowserNewContextOptions{
+		RecordVideo: recordVideoOption,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to start signin page instance. Error: %v", err)
 	}

@@ -1,15 +1,14 @@
-import React from 'react';
 import graphql from 'babel-plugin-relay/macro';
-import { createFragmentContainer } from 'react-relay';
-import { QueryRenderer } from 'react-relay';
+import React from 'react';
+import { createFragmentContainer, QueryRenderer } from 'react-relay';
 import { useParams } from 'react-router-dom';
 
-import { OrderDetails_Query$data } from './__generated__/OrderDetails_Query.graphql';
 import { OrderDetailsQuery, OrderDetailsQuery$data } from './__generated__/OrderDetailsQuery.graphql';
+import { OrderDetails_Query$data } from './__generated__/OrderDetails_Query.graphql';
 
 import { default as createEnvironment } from '../../../framework/relay/Environment';
-import LoadingContainer from '../../common/loading/LoadingContainer';
 import GenericErrorContainer from '../../common/generic-error/GenericErrorContainer';
+import LoadingContainer from '../../common/loading/LoadingContainer';
 
 export const enNZTranslation = {
   id: 'Id',

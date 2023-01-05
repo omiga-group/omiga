@@ -218,80 +218,37 @@ func (ou *OutboxUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := ou.mutation.Timestamp(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: outbox.FieldTimestamp,
-		})
+		_spec.SetField(outbox.FieldTimestamp, field.TypeTime, value)
 	}
 	if value, ok := ou.mutation.Topic(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: outbox.FieldTopic,
-		})
+		_spec.SetField(outbox.FieldTopic, field.TypeString, value)
 	}
 	if value, ok := ou.mutation.Key(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: outbox.FieldKey,
-		})
+		_spec.SetField(outbox.FieldKey, field.TypeString, value)
 	}
 	if value, ok := ou.mutation.Payload(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBytes,
-			Value:  value,
-			Column: outbox.FieldPayload,
-		})
+		_spec.SetField(outbox.FieldPayload, field.TypeBytes, value)
 	}
 	if value, ok := ou.mutation.Headers(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: outbox.FieldHeaders,
-		})
+		_spec.SetField(outbox.FieldHeaders, field.TypeJSON, value)
 	}
 	if value, ok := ou.mutation.RetryCount(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: outbox.FieldRetryCount,
-		})
+		_spec.SetField(outbox.FieldRetryCount, field.TypeInt, value)
 	}
 	if value, ok := ou.mutation.AddedRetryCount(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: outbox.FieldRetryCount,
-		})
+		_spec.AddField(outbox.FieldRetryCount, field.TypeInt, value)
 	}
 	if value, ok := ou.mutation.Status(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: outbox.FieldStatus,
-		})
+		_spec.SetField(outbox.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := ou.mutation.LastRetry(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: outbox.FieldLastRetry,
-		})
+		_spec.SetField(outbox.FieldLastRetry, field.TypeTime, value)
 	}
 	if ou.mutation.LastRetryCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Column: outbox.FieldLastRetry,
-		})
+		_spec.ClearField(outbox.FieldLastRetry, field.TypeTime)
 	}
 	if value, ok := ou.mutation.ProcessingErrors(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: outbox.FieldProcessingErrors,
-		})
+		_spec.SetField(outbox.FieldProcessingErrors, field.TypeJSON, value)
 	}
 	if value, ok := ou.mutation.AppendedProcessingErrors(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
@@ -299,10 +256,7 @@ func (ou *OutboxUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		})
 	}
 	if ou.mutation.ProcessingErrorsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: outbox.FieldProcessingErrors,
-		})
+		_spec.ClearField(outbox.FieldProcessingErrors, field.TypeJSON)
 	}
 	_spec.Node.Schema = ou.schemaConfig.Outbox
 	ctx = internal.NewSchemaConfigContext(ctx, ou.schemaConfig)
@@ -544,80 +498,37 @@ func (ouo *OutboxUpdateOne) sqlSave(ctx context.Context) (_node *Outbox, err err
 		}
 	}
 	if value, ok := ouo.mutation.Timestamp(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: outbox.FieldTimestamp,
-		})
+		_spec.SetField(outbox.FieldTimestamp, field.TypeTime, value)
 	}
 	if value, ok := ouo.mutation.Topic(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: outbox.FieldTopic,
-		})
+		_spec.SetField(outbox.FieldTopic, field.TypeString, value)
 	}
 	if value, ok := ouo.mutation.Key(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: outbox.FieldKey,
-		})
+		_spec.SetField(outbox.FieldKey, field.TypeString, value)
 	}
 	if value, ok := ouo.mutation.Payload(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBytes,
-			Value:  value,
-			Column: outbox.FieldPayload,
-		})
+		_spec.SetField(outbox.FieldPayload, field.TypeBytes, value)
 	}
 	if value, ok := ouo.mutation.Headers(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: outbox.FieldHeaders,
-		})
+		_spec.SetField(outbox.FieldHeaders, field.TypeJSON, value)
 	}
 	if value, ok := ouo.mutation.RetryCount(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: outbox.FieldRetryCount,
-		})
+		_spec.SetField(outbox.FieldRetryCount, field.TypeInt, value)
 	}
 	if value, ok := ouo.mutation.AddedRetryCount(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: outbox.FieldRetryCount,
-		})
+		_spec.AddField(outbox.FieldRetryCount, field.TypeInt, value)
 	}
 	if value, ok := ouo.mutation.Status(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: outbox.FieldStatus,
-		})
+		_spec.SetField(outbox.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := ouo.mutation.LastRetry(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: outbox.FieldLastRetry,
-		})
+		_spec.SetField(outbox.FieldLastRetry, field.TypeTime, value)
 	}
 	if ouo.mutation.LastRetryCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Column: outbox.FieldLastRetry,
-		})
+		_spec.ClearField(outbox.FieldLastRetry, field.TypeTime)
 	}
 	if value, ok := ouo.mutation.ProcessingErrors(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: outbox.FieldProcessingErrors,
-		})
+		_spec.SetField(outbox.FieldProcessingErrors, field.TypeJSON, value)
 	}
 	if value, ok := ouo.mutation.AppendedProcessingErrors(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
@@ -625,10 +536,7 @@ func (ouo *OutboxUpdateOne) sqlSave(ctx context.Context) (_node *Outbox, err err
 		})
 	}
 	if ouo.mutation.ProcessingErrorsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: outbox.FieldProcessingErrors,
-		})
+		_spec.ClearField(outbox.FieldProcessingErrors, field.TypeJSON)
 	}
 	_spec.Node.Schema = ouo.schemaConfig.Outbox
 	ctx = internal.NewSchemaConfigContext(ctx, ouo.schemaConfig)

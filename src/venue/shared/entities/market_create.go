@@ -181,19 +181,11 @@ func (mc *MarketCreate) createSpec() (*Market, *sqlgraph.CreateSpec) {
 	_spec.Schema = mc.schemaConfig.Market
 	_spec.OnConflict = mc.conflict
 	if value, ok := mc.mutation.Name(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: market.FieldName,
-		})
+		_spec.SetField(market.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
 	if value, ok := mc.mutation.GetType(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: market.FieldType,
-		})
+		_spec.SetField(market.FieldType, field.TypeEnum, value)
 		_node.Type = value
 	}
 	if nodes := mc.mutation.VenueIDs(); len(nodes) > 0 {

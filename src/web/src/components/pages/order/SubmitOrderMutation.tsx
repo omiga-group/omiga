@@ -1,8 +1,8 @@
 import graphql from 'babel-plugin-relay/macro';
+import cuid from 'cuid';
 import { useCallback } from 'react';
 import { useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
-import cuid from 'cuid';
 
 import { SubmitOrderInput, SubmitOrderMutation$data } from './__generated__/SubmitOrderMutation.graphql';
 

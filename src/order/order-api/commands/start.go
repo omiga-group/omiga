@@ -2,15 +2,15 @@ package commands
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/order/order-api/appsetup"
 	"github.com/omiga-group/omiga/src/order/order-api/configuration"
-	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
+	orderappsetup "github.com/omiga-group/omiga/src/order/shared/appsetup"
+	enterpriseappsetup "github.com/omiga-group/omiga/src/shared/enterprise/appsetup"
+	"github.com/omiga-group/omiga/src/shared/enterprise/logger"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
 
 func startCommand() *cobra.Command {
@@ -20,20 +20,19 @@ func startCommand() *cobra.Command {
 		Long:  "Start order-api",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
+			sugarLogger := logger.CreateLogger()
 
-			logger, err := zap.NewDevelopment()
+			configurationHelper, err := enterpriseappsetup.NewConfigurationHelper(sugarLogger)
 			if err != nil {
-				log.Fatal(err)
-			}
-
-			sugarLogger := logger.Sugar()
-
-			var config configuration.Config
-			if err := entconfiguration.LoadConfig("config.yaml", &config); err != nil {
 				sugarLogger.Fatal(err)
 			}
 
-			entgoClient, err := appsetup.NewEntgoClient(
+			var config configuration.Config
+			if err := configurationHelper.LoadYaml("config.yaml", &config); err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			entgoClient, err := orderappsetup.NewEntgoClient(
 				sugarLogger,
 				config.Postgres)
 			if err != nil {
@@ -44,7 +43,7 @@ func startCommand() *cobra.Command {
 			jobScheduler.StartAsync()
 			defer jobScheduler.Stop()
 
-			outboxBackgroundService, err := appsetup.NewOutboxBackgroundService(
+			outboxBackgroundService, err := orderappsetup.NewOutboxBackgroundService(
 				ctx,
 				sugarLogger,
 				config.Pulsar,

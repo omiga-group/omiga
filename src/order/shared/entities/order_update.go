@@ -133,18 +133,10 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := ou.mutation.OrderDetails(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: order.FieldOrderDetails,
-		})
+		_spec.SetField(order.FieldOrderDetails, field.TypeJSON, value)
 	}
 	if value, ok := ou.mutation.PreferredExchanges(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: order.FieldPreferredExchanges,
-		})
+		_spec.SetField(order.FieldPreferredExchanges, field.TypeJSON, value)
 	}
 	if value, ok := ou.mutation.AppendedPreferredExchanges(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
@@ -306,18 +298,10 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		}
 	}
 	if value, ok := ouo.mutation.OrderDetails(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: order.FieldOrderDetails,
-		})
+		_spec.SetField(order.FieldOrderDetails, field.TypeJSON, value)
 	}
 	if value, ok := ouo.mutation.PreferredExchanges(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: order.FieldPreferredExchanges,
-		})
+		_spec.SetField(order.FieldPreferredExchanges, field.TypeJSON, value)
 	}
 	if value, ok := ouo.mutation.AppendedPreferredExchanges(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {

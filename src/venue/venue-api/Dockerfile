@@ -34,4 +34,7 @@ COPY --from=build /src/venue/venue-api/config.yaml /omiga
 
 RUN /omiga/venue-api install-dependecies
 
+# Fix CVE-2022-3996
+RUN apk upgrade libssl3 libcrypto3
+
 CMD ["/omiga/venue-api", "start"]
