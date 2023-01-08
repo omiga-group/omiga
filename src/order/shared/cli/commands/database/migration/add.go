@@ -94,7 +94,7 @@ func AddCommand(connectionString *string) *cobra.Command {
 
 	cmd.Flags().StringVar(&options.path, "path", "", "Specify the path to the migration scripts directory")
 	cmd.Flags().StringVar(&options.name, "name", "", "Specify the name of the migration to add")
-	cmd.Flags().BoolVar(&options.enableGlobalUniqueID, "enable-global-unique-id", true, "Adds the universal ids options to the migration.")
+	cmd.Flags().BoolVar(&options.enableGlobalUniqueID, "enable-global-unique-id", false, "Adds the universal ids options to the migration.")
 	cmd.Flags().BoolVar(&options.enableDropColumn, "enable-drop-column", true, "Adds the column dropping options to the migration.")
 	cmd.Flags().BoolVar(&options.enableDropIndex, "enable-drop-index", true, "Adds the index dropping options to the migration.")
 
