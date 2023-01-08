@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/omiga-group/omiga/src/order/orderctl/configuration"
 	orderappsetup "github.com/omiga-group/omiga/src/order/shared/appsetup"
-	"github.com/omiga-group/omiga/src/order/shared/cli/configuration"
 	"github.com/omiga-group/omiga/src/order/shared/entities/migrate"
 	enterpriseappsetup "github.com/omiga-group/omiga/src/shared/enterprise/appsetup"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"

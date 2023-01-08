@@ -17,7 +17,6 @@ func Root() *cobra.Command {
 		},
 	}
 
-	// Register all commands
 	cmd.AddCommand(
 		versionCommand(),
 		setupPulsarCommand(),

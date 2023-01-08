@@ -148,7 +148,7 @@ func (kobs *krakenOrderBookSubscriber) connectAndSubscribe() {
 					kobs.ctx,
 					orderBook.ExchangeId,
 					orderBook); err != nil {
-					kobs.logger.Errorf("Failed to publish order book for Kraken exchange. Error: %v", err)
+					kobs.logger.Errorf("Failed to publish order book for Kraken venue. Error: %v", err)
 
 					return
 				}

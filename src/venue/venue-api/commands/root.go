@@ -17,7 +17,6 @@ func Root() *cobra.Command {
 		},
 	}
 
-	// Register all commands
 	cmd.AddCommand(
 		versionCommand(),
 		installDependeciesCommand(),
@@ -28,5 +27,5 @@ func Root() *cobra.Command {
 }
 
 func printHeader() {
-	util.PrintInfo("Exchange API")
+	util.PrintInfo("Venue API")
 }

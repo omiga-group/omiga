@@ -8,7 +8,7 @@ import (
 // RootCommand returns root CLI application command interface
 func Root() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use: "venue-database-migration",
+		Use: "venuectl",
 		PreRun: func(cmd *cobra.Command, args []string) {
 			printHeader()
 		},
@@ -17,10 +17,10 @@ func Root() *cobra.Command {
 		},
 	}
 
-	// Register all commands
 	cmd.AddCommand(
 		versionCommand(),
 		installDependeciesCommand(),
+		databaseCommand(),
 		migrateCommand(),
 	)
 
@@ -28,5 +28,5 @@ func Root() *cobra.Command {
 }
 
 func printHeader() {
-	util.PrintInfo("Exchange Database Migration Tool")
+	util.PrintInfo("Venue Cli")
 }

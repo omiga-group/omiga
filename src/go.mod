@@ -3,6 +3,7 @@ module github.com/omiga-group/omiga/src
 go 1.19
 
 require (
+	ariga.io/atlas v0.7.3-0.20221011160332-3ca609863edd
 	entgo.io/contrib v0.3.4
 	entgo.io/ent v0.11.5-0.20221031135557-521f9b57bc3d
 	github.com/99designs/gqlgen v0.17.20
@@ -39,7 +40,6 @@ require (
 )
 
 require (
-	ariga.io/atlas v0.7.3-0.20221011160332-3ca609863edd // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/AthenZ/athenz v1.10.39 // indirect

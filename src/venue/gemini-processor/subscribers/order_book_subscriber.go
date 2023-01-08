@@ -164,7 +164,7 @@ func (gobs *geminiOrderBookSubscriber) publish(
 	orderBook.ExchangeId = "binance"
 
 	if err := gobs.orderBookPublisher.Publish(gobs.ctx, orderBook.ExchangeId, orderBook); err != nil {
-		gobs.logger.Errorf("Failed to publish order book for Binance exchange. Error: %v", err)
+		gobs.logger.Errorf("Failed to publish order book for Binance venue. Error: %v", err)
 	}
 }
 

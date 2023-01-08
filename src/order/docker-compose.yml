@@ -1,17 +1,36 @@
 ﻿version: "3.9"
 
 services:
+  order-database-create:
+    image: ${DOCKER_REGISTRY-}orderdatabasecreate
+    command: "/omiga/omigactl database provision --name order"
+    build:
+      context: .
+      dockerfile: shared/omigactl/Dockerfile
+      target: final
+    restart: on-failure
+    environment:
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres"
+    depends_on:
+      - postgres
+    profiles:
+      - core
+      - order
+      - all
+    networks:
+      - omiga_network
+
   order-database-migration:
     image: ${DOCKER_REGISTRY-}orderdatabasemigration
     build:
       context: .
-      dockerfile: order/shared/cli/Dockerfile
-      target: final
+      dockerfile: order/shared/migrations/Dockerfile
     restart: on-failure
     environment:
-      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/order"
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/order?sslmode=disable"
     depends_on:
       - postgres
+      - order-database-create
     profiles:
       - core
       - order

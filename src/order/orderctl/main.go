@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/micro-business/go-core/pkg/util"
-	"github.com/omiga-group/omiga/src/venue/shared/cli/commands"
+	"github.com/omiga-group/omiga/src/order/orderctl/commands"
 )
 
 func main() {

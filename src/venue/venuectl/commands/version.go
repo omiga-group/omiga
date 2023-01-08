@@ -11,10 +11,10 @@ import (
 func versionCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "version",
-		Short: "Return venue-database-migration version",
-		Long:  "Return venue-database-migration version",
+		Short: "Return venuectl version",
+		Long:  "Return venuectl version",
 		Run: func(cmd *cobra.Command, args []string) {
-			util.PrintInfo("Exchange Database Migration Tool\n")
+			util.PrintInfo("Venue Cli\n")
 			util.PrintInfo(fmt.Sprintf("Copyright (C) %d, Omiga Ltd.\n", time.Now().Year()))
 			util.PrintYAML(util.GetVersion())
 		},

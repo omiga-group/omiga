@@ -35,7 +35,7 @@ func NewHttpServer(
 func (hs *httpServer) ListenAndServe() error {
 	mux := http.NewServeMux()
 
-	mux.Handle("/", playground.Handler("Omiga - Exchange", "/graphql"))
+	mux.Handle("/", playground.Handler("Omiga - Venue", "/graphql"))
 	mux.Handle("/graphql", hs.graphQLServer)
 	mux.HandleFunc("/health", hs.healthHandler)
 

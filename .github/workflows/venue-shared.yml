@@ -24,7 +24,7 @@ on:
       - "src/venue/shared/**"
 
 jobs:
-  build:
+  build-venue-shared:
     name: "Build - Venue Shared"
     runs-on:
       - self-hosted
@@ -72,5 +72,69 @@ jobs:
       - name: Clean up
         if: always()
         run: |
+          docker rm ${{ env.unittest_container_tag }} || true
           docker rm ${{ env.unittest_extract_container_name }} || true
-          docker rmi ${{ env.unittest_container_tag }} || true
+
+  build-venue-database-migrations:
+    name: "Build - Venue Database Migrations"
+    runs-on:
+      - self-hosted
+    env:
+      DOCKER_BUILDKIT: 1
+      COMPOSE_DOCKER_CLI_BUILD: 1
+
+    steps:
+      - name: Checkout code with full history
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set required environment variable
+        run: |
+          echo "sem_version=$(docker run --rm -v $(pwd):/repo gittools/gitversion:5.11.1-alpine.3.13-6.0 /repo | jq '.SemVer')" >> $GITHUB_ENV
+
+      - name: Build
+        run: |
+          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
+             --pull \
+            --tag microbusiness/venue-database-migrations:${{ github.sha }} \
+            --file ./src/venue/shared/migrations/Dockerfile \
+            ./src
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: microbusiness/venue-database-migrations:${{ github.sha }}
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL"
+          timeout: "10m0s"
+
+      - name: Login to Docker Hub
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push docker image
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker tag \
+            microbusiness/venue-database-migrations:${{ github.sha }} \
+            microbusiness/venue-database-migrations:latest
+          docker tag \
+            microbusiness/venue-database-migrations:${{ github.sha }} \
+            microbusiness/venue-database-migrations:${{ env.sem_version }}
+          docker push microbusiness/venue-database-migrations:${{ env.sem_version }}
+          docker push microbusiness/venue-database-migrations:${{ github.sha }}
+          docker push microbusiness/venue-database-migrations:latest
+
+      - name: Clean up
+        if: always()
+        run: |
+          docker rmi microbusiness/venue-database-migrations:${{ env.sem_version }} || true
+          docker rmi microbusiness/venue-database-migrations:${{ github.sha }} || true
+          docker rmi microbusiness/venue-database-migrations:latest || true
