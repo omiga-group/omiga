@@ -10,23 +10,17 @@ type databaseOptions struct {
 }
 
 func databaseCommand() *cobra.Command {
+	options := databaseOptions{}
+
 	cmd := &cobra.Command{
 		Use: "database",
-		PreRun: func(cmd *cobra.Command, args []string) {
-			printHeader()
-		},
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			return nil
-		},
 	}
-
-	options := databaseOptions{}
 
 	cmd.PersistentFlags().StringVar(&options.connectionString, "connectionString", "", "Specify the database connection string")
 
-	// Register all commands
 	cmd.AddCommand(
-		database.CreateCommand(cmd),
+		database.ProvisionCommand(&options.connectionString),
+		database.MigrateCommand(&options.connectionString),
 	)
 
 	return cmd

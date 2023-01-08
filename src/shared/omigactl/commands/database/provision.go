@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strings"
 
 	"github.com/omiga-group/omiga/src/shared/enterprise/appsetup"
 	"github.com/omiga-group/omiga/src/shared/enterprise/logger"
@@ -12,18 +11,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type createDatabaseOptions struct {
+type provisionDatabaseOptions struct {
 	name string
 }
 
-func CreateCommand(databaseCommand *cobra.Command) *cobra.Command {
-	options := createDatabaseOptions{}
+func ProvisionCommand(connectionString *string) *cobra.Command {
+	options := provisionDatabaseOptions{}
 	sugarLogger := logger.CreateLogger()
 
 	cmd := &cobra.Command{
-		Use:   "create",
-		Short: "Create Database",
-		Long:  "Create Database",
+		Use:   "provision",
+		Short: "Provision Database",
+		Long:  "Provision Database",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
 
@@ -37,14 +36,8 @@ func CreateCommand(databaseCommand *cobra.Command) *cobra.Command {
 				sugarLogger.Fatal(err)
 			}
 
-			if connectionString, err := databaseCommand.PersistentFlags().GetString("connectionString"); err != nil {
-				sugarLogger.Fatal(err)
-			} else {
-				connectionString = strings.TrimSpace(connectionString)
-
-				if len(connectionString) != 0 {
-					config.Postgres.ConnectionString = connectionString
-				}
+			if len(*connectionString) != 0 {
+				config.Postgres.ConnectionString = *connectionString
 			}
 
 			database, err := appsetup.NewDatabase(
@@ -71,16 +64,16 @@ func CreateCommand(databaseCommand *cobra.Command) *cobra.Command {
 					sugarLogger.Fatal(err)
 				}
 
-				sugarLogger.Infof("Database %s successfully created.", options.name)
+				sugarLogger.Infof("Database %s successfully provisioned.", options.name)
 			} else if err != nil {
 				sugarLogger.Fatal(err)
 			} else {
-				sugarLogger.Infof("Database %s already exists. Ignore creating the database.", options.name)
+				sugarLogger.Infof("Database %s already exists. Ignore provisioning the database.", options.name)
 			}
 		},
 	}
 
-	cmd.Flags().StringVar(&options.name, "name", "", "Specify the database name to create")
+	cmd.Flags().StringVar(&options.name, "name", "", "Specify the database name to provision")
 
 	if err := cmd.MarkFlagRequired("name"); err != nil {
 		sugarLogger.Fatal(err)
