@@ -27,5 +27,5 @@ func Root() *cobra.Command {
 }
 
 func printHeader() {
-	util.PrintInfo("Order Cli")
+	util.PrintInfo("orderctl")
 }

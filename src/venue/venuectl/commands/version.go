@@ -14,7 +14,7 @@ func versionCommand() *cobra.Command {
 		Short: "Return venuectl version",
 		Long:  "Return venuectl version",
 		Run: func(cmd *cobra.Command, args []string) {
-			util.PrintInfo("Venue Cli\n")
+			util.PrintInfo("venuectl\n")
 			util.PrintInfo(fmt.Sprintf("Copyright (C) %d, Omiga Ltd.\n", time.Now().Year()))
 			util.PrintYAML(util.GetVersion())
 		},

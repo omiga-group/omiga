@@ -11,10 +11,10 @@ import (
 func versionCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "version",
-		Short: "Return orderctl version",
-		Long:  "Return orderctl version",
+		Short: "Return omigactl version",
+		Long:  "Return omigactl version",
 		Run: func(cmd *cobra.Command, args []string) {
-			util.PrintInfo("Order Cli\n")
+			util.PrintInfo("omigactl\n")
 			util.PrintInfo(fmt.Sprintf("Copyright (C) %d, Omiga Ltd.\n", time.Now().Year()))
 			util.PrintYAML(util.GetVersion())
 		},
