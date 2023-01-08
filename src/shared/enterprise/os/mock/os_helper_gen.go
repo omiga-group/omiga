@@ -33,6 +33,20 @@ func (m *MockOsHelper) EXPECT() *MockOsHelperMockRecorder {
 	return m.recorder
 }
 
+// CreateDir mocks base method.
+func (m *MockOsHelper) CreateDir(path string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateDir", path)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateDir indicates an expected call of CreateDir.
+func (mr *MockOsHelperMockRecorder) CreateDir(path interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateDir", reflect.TypeOf((*MockOsHelper)(nil).CreateDir), path)
+}
+
 // CreateTemporaryTextFile mocks base method.
 func (m *MockOsHelper) CreateTemporaryTextFile(content string) (string, error) {
 	m.ctrl.T.Helper()

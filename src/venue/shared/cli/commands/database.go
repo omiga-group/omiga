@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/omiga-group/omiga/src/shared/omigactl/commands/database"
+	"github.com/omiga-group/omiga/src/venue/shared/cli/commands/database"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +19,7 @@ func databaseCommand() *cobra.Command {
 	cmd.PersistentFlags().StringVar(&options.connectionString, "connectionString", "", "Specify the database connection string")
 
 	cmd.AddCommand(
-		database.ProvisionCommand(&options.connectionString),
+		database.MigrateCommand(&options.connectionString),
 	)
 
 	return cmd

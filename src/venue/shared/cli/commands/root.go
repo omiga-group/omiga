@@ -20,6 +20,7 @@ func Root() *cobra.Command {
 	cmd.AddCommand(
 		versionCommand(),
 		installDependeciesCommand(),
+		databaseCommand(),
 		migrateCommand(),
 	)
 

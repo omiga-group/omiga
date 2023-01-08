@@ -7,6 +7,7 @@ import (
 type OsHelper interface {
 	FileExist(path string) bool
 	DirExist(path string) bool
+	CreateDir(path string) error
 	GetFileAsByteArray(path string) ([]byte, error)
 	GetFileAsString(path string) (string, error)
 	CreateTemporaryTextFile(content string) (string, error)
@@ -45,6 +46,10 @@ func (oh *osHelper) DirExist(path string) bool {
 	}
 
 	return true
+}
+
+func (oh *osHelper) CreateDir(path string) error {
+	return os.Mkdir(path, os.ModePerm)
 }
 
 func (oh *osHelper) GetFileAsByteArray(path string) ([]byte, error) {

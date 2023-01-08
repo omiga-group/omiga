@@ -10,14 +10,6 @@
       "args": ["setup-pulsar"]
     },
     {
-      "name": "Venue Database Migration",
-      "type": "go",
-      "request": "launch",
-      "mode": "debug",
-      "program": "${workspaceFolder}/src/venue/shared/cli/main.go",
-      "args": ["migrate", "--post-migration-script-path", "${workspaceFolder}/src/venue/shared/cli/post_migration_script.sql"]
-    },
-    {
       "name": "Coingeko",
       "type": "go",
       "request": "launch",
@@ -152,14 +144,6 @@
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/xt-processor/main.go",
       "args": ["start"]
-    },
-    {
-      "name": "Order Database Migration",
-      "type": "go",
-      "request": "launch",
-      "mode": "debug",
-      "program": "${workspaceFolder}/src/order/shared/cli/main.go",
-      "args": ["migrate", "--post-migration-script-path", "${workspaceFolder}/src/order/shared/cli/post_migration_script.sql"]
     },
     {
       "name": "Order API",
