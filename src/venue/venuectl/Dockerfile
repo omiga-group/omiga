@@ -6,15 +6,15 @@ FROM $BUILD_IMAGE as build
 
 RUN mkdir -p /src/shared/enterprise \
     mkdir -p /src/venue/shared \
-    mkdir -p /src/venue/shared/cli
+    mkdir -p /src/venue/venuectl
 
 COPY go.mod /src/
 COPY go.sum /src/
 COPY shared/enterprise /src/shared/enterprise
 COPY venue/shared /src/venue/shared
-COPY venue/shared/cli /src/venue/shared/cli
+COPY venue/venuectl /src/venue/venuectl
 
-WORKDIR /src/venue/shared/cli
+WORKDIR /src/venue/venuectl
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/venuectl main.go
 
@@ -28,8 +28,8 @@ LABEL maintainer="morteza@omiga.com.au"
 
 WORKDIR /omiga
 COPY --from=build /bin/venuectl /omiga
-COPY --from=build /src/venue/shared/cli/config.yaml /omiga
-COPY --from=build /src/venue/shared/cli/post_migration_script.sql /omiga
+COPY --from=build /src/venue/venuectl/config.yaml /omiga
+COPY --from=build /src/venue/venuectl/post_migration_script.sql /omiga
 
 RUN /omiga/venuectl install-dependecies
 

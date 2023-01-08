@@ -11,8 +11,8 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/logger"
 	venueappsetup "github.com/omiga-group/omiga/src/venue/shared/appsetup"
-	"github.com/omiga-group/omiga/src/venue/shared/cli/configuration"
 	"github.com/omiga-group/omiga/src/venue/shared/entities/migrate"
+	"github.com/omiga-group/omiga/src/venue/venuectl/configuration"
 	"github.com/spf13/cobra"
 )
 

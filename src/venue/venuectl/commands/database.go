@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/omiga-group/omiga/src/order/shared/cli/commands/database"
+	"github.com/omiga-group/omiga/src/venue/venuectl/commands/database"
 	"github.com/spf13/cobra"
 )
 

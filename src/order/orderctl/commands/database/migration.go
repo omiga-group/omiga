@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/omiga-group/omiga/src/order/shared/cli/commands/database/migration"
+	"github.com/omiga-group/omiga/src/order/orderctl/commands/database/migration"
 	"github.com/spf13/cobra"
 )
 

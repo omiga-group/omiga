@@ -5,7 +5,7 @@ services:
     image: ${DOCKER_REGISTRY-}orderdatabasemigration
     build:
       context: .
-      dockerfile: order/shared/cli/Dockerfile
+      dockerfile: order/orderctl/Dockerfile
       target: final
     restart: on-failure
     environment:

@@ -6,15 +6,15 @@ FROM $BUILD_IMAGE as build
 
 RUN mkdir -p /src/shared/enterprise \
     mkdir -p /src/order/shared \
-    mkdir -p /src/order/shared/cli
+    mkdir -p /src/order/orderctl
 
 COPY go.mod /src/
 COPY go.sum /src/
 COPY shared/enterprise /src/shared/enterprise
 COPY order/shared /src/order/shared
-COPY order/shared/cli /src/order/shared/cli
+COPY order/orderctl /src/order/orderctl
 
-WORKDIR /src/order/shared/cli
+WORKDIR /src/order/orderctl
 
 RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/orderctl main.go
 
@@ -28,8 +28,8 @@ LABEL maintainer="morteza@omiga.com.au"
 
 WORKDIR /omiga
 COPY --from=build /bin/orderctl /omiga
-COPY --from=build /src/order/shared/cli/config.yaml /omiga
-COPY --from=build /src/order/shared/cli/post_migration_script.sql /omiga
+COPY --from=build /src/order/orderctl/config.yaml /omiga
+COPY --from=build /src/order/orderctl/post_migration_script.sql /omiga
 
 RUN /omiga/orderctl install-dependecies
 

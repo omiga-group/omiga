@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/omiga-group/omiga/src/venue/shared/cli/commands/database/migration"
+	"github.com/omiga-group/omiga/src/venue/venuectl/commands/database/migration"
 	"github.com/spf13/cobra"
 )
 

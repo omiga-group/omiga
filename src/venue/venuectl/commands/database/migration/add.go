@@ -6,10 +6,10 @@ import (
 	atlas "ariga.io/atlas/sql/migrate"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/omiga-group/omiga/src/order/shared/appsetup"
 	enterpriseappsetup "github.com/omiga-group/omiga/src/shared/enterprise/appsetup"
 	"github.com/omiga-group/omiga/src/shared/enterprise/logger"
-	"github.com/omiga-group/omiga/src/shared/omigactl/configuration"
+	"github.com/omiga-group/omiga/src/venue/shared/appsetup"
+	"github.com/omiga-group/omiga/src/venue/venuectl/configuration"
 	"github.com/spf13/cobra"
 )
 

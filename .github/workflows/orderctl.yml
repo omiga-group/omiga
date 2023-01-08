@@ -1,4 +1,4 @@
-name: "Venue Database Migration"
+name: "Orderctl"
 
 on:
   workflow_dispatch:
@@ -7,25 +7,27 @@ on:
       - "main"
     paths:
       - ".github/workflows/lint.yml"
-      - ".github/workflows/venue-db-migration.yml"
+      - ".github/workflows/orderctl.yml"
       - "src/go.mod"
       - "src/go.sum"
       - "src/shared/**"
-      - "src/venue/shared/repositories/**"
+      - "src/order/shared/repositories/**"
+      - "src/order/orderctl/**"
   pull_request:
     branches:
       - "main"
     paths:
       - ".github/workflows/lint.yml"
-      - ".github/workflows/venue-db-migration.yml"
+      - ".github/workflows/orderctl.yml"
       - "src/go.mod"
       - "src/go.sum"
       - "src/shared/**"
-      - "src/venue/shared/repositories/**"
+      - "src/order/shared/repositories/**"
+      - "src/order/orderctl/**"
 
 jobs:
   build:
-    name: "Build - Venue Database Migration"
+    name: "Build - Orderctl"
     runs-on:
       - self-hosted
     env:
@@ -51,7 +53,7 @@ jobs:
              --pull \
              --target build \
             --tag ${{ env.build_container_tag }} \
-            --file ./src/venue/shared/cli/Dockerfile \
+            --file ./src/order/orderctl/Dockerfile \
             ./src
 
       - name: Unit Tests
@@ -60,7 +62,7 @@ jobs:
              --pull \
              --target test \
             --tag ${{ env.unittest_container_tag }} \
-            --file ./src/venue/shared/cli/Dockerfile \
+            --file ./src/order/orderctl/Dockerfile \
             ./src
 
       - name: Extract coverage output
@@ -76,7 +78,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ./coverage/reports/
-          flags: unittests,venue-db-migration
+          flags: unittests,orderctl
           fail_ci_if_error: true
           verbose: true
 
@@ -85,14 +87,14 @@ jobs:
           DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
              --target final \
-            --tag microbusiness/venue-db-migration:${{ github.sha }} \
-            --file ./src/venue/shared/cli/Dockerfile \
+            --tag microbusiness/orderctl:${{ github.sha }} \
+            --file ./src/order/orderctl/Dockerfile \
             ./src
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: microbusiness/venue-db-migration:${{ github.sha }}
+          image-ref: microbusiness/orderctl:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
@@ -111,14 +113,14 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           docker tag \
-            microbusiness/venue-db-migration:${{ github.sha }} \
-            microbusiness/venue-db-migration:latest
+            microbusiness/orderctl:${{ github.sha }} \
+            microbusiness/orderctl:latest
           docker tag \
-            microbusiness/venue-db-migration:${{ github.sha }} \
-            microbusiness/venue-db-migration:${{ env.sem_version }}
-          docker push microbusiness/venue-db-migration:${{ env.sem_version }}
-          docker push microbusiness/venue-db-migration:${{ github.sha }}
-          docker push microbusiness/venue-db-migration:latest
+            microbusiness/orderctl:${{ github.sha }} \
+            microbusiness/orderctl:${{ env.sem_version }}
+          docker push microbusiness/orderctl:${{ env.sem_version }}
+          docker push microbusiness/orderctl:${{ github.sha }}
+          docker push microbusiness/orderctl:latest
 
       - name: Clean up
         if: always()
@@ -126,6 +128,6 @@ jobs:
           docker rm ${{ env.unittest_extract_container_name }} || true
           docker rmi ${{ env.build_container_tag }} || true
           docker rmi ${{ env.unittest_container_tag }} || true
-          docker rmi microbusiness/venue-db-migration:${{ env.sem_version }} || true
-          docker rmi microbusiness/venue-db-migration:${{ github.sha }} || true
-          docker rmi microbusiness/venue-db-migration:latest || true
+          docker rmi microbusiness/orderctl:${{ env.sem_version }} || true
+          docker rmi microbusiness/orderctl:${{ github.sha }} || true
+          docker rmi microbusiness/orderctl:latest || true
