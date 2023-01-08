@@ -93,7 +93,7 @@ jobs:
         run: |
           echo "sem_version=$(docker run --rm -v $(pwd):/repo gittools/gitversion:5.11.1-alpine.3.13-6.0 /repo | jq '.SemVer')" >> $GITHUB_ENV
 
-      - name: Build final
+      - name: Build
         run: |
           DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
              --pull \
