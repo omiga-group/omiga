@@ -21,7 +21,6 @@ func Root() *cobra.Command {
 		versionCommand(),
 		installDependeciesCommand(),
 		databaseCommand(),
-		migrateCommand(),
 	)
 
 	return cmd

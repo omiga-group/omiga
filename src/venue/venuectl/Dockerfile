@@ -29,11 +29,8 @@ LABEL maintainer="morteza@omiga.com.au"
 WORKDIR /omiga
 COPY --from=build /bin/venuectl /omiga
 COPY --from=build /src/venue/venuectl/config.yaml /omiga
-COPY --from=build /src/venue/venuectl/post_migration_script.sql /omiga
 
 RUN /omiga/venuectl install-dependecies
 
 # Fix CVE-2022-3996
 RUN apk upgrade libssl3 libcrypto3
-
-CMD ["/omiga/venuectl", "migrate", "--post-migration-script-path", "post_migration_script.sql"]

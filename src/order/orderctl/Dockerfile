@@ -29,11 +29,8 @@ LABEL maintainer="morteza@omiga.com.au"
 WORKDIR /omiga
 COPY --from=build /bin/orderctl /omiga
 COPY --from=build /src/order/orderctl/config.yaml /omiga
-COPY --from=build /src/order/orderctl/post_migration_script.sql /omiga
 
 RUN /omiga/orderctl install-dependecies
 
 # Fix CVE-2022-3996
 RUN apk upgrade libssl3 libcrypto3
-
-CMD ["/omiga/orderctl", "migrate", "--post-migration-script-path", "post_migration_script.sql"]
