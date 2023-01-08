@@ -1,0 +1,13 @@
+# syntax = docker/dockerfile:1.4.1
+FROM ubuntu:latest as final
+LABEL maintainer="morteza@omiga.com.au"
+
+RUN apt-get update -y \
+  && apt-get upgrade -y \
+  && apt-get install curl -y \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /
+RUN curl https://release.ariga.io/atlas/atlas-linux-amd64-latest -o /atlas
+RUN chmod +x /atlas

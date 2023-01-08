@@ -44,7 +44,7 @@ jobs:
           echo "build_container_tag=$(uuidgen)" >> $GITHUB_ENV
           echo "unittest_container_tag=$(uuidgen)" >> $GITHUB_ENV
           echo "unittest_extract_container_name=$(uuidgen)" >> $GITHUB_ENV
-          echo "sem_version=$(docker run --rm -v $(pwd):/repo gittools/gitversion:5.10.3-alpine.3.13-6.0 /repo | jq '.SemVer')" >> $GITHUB_ENV
+          echo "sem_version=$(docker run --rm -v $(pwd):/repo gittools/gitversion:5.11.1-alpine.3.13-6.0 /repo | jq '.SemVer')" >> $GITHUB_ENV
 
       - name: Build
         run: |
