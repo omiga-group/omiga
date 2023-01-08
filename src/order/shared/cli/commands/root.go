@@ -8,7 +8,7 @@ import (
 // RootCommand returns root CLI application command interface
 func Root() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use: "order-database-migration",
+		Use: "orderctl",
 		PreRun: func(cmd *cobra.Command, args []string) {
 			printHeader()
 		},
@@ -27,5 +27,5 @@ func Root() *cobra.Command {
 }
 
 func printHeader() {
-	util.PrintInfo("Order Database Migration Tool")
+	util.PrintInfo("Order Cli")
 }

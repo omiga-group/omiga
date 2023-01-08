@@ -16,7 +16,7 @@ COPY venue/shared/cli /src/venue/shared/cli
 
 WORKDIR /src/venue/shared/cli
 
-RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/venue-database-migration main.go
+RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/venuectl main.go
 
 FROM build AS test
 
@@ -27,13 +27,13 @@ FROM $FINAL_IMAGE as final
 LABEL maintainer="morteza@omiga.com.au"
 
 WORKDIR /omiga
-COPY --from=build /bin/venue-database-migration /omiga
+COPY --from=build /bin/venuectl /omiga
 COPY --from=build /src/venue/shared/cli/config.yaml /omiga
 COPY --from=build /src/venue/shared/cli/post_migration_script.sql /omiga
 
-RUN /omiga/venue-database-migration install-dependecies
+RUN /omiga/venuectl install-dependecies
 
 # Fix CVE-2022-3996
 RUN apk upgrade libssl3 libcrypto3
 
-CMD ["/omiga/venue-database-migration", "migrate", "--post-migration-script-path", "post_migration_script.sql"]
+CMD ["/omiga/venuectl", "migrate", "--post-migration-script-path", "post_migration_script.sql"]

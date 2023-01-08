@@ -191,7 +191,7 @@ func (fobs *ftxOrderBookSubscriber) publish(
 	orderBook.ExchangeId = "binance"
 
 	if err := fobs.orderBookPublisher.Publish(fobs.ctx, orderBook.ExchangeId, orderBook); err != nil {
-		fobs.logger.Errorf("Failed to publish order book for Binance exchange. Error: %v", err)
+		fobs.logger.Errorf("Failed to publish order book for Binance venue. Error: %v", err)
 	}
 }
 

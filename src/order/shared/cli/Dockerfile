@@ -16,7 +16,7 @@ COPY order/shared/cli /src/order/shared/cli
 
 WORKDIR /src/order/shared/cli
 
-RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/order-database-migration main.go
+RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/orderctl main.go
 
 FROM build AS test
 
@@ -27,13 +27,13 @@ FROM $FINAL_IMAGE as final
 LABEL maintainer="morteza@omiga.com.au"
 
 WORKDIR /omiga
-COPY --from=build /bin/order-database-migration /omiga
+COPY --from=build /bin/orderctl /omiga
 COPY --from=build /src/order/shared/cli/config.yaml /omiga
 COPY --from=build /src/order/shared/cli/post_migration_script.sql /omiga
 
-RUN /omiga/order-database-migration install-dependecies
+RUN /omiga/orderctl install-dependecies
 
 # Fix CVE-2022-3996
 RUN apk upgrade libssl3 libcrypto3
 
-CMD ["/omiga/order-database-migration", "migrate", "--post-migration-script-path", "post_migration_script.sql"]
+CMD ["/omiga/orderctl", "migrate", "--post-migration-script-path", "post_migration_script.sql"]

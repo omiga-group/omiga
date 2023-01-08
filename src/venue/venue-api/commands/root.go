@@ -27,5 +27,5 @@ func Root() *cobra.Command {
 }
 
 func printHeader() {
-	util.PrintInfo("Exchange API")
+	util.PrintInfo("Venue API")
 }
