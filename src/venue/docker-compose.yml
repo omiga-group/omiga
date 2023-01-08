@@ -1,17 +1,36 @@
 ﻿version: "3.9"
 
 services:
+  venue-database-create:
+    image: ${DOCKER_REGISTRY-}venuedatabasecreate
+    command: "/omiga/omigactl database provision --name venue"
+    build:
+      context: .
+      dockerfile: shared/omigactl/Dockerfile
+      target: final
+    restart: on-failure
+    environment:
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres"
+    depends_on:
+      - postgres
+    profiles:
+      - core
+      - venue
+      - all
+    networks:
+      - omiga_network
+
   venue-database-migration:
     image: ${DOCKER_REGISTRY-}venuedatabasemigration
     build:
       context: .
-      dockerfile: order/orderctl/Dockerfile
-      target: final
+      dockerfile: order/shared/migrations/Dockerfile
     restart: on-failure
     environment:
-      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue"
+      OMIGA_POSTGRES_CONNECTIONSTRING: "postgres://postgres:12345678@postgres/venue?sslmode=disable"
     depends_on:
       - postgres
+      - venue-database-create
     profiles:
       - core
       - venue
