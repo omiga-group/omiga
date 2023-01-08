@@ -76,10 +76,10 @@
     rollup "^2.60.1"
     source-map-support "^0.5.19"
 
-"@asyncapi/modelina@^0.59.8":
-  version "0.59.8"
-  resolved "https://registry.yarnpkg.com/@asyncapi/modelina/-/modelina-0.59.8.tgz#27707ce819d31137e99adb1cd3b4482eae18477b"
-  integrity sha512-QAzmFI2sL2+5K5aySfobUb23MsSWZwBgcY0IJfd0Logai5D5SxdTOpAADvLEVJtpdyBokHF9NCSEeQGn1t8IXw==
+"@asyncapi/modelina@^0.59.9":
+  version "0.59.9"
+  resolved "https://registry.yarnpkg.com/@asyncapi/modelina/-/modelina-0.59.9.tgz#15fb3932e2ebe8019c6e231ad391d9cc7e0522ca"
+  integrity sha512-3RLl27HdYqp+RWWftDcU75yvNinEkVyrUjNGiNmd3aS4i/rkFpGmXcNC/j7UaueYXewcqNKJzhB86K64tbtHqw==
   dependencies:
     "@apidevtools/json-schema-ref-parser" "^9.0.9"
     "@apidevtools/swagger-parser" "^10.0.3"
