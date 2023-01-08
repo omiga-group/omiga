@@ -28,6 +28,7 @@ type TradingPairQuery struct {
 	unique          *bool
 	order           []OrderFunc
 	fields          []string
+	inters          []Interceptor
 	predicates      []predicate.TradingPair
 	withVenue       *VenueQuery
 	withBase        *CurrencyQuery
@@ -48,13 +49,13 @@ func (tpq *TradingPairQuery) Where(ps ...predicate.TradingPair) *TradingPairQuer
 	return tpq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (tpq *TradingPairQuery) Limit(limit int) *TradingPairQuery {
 	tpq.limit = &limit
 	return tpq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (tpq *TradingPairQuery) Offset(offset int) *TradingPairQuery {
 	tpq.offset = &offset
 	return tpq
@@ -67,7 +68,7 @@ func (tpq *TradingPairQuery) Unique(unique bool) *TradingPairQuery {
 	return tpq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (tpq *TradingPairQuery) Order(o ...OrderFunc) *TradingPairQuery {
 	tpq.order = append(tpq.order, o...)
 	return tpq
@@ -75,7 +76,7 @@ func (tpq *TradingPairQuery) Order(o ...OrderFunc) *TradingPairQuery {
 
 // QueryVenue chains the current query on the "venue" edge.
 func (tpq *TradingPairQuery) QueryVenue() *VenueQuery {
-	query := &VenueQuery{config: tpq.config}
+	query := (&VenueClient{config: tpq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tpq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -100,7 +101,7 @@ func (tpq *TradingPairQuery) QueryVenue() *VenueQuery {
 
 // QueryBase chains the current query on the "base" edge.
 func (tpq *TradingPairQuery) QueryBase() *CurrencyQuery {
-	query := &CurrencyQuery{config: tpq.config}
+	query := (&CurrencyClient{config: tpq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tpq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -125,7 +126,7 @@ func (tpq *TradingPairQuery) QueryBase() *CurrencyQuery {
 
 // QueryCounter chains the current query on the "counter" edge.
 func (tpq *TradingPairQuery) QueryCounter() *CurrencyQuery {
-	query := &CurrencyQuery{config: tpq.config}
+	query := (&CurrencyClient{config: tpq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tpq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -150,7 +151,7 @@ func (tpq *TradingPairQuery) QueryCounter() *CurrencyQuery {
 
 // QueryMarket chains the current query on the "market" edge.
 func (tpq *TradingPairQuery) QueryMarket() *MarketQuery {
-	query := &MarketQuery{config: tpq.config}
+	query := (&MarketClient{config: tpq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tpq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -176,7 +177,7 @@ func (tpq *TradingPairQuery) QueryMarket() *MarketQuery {
 // First returns the first TradingPair entity from the query.
 // Returns a *NotFoundError when no TradingPair was found.
 func (tpq *TradingPairQuery) First(ctx context.Context) (*TradingPair, error) {
-	nodes, err := tpq.Limit(1).All(ctx)
+	nodes, err := tpq.Limit(1).All(newQueryContext(ctx, TypeTradingPair, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +200,7 @@ func (tpq *TradingPairQuery) FirstX(ctx context.Context) *TradingPair {
 // Returns a *NotFoundError when no TradingPair ID was found.
 func (tpq *TradingPairQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = tpq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = tpq.Limit(1).IDs(newQueryContext(ctx, TypeTradingPair, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -222,7 +223,7 @@ func (tpq *TradingPairQuery) FirstIDX(ctx context.Context) int {
 // Returns a *NotSingularError when more than one TradingPair entity is found.
 // Returns a *NotFoundError when no TradingPair entities are found.
 func (tpq *TradingPairQuery) Only(ctx context.Context) (*TradingPair, error) {
-	nodes, err := tpq.Limit(2).All(ctx)
+	nodes, err := tpq.Limit(2).All(newQueryContext(ctx, TypeTradingPair, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -250,7 +251,7 @@ func (tpq *TradingPairQuery) OnlyX(ctx context.Context) *TradingPair {
 // Returns a *NotFoundError when no entities are found.
 func (tpq *TradingPairQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = tpq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = tpq.Limit(2).IDs(newQueryContext(ctx, TypeTradingPair, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -275,10 +276,12 @@ func (tpq *TradingPairQuery) OnlyIDX(ctx context.Context) int {
 
 // All executes the query and returns a list of TradingPairs.
 func (tpq *TradingPairQuery) All(ctx context.Context) ([]*TradingPair, error) {
+	ctx = newQueryContext(ctx, TypeTradingPair, "All")
 	if err := tpq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return tpq.sqlAll(ctx)
+	qr := querierAll[[]*TradingPair, *TradingPairQuery]()
+	return withInterceptors[[]*TradingPair](ctx, tpq, qr, tpq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -293,6 +296,7 @@ func (tpq *TradingPairQuery) AllX(ctx context.Context) []*TradingPair {
 // IDs executes the query and returns a list of TradingPair IDs.
 func (tpq *TradingPairQuery) IDs(ctx context.Context) ([]int, error) {
 	var ids []int
+	ctx = newQueryContext(ctx, TypeTradingPair, "IDs")
 	if err := tpq.Select(tradingpair.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -310,10 +314,11 @@ func (tpq *TradingPairQuery) IDsX(ctx context.Context) []int {
 
 // Count returns the count of the given query.
 func (tpq *TradingPairQuery) Count(ctx context.Context) (int, error) {
+	ctx = newQueryContext(ctx, TypeTradingPair, "Count")
 	if err := tpq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return tpq.sqlCount(ctx)
+	return withInterceptors[int](ctx, tpq, querierCount[*TradingPairQuery](), tpq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -327,10 +332,15 @@ func (tpq *TradingPairQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (tpq *TradingPairQuery) Exist(ctx context.Context) (bool, error) {
-	if err := tpq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = newQueryContext(ctx, TypeTradingPair, "Exist")
+	switch _, err := tpq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("entities: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return tpq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -353,6 +363,7 @@ func (tpq *TradingPairQuery) Clone() *TradingPairQuery {
 		limit:       tpq.limit,
 		offset:      tpq.offset,
 		order:       append([]OrderFunc{}, tpq.order...),
+		inters:      append([]Interceptor{}, tpq.inters...),
 		predicates:  append([]predicate.TradingPair{}, tpq.predicates...),
 		withVenue:   tpq.withVenue.Clone(),
 		withBase:    tpq.withBase.Clone(),
@@ -368,7 +379,7 @@ func (tpq *TradingPairQuery) Clone() *TradingPairQuery {
 // WithVenue tells the query-builder to eager-load the nodes that are connected to
 // the "venue" edge. The optional arguments are used to configure the query builder of the edge.
 func (tpq *TradingPairQuery) WithVenue(opts ...func(*VenueQuery)) *TradingPairQuery {
-	query := &VenueQuery{config: tpq.config}
+	query := (&VenueClient{config: tpq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -379,7 +390,7 @@ func (tpq *TradingPairQuery) WithVenue(opts ...func(*VenueQuery)) *TradingPairQu
 // WithBase tells the query-builder to eager-load the nodes that are connected to
 // the "base" edge. The optional arguments are used to configure the query builder of the edge.
 func (tpq *TradingPairQuery) WithBase(opts ...func(*CurrencyQuery)) *TradingPairQuery {
-	query := &CurrencyQuery{config: tpq.config}
+	query := (&CurrencyClient{config: tpq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -390,7 +401,7 @@ func (tpq *TradingPairQuery) WithBase(opts ...func(*CurrencyQuery)) *TradingPair
 // WithCounter tells the query-builder to eager-load the nodes that are connected to
 // the "counter" edge. The optional arguments are used to configure the query builder of the edge.
 func (tpq *TradingPairQuery) WithCounter(opts ...func(*CurrencyQuery)) *TradingPairQuery {
-	query := &CurrencyQuery{config: tpq.config}
+	query := (&CurrencyClient{config: tpq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -401,7 +412,7 @@ func (tpq *TradingPairQuery) WithCounter(opts ...func(*CurrencyQuery)) *TradingP
 // WithMarket tells the query-builder to eager-load the nodes that are connected to
 // the "market" edge. The optional arguments are used to configure the query builder of the edge.
 func (tpq *TradingPairQuery) WithMarket(opts ...func(*MarketQuery)) *TradingPairQuery {
-	query := &MarketQuery{config: tpq.config}
+	query := (&MarketClient{config: tpq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -424,16 +435,11 @@ func (tpq *TradingPairQuery) WithMarket(opts ...func(*MarketQuery)) *TradingPair
 //		Aggregate(entities.Count()).
 //		Scan(ctx, &v)
 func (tpq *TradingPairQuery) GroupBy(field string, fields ...string) *TradingPairGroupBy {
-	grbuild := &TradingPairGroupBy{config: tpq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := tpq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return tpq.sqlQuery(ctx), nil
-	}
+	tpq.fields = append([]string{field}, fields...)
+	grbuild := &TradingPairGroupBy{build: tpq}
+	grbuild.flds = &tpq.fields
 	grbuild.label = tradingpair.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -451,10 +457,10 @@ func (tpq *TradingPairQuery) GroupBy(field string, fields ...string) *TradingPai
 //		Scan(ctx, &v)
 func (tpq *TradingPairQuery) Select(fields ...string) *TradingPairSelect {
 	tpq.fields = append(tpq.fields, fields...)
-	selbuild := &TradingPairSelect{TradingPairQuery: tpq}
-	selbuild.label = tradingpair.Label
-	selbuild.flds, selbuild.scan = &tpq.fields, selbuild.Scan
-	return selbuild
+	sbuild := &TradingPairSelect{TradingPairQuery: tpq}
+	sbuild.label = tradingpair.Label
+	sbuild.flds, sbuild.scan = &tpq.fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a TradingPairSelect configured with the given aggregations.
@@ -463,6 +469,16 @@ func (tpq *TradingPairQuery) Aggregate(fns ...AggregateFunc) *TradingPairSelect 
 }
 
 func (tpq *TradingPairQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range tpq.inters {
+		if inter == nil {
+			return fmt.Errorf("entities: uninitialized interceptor (forgotten import entities/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, tpq); err != nil {
+				return err
+			}
+		}
+	}
 	for _, f := range tpq.fields {
 		if !tradingpair.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("entities: invalid field %q for query", f)}
@@ -659,6 +675,7 @@ func (tpq *TradingPairQuery) loadMarket(ctx context.Context, query *MarketQuery,
 	}
 	query.Where(func(s *sql.Selector) {
 		joinT := sql.Table(tradingpair.MarketTable)
+		joinT.Schema(tpq.schemaConfig.MarketTradingPair)
 		s.Join(joinT).On(s.C(market.FieldID), joinT.C(tradingpair.MarketPrimaryKey[0]))
 		s.Where(sql.InValues(joinT.C(tradingpair.MarketPrimaryKey[1]), edgeIDs...))
 		columns := s.SelectedColumns()
@@ -717,17 +734,6 @@ func (tpq *TradingPairQuery) sqlCount(ctx context.Context) (int, error) {
 		_spec.Unique = tpq.unique != nil && *tpq.unique
 	}
 	return sqlgraph.CountNodes(ctx, tpq.driver, _spec)
-}
-
-func (tpq *TradingPairQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := tpq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("entities: check existence: %w", err)
-	default:
-		return true, nil
-	}
 }
 
 func (tpq *TradingPairQuery) querySpec() *sqlgraph.QuerySpec {
@@ -851,7 +857,7 @@ func (tpq *TradingPairQuery) Modify(modifiers ...func(s *sql.Selector)) *Trading
 // WithNamedMarket tells the query-builder to eager-load the nodes that are connected to the "market"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (tpq *TradingPairQuery) WithNamedMarket(name string, opts ...func(*MarketQuery)) *TradingPairQuery {
-	query := &MarketQuery{config: tpq.config}
+	query := (&MarketClient{config: tpq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -864,13 +870,8 @@ func (tpq *TradingPairQuery) WithNamedMarket(name string, opts ...func(*MarketQu
 
 // TradingPairGroupBy is the group-by builder for TradingPair entities.
 type TradingPairGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *TradingPairQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -879,58 +880,46 @@ func (tpgb *TradingPairGroupBy) Aggregate(fns ...AggregateFunc) *TradingPairGrou
 	return tpgb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (tpgb *TradingPairGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := tpgb.path(ctx)
-	if err != nil {
+	ctx = newQueryContext(ctx, TypeTradingPair, "GroupBy")
+	if err := tpgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	tpgb.sql = query
-	return tpgb.sqlScan(ctx, v)
+	return scanWithInterceptors[*TradingPairQuery, *TradingPairGroupBy](ctx, tpgb.build, tpgb, tpgb.build.inters, v)
 }
 
-func (tpgb *TradingPairGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range tpgb.fields {
-		if !tradingpair.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (tpgb *TradingPairGroupBy) sqlScan(ctx context.Context, root *TradingPairQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(tpgb.fns))
+	for _, fn := range tpgb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := tpgb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*tpgb.flds)+len(tpgb.fns))
+		for _, f := range *tpgb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*tpgb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := tpgb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := tpgb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (tpgb *TradingPairGroupBy) sqlQuery() *sql.Selector {
-	selector := tpgb.sql.Select()
-	aggregation := make([]string, 0, len(tpgb.fns))
-	for _, fn := range tpgb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(tpgb.fields)+len(tpgb.fns))
-		for _, f := range tpgb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(tpgb.fields...)...)
-}
-
 // TradingPairSelect is the builder for selecting fields of TradingPair entities.
 type TradingPairSelect struct {
 	*TradingPairQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -941,26 +930,27 @@ func (tps *TradingPairSelect) Aggregate(fns ...AggregateFunc) *TradingPairSelect
 
 // Scan applies the selector query and scans the result into the given value.
 func (tps *TradingPairSelect) Scan(ctx context.Context, v any) error {
+	ctx = newQueryContext(ctx, TypeTradingPair, "Select")
 	if err := tps.prepareQuery(ctx); err != nil {
 		return err
 	}
-	tps.sql = tps.TradingPairQuery.sqlQuery(ctx)
-	return tps.sqlScan(ctx, v)
+	return scanWithInterceptors[*TradingPairQuery, *TradingPairSelect](ctx, tps.TradingPairQuery, tps, tps.inters, v)
 }
 
-func (tps *TradingPairSelect) sqlScan(ctx context.Context, v any) error {
+func (tps *TradingPairSelect) sqlScan(ctx context.Context, root *TradingPairQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(tps.fns))
 	for _, fn := range tps.fns {
-		aggregation = append(aggregation, fn(tps.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*tps.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		tps.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		tps.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := tps.sql.Query()
+	query, args := selector.Query()
 	if err := tps.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

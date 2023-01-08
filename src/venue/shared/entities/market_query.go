@@ -27,6 +27,7 @@ type MarketQuery struct {
 	unique               *bool
 	order                []OrderFunc
 	fields               []string
+	inters               []Interceptor
 	predicates           []predicate.Market
 	withVenue            *VenueQuery
 	withTradingPair      *TradingPairQuery
@@ -45,13 +46,13 @@ func (mq *MarketQuery) Where(ps ...predicate.Market) *MarketQuery {
 	return mq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (mq *MarketQuery) Limit(limit int) *MarketQuery {
 	mq.limit = &limit
 	return mq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (mq *MarketQuery) Offset(offset int) *MarketQuery {
 	mq.offset = &offset
 	return mq
@@ -64,7 +65,7 @@ func (mq *MarketQuery) Unique(unique bool) *MarketQuery {
 	return mq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (mq *MarketQuery) Order(o ...OrderFunc) *MarketQuery {
 	mq.order = append(mq.order, o...)
 	return mq
@@ -72,7 +73,7 @@ func (mq *MarketQuery) Order(o ...OrderFunc) *MarketQuery {
 
 // QueryVenue chains the current query on the "venue" edge.
 func (mq *MarketQuery) QueryVenue() *VenueQuery {
-	query := &VenueQuery{config: mq.config}
+	query := (&VenueClient{config: mq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := mq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -97,7 +98,7 @@ func (mq *MarketQuery) QueryVenue() *VenueQuery {
 
 // QueryTradingPair chains the current query on the "trading_pair" edge.
 func (mq *MarketQuery) QueryTradingPair() *TradingPairQuery {
-	query := &TradingPairQuery{config: mq.config}
+	query := (&TradingPairClient{config: mq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := mq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -123,7 +124,7 @@ func (mq *MarketQuery) QueryTradingPair() *TradingPairQuery {
 // First returns the first Market entity from the query.
 // Returns a *NotFoundError when no Market was found.
 func (mq *MarketQuery) First(ctx context.Context) (*Market, error) {
-	nodes, err := mq.Limit(1).All(ctx)
+	nodes, err := mq.Limit(1).All(newQueryContext(ctx, TypeMarket, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +147,7 @@ func (mq *MarketQuery) FirstX(ctx context.Context) *Market {
 // Returns a *NotFoundError when no Market ID was found.
 func (mq *MarketQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = mq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = mq.Limit(1).IDs(newQueryContext(ctx, TypeMarket, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -169,7 +170,7 @@ func (mq *MarketQuery) FirstIDX(ctx context.Context) int {
 // Returns a *NotSingularError when more than one Market entity is found.
 // Returns a *NotFoundError when no Market entities are found.
 func (mq *MarketQuery) Only(ctx context.Context) (*Market, error) {
-	nodes, err := mq.Limit(2).All(ctx)
+	nodes, err := mq.Limit(2).All(newQueryContext(ctx, TypeMarket, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -197,7 +198,7 @@ func (mq *MarketQuery) OnlyX(ctx context.Context) *Market {
 // Returns a *NotFoundError when no entities are found.
 func (mq *MarketQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = mq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = mq.Limit(2).IDs(newQueryContext(ctx, TypeMarket, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -222,10 +223,12 @@ func (mq *MarketQuery) OnlyIDX(ctx context.Context) int {
 
 // All executes the query and returns a list of Markets.
 func (mq *MarketQuery) All(ctx context.Context) ([]*Market, error) {
+	ctx = newQueryContext(ctx, TypeMarket, "All")
 	if err := mq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return mq.sqlAll(ctx)
+	qr := querierAll[[]*Market, *MarketQuery]()
+	return withInterceptors[[]*Market](ctx, mq, qr, mq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -240,6 +243,7 @@ func (mq *MarketQuery) AllX(ctx context.Context) []*Market {
 // IDs executes the query and returns a list of Market IDs.
 func (mq *MarketQuery) IDs(ctx context.Context) ([]int, error) {
 	var ids []int
+	ctx = newQueryContext(ctx, TypeMarket, "IDs")
 	if err := mq.Select(market.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -257,10 +261,11 @@ func (mq *MarketQuery) IDsX(ctx context.Context) []int {
 
 // Count returns the count of the given query.
 func (mq *MarketQuery) Count(ctx context.Context) (int, error) {
+	ctx = newQueryContext(ctx, TypeMarket, "Count")
 	if err := mq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return mq.sqlCount(ctx)
+	return withInterceptors[int](ctx, mq, querierCount[*MarketQuery](), mq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -274,10 +279,15 @@ func (mq *MarketQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (mq *MarketQuery) Exist(ctx context.Context) (bool, error) {
-	if err := mq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = newQueryContext(ctx, TypeMarket, "Exist")
+	switch _, err := mq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("entities: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return mq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -300,6 +310,7 @@ func (mq *MarketQuery) Clone() *MarketQuery {
 		limit:           mq.limit,
 		offset:          mq.offset,
 		order:           append([]OrderFunc{}, mq.order...),
+		inters:          append([]Interceptor{}, mq.inters...),
 		predicates:      append([]predicate.Market{}, mq.predicates...),
 		withVenue:       mq.withVenue.Clone(),
 		withTradingPair: mq.withTradingPair.Clone(),
@@ -313,7 +324,7 @@ func (mq *MarketQuery) Clone() *MarketQuery {
 // WithVenue tells the query-builder to eager-load the nodes that are connected to
 // the "venue" edge. The optional arguments are used to configure the query builder of the edge.
 func (mq *MarketQuery) WithVenue(opts ...func(*VenueQuery)) *MarketQuery {
-	query := &VenueQuery{config: mq.config}
+	query := (&VenueClient{config: mq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -324,7 +335,7 @@ func (mq *MarketQuery) WithVenue(opts ...func(*VenueQuery)) *MarketQuery {
 // WithTradingPair tells the query-builder to eager-load the nodes that are connected to
 // the "trading_pair" edge. The optional arguments are used to configure the query builder of the edge.
 func (mq *MarketQuery) WithTradingPair(opts ...func(*TradingPairQuery)) *MarketQuery {
-	query := &TradingPairQuery{config: mq.config}
+	query := (&TradingPairClient{config: mq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -347,16 +358,11 @@ func (mq *MarketQuery) WithTradingPair(opts ...func(*TradingPairQuery)) *MarketQ
 //		Aggregate(entities.Count()).
 //		Scan(ctx, &v)
 func (mq *MarketQuery) GroupBy(field string, fields ...string) *MarketGroupBy {
-	grbuild := &MarketGroupBy{config: mq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := mq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return mq.sqlQuery(ctx), nil
-	}
+	mq.fields = append([]string{field}, fields...)
+	grbuild := &MarketGroupBy{build: mq}
+	grbuild.flds = &mq.fields
 	grbuild.label = market.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -374,10 +380,10 @@ func (mq *MarketQuery) GroupBy(field string, fields ...string) *MarketGroupBy {
 //		Scan(ctx, &v)
 func (mq *MarketQuery) Select(fields ...string) *MarketSelect {
 	mq.fields = append(mq.fields, fields...)
-	selbuild := &MarketSelect{MarketQuery: mq}
-	selbuild.label = market.Label
-	selbuild.flds, selbuild.scan = &mq.fields, selbuild.Scan
-	return selbuild
+	sbuild := &MarketSelect{MarketQuery: mq}
+	sbuild.label = market.Label
+	sbuild.flds, sbuild.scan = &mq.fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a MarketSelect configured with the given aggregations.
@@ -386,6 +392,16 @@ func (mq *MarketQuery) Aggregate(fns ...AggregateFunc) *MarketSelect {
 }
 
 func (mq *MarketQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range mq.inters {
+		if inter == nil {
+			return fmt.Errorf("entities: uninitialized interceptor (forgotten import entities/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, mq); err != nil {
+				return err
+			}
+		}
+	}
 	for _, f := range mq.fields {
 		if !market.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("entities: invalid field %q for query", f)}
@@ -510,6 +526,7 @@ func (mq *MarketQuery) loadTradingPair(ctx context.Context, query *TradingPairQu
 	}
 	query.Where(func(s *sql.Selector) {
 		joinT := sql.Table(market.TradingPairTable)
+		joinT.Schema(mq.schemaConfig.MarketTradingPair)
 		s.Join(joinT).On(s.C(tradingpair.FieldID), joinT.C(market.TradingPairPrimaryKey[1]))
 		s.Where(sql.InValues(joinT.C(market.TradingPairPrimaryKey[0]), edgeIDs...))
 		columns := s.SelectedColumns()
@@ -568,17 +585,6 @@ func (mq *MarketQuery) sqlCount(ctx context.Context) (int, error) {
 		_spec.Unique = mq.unique != nil && *mq.unique
 	}
 	return sqlgraph.CountNodes(ctx, mq.driver, _spec)
-}
-
-func (mq *MarketQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := mq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("entities: check existence: %w", err)
-	default:
-		return true, nil
-	}
 }
 
 func (mq *MarketQuery) querySpec() *sqlgraph.QuerySpec {
@@ -702,7 +708,7 @@ func (mq *MarketQuery) Modify(modifiers ...func(s *sql.Selector)) *MarketSelect 
 // WithNamedTradingPair tells the query-builder to eager-load the nodes that are connected to the "trading_pair"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (mq *MarketQuery) WithNamedTradingPair(name string, opts ...func(*TradingPairQuery)) *MarketQuery {
-	query := &TradingPairQuery{config: mq.config}
+	query := (&TradingPairClient{config: mq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -715,13 +721,8 @@ func (mq *MarketQuery) WithNamedTradingPair(name string, opts ...func(*TradingPa
 
 // MarketGroupBy is the group-by builder for Market entities.
 type MarketGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *MarketQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -730,58 +731,46 @@ func (mgb *MarketGroupBy) Aggregate(fns ...AggregateFunc) *MarketGroupBy {
 	return mgb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (mgb *MarketGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := mgb.path(ctx)
-	if err != nil {
+	ctx = newQueryContext(ctx, TypeMarket, "GroupBy")
+	if err := mgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	mgb.sql = query
-	return mgb.sqlScan(ctx, v)
+	return scanWithInterceptors[*MarketQuery, *MarketGroupBy](ctx, mgb.build, mgb, mgb.build.inters, v)
 }
 
-func (mgb *MarketGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range mgb.fields {
-		if !market.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (mgb *MarketGroupBy) sqlScan(ctx context.Context, root *MarketQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(mgb.fns))
+	for _, fn := range mgb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := mgb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*mgb.flds)+len(mgb.fns))
+		for _, f := range *mgb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*mgb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := mgb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := mgb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (mgb *MarketGroupBy) sqlQuery() *sql.Selector {
-	selector := mgb.sql.Select()
-	aggregation := make([]string, 0, len(mgb.fns))
-	for _, fn := range mgb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(mgb.fields)+len(mgb.fns))
-		for _, f := range mgb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(mgb.fields...)...)
-}
-
 // MarketSelect is the builder for selecting fields of Market entities.
 type MarketSelect struct {
 	*MarketQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -792,26 +781,27 @@ func (ms *MarketSelect) Aggregate(fns ...AggregateFunc) *MarketSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ms *MarketSelect) Scan(ctx context.Context, v any) error {
+	ctx = newQueryContext(ctx, TypeMarket, "Select")
 	if err := ms.prepareQuery(ctx); err != nil {
 		return err
 	}
-	ms.sql = ms.MarketQuery.sqlQuery(ctx)
-	return ms.sqlScan(ctx, v)
+	return scanWithInterceptors[*MarketQuery, *MarketSelect](ctx, ms.MarketQuery, ms, ms.inters, v)
 }
 
-func (ms *MarketSelect) sqlScan(ctx context.Context, v any) error {
+func (ms *MarketSelect) sqlScan(ctx context.Context, root *MarketQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(ms.fns))
 	for _, fn := range ms.fns {
-		aggregation = append(aggregation, fn(ms.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*ms.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		ms.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		ms.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := ms.sql.Query()
+	query, args := selector.Query()
 	if err := ms.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

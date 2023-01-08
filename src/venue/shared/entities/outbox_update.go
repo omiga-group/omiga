@@ -125,40 +125,7 @@ func (ou *OutboxUpdate) Mutation() *OutboxMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ou *OutboxUpdate) Save(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(ou.hooks) == 0 {
-		if err = ou.check(); err != nil {
-			return 0, err
-		}
-		affected, err = ou.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*OutboxMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = ou.check(); err != nil {
-				return 0, err
-			}
-			ou.mutation = mutation
-			affected, err = ou.sqlSave(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(ou.hooks) - 1; i >= 0; i-- {
-			if ou.hooks[i] == nil {
-				return 0, fmt.Errorf("entities: uninitialized hook (forgotten import entities/runtime?)")
-			}
-			mut = ou.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, ou.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, OutboxMutation](ctx, ou.sqlSave, ou.mutation, ou.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -200,6 +167,9 @@ func (ou *OutboxUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *OutboxU
 }
 
 func (ou *OutboxUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := ou.check(); err != nil {
+		return n, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   outbox.Table,
@@ -269,6 +239,7 @@ func (ou *OutboxUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
+	ou.mutation.done = true
 	return n, nil
 }
 
@@ -382,46 +353,7 @@ func (ouo *OutboxUpdateOne) Select(field string, fields ...string) *OutboxUpdate
 
 // Save executes the query and returns the updated Outbox entity.
 func (ouo *OutboxUpdateOne) Save(ctx context.Context) (*Outbox, error) {
-	var (
-		err  error
-		node *Outbox
-	)
-	if len(ouo.hooks) == 0 {
-		if err = ouo.check(); err != nil {
-			return nil, err
-		}
-		node, err = ouo.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*OutboxMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = ouo.check(); err != nil {
-				return nil, err
-			}
-			ouo.mutation = mutation
-			node, err = ouo.sqlSave(ctx)
-			mutation.done = true
-			return node, err
-		})
-		for i := len(ouo.hooks) - 1; i >= 0; i-- {
-			if ouo.hooks[i] == nil {
-				return nil, fmt.Errorf("entities: uninitialized hook (forgotten import entities/runtime?)")
-			}
-			mut = ouo.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, ouo.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*Outbox)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from OutboxMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*Outbox, OutboxMutation](ctx, ouo.sqlSave, ouo.mutation, ouo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -463,6 +395,9 @@ func (ouo *OutboxUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Out
 }
 
 func (ouo *OutboxUpdateOne) sqlSave(ctx context.Context) (_node *Outbox, err error) {
+	if err := ouo.check(); err != nil {
+		return _node, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   outbox.Table,
@@ -552,5 +487,6 @@ func (ouo *OutboxUpdateOne) sqlSave(ctx context.Context) (_node *Outbox, err err
 		}
 		return nil, err
 	}
+	ouo.mutation.done = true
 	return _node, nil
 }

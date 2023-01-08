@@ -15,11 +15,10 @@ type OrderFunc func(context.Context, *entities.OrderMutation) (entities.Value, e
 
 // Mutate calls f(ctx, m).
 func (f OrderFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
-	mv, ok := m.(*entities.OrderMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.OrderMutation", m)
+	if mv, ok := m.(*entities.OrderMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.OrderMutation", m)
 }
 
 // The OutboxFunc type is an adapter to allow the use of ordinary
@@ -28,11 +27,10 @@ type OutboxFunc func(context.Context, *entities.OutboxMutation) (entities.Value,
 
 // Mutate calls f(ctx, m).
 func (f OutboxFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
-	mv, ok := m.(*entities.OutboxMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.OutboxMutation", m)
+	if mv, ok := m.(*entities.OutboxMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.OutboxMutation", m)
 }
 
 // Condition is a hook condition function.

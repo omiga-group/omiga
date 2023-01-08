@@ -24,6 +24,7 @@ type OutboxQuery struct {
 	unique     *bool
 	order      []OrderFunc
 	fields     []string
+	inters     []Interceptor
 	predicates []predicate.Outbox
 	loadTotal  []func(context.Context, []*Outbox) error
 	modifiers  []func(*sql.Selector)
@@ -38,13 +39,13 @@ func (oq *OutboxQuery) Where(ps ...predicate.Outbox) *OutboxQuery {
 	return oq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (oq *OutboxQuery) Limit(limit int) *OutboxQuery {
 	oq.limit = &limit
 	return oq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (oq *OutboxQuery) Offset(offset int) *OutboxQuery {
 	oq.offset = &offset
 	return oq
@@ -57,7 +58,7 @@ func (oq *OutboxQuery) Unique(unique bool) *OutboxQuery {
 	return oq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (oq *OutboxQuery) Order(o ...OrderFunc) *OutboxQuery {
 	oq.order = append(oq.order, o...)
 	return oq
@@ -66,7 +67,7 @@ func (oq *OutboxQuery) Order(o ...OrderFunc) *OutboxQuery {
 // First returns the first Outbox entity from the query.
 // Returns a *NotFoundError when no Outbox was found.
 func (oq *OutboxQuery) First(ctx context.Context) (*Outbox, error) {
-	nodes, err := oq.Limit(1).All(ctx)
+	nodes, err := oq.Limit(1).All(newQueryContext(ctx, TypeOutbox, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +90,7 @@ func (oq *OutboxQuery) FirstX(ctx context.Context) *Outbox {
 // Returns a *NotFoundError when no Outbox ID was found.
 func (oq *OutboxQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = oq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = oq.Limit(1).IDs(newQueryContext(ctx, TypeOutbox, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -112,7 +113,7 @@ func (oq *OutboxQuery) FirstIDX(ctx context.Context) int {
 // Returns a *NotSingularError when more than one Outbox entity is found.
 // Returns a *NotFoundError when no Outbox entities are found.
 func (oq *OutboxQuery) Only(ctx context.Context) (*Outbox, error) {
-	nodes, err := oq.Limit(2).All(ctx)
+	nodes, err := oq.Limit(2).All(newQueryContext(ctx, TypeOutbox, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +141,7 @@ func (oq *OutboxQuery) OnlyX(ctx context.Context) *Outbox {
 // Returns a *NotFoundError when no entities are found.
 func (oq *OutboxQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = oq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = oq.Limit(2).IDs(newQueryContext(ctx, TypeOutbox, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -165,10 +166,12 @@ func (oq *OutboxQuery) OnlyIDX(ctx context.Context) int {
 
 // All executes the query and returns a list of Outboxes.
 func (oq *OutboxQuery) All(ctx context.Context) ([]*Outbox, error) {
+	ctx = newQueryContext(ctx, TypeOutbox, "All")
 	if err := oq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return oq.sqlAll(ctx)
+	qr := querierAll[[]*Outbox, *OutboxQuery]()
+	return withInterceptors[[]*Outbox](ctx, oq, qr, oq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -183,6 +186,7 @@ func (oq *OutboxQuery) AllX(ctx context.Context) []*Outbox {
 // IDs executes the query and returns a list of Outbox IDs.
 func (oq *OutboxQuery) IDs(ctx context.Context) ([]int, error) {
 	var ids []int
+	ctx = newQueryContext(ctx, TypeOutbox, "IDs")
 	if err := oq.Select(outbox.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -200,10 +204,11 @@ func (oq *OutboxQuery) IDsX(ctx context.Context) []int {
 
 // Count returns the count of the given query.
 func (oq *OutboxQuery) Count(ctx context.Context) (int, error) {
+	ctx = newQueryContext(ctx, TypeOutbox, "Count")
 	if err := oq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return oq.sqlCount(ctx)
+	return withInterceptors[int](ctx, oq, querierCount[*OutboxQuery](), oq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -217,10 +222,15 @@ func (oq *OutboxQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (oq *OutboxQuery) Exist(ctx context.Context) (bool, error) {
-	if err := oq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = newQueryContext(ctx, TypeOutbox, "Exist")
+	switch _, err := oq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("entities: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return oq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -243,6 +253,7 @@ func (oq *OutboxQuery) Clone() *OutboxQuery {
 		limit:      oq.limit,
 		offset:     oq.offset,
 		order:      append([]OrderFunc{}, oq.order...),
+		inters:     append([]Interceptor{}, oq.inters...),
 		predicates: append([]predicate.Outbox{}, oq.predicates...),
 		// clone intermediate query.
 		sql:    oq.sql.Clone(),
@@ -266,16 +277,11 @@ func (oq *OutboxQuery) Clone() *OutboxQuery {
 //		Aggregate(entities.Count()).
 //		Scan(ctx, &v)
 func (oq *OutboxQuery) GroupBy(field string, fields ...string) *OutboxGroupBy {
-	grbuild := &OutboxGroupBy{config: oq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := oq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return oq.sqlQuery(ctx), nil
-	}
+	oq.fields = append([]string{field}, fields...)
+	grbuild := &OutboxGroupBy{build: oq}
+	grbuild.flds = &oq.fields
 	grbuild.label = outbox.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -293,10 +299,10 @@ func (oq *OutboxQuery) GroupBy(field string, fields ...string) *OutboxGroupBy {
 //		Scan(ctx, &v)
 func (oq *OutboxQuery) Select(fields ...string) *OutboxSelect {
 	oq.fields = append(oq.fields, fields...)
-	selbuild := &OutboxSelect{OutboxQuery: oq}
-	selbuild.label = outbox.Label
-	selbuild.flds, selbuild.scan = &oq.fields, selbuild.Scan
-	return selbuild
+	sbuild := &OutboxSelect{OutboxQuery: oq}
+	sbuild.label = outbox.Label
+	sbuild.flds, sbuild.scan = &oq.fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a OutboxSelect configured with the given aggregations.
@@ -305,6 +311,16 @@ func (oq *OutboxQuery) Aggregate(fns ...AggregateFunc) *OutboxSelect {
 }
 
 func (oq *OutboxQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range oq.inters {
+		if inter == nil {
+			return fmt.Errorf("entities: uninitialized interceptor (forgotten import entities/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, oq); err != nil {
+				return err
+			}
+		}
+	}
 	for _, f := range oq.fields {
 		if !outbox.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("entities: invalid field %q for query", f)}
@@ -367,17 +383,6 @@ func (oq *OutboxQuery) sqlCount(ctx context.Context) (int, error) {
 		_spec.Unique = oq.unique != nil && *oq.unique
 	}
 	return sqlgraph.CountNodes(ctx, oq.driver, _spec)
-}
-
-func (oq *OutboxQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := oq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("entities: check existence: %w", err)
-	default:
-		return true, nil
-	}
 }
 
 func (oq *OutboxQuery) querySpec() *sqlgraph.QuerySpec {
@@ -500,13 +505,8 @@ func (oq *OutboxQuery) Modify(modifiers ...func(s *sql.Selector)) *OutboxSelect 
 
 // OutboxGroupBy is the group-by builder for Outbox entities.
 type OutboxGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *OutboxQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -515,58 +515,46 @@ func (ogb *OutboxGroupBy) Aggregate(fns ...AggregateFunc) *OutboxGroupBy {
 	return ogb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (ogb *OutboxGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := ogb.path(ctx)
-	if err != nil {
+	ctx = newQueryContext(ctx, TypeOutbox, "GroupBy")
+	if err := ogb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	ogb.sql = query
-	return ogb.sqlScan(ctx, v)
+	return scanWithInterceptors[*OutboxQuery, *OutboxGroupBy](ctx, ogb.build, ogb, ogb.build.inters, v)
 }
 
-func (ogb *OutboxGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range ogb.fields {
-		if !outbox.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (ogb *OutboxGroupBy) sqlScan(ctx context.Context, root *OutboxQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(ogb.fns))
+	for _, fn := range ogb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := ogb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*ogb.flds)+len(ogb.fns))
+		for _, f := range *ogb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*ogb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := ogb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := ogb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (ogb *OutboxGroupBy) sqlQuery() *sql.Selector {
-	selector := ogb.sql.Select()
-	aggregation := make([]string, 0, len(ogb.fns))
-	for _, fn := range ogb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(ogb.fields)+len(ogb.fns))
-		for _, f := range ogb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(ogb.fields...)...)
-}
-
 // OutboxSelect is the builder for selecting fields of Outbox entities.
 type OutboxSelect struct {
 	*OutboxQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -577,26 +565,27 @@ func (os *OutboxSelect) Aggregate(fns ...AggregateFunc) *OutboxSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (os *OutboxSelect) Scan(ctx context.Context, v any) error {
+	ctx = newQueryContext(ctx, TypeOutbox, "Select")
 	if err := os.prepareQuery(ctx); err != nil {
 		return err
 	}
-	os.sql = os.OutboxQuery.sqlQuery(ctx)
-	return os.sqlScan(ctx, v)
+	return scanWithInterceptors[*OutboxQuery, *OutboxSelect](ctx, os.OutboxQuery, os, os.inters, v)
 }
 
-func (os *OutboxSelect) sqlScan(ctx context.Context, v any) error {
+func (os *OutboxSelect) sqlScan(ctx context.Context, root *OutboxQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(os.fns))
 	for _, fn := range os.fns {
-		aggregation = append(aggregation, fn(os.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*os.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		os.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		os.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := os.sql.Query()
+	query, args := selector.Query()
 	if err := os.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

@@ -32,7 +32,7 @@ type Client struct {
 
 // NewClient creates a new client configured with the given options.
 func NewClient(opts ...Option) *Client {
-	cfg := config{log: log.Println, hooks: &hooks{}}
+	cfg := config{log: log.Println, hooks: &hooks{}, inters: &inters{}}
 	cfg.options(opts...)
 	client := &Client{config: cfg}
 	client.init()
@@ -131,6 +131,25 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Outbox.Use(hooks...)
 }
 
+// Intercept adds the query interceptors to all the entity clients.
+// In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
+func (c *Client) Intercept(interceptors ...Interceptor) {
+	c.Order.Intercept(interceptors...)
+	c.Outbox.Intercept(interceptors...)
+}
+
+// Mutate implements the ent.Mutator interface.
+func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
+	switch m := m.(type) {
+	case *OrderMutation:
+		return c.Order.mutate(ctx, m)
+	case *OutboxMutation:
+		return c.Outbox.mutate(ctx, m)
+	default:
+		return nil, fmt.Errorf("entities: unknown mutation type %T", m)
+	}
+}
+
 // OrderClient is a client for the Order schema.
 type OrderClient struct {
 	config
@@ -145,6 +164,12 @@ func NewOrderClient(c config) *OrderClient {
 // A call to `Use(f, g, h)` equals to `order.Hooks(f(g(h())))`.
 func (c *OrderClient) Use(hooks ...Hook) {
 	c.hooks.Order = append(c.hooks.Order, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `order.Intercept(f(g(h())))`.
+func (c *OrderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Order = append(c.inters.Order, interceptors...)
 }
 
 // Create returns a builder for creating a Order entity.
@@ -199,6 +224,7 @@ func (c *OrderClient) DeleteOneID(id int) *OrderDeleteOne {
 func (c *OrderClient) Query() *OrderQuery {
 	return &OrderQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -221,6 +247,26 @@ func (c *OrderClient) Hooks() []Hook {
 	return c.hooks.Order
 }
 
+// Interceptors returns the client interceptors.
+func (c *OrderClient) Interceptors() []Interceptor {
+	return c.inters.Order
+}
+
+func (c *OrderClient) mutate(ctx context.Context, m *OrderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OrderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OrderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("entities: unknown Order mutation op: %q", m.Op())
+	}
+}
+
 // OutboxClient is a client for the Outbox schema.
 type OutboxClient struct {
 	config
@@ -235,6 +281,12 @@ func NewOutboxClient(c config) *OutboxClient {
 // A call to `Use(f, g, h)` equals to `outbox.Hooks(f(g(h())))`.
 func (c *OutboxClient) Use(hooks ...Hook) {
 	c.hooks.Outbox = append(c.hooks.Outbox, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `outbox.Intercept(f(g(h())))`.
+func (c *OutboxClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Outbox = append(c.inters.Outbox, interceptors...)
 }
 
 // Create returns a builder for creating a Outbox entity.
@@ -289,6 +341,7 @@ func (c *OutboxClient) DeleteOneID(id int) *OutboxDeleteOne {
 func (c *OutboxClient) Query() *OutboxQuery {
 	return &OutboxQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -309,4 +362,24 @@ func (c *OutboxClient) GetX(ctx context.Context, id int) *Outbox {
 // Hooks returns the client hooks.
 func (c *OutboxClient) Hooks() []Hook {
 	return c.hooks.Outbox
+}
+
+// Interceptors returns the client interceptors.
+func (c *OutboxClient) Interceptors() []Interceptor {
+	return c.inters.Outbox
+}
+
+func (c *OutboxClient) mutate(ctx context.Context, m *OutboxMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OutboxCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OutboxUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OutboxUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OutboxDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("entities: unknown Outbox mutation op: %q", m.Op())
+	}
 }

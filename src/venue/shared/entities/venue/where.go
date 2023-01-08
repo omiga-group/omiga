@@ -11,1564 +11,1032 @@ import (
 
 // ID filters vertices based on their ID field.
 func ID(id int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldID), id))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
 func IDEQ(id int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldID), id))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
 func IDNEQ(id int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldID), id))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
 func IDIn(ids ...int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		v := make([]any, len(ids))
-		for i := range v {
-			v[i] = ids[i]
-		}
-		s.Where(sql.In(s.C(FieldID), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
 func IDNotIn(ids ...int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		v := make([]any, len(ids))
-		for i := range v {
-			v[i] = ids[i]
-		}
-		s.Where(sql.NotIn(s.C(FieldID), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
 func IDGT(id int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldID), id))
-	})
+	return predicate.Venue(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
 func IDGTE(id int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldID), id))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
 func IDLT(id int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldID), id))
-	})
+	return predicate.Venue(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
 func IDLTE(id int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldID), id))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldID, id))
 }
 
 // VenueID applies equality check predicate on the "venue_id" field. It's identical to VenueIDEQ.
 func VenueID(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldVenueID), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldVenueID, v))
 }
 
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldName), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldName, v))
 }
 
 // YearEstablished applies equality check predicate on the "year_established" field. It's identical to YearEstablishedEQ.
 func YearEstablished(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldYearEstablished), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldYearEstablished, v))
 }
 
 // Country applies equality check predicate on the "country" field. It's identical to CountryEQ.
 func Country(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCountry), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldCountry, v))
 }
 
 // Image applies equality check predicate on the "image" field. It's identical to ImageEQ.
 func Image(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldImage), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldImage, v))
 }
 
 // HasTradingIncentive applies equality check predicate on the "has_trading_incentive" field. It's identical to HasTradingIncentiveEQ.
 func HasTradingIncentive(v bool) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldHasTradingIncentive), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldHasTradingIncentive, v))
 }
 
 // Centralized applies equality check predicate on the "centralized" field. It's identical to CentralizedEQ.
 func Centralized(v bool) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCentralized), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldCentralized, v))
 }
 
 // PublicNotice applies equality check predicate on the "public_notice" field. It's identical to PublicNoticeEQ.
 func PublicNotice(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPublicNotice), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldPublicNotice, v))
 }
 
 // AlertNotice applies equality check predicate on the "alert_notice" field. It's identical to AlertNoticeEQ.
 func AlertNotice(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlertNotice), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldAlertNotice, v))
 }
 
 // TrustScore applies equality check predicate on the "trust_score" field. It's identical to TrustScoreEQ.
 func TrustScore(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTrustScore), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldTrustScore, v))
 }
 
 // TrustScoreRank applies equality check predicate on the "trust_score_rank" field. It's identical to TrustScoreRankEQ.
 func TrustScoreRank(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTrustScoreRank), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldTrustScoreRank, v))
 }
 
 // TradeVolume24hBtc applies equality check predicate on the "trade_volume_24h_btc" field. It's identical to TradeVolume24hBtcEQ.
 func TradeVolume24hBtc(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTradeVolume24hBtc), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldTradeVolume24hBtc, v))
 }
 
 // TradeVolume24hBtcNormalized applies equality check predicate on the "trade_volume_24h_btc_normalized" field. It's identical to TradeVolume24hBtcNormalizedEQ.
 func TradeVolume24hBtcNormalized(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTradeVolume24hBtcNormalized), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldTradeVolume24hBtcNormalized, v))
 }
 
 // MakerFee applies equality check predicate on the "maker_fee" field. It's identical to MakerFeeEQ.
 func MakerFee(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldMakerFee), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldMakerFee, v))
 }
 
 // TakerFee applies equality check predicate on the "taker_fee" field. It's identical to TakerFeeEQ.
 func TakerFee(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTakerFee), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldTakerFee, v))
 }
 
 // SpreadFee applies equality check predicate on the "spread_fee" field. It's identical to SpreadFeeEQ.
 func SpreadFee(v bool) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldSpreadFee), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldSpreadFee, v))
 }
 
 // SupportAPI applies equality check predicate on the "support_api" field. It's identical to SupportAPIEQ.
 func SupportAPI(v bool) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldSupportAPI), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldSupportAPI, v))
 }
 
 // VenueIDEQ applies the EQ predicate on the "venue_id" field.
 func VenueIDEQ(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldVenueID), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldVenueID, v))
 }
 
 // VenueIDNEQ applies the NEQ predicate on the "venue_id" field.
 func VenueIDNEQ(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldVenueID), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldVenueID, v))
 }
 
 // VenueIDIn applies the In predicate on the "venue_id" field.
 func VenueIDIn(vs ...string) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldVenueID), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldVenueID, vs...))
 }
 
 // VenueIDNotIn applies the NotIn predicate on the "venue_id" field.
 func VenueIDNotIn(vs ...string) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldVenueID), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldVenueID, vs...))
 }
 
 // VenueIDGT applies the GT predicate on the "venue_id" field.
 func VenueIDGT(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldVenueID), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldVenueID, v))
 }
 
 // VenueIDGTE applies the GTE predicate on the "venue_id" field.
 func VenueIDGTE(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldVenueID), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldVenueID, v))
 }
 
 // VenueIDLT applies the LT predicate on the "venue_id" field.
 func VenueIDLT(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldVenueID), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldVenueID, v))
 }
 
 // VenueIDLTE applies the LTE predicate on the "venue_id" field.
 func VenueIDLTE(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldVenueID), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldVenueID, v))
 }
 
 // VenueIDContains applies the Contains predicate on the "venue_id" field.
 func VenueIDContains(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldVenueID), v))
-	})
+	return predicate.Venue(sql.FieldContains(FieldVenueID, v))
 }
 
 // VenueIDHasPrefix applies the HasPrefix predicate on the "venue_id" field.
 func VenueIDHasPrefix(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldVenueID), v))
-	})
+	return predicate.Venue(sql.FieldHasPrefix(FieldVenueID, v))
 }
 
 // VenueIDHasSuffix applies the HasSuffix predicate on the "venue_id" field.
 func VenueIDHasSuffix(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldVenueID), v))
-	})
+	return predicate.Venue(sql.FieldHasSuffix(FieldVenueID, v))
 }
 
 // VenueIDEqualFold applies the EqualFold predicate on the "venue_id" field.
 func VenueIDEqualFold(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldVenueID), v))
-	})
+	return predicate.Venue(sql.FieldEqualFold(FieldVenueID, v))
 }
 
 // VenueIDContainsFold applies the ContainsFold predicate on the "venue_id" field.
 func VenueIDContainsFold(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldVenueID), v))
-	})
+	return predicate.Venue(sql.FieldContainsFold(FieldVenueID, v))
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
 func TypeEQ(v Type) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldType), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldType, v))
 }
 
 // TypeNEQ applies the NEQ predicate on the "type" field.
 func TypeNEQ(v Type) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldType), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldType, v))
 }
 
 // TypeIn applies the In predicate on the "type" field.
 func TypeIn(vs ...Type) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldType), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldType, vs...))
 }
 
 // TypeNotIn applies the NotIn predicate on the "type" field.
 func TypeNotIn(vs ...Type) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldType), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldType, vs...))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldName), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldName, v))
 }
 
 // NameNEQ applies the NEQ predicate on the "name" field.
 func NameNEQ(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldName), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldName, v))
 }
 
 // NameIn applies the In predicate on the "name" field.
 func NameIn(vs ...string) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldName), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldName, vs...))
 }
 
 // NameNotIn applies the NotIn predicate on the "name" field.
 func NameNotIn(vs ...string) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldName), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldName, vs...))
 }
 
 // NameGT applies the GT predicate on the "name" field.
 func NameGT(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldName), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldName, v))
 }
 
 // NameGTE applies the GTE predicate on the "name" field.
 func NameGTE(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldName), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldName, v))
 }
 
 // NameLT applies the LT predicate on the "name" field.
 func NameLT(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldName), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldName, v))
 }
 
 // NameLTE applies the LTE predicate on the "name" field.
 func NameLTE(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldName), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldName, v))
 }
 
 // NameContains applies the Contains predicate on the "name" field.
 func NameContains(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldName), v))
-	})
+	return predicate.Venue(sql.FieldContains(FieldName, v))
 }
 
 // NameHasPrefix applies the HasPrefix predicate on the "name" field.
 func NameHasPrefix(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldName), v))
-	})
+	return predicate.Venue(sql.FieldHasPrefix(FieldName, v))
 }
 
 // NameHasSuffix applies the HasSuffix predicate on the "name" field.
 func NameHasSuffix(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldName), v))
-	})
+	return predicate.Venue(sql.FieldHasSuffix(FieldName, v))
 }
 
 // NameIsNil applies the IsNil predicate on the "name" field.
 func NameIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldName)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldName))
 }
 
 // NameNotNil applies the NotNil predicate on the "name" field.
 func NameNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldName)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldName))
 }
 
 // NameEqualFold applies the EqualFold predicate on the "name" field.
 func NameEqualFold(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldName), v))
-	})
+	return predicate.Venue(sql.FieldEqualFold(FieldName, v))
 }
 
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldName), v))
-	})
+	return predicate.Venue(sql.FieldContainsFold(FieldName, v))
 }
 
 // YearEstablishedEQ applies the EQ predicate on the "year_established" field.
 func YearEstablishedEQ(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldYearEstablished), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldYearEstablished, v))
 }
 
 // YearEstablishedNEQ applies the NEQ predicate on the "year_established" field.
 func YearEstablishedNEQ(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldYearEstablished), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldYearEstablished, v))
 }
 
 // YearEstablishedIn applies the In predicate on the "year_established" field.
 func YearEstablishedIn(vs ...int) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldYearEstablished), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldYearEstablished, vs...))
 }
 
 // YearEstablishedNotIn applies the NotIn predicate on the "year_established" field.
 func YearEstablishedNotIn(vs ...int) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldYearEstablished), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldYearEstablished, vs...))
 }
 
 // YearEstablishedGT applies the GT predicate on the "year_established" field.
 func YearEstablishedGT(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldYearEstablished), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldYearEstablished, v))
 }
 
 // YearEstablishedGTE applies the GTE predicate on the "year_established" field.
 func YearEstablishedGTE(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldYearEstablished), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldYearEstablished, v))
 }
 
 // YearEstablishedLT applies the LT predicate on the "year_established" field.
 func YearEstablishedLT(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldYearEstablished), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldYearEstablished, v))
 }
 
 // YearEstablishedLTE applies the LTE predicate on the "year_established" field.
 func YearEstablishedLTE(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldYearEstablished), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldYearEstablished, v))
 }
 
 // YearEstablishedIsNil applies the IsNil predicate on the "year_established" field.
 func YearEstablishedIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldYearEstablished)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldYearEstablished))
 }
 
 // YearEstablishedNotNil applies the NotNil predicate on the "year_established" field.
 func YearEstablishedNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldYearEstablished)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldYearEstablished))
 }
 
 // CountryEQ applies the EQ predicate on the "country" field.
 func CountryEQ(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCountry), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldCountry, v))
 }
 
 // CountryNEQ applies the NEQ predicate on the "country" field.
 func CountryNEQ(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCountry), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldCountry, v))
 }
 
 // CountryIn applies the In predicate on the "country" field.
 func CountryIn(vs ...string) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldCountry), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldCountry, vs...))
 }
 
 // CountryNotIn applies the NotIn predicate on the "country" field.
 func CountryNotIn(vs ...string) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldCountry), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldCountry, vs...))
 }
 
 // CountryGT applies the GT predicate on the "country" field.
 func CountryGT(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCountry), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldCountry, v))
 }
 
 // CountryGTE applies the GTE predicate on the "country" field.
 func CountryGTE(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCountry), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldCountry, v))
 }
 
 // CountryLT applies the LT predicate on the "country" field.
 func CountryLT(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCountry), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldCountry, v))
 }
 
 // CountryLTE applies the LTE predicate on the "country" field.
 func CountryLTE(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCountry), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldCountry, v))
 }
 
 // CountryContains applies the Contains predicate on the "country" field.
 func CountryContains(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldCountry), v))
-	})
+	return predicate.Venue(sql.FieldContains(FieldCountry, v))
 }
 
 // CountryHasPrefix applies the HasPrefix predicate on the "country" field.
 func CountryHasPrefix(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldCountry), v))
-	})
+	return predicate.Venue(sql.FieldHasPrefix(FieldCountry, v))
 }
 
 // CountryHasSuffix applies the HasSuffix predicate on the "country" field.
 func CountryHasSuffix(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldCountry), v))
-	})
+	return predicate.Venue(sql.FieldHasSuffix(FieldCountry, v))
 }
 
 // CountryIsNil applies the IsNil predicate on the "country" field.
 func CountryIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldCountry)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldCountry))
 }
 
 // CountryNotNil applies the NotNil predicate on the "country" field.
 func CountryNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldCountry)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldCountry))
 }
 
 // CountryEqualFold applies the EqualFold predicate on the "country" field.
 func CountryEqualFold(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldCountry), v))
-	})
+	return predicate.Venue(sql.FieldEqualFold(FieldCountry, v))
 }
 
 // CountryContainsFold applies the ContainsFold predicate on the "country" field.
 func CountryContainsFold(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldCountry), v))
-	})
+	return predicate.Venue(sql.FieldContainsFold(FieldCountry, v))
 }
 
 // ImageEQ applies the EQ predicate on the "image" field.
 func ImageEQ(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldImage), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldImage, v))
 }
 
 // ImageNEQ applies the NEQ predicate on the "image" field.
 func ImageNEQ(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldImage), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldImage, v))
 }
 
 // ImageIn applies the In predicate on the "image" field.
 func ImageIn(vs ...string) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldImage), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldImage, vs...))
 }
 
 // ImageNotIn applies the NotIn predicate on the "image" field.
 func ImageNotIn(vs ...string) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldImage), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldImage, vs...))
 }
 
 // ImageGT applies the GT predicate on the "image" field.
 func ImageGT(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldImage), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldImage, v))
 }
 
 // ImageGTE applies the GTE predicate on the "image" field.
 func ImageGTE(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldImage), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldImage, v))
 }
 
 // ImageLT applies the LT predicate on the "image" field.
 func ImageLT(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldImage), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldImage, v))
 }
 
 // ImageLTE applies the LTE predicate on the "image" field.
 func ImageLTE(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldImage), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldImage, v))
 }
 
 // ImageContains applies the Contains predicate on the "image" field.
 func ImageContains(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldImage), v))
-	})
+	return predicate.Venue(sql.FieldContains(FieldImage, v))
 }
 
 // ImageHasPrefix applies the HasPrefix predicate on the "image" field.
 func ImageHasPrefix(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldImage), v))
-	})
+	return predicate.Venue(sql.FieldHasPrefix(FieldImage, v))
 }
 
 // ImageHasSuffix applies the HasSuffix predicate on the "image" field.
 func ImageHasSuffix(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldImage), v))
-	})
+	return predicate.Venue(sql.FieldHasSuffix(FieldImage, v))
 }
 
 // ImageIsNil applies the IsNil predicate on the "image" field.
 func ImageIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldImage)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldImage))
 }
 
 // ImageNotNil applies the NotNil predicate on the "image" field.
 func ImageNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldImage)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldImage))
 }
 
 // ImageEqualFold applies the EqualFold predicate on the "image" field.
 func ImageEqualFold(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldImage), v))
-	})
+	return predicate.Venue(sql.FieldEqualFold(FieldImage, v))
 }
 
 // ImageContainsFold applies the ContainsFold predicate on the "image" field.
 func ImageContainsFold(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldImage), v))
-	})
+	return predicate.Venue(sql.FieldContainsFold(FieldImage, v))
 }
 
 // LinksIsNil applies the IsNil predicate on the "links" field.
 func LinksIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldLinks)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldLinks))
 }
 
 // LinksNotNil applies the NotNil predicate on the "links" field.
 func LinksNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldLinks)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldLinks))
 }
 
 // HasTradingIncentiveEQ applies the EQ predicate on the "has_trading_incentive" field.
 func HasTradingIncentiveEQ(v bool) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldHasTradingIncentive), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldHasTradingIncentive, v))
 }
 
 // HasTradingIncentiveNEQ applies the NEQ predicate on the "has_trading_incentive" field.
 func HasTradingIncentiveNEQ(v bool) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldHasTradingIncentive), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldHasTradingIncentive, v))
 }
 
 // HasTradingIncentiveIsNil applies the IsNil predicate on the "has_trading_incentive" field.
 func HasTradingIncentiveIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldHasTradingIncentive)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldHasTradingIncentive))
 }
 
 // HasTradingIncentiveNotNil applies the NotNil predicate on the "has_trading_incentive" field.
 func HasTradingIncentiveNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldHasTradingIncentive)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldHasTradingIncentive))
 }
 
 // CentralizedEQ applies the EQ predicate on the "centralized" field.
 func CentralizedEQ(v bool) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCentralized), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldCentralized, v))
 }
 
 // CentralizedNEQ applies the NEQ predicate on the "centralized" field.
 func CentralizedNEQ(v bool) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCentralized), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldCentralized, v))
 }
 
 // CentralizedIsNil applies the IsNil predicate on the "centralized" field.
 func CentralizedIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldCentralized)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldCentralized))
 }
 
 // CentralizedNotNil applies the NotNil predicate on the "centralized" field.
 func CentralizedNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldCentralized)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldCentralized))
 }
 
 // PublicNoticeEQ applies the EQ predicate on the "public_notice" field.
 func PublicNoticeEQ(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPublicNotice), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldPublicNotice, v))
 }
 
 // PublicNoticeNEQ applies the NEQ predicate on the "public_notice" field.
 func PublicNoticeNEQ(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldPublicNotice), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldPublicNotice, v))
 }
 
 // PublicNoticeIn applies the In predicate on the "public_notice" field.
 func PublicNoticeIn(vs ...string) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldPublicNotice), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldPublicNotice, vs...))
 }
 
 // PublicNoticeNotIn applies the NotIn predicate on the "public_notice" field.
 func PublicNoticeNotIn(vs ...string) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldPublicNotice), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldPublicNotice, vs...))
 }
 
 // PublicNoticeGT applies the GT predicate on the "public_notice" field.
 func PublicNoticeGT(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldPublicNotice), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldPublicNotice, v))
 }
 
 // PublicNoticeGTE applies the GTE predicate on the "public_notice" field.
 func PublicNoticeGTE(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldPublicNotice), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldPublicNotice, v))
 }
 
 // PublicNoticeLT applies the LT predicate on the "public_notice" field.
 func PublicNoticeLT(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldPublicNotice), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldPublicNotice, v))
 }
 
 // PublicNoticeLTE applies the LTE predicate on the "public_notice" field.
 func PublicNoticeLTE(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldPublicNotice), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldPublicNotice, v))
 }
 
 // PublicNoticeContains applies the Contains predicate on the "public_notice" field.
 func PublicNoticeContains(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldPublicNotice), v))
-	})
+	return predicate.Venue(sql.FieldContains(FieldPublicNotice, v))
 }
 
 // PublicNoticeHasPrefix applies the HasPrefix predicate on the "public_notice" field.
 func PublicNoticeHasPrefix(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldPublicNotice), v))
-	})
+	return predicate.Venue(sql.FieldHasPrefix(FieldPublicNotice, v))
 }
 
 // PublicNoticeHasSuffix applies the HasSuffix predicate on the "public_notice" field.
 func PublicNoticeHasSuffix(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldPublicNotice), v))
-	})
+	return predicate.Venue(sql.FieldHasSuffix(FieldPublicNotice, v))
 }
 
 // PublicNoticeIsNil applies the IsNil predicate on the "public_notice" field.
 func PublicNoticeIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldPublicNotice)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldPublicNotice))
 }
 
 // PublicNoticeNotNil applies the NotNil predicate on the "public_notice" field.
 func PublicNoticeNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldPublicNotice)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldPublicNotice))
 }
 
 // PublicNoticeEqualFold applies the EqualFold predicate on the "public_notice" field.
 func PublicNoticeEqualFold(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldPublicNotice), v))
-	})
+	return predicate.Venue(sql.FieldEqualFold(FieldPublicNotice, v))
 }
 
 // PublicNoticeContainsFold applies the ContainsFold predicate on the "public_notice" field.
 func PublicNoticeContainsFold(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldPublicNotice), v))
-	})
+	return predicate.Venue(sql.FieldContainsFold(FieldPublicNotice, v))
 }
 
 // AlertNoticeEQ applies the EQ predicate on the "alert_notice" field.
 func AlertNoticeEQ(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlertNotice), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldAlertNotice, v))
 }
 
 // AlertNoticeNEQ applies the NEQ predicate on the "alert_notice" field.
 func AlertNoticeNEQ(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAlertNotice), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldAlertNotice, v))
 }
 
 // AlertNoticeIn applies the In predicate on the "alert_notice" field.
 func AlertNoticeIn(vs ...string) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldAlertNotice), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldAlertNotice, vs...))
 }
 
 // AlertNoticeNotIn applies the NotIn predicate on the "alert_notice" field.
 func AlertNoticeNotIn(vs ...string) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldAlertNotice), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldAlertNotice, vs...))
 }
 
 // AlertNoticeGT applies the GT predicate on the "alert_notice" field.
 func AlertNoticeGT(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldAlertNotice), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldAlertNotice, v))
 }
 
 // AlertNoticeGTE applies the GTE predicate on the "alert_notice" field.
 func AlertNoticeGTE(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldAlertNotice), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldAlertNotice, v))
 }
 
 // AlertNoticeLT applies the LT predicate on the "alert_notice" field.
 func AlertNoticeLT(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldAlertNotice), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldAlertNotice, v))
 }
 
 // AlertNoticeLTE applies the LTE predicate on the "alert_notice" field.
 func AlertNoticeLTE(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldAlertNotice), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldAlertNotice, v))
 }
 
 // AlertNoticeContains applies the Contains predicate on the "alert_notice" field.
 func AlertNoticeContains(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldAlertNotice), v))
-	})
+	return predicate.Venue(sql.FieldContains(FieldAlertNotice, v))
 }
 
 // AlertNoticeHasPrefix applies the HasPrefix predicate on the "alert_notice" field.
 func AlertNoticeHasPrefix(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldAlertNotice), v))
-	})
+	return predicate.Venue(sql.FieldHasPrefix(FieldAlertNotice, v))
 }
 
 // AlertNoticeHasSuffix applies the HasSuffix predicate on the "alert_notice" field.
 func AlertNoticeHasSuffix(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldAlertNotice), v))
-	})
+	return predicate.Venue(sql.FieldHasSuffix(FieldAlertNotice, v))
 }
 
 // AlertNoticeIsNil applies the IsNil predicate on the "alert_notice" field.
 func AlertNoticeIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldAlertNotice)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldAlertNotice))
 }
 
 // AlertNoticeNotNil applies the NotNil predicate on the "alert_notice" field.
 func AlertNoticeNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldAlertNotice)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldAlertNotice))
 }
 
 // AlertNoticeEqualFold applies the EqualFold predicate on the "alert_notice" field.
 func AlertNoticeEqualFold(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldAlertNotice), v))
-	})
+	return predicate.Venue(sql.FieldEqualFold(FieldAlertNotice, v))
 }
 
 // AlertNoticeContainsFold applies the ContainsFold predicate on the "alert_notice" field.
 func AlertNoticeContainsFold(v string) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldAlertNotice), v))
-	})
+	return predicate.Venue(sql.FieldContainsFold(FieldAlertNotice, v))
 }
 
 // TrustScoreEQ applies the EQ predicate on the "trust_score" field.
 func TrustScoreEQ(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTrustScore), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldTrustScore, v))
 }
 
 // TrustScoreNEQ applies the NEQ predicate on the "trust_score" field.
 func TrustScoreNEQ(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTrustScore), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldTrustScore, v))
 }
 
 // TrustScoreIn applies the In predicate on the "trust_score" field.
 func TrustScoreIn(vs ...int) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldTrustScore), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldTrustScore, vs...))
 }
 
 // TrustScoreNotIn applies the NotIn predicate on the "trust_score" field.
 func TrustScoreNotIn(vs ...int) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldTrustScore), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldTrustScore, vs...))
 }
 
 // TrustScoreGT applies the GT predicate on the "trust_score" field.
 func TrustScoreGT(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTrustScore), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldTrustScore, v))
 }
 
 // TrustScoreGTE applies the GTE predicate on the "trust_score" field.
 func TrustScoreGTE(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTrustScore), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldTrustScore, v))
 }
 
 // TrustScoreLT applies the LT predicate on the "trust_score" field.
 func TrustScoreLT(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTrustScore), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldTrustScore, v))
 }
 
 // TrustScoreLTE applies the LTE predicate on the "trust_score" field.
 func TrustScoreLTE(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTrustScore), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldTrustScore, v))
 }
 
 // TrustScoreIsNil applies the IsNil predicate on the "trust_score" field.
 func TrustScoreIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldTrustScore)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldTrustScore))
 }
 
 // TrustScoreNotNil applies the NotNil predicate on the "trust_score" field.
 func TrustScoreNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldTrustScore)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldTrustScore))
 }
 
 // TrustScoreRankEQ applies the EQ predicate on the "trust_score_rank" field.
 func TrustScoreRankEQ(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTrustScoreRank), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldTrustScoreRank, v))
 }
 
 // TrustScoreRankNEQ applies the NEQ predicate on the "trust_score_rank" field.
 func TrustScoreRankNEQ(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTrustScoreRank), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldTrustScoreRank, v))
 }
 
 // TrustScoreRankIn applies the In predicate on the "trust_score_rank" field.
 func TrustScoreRankIn(vs ...int) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldTrustScoreRank), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldTrustScoreRank, vs...))
 }
 
 // TrustScoreRankNotIn applies the NotIn predicate on the "trust_score_rank" field.
 func TrustScoreRankNotIn(vs ...int) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldTrustScoreRank), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldTrustScoreRank, vs...))
 }
 
 // TrustScoreRankGT applies the GT predicate on the "trust_score_rank" field.
 func TrustScoreRankGT(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTrustScoreRank), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldTrustScoreRank, v))
 }
 
 // TrustScoreRankGTE applies the GTE predicate on the "trust_score_rank" field.
 func TrustScoreRankGTE(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTrustScoreRank), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldTrustScoreRank, v))
 }
 
 // TrustScoreRankLT applies the LT predicate on the "trust_score_rank" field.
 func TrustScoreRankLT(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTrustScoreRank), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldTrustScoreRank, v))
 }
 
 // TrustScoreRankLTE applies the LTE predicate on the "trust_score_rank" field.
 func TrustScoreRankLTE(v int) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTrustScoreRank), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldTrustScoreRank, v))
 }
 
 // TrustScoreRankIsNil applies the IsNil predicate on the "trust_score_rank" field.
 func TrustScoreRankIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldTrustScoreRank)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldTrustScoreRank))
 }
 
 // TrustScoreRankNotNil applies the NotNil predicate on the "trust_score_rank" field.
 func TrustScoreRankNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldTrustScoreRank)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldTrustScoreRank))
 }
 
 // TradeVolume24hBtcEQ applies the EQ predicate on the "trade_volume_24h_btc" field.
 func TradeVolume24hBtcEQ(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTradeVolume24hBtc), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldTradeVolume24hBtc, v))
 }
 
 // TradeVolume24hBtcNEQ applies the NEQ predicate on the "trade_volume_24h_btc" field.
 func TradeVolume24hBtcNEQ(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTradeVolume24hBtc), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldTradeVolume24hBtc, v))
 }
 
 // TradeVolume24hBtcIn applies the In predicate on the "trade_volume_24h_btc" field.
 func TradeVolume24hBtcIn(vs ...float64) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldTradeVolume24hBtc), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldTradeVolume24hBtc, vs...))
 }
 
 // TradeVolume24hBtcNotIn applies the NotIn predicate on the "trade_volume_24h_btc" field.
 func TradeVolume24hBtcNotIn(vs ...float64) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldTradeVolume24hBtc), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldTradeVolume24hBtc, vs...))
 }
 
 // TradeVolume24hBtcGT applies the GT predicate on the "trade_volume_24h_btc" field.
 func TradeVolume24hBtcGT(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTradeVolume24hBtc), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldTradeVolume24hBtc, v))
 }
 
 // TradeVolume24hBtcGTE applies the GTE predicate on the "trade_volume_24h_btc" field.
 func TradeVolume24hBtcGTE(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTradeVolume24hBtc), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldTradeVolume24hBtc, v))
 }
 
 // TradeVolume24hBtcLT applies the LT predicate on the "trade_volume_24h_btc" field.
 func TradeVolume24hBtcLT(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTradeVolume24hBtc), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldTradeVolume24hBtc, v))
 }
 
 // TradeVolume24hBtcLTE applies the LTE predicate on the "trade_volume_24h_btc" field.
 func TradeVolume24hBtcLTE(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTradeVolume24hBtc), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldTradeVolume24hBtc, v))
 }
 
 // TradeVolume24hBtcIsNil applies the IsNil predicate on the "trade_volume_24h_btc" field.
 func TradeVolume24hBtcIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldTradeVolume24hBtc)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldTradeVolume24hBtc))
 }
 
 // TradeVolume24hBtcNotNil applies the NotNil predicate on the "trade_volume_24h_btc" field.
 func TradeVolume24hBtcNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldTradeVolume24hBtc)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldTradeVolume24hBtc))
 }
 
 // TradeVolume24hBtcNormalizedEQ applies the EQ predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedEQ(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTradeVolume24hBtcNormalized), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldTradeVolume24hBtcNormalized, v))
 }
 
 // TradeVolume24hBtcNormalizedNEQ applies the NEQ predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedNEQ(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTradeVolume24hBtcNormalized), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldTradeVolume24hBtcNormalized, v))
 }
 
 // TradeVolume24hBtcNormalizedIn applies the In predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedIn(vs ...float64) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldTradeVolume24hBtcNormalized), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldTradeVolume24hBtcNormalized, vs...))
 }
 
 // TradeVolume24hBtcNormalizedNotIn applies the NotIn predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedNotIn(vs ...float64) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldTradeVolume24hBtcNormalized), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldTradeVolume24hBtcNormalized, vs...))
 }
 
 // TradeVolume24hBtcNormalizedGT applies the GT predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedGT(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTradeVolume24hBtcNormalized), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldTradeVolume24hBtcNormalized, v))
 }
 
 // TradeVolume24hBtcNormalizedGTE applies the GTE predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedGTE(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTradeVolume24hBtcNormalized), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldTradeVolume24hBtcNormalized, v))
 }
 
 // TradeVolume24hBtcNormalizedLT applies the LT predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedLT(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTradeVolume24hBtcNormalized), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldTradeVolume24hBtcNormalized, v))
 }
 
 // TradeVolume24hBtcNormalizedLTE applies the LTE predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedLTE(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTradeVolume24hBtcNormalized), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldTradeVolume24hBtcNormalized, v))
 }
 
 // TradeVolume24hBtcNormalizedIsNil applies the IsNil predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldTradeVolume24hBtcNormalized)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldTradeVolume24hBtcNormalized))
 }
 
 // TradeVolume24hBtcNormalizedNotNil applies the NotNil predicate on the "trade_volume_24h_btc_normalized" field.
 func TradeVolume24hBtcNormalizedNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldTradeVolume24hBtcNormalized)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldTradeVolume24hBtcNormalized))
 }
 
 // MakerFeeEQ applies the EQ predicate on the "maker_fee" field.
 func MakerFeeEQ(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldMakerFee), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldMakerFee, v))
 }
 
 // MakerFeeNEQ applies the NEQ predicate on the "maker_fee" field.
 func MakerFeeNEQ(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldMakerFee), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldMakerFee, v))
 }
 
 // MakerFeeIn applies the In predicate on the "maker_fee" field.
 func MakerFeeIn(vs ...float64) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldMakerFee), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldMakerFee, vs...))
 }
 
 // MakerFeeNotIn applies the NotIn predicate on the "maker_fee" field.
 func MakerFeeNotIn(vs ...float64) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldMakerFee), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldMakerFee, vs...))
 }
 
 // MakerFeeGT applies the GT predicate on the "maker_fee" field.
 func MakerFeeGT(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldMakerFee), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldMakerFee, v))
 }
 
 // MakerFeeGTE applies the GTE predicate on the "maker_fee" field.
 func MakerFeeGTE(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldMakerFee), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldMakerFee, v))
 }
 
 // MakerFeeLT applies the LT predicate on the "maker_fee" field.
 func MakerFeeLT(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldMakerFee), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldMakerFee, v))
 }
 
 // MakerFeeLTE applies the LTE predicate on the "maker_fee" field.
 func MakerFeeLTE(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldMakerFee), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldMakerFee, v))
 }
 
 // MakerFeeIsNil applies the IsNil predicate on the "maker_fee" field.
 func MakerFeeIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldMakerFee)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldMakerFee))
 }
 
 // MakerFeeNotNil applies the NotNil predicate on the "maker_fee" field.
 func MakerFeeNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldMakerFee)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldMakerFee))
 }
 
 // TakerFeeEQ applies the EQ predicate on the "taker_fee" field.
 func TakerFeeEQ(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTakerFee), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldTakerFee, v))
 }
 
 // TakerFeeNEQ applies the NEQ predicate on the "taker_fee" field.
 func TakerFeeNEQ(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTakerFee), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldTakerFee, v))
 }
 
 // TakerFeeIn applies the In predicate on the "taker_fee" field.
 func TakerFeeIn(vs ...float64) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldTakerFee), v...))
-	})
+	return predicate.Venue(sql.FieldIn(FieldTakerFee, vs...))
 }
 
 // TakerFeeNotIn applies the NotIn predicate on the "taker_fee" field.
 func TakerFeeNotIn(vs ...float64) predicate.Venue {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldTakerFee), v...))
-	})
+	return predicate.Venue(sql.FieldNotIn(FieldTakerFee, vs...))
 }
 
 // TakerFeeGT applies the GT predicate on the "taker_fee" field.
 func TakerFeeGT(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTakerFee), v))
-	})
+	return predicate.Venue(sql.FieldGT(FieldTakerFee, v))
 }
 
 // TakerFeeGTE applies the GTE predicate on the "taker_fee" field.
 func TakerFeeGTE(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTakerFee), v))
-	})
+	return predicate.Venue(sql.FieldGTE(FieldTakerFee, v))
 }
 
 // TakerFeeLT applies the LT predicate on the "taker_fee" field.
 func TakerFeeLT(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTakerFee), v))
-	})
+	return predicate.Venue(sql.FieldLT(FieldTakerFee, v))
 }
 
 // TakerFeeLTE applies the LTE predicate on the "taker_fee" field.
 func TakerFeeLTE(v float64) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTakerFee), v))
-	})
+	return predicate.Venue(sql.FieldLTE(FieldTakerFee, v))
 }
 
 // TakerFeeIsNil applies the IsNil predicate on the "taker_fee" field.
 func TakerFeeIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldTakerFee)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldTakerFee))
 }
 
 // TakerFeeNotNil applies the NotNil predicate on the "taker_fee" field.
 func TakerFeeNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldTakerFee)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldTakerFee))
 }
 
 // SpreadFeeEQ applies the EQ predicate on the "spread_fee" field.
 func SpreadFeeEQ(v bool) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldSpreadFee), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldSpreadFee, v))
 }
 
 // SpreadFeeNEQ applies the NEQ predicate on the "spread_fee" field.
 func SpreadFeeNEQ(v bool) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldSpreadFee), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldSpreadFee, v))
 }
 
 // SpreadFeeIsNil applies the IsNil predicate on the "spread_fee" field.
 func SpreadFeeIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldSpreadFee)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldSpreadFee))
 }
 
 // SpreadFeeNotNil applies the NotNil predicate on the "spread_fee" field.
 func SpreadFeeNotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldSpreadFee)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldSpreadFee))
 }
 
 // SupportAPIEQ applies the EQ predicate on the "support_api" field.
 func SupportAPIEQ(v bool) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldSupportAPI), v))
-	})
+	return predicate.Venue(sql.FieldEQ(FieldSupportAPI, v))
 }
 
 // SupportAPINEQ applies the NEQ predicate on the "support_api" field.
 func SupportAPINEQ(v bool) predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldSupportAPI), v))
-	})
+	return predicate.Venue(sql.FieldNEQ(FieldSupportAPI, v))
 }
 
 // SupportAPIIsNil applies the IsNil predicate on the "support_api" field.
 func SupportAPIIsNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldSupportAPI)))
-	})
+	return predicate.Venue(sql.FieldIsNull(FieldSupportAPI))
 }
 
 // SupportAPINotNil applies the NotNil predicate on the "support_api" field.
 func SupportAPINotNil() predicate.Venue {
-	return predicate.Venue(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldSupportAPI)))
-	})
+	return predicate.Venue(sql.FieldNotNull(FieldSupportAPI))
 }
 
 // HasTicker applies the HasEdge predicate on the "ticker" edge.
@@ -1576,7 +1044,6 @@ func HasTicker() predicate.Venue {
 	return predicate.Venue(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(TickerTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, TickerTable, TickerColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
@@ -1610,7 +1077,6 @@ func HasTradingPair() predicate.Venue {
 	return predicate.Venue(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(TradingPairTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, TradingPairTable, TradingPairColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
@@ -1644,7 +1110,6 @@ func HasMarket() predicate.Venue {
 	return predicate.Venue(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(MarketTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, MarketTable, MarketColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())

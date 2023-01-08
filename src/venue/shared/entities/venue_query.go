@@ -28,6 +28,7 @@ type VenueQuery struct {
 	unique               *bool
 	order                []OrderFunc
 	fields               []string
+	inters               []Interceptor
 	predicates           []predicate.Venue
 	withTicker           *TickerQuery
 	withTradingPair      *TradingPairQuery
@@ -48,13 +49,13 @@ func (vq *VenueQuery) Where(ps ...predicate.Venue) *VenueQuery {
 	return vq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (vq *VenueQuery) Limit(limit int) *VenueQuery {
 	vq.limit = &limit
 	return vq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (vq *VenueQuery) Offset(offset int) *VenueQuery {
 	vq.offset = &offset
 	return vq
@@ -67,7 +68,7 @@ func (vq *VenueQuery) Unique(unique bool) *VenueQuery {
 	return vq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (vq *VenueQuery) Order(o ...OrderFunc) *VenueQuery {
 	vq.order = append(vq.order, o...)
 	return vq
@@ -75,7 +76,7 @@ func (vq *VenueQuery) Order(o ...OrderFunc) *VenueQuery {
 
 // QueryTicker chains the current query on the "ticker" edge.
 func (vq *VenueQuery) QueryTicker() *TickerQuery {
-	query := &TickerQuery{config: vq.config}
+	query := (&TickerClient{config: vq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := vq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -100,7 +101,7 @@ func (vq *VenueQuery) QueryTicker() *TickerQuery {
 
 // QueryTradingPair chains the current query on the "trading_pair" edge.
 func (vq *VenueQuery) QueryTradingPair() *TradingPairQuery {
-	query := &TradingPairQuery{config: vq.config}
+	query := (&TradingPairClient{config: vq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := vq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -125,7 +126,7 @@ func (vq *VenueQuery) QueryTradingPair() *TradingPairQuery {
 
 // QueryMarket chains the current query on the "market" edge.
 func (vq *VenueQuery) QueryMarket() *MarketQuery {
-	query := &MarketQuery{config: vq.config}
+	query := (&MarketClient{config: vq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := vq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -151,7 +152,7 @@ func (vq *VenueQuery) QueryMarket() *MarketQuery {
 // First returns the first Venue entity from the query.
 // Returns a *NotFoundError when no Venue was found.
 func (vq *VenueQuery) First(ctx context.Context) (*Venue, error) {
-	nodes, err := vq.Limit(1).All(ctx)
+	nodes, err := vq.Limit(1).All(newQueryContext(ctx, TypeVenue, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +175,7 @@ func (vq *VenueQuery) FirstX(ctx context.Context) *Venue {
 // Returns a *NotFoundError when no Venue ID was found.
 func (vq *VenueQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = vq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = vq.Limit(1).IDs(newQueryContext(ctx, TypeVenue, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -197,7 +198,7 @@ func (vq *VenueQuery) FirstIDX(ctx context.Context) int {
 // Returns a *NotSingularError when more than one Venue entity is found.
 // Returns a *NotFoundError when no Venue entities are found.
 func (vq *VenueQuery) Only(ctx context.Context) (*Venue, error) {
-	nodes, err := vq.Limit(2).All(ctx)
+	nodes, err := vq.Limit(2).All(newQueryContext(ctx, TypeVenue, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +226,7 @@ func (vq *VenueQuery) OnlyX(ctx context.Context) *Venue {
 // Returns a *NotFoundError when no entities are found.
 func (vq *VenueQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = vq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = vq.Limit(2).IDs(newQueryContext(ctx, TypeVenue, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -250,10 +251,12 @@ func (vq *VenueQuery) OnlyIDX(ctx context.Context) int {
 
 // All executes the query and returns a list of Venues.
 func (vq *VenueQuery) All(ctx context.Context) ([]*Venue, error) {
+	ctx = newQueryContext(ctx, TypeVenue, "All")
 	if err := vq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return vq.sqlAll(ctx)
+	qr := querierAll[[]*Venue, *VenueQuery]()
+	return withInterceptors[[]*Venue](ctx, vq, qr, vq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -268,6 +271,7 @@ func (vq *VenueQuery) AllX(ctx context.Context) []*Venue {
 // IDs executes the query and returns a list of Venue IDs.
 func (vq *VenueQuery) IDs(ctx context.Context) ([]int, error) {
 	var ids []int
+	ctx = newQueryContext(ctx, TypeVenue, "IDs")
 	if err := vq.Select(venue.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -285,10 +289,11 @@ func (vq *VenueQuery) IDsX(ctx context.Context) []int {
 
 // Count returns the count of the given query.
 func (vq *VenueQuery) Count(ctx context.Context) (int, error) {
+	ctx = newQueryContext(ctx, TypeVenue, "Count")
 	if err := vq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return vq.sqlCount(ctx)
+	return withInterceptors[int](ctx, vq, querierCount[*VenueQuery](), vq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -302,10 +307,15 @@ func (vq *VenueQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (vq *VenueQuery) Exist(ctx context.Context) (bool, error) {
-	if err := vq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = newQueryContext(ctx, TypeVenue, "Exist")
+	switch _, err := vq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("entities: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return vq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -328,6 +338,7 @@ func (vq *VenueQuery) Clone() *VenueQuery {
 		limit:           vq.limit,
 		offset:          vq.offset,
 		order:           append([]OrderFunc{}, vq.order...),
+		inters:          append([]Interceptor{}, vq.inters...),
 		predicates:      append([]predicate.Venue{}, vq.predicates...),
 		withTicker:      vq.withTicker.Clone(),
 		withTradingPair: vq.withTradingPair.Clone(),
@@ -342,7 +353,7 @@ func (vq *VenueQuery) Clone() *VenueQuery {
 // WithTicker tells the query-builder to eager-load the nodes that are connected to
 // the "ticker" edge. The optional arguments are used to configure the query builder of the edge.
 func (vq *VenueQuery) WithTicker(opts ...func(*TickerQuery)) *VenueQuery {
-	query := &TickerQuery{config: vq.config}
+	query := (&TickerClient{config: vq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -353,7 +364,7 @@ func (vq *VenueQuery) WithTicker(opts ...func(*TickerQuery)) *VenueQuery {
 // WithTradingPair tells the query-builder to eager-load the nodes that are connected to
 // the "trading_pair" edge. The optional arguments are used to configure the query builder of the edge.
 func (vq *VenueQuery) WithTradingPair(opts ...func(*TradingPairQuery)) *VenueQuery {
-	query := &TradingPairQuery{config: vq.config}
+	query := (&TradingPairClient{config: vq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -364,7 +375,7 @@ func (vq *VenueQuery) WithTradingPair(opts ...func(*TradingPairQuery)) *VenueQue
 // WithMarket tells the query-builder to eager-load the nodes that are connected to
 // the "market" edge. The optional arguments are used to configure the query builder of the edge.
 func (vq *VenueQuery) WithMarket(opts ...func(*MarketQuery)) *VenueQuery {
-	query := &MarketQuery{config: vq.config}
+	query := (&MarketClient{config: vq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -387,16 +398,11 @@ func (vq *VenueQuery) WithMarket(opts ...func(*MarketQuery)) *VenueQuery {
 //		Aggregate(entities.Count()).
 //		Scan(ctx, &v)
 func (vq *VenueQuery) GroupBy(field string, fields ...string) *VenueGroupBy {
-	grbuild := &VenueGroupBy{config: vq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := vq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return vq.sqlQuery(ctx), nil
-	}
+	vq.fields = append([]string{field}, fields...)
+	grbuild := &VenueGroupBy{build: vq}
+	grbuild.flds = &vq.fields
 	grbuild.label = venue.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -414,10 +420,10 @@ func (vq *VenueQuery) GroupBy(field string, fields ...string) *VenueGroupBy {
 //		Scan(ctx, &v)
 func (vq *VenueQuery) Select(fields ...string) *VenueSelect {
 	vq.fields = append(vq.fields, fields...)
-	selbuild := &VenueSelect{VenueQuery: vq}
-	selbuild.label = venue.Label
-	selbuild.flds, selbuild.scan = &vq.fields, selbuild.Scan
-	return selbuild
+	sbuild := &VenueSelect{VenueQuery: vq}
+	sbuild.label = venue.Label
+	sbuild.flds, sbuild.scan = &vq.fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a VenueSelect configured with the given aggregations.
@@ -426,6 +432,16 @@ func (vq *VenueQuery) Aggregate(fns ...AggregateFunc) *VenueSelect {
 }
 
 func (vq *VenueQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range vq.inters {
+		if inter == nil {
+			return fmt.Errorf("entities: uninitialized interceptor (forgotten import entities/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, vq); err != nil {
+				return err
+			}
+		}
+	}
 	for _, f := range vq.fields {
 		if !venue.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("entities: invalid field %q for query", f)}
@@ -632,17 +648,6 @@ func (vq *VenueQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, vq.driver, _spec)
 }
 
-func (vq *VenueQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := vq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("entities: check existence: %w", err)
-	default:
-		return true, nil
-	}
-}
-
 func (vq *VenueQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
@@ -764,7 +769,7 @@ func (vq *VenueQuery) Modify(modifiers ...func(s *sql.Selector)) *VenueSelect {
 // WithNamedTicker tells the query-builder to eager-load the nodes that are connected to the "ticker"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (vq *VenueQuery) WithNamedTicker(name string, opts ...func(*TickerQuery)) *VenueQuery {
-	query := &TickerQuery{config: vq.config}
+	query := (&TickerClient{config: vq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -778,7 +783,7 @@ func (vq *VenueQuery) WithNamedTicker(name string, opts ...func(*TickerQuery)) *
 // WithNamedTradingPair tells the query-builder to eager-load the nodes that are connected to the "trading_pair"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (vq *VenueQuery) WithNamedTradingPair(name string, opts ...func(*TradingPairQuery)) *VenueQuery {
-	query := &TradingPairQuery{config: vq.config}
+	query := (&TradingPairClient{config: vq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -792,7 +797,7 @@ func (vq *VenueQuery) WithNamedTradingPair(name string, opts ...func(*TradingPai
 // WithNamedMarket tells the query-builder to eager-load the nodes that are connected to the "market"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (vq *VenueQuery) WithNamedMarket(name string, opts ...func(*MarketQuery)) *VenueQuery {
-	query := &MarketQuery{config: vq.config}
+	query := (&MarketClient{config: vq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -805,13 +810,8 @@ func (vq *VenueQuery) WithNamedMarket(name string, opts ...func(*MarketQuery)) *
 
 // VenueGroupBy is the group-by builder for Venue entities.
 type VenueGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *VenueQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -820,58 +820,46 @@ func (vgb *VenueGroupBy) Aggregate(fns ...AggregateFunc) *VenueGroupBy {
 	return vgb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (vgb *VenueGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := vgb.path(ctx)
-	if err != nil {
+	ctx = newQueryContext(ctx, TypeVenue, "GroupBy")
+	if err := vgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	vgb.sql = query
-	return vgb.sqlScan(ctx, v)
+	return scanWithInterceptors[*VenueQuery, *VenueGroupBy](ctx, vgb.build, vgb, vgb.build.inters, v)
 }
 
-func (vgb *VenueGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range vgb.fields {
-		if !venue.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (vgb *VenueGroupBy) sqlScan(ctx context.Context, root *VenueQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(vgb.fns))
+	for _, fn := range vgb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := vgb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*vgb.flds)+len(vgb.fns))
+		for _, f := range *vgb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*vgb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := vgb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := vgb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (vgb *VenueGroupBy) sqlQuery() *sql.Selector {
-	selector := vgb.sql.Select()
-	aggregation := make([]string, 0, len(vgb.fns))
-	for _, fn := range vgb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(vgb.fields)+len(vgb.fns))
-		for _, f := range vgb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(vgb.fields...)...)
-}
-
 // VenueSelect is the builder for selecting fields of Venue entities.
 type VenueSelect struct {
 	*VenueQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -882,26 +870,27 @@ func (vs *VenueSelect) Aggregate(fns ...AggregateFunc) *VenueSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (vs *VenueSelect) Scan(ctx context.Context, v any) error {
+	ctx = newQueryContext(ctx, TypeVenue, "Select")
 	if err := vs.prepareQuery(ctx); err != nil {
 		return err
 	}
-	vs.sql = vs.VenueQuery.sqlQuery(ctx)
-	return vs.sqlScan(ctx, v)
+	return scanWithInterceptors[*VenueQuery, *VenueSelect](ctx, vs.VenueQuery, vs, vs.inters, v)
 }
 
-func (vs *VenueSelect) sqlScan(ctx context.Context, v any) error {
+func (vs *VenueSelect) sqlScan(ctx context.Context, root *VenueQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(vs.fns))
 	for _, fn := range vs.fns {
-		aggregation = append(aggregation, fn(vs.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*vs.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		vs.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		vs.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := vs.sql.Query()
+	query, args := selector.Query()
 	if err := vs.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

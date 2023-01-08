@@ -25,19 +25,31 @@ type config struct {
 	log func(...any)
 	// hooks to execute on mutations.
 	hooks *hooks
+	// interceptors to execute on queries.
+	inters *inters
 	// schemaConfig contains alternative names for all tables.
 	schemaConfig SchemaConfig
 }
 
-// hooks per client, for fast access.
-type hooks struct {
-	Currency    []ent.Hook
-	Market      []ent.Hook
-	Outbox      []ent.Hook
-	Ticker      []ent.Hook
-	TradingPair []ent.Hook
-	Venue       []ent.Hook
-}
+// hooks and interceptors per client, for fast access.
+type (
+	hooks struct {
+		Currency    []ent.Hook
+		Market      []ent.Hook
+		Outbox      []ent.Hook
+		Ticker      []ent.Hook
+		TradingPair []ent.Hook
+		Venue       []ent.Hook
+	}
+	inters struct {
+		Currency    []ent.Interceptor
+		Market      []ent.Interceptor
+		Outbox      []ent.Interceptor
+		Ticker      []ent.Interceptor
+		TradingPair []ent.Interceptor
+		Venue       []ent.Interceptor
+	}
+)
 
 // Options applies the options on the config object.
 func (c *config) options(opts ...Option) {

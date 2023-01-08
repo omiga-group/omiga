@@ -15,11 +15,10 @@ type CurrencyFunc func(context.Context, *entities.CurrencyMutation) (entities.Va
 
 // Mutate calls f(ctx, m).
 func (f CurrencyFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
-	mv, ok := m.(*entities.CurrencyMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.CurrencyMutation", m)
+	if mv, ok := m.(*entities.CurrencyMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.CurrencyMutation", m)
 }
 
 // The MarketFunc type is an adapter to allow the use of ordinary
@@ -28,11 +27,10 @@ type MarketFunc func(context.Context, *entities.MarketMutation) (entities.Value,
 
 // Mutate calls f(ctx, m).
 func (f MarketFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
-	mv, ok := m.(*entities.MarketMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.MarketMutation", m)
+	if mv, ok := m.(*entities.MarketMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.MarketMutation", m)
 }
 
 // The OutboxFunc type is an adapter to allow the use of ordinary
@@ -41,11 +39,10 @@ type OutboxFunc func(context.Context, *entities.OutboxMutation) (entities.Value,
 
 // Mutate calls f(ctx, m).
 func (f OutboxFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
-	mv, ok := m.(*entities.OutboxMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.OutboxMutation", m)
+	if mv, ok := m.(*entities.OutboxMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.OutboxMutation", m)
 }
 
 // The TickerFunc type is an adapter to allow the use of ordinary
@@ -54,11 +51,10 @@ type TickerFunc func(context.Context, *entities.TickerMutation) (entities.Value,
 
 // Mutate calls f(ctx, m).
 func (f TickerFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
-	mv, ok := m.(*entities.TickerMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.TickerMutation", m)
+	if mv, ok := m.(*entities.TickerMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.TickerMutation", m)
 }
 
 // The TradingPairFunc type is an adapter to allow the use of ordinary
@@ -67,11 +63,10 @@ type TradingPairFunc func(context.Context, *entities.TradingPairMutation) (entit
 
 // Mutate calls f(ctx, m).
 func (f TradingPairFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
-	mv, ok := m.(*entities.TradingPairMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.TradingPairMutation", m)
+	if mv, ok := m.(*entities.TradingPairMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.TradingPairMutation", m)
 }
 
 // The VenueFunc type is an adapter to allow the use of ordinary
@@ -80,11 +75,10 @@ type VenueFunc func(context.Context, *entities.VenueMutation) (entities.Value, e
 
 // Mutate calls f(ctx, m).
 func (f VenueFunc) Mutate(ctx context.Context, m entities.Mutation) (entities.Value, error) {
-	mv, ok := m.(*entities.VenueMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.VenueMutation", m)
+	if mv, ok := m.(*entities.VenueMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *entities.VenueMutation", m)
 }
 
 // Condition is a hook condition function.

@@ -45,7 +45,7 @@ type Client struct {
 
 // NewClient creates a new client configured with the given options.
 func NewClient(opts ...Option) *Client {
-	cfg := config{log: log.Println, hooks: &hooks{}}
+	cfg := config{log: log.Println, hooks: &hooks{}, inters: &inters{}}
 	cfg.options(opts...)
 	client := &Client{config: cfg}
 	client.init()
@@ -160,6 +160,37 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Venue.Use(hooks...)
 }
 
+// Intercept adds the query interceptors to all the entity clients.
+// In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
+func (c *Client) Intercept(interceptors ...Interceptor) {
+	c.Currency.Intercept(interceptors...)
+	c.Market.Intercept(interceptors...)
+	c.Outbox.Intercept(interceptors...)
+	c.Ticker.Intercept(interceptors...)
+	c.TradingPair.Intercept(interceptors...)
+	c.Venue.Intercept(interceptors...)
+}
+
+// Mutate implements the ent.Mutator interface.
+func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
+	switch m := m.(type) {
+	case *CurrencyMutation:
+		return c.Currency.mutate(ctx, m)
+	case *MarketMutation:
+		return c.Market.mutate(ctx, m)
+	case *OutboxMutation:
+		return c.Outbox.mutate(ctx, m)
+	case *TickerMutation:
+		return c.Ticker.mutate(ctx, m)
+	case *TradingPairMutation:
+		return c.TradingPair.mutate(ctx, m)
+	case *VenueMutation:
+		return c.Venue.mutate(ctx, m)
+	default:
+		return nil, fmt.Errorf("entities: unknown mutation type %T", m)
+	}
+}
+
 // CurrencyClient is a client for the Currency schema.
 type CurrencyClient struct {
 	config
@@ -174,6 +205,12 @@ func NewCurrencyClient(c config) *CurrencyClient {
 // A call to `Use(f, g, h)` equals to `currency.Hooks(f(g(h())))`.
 func (c *CurrencyClient) Use(hooks ...Hook) {
 	c.hooks.Currency = append(c.hooks.Currency, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `currency.Intercept(f(g(h())))`.
+func (c *CurrencyClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Currency = append(c.inters.Currency, interceptors...)
 }
 
 // Create returns a builder for creating a Currency entity.
@@ -228,6 +265,7 @@ func (c *CurrencyClient) DeleteOneID(id int) *CurrencyDeleteOne {
 func (c *CurrencyClient) Query() *CurrencyQuery {
 	return &CurrencyQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -247,7 +285,7 @@ func (c *CurrencyClient) GetX(ctx context.Context, id int) *Currency {
 
 // QueryCurrencyBase queries the currency_base edge of a Currency.
 func (c *CurrencyClient) QueryCurrencyBase(cu *Currency) *TradingPairQuery {
-	query := &TradingPairQuery{config: c.config}
+	query := (&TradingPairClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := cu.ID
 		step := sqlgraph.NewStep(
@@ -266,7 +304,7 @@ func (c *CurrencyClient) QueryCurrencyBase(cu *Currency) *TradingPairQuery {
 
 // QueryCurrencyCounter queries the currency_counter edge of a Currency.
 func (c *CurrencyClient) QueryCurrencyCounter(cu *Currency) *TradingPairQuery {
-	query := &TradingPairQuery{config: c.config}
+	query := (&TradingPairClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := cu.ID
 		step := sqlgraph.NewStep(
@@ -288,6 +326,26 @@ func (c *CurrencyClient) Hooks() []Hook {
 	return c.hooks.Currency
 }
 
+// Interceptors returns the client interceptors.
+func (c *CurrencyClient) Interceptors() []Interceptor {
+	return c.inters.Currency
+}
+
+func (c *CurrencyClient) mutate(ctx context.Context, m *CurrencyMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CurrencyCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CurrencyUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CurrencyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CurrencyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("entities: unknown Currency mutation op: %q", m.Op())
+	}
+}
+
 // MarketClient is a client for the Market schema.
 type MarketClient struct {
 	config
@@ -302,6 +360,12 @@ func NewMarketClient(c config) *MarketClient {
 // A call to `Use(f, g, h)` equals to `market.Hooks(f(g(h())))`.
 func (c *MarketClient) Use(hooks ...Hook) {
 	c.hooks.Market = append(c.hooks.Market, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `market.Intercept(f(g(h())))`.
+func (c *MarketClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Market = append(c.inters.Market, interceptors...)
 }
 
 // Create returns a builder for creating a Market entity.
@@ -356,6 +420,7 @@ func (c *MarketClient) DeleteOneID(id int) *MarketDeleteOne {
 func (c *MarketClient) Query() *MarketQuery {
 	return &MarketQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -375,7 +440,7 @@ func (c *MarketClient) GetX(ctx context.Context, id int) *Market {
 
 // QueryVenue queries the venue edge of a Market.
 func (c *MarketClient) QueryVenue(m *Market) *VenueQuery {
-	query := &VenueQuery{config: c.config}
+	query := (&VenueClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
@@ -394,7 +459,7 @@ func (c *MarketClient) QueryVenue(m *Market) *VenueQuery {
 
 // QueryTradingPair queries the trading_pair edge of a Market.
 func (c *MarketClient) QueryTradingPair(m *Market) *TradingPairQuery {
-	query := &TradingPairQuery{config: c.config}
+	query := (&TradingPairClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
@@ -416,6 +481,26 @@ func (c *MarketClient) Hooks() []Hook {
 	return c.hooks.Market
 }
 
+// Interceptors returns the client interceptors.
+func (c *MarketClient) Interceptors() []Interceptor {
+	return c.inters.Market
+}
+
+func (c *MarketClient) mutate(ctx context.Context, m *MarketMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MarketCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MarketUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MarketUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MarketDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("entities: unknown Market mutation op: %q", m.Op())
+	}
+}
+
 // OutboxClient is a client for the Outbox schema.
 type OutboxClient struct {
 	config
@@ -430,6 +515,12 @@ func NewOutboxClient(c config) *OutboxClient {
 // A call to `Use(f, g, h)` equals to `outbox.Hooks(f(g(h())))`.
 func (c *OutboxClient) Use(hooks ...Hook) {
 	c.hooks.Outbox = append(c.hooks.Outbox, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `outbox.Intercept(f(g(h())))`.
+func (c *OutboxClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Outbox = append(c.inters.Outbox, interceptors...)
 }
 
 // Create returns a builder for creating a Outbox entity.
@@ -484,6 +575,7 @@ func (c *OutboxClient) DeleteOneID(id int) *OutboxDeleteOne {
 func (c *OutboxClient) Query() *OutboxQuery {
 	return &OutboxQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -506,6 +598,26 @@ func (c *OutboxClient) Hooks() []Hook {
 	return c.hooks.Outbox
 }
 
+// Interceptors returns the client interceptors.
+func (c *OutboxClient) Interceptors() []Interceptor {
+	return c.inters.Outbox
+}
+
+func (c *OutboxClient) mutate(ctx context.Context, m *OutboxMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OutboxCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OutboxUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OutboxUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OutboxDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("entities: unknown Outbox mutation op: %q", m.Op())
+	}
+}
+
 // TickerClient is a client for the Ticker schema.
 type TickerClient struct {
 	config
@@ -520,6 +632,12 @@ func NewTickerClient(c config) *TickerClient {
 // A call to `Use(f, g, h)` equals to `ticker.Hooks(f(g(h())))`.
 func (c *TickerClient) Use(hooks ...Hook) {
 	c.hooks.Ticker = append(c.hooks.Ticker, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `ticker.Intercept(f(g(h())))`.
+func (c *TickerClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Ticker = append(c.inters.Ticker, interceptors...)
 }
 
 // Create returns a builder for creating a Ticker entity.
@@ -574,6 +692,7 @@ func (c *TickerClient) DeleteOneID(id int) *TickerDeleteOne {
 func (c *TickerClient) Query() *TickerQuery {
 	return &TickerQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -593,7 +712,7 @@ func (c *TickerClient) GetX(ctx context.Context, id int) *Ticker {
 
 // QueryVenue queries the venue edge of a Ticker.
 func (c *TickerClient) QueryVenue(t *Ticker) *VenueQuery {
-	query := &VenueQuery{config: c.config}
+	query := (&VenueClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
@@ -615,6 +734,26 @@ func (c *TickerClient) Hooks() []Hook {
 	return c.hooks.Ticker
 }
 
+// Interceptors returns the client interceptors.
+func (c *TickerClient) Interceptors() []Interceptor {
+	return c.inters.Ticker
+}
+
+func (c *TickerClient) mutate(ctx context.Context, m *TickerMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TickerCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TickerUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TickerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TickerDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("entities: unknown Ticker mutation op: %q", m.Op())
+	}
+}
+
 // TradingPairClient is a client for the TradingPair schema.
 type TradingPairClient struct {
 	config
@@ -629,6 +768,12 @@ func NewTradingPairClient(c config) *TradingPairClient {
 // A call to `Use(f, g, h)` equals to `tradingpair.Hooks(f(g(h())))`.
 func (c *TradingPairClient) Use(hooks ...Hook) {
 	c.hooks.TradingPair = append(c.hooks.TradingPair, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `tradingpair.Intercept(f(g(h())))`.
+func (c *TradingPairClient) Intercept(interceptors ...Interceptor) {
+	c.inters.TradingPair = append(c.inters.TradingPair, interceptors...)
 }
 
 // Create returns a builder for creating a TradingPair entity.
@@ -683,6 +828,7 @@ func (c *TradingPairClient) DeleteOneID(id int) *TradingPairDeleteOne {
 func (c *TradingPairClient) Query() *TradingPairQuery {
 	return &TradingPairQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -702,7 +848,7 @@ func (c *TradingPairClient) GetX(ctx context.Context, id int) *TradingPair {
 
 // QueryVenue queries the venue edge of a TradingPair.
 func (c *TradingPairClient) QueryVenue(tp *TradingPair) *VenueQuery {
-	query := &VenueQuery{config: c.config}
+	query := (&VenueClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := tp.ID
 		step := sqlgraph.NewStep(
@@ -721,7 +867,7 @@ func (c *TradingPairClient) QueryVenue(tp *TradingPair) *VenueQuery {
 
 // QueryBase queries the base edge of a TradingPair.
 func (c *TradingPairClient) QueryBase(tp *TradingPair) *CurrencyQuery {
-	query := &CurrencyQuery{config: c.config}
+	query := (&CurrencyClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := tp.ID
 		step := sqlgraph.NewStep(
@@ -740,7 +886,7 @@ func (c *TradingPairClient) QueryBase(tp *TradingPair) *CurrencyQuery {
 
 // QueryCounter queries the counter edge of a TradingPair.
 func (c *TradingPairClient) QueryCounter(tp *TradingPair) *CurrencyQuery {
-	query := &CurrencyQuery{config: c.config}
+	query := (&CurrencyClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := tp.ID
 		step := sqlgraph.NewStep(
@@ -759,7 +905,7 @@ func (c *TradingPairClient) QueryCounter(tp *TradingPair) *CurrencyQuery {
 
 // QueryMarket queries the market edge of a TradingPair.
 func (c *TradingPairClient) QueryMarket(tp *TradingPair) *MarketQuery {
-	query := &MarketQuery{config: c.config}
+	query := (&MarketClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := tp.ID
 		step := sqlgraph.NewStep(
@@ -781,6 +927,26 @@ func (c *TradingPairClient) Hooks() []Hook {
 	return c.hooks.TradingPair
 }
 
+// Interceptors returns the client interceptors.
+func (c *TradingPairClient) Interceptors() []Interceptor {
+	return c.inters.TradingPair
+}
+
+func (c *TradingPairClient) mutate(ctx context.Context, m *TradingPairMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TradingPairCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TradingPairUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TradingPairUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TradingPairDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("entities: unknown TradingPair mutation op: %q", m.Op())
+	}
+}
+
 // VenueClient is a client for the Venue schema.
 type VenueClient struct {
 	config
@@ -795,6 +961,12 @@ func NewVenueClient(c config) *VenueClient {
 // A call to `Use(f, g, h)` equals to `venue.Hooks(f(g(h())))`.
 func (c *VenueClient) Use(hooks ...Hook) {
 	c.hooks.Venue = append(c.hooks.Venue, hooks...)
+}
+
+// Use adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `venue.Intercept(f(g(h())))`.
+func (c *VenueClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Venue = append(c.inters.Venue, interceptors...)
 }
 
 // Create returns a builder for creating a Venue entity.
@@ -849,6 +1021,7 @@ func (c *VenueClient) DeleteOneID(id int) *VenueDeleteOne {
 func (c *VenueClient) Query() *VenueQuery {
 	return &VenueQuery{
 		config: c.config,
+		inters: c.Interceptors(),
 	}
 }
 
@@ -868,7 +1041,7 @@ func (c *VenueClient) GetX(ctx context.Context, id int) *Venue {
 
 // QueryTicker queries the ticker edge of a Venue.
 func (c *VenueClient) QueryTicker(v *Venue) *TickerQuery {
-	query := &TickerQuery{config: c.config}
+	query := (&TickerClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := v.ID
 		step := sqlgraph.NewStep(
@@ -887,7 +1060,7 @@ func (c *VenueClient) QueryTicker(v *Venue) *TickerQuery {
 
 // QueryTradingPair queries the trading_pair edge of a Venue.
 func (c *VenueClient) QueryTradingPair(v *Venue) *TradingPairQuery {
-	query := &TradingPairQuery{config: c.config}
+	query := (&TradingPairClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := v.ID
 		step := sqlgraph.NewStep(
@@ -906,7 +1079,7 @@ func (c *VenueClient) QueryTradingPair(v *Venue) *TradingPairQuery {
 
 // QueryMarket queries the market edge of a Venue.
 func (c *VenueClient) QueryMarket(v *Venue) *MarketQuery {
-	query := &MarketQuery{config: c.config}
+	query := (&MarketClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := v.ID
 		step := sqlgraph.NewStep(
@@ -926,4 +1099,24 @@ func (c *VenueClient) QueryMarket(v *Venue) *MarketQuery {
 // Hooks returns the client hooks.
 func (c *VenueClient) Hooks() []Hook {
 	return c.hooks.Venue
+}
+
+// Interceptors returns the client interceptors.
+func (c *VenueClient) Interceptors() []Interceptor {
+	return c.inters.Venue
+}
+
+func (c *VenueClient) mutate(ctx context.Context, m *VenueMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VenueCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VenueUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VenueUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VenueDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("entities: unknown Venue mutation op: %q", m.Op())
+	}
 }

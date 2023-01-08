@@ -4,7 +4,6 @@ package entities
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -29,34 +28,7 @@ func (tpd *TradingPairDelete) Where(ps ...predicate.TradingPair) *TradingPairDel
 
 // Exec executes the deletion query and returns how many vertices were deleted.
 func (tpd *TradingPairDelete) Exec(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(tpd.hooks) == 0 {
-		affected, err = tpd.sqlExec(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*TradingPairMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			tpd.mutation = mutation
-			affected, err = tpd.sqlExec(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(tpd.hooks) - 1; i >= 0; i-- {
-			if tpd.hooks[i] == nil {
-				return 0, fmt.Errorf("entities: uninitialized hook (forgotten import entities/runtime?)")
-			}
-			mut = tpd.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, tpd.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, TradingPairMutation](ctx, tpd.sqlExec, tpd.mutation, tpd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
@@ -91,6 +63,7 @@ func (tpd *TradingPairDelete) sqlExec(ctx context.Context) (int, error) {
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
+	tpd.mutation.done = true
 	return affected, err
 }
 

@@ -25,6 +25,7 @@ type TickerQuery struct {
 	unique     *bool
 	order      []OrderFunc
 	fields     []string
+	inters     []Interceptor
 	predicates []predicate.Ticker
 	withVenue  *VenueQuery
 	withFKs    bool
@@ -41,13 +42,13 @@ func (tq *TickerQuery) Where(ps ...predicate.Ticker) *TickerQuery {
 	return tq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (tq *TickerQuery) Limit(limit int) *TickerQuery {
 	tq.limit = &limit
 	return tq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (tq *TickerQuery) Offset(offset int) *TickerQuery {
 	tq.offset = &offset
 	return tq
@@ -60,7 +61,7 @@ func (tq *TickerQuery) Unique(unique bool) *TickerQuery {
 	return tq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (tq *TickerQuery) Order(o ...OrderFunc) *TickerQuery {
 	tq.order = append(tq.order, o...)
 	return tq
@@ -68,7 +69,7 @@ func (tq *TickerQuery) Order(o ...OrderFunc) *TickerQuery {
 
 // QueryVenue chains the current query on the "venue" edge.
 func (tq *TickerQuery) QueryVenue() *VenueQuery {
-	query := &VenueQuery{config: tq.config}
+	query := (&VenueClient{config: tq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -94,7 +95,7 @@ func (tq *TickerQuery) QueryVenue() *VenueQuery {
 // First returns the first Ticker entity from the query.
 // Returns a *NotFoundError when no Ticker was found.
 func (tq *TickerQuery) First(ctx context.Context) (*Ticker, error) {
-	nodes, err := tq.Limit(1).All(ctx)
+	nodes, err := tq.Limit(1).All(newQueryContext(ctx, TypeTicker, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +118,7 @@ func (tq *TickerQuery) FirstX(ctx context.Context) *Ticker {
 // Returns a *NotFoundError when no Ticker ID was found.
 func (tq *TickerQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = tq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = tq.Limit(1).IDs(newQueryContext(ctx, TypeTicker, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -140,7 +141,7 @@ func (tq *TickerQuery) FirstIDX(ctx context.Context) int {
 // Returns a *NotSingularError when more than one Ticker entity is found.
 // Returns a *NotFoundError when no Ticker entities are found.
 func (tq *TickerQuery) Only(ctx context.Context) (*Ticker, error) {
-	nodes, err := tq.Limit(2).All(ctx)
+	nodes, err := tq.Limit(2).All(newQueryContext(ctx, TypeTicker, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +169,7 @@ func (tq *TickerQuery) OnlyX(ctx context.Context) *Ticker {
 // Returns a *NotFoundError when no entities are found.
 func (tq *TickerQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = tq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = tq.Limit(2).IDs(newQueryContext(ctx, TypeTicker, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -193,10 +194,12 @@ func (tq *TickerQuery) OnlyIDX(ctx context.Context) int {
 
 // All executes the query and returns a list of Tickers.
 func (tq *TickerQuery) All(ctx context.Context) ([]*Ticker, error) {
+	ctx = newQueryContext(ctx, TypeTicker, "All")
 	if err := tq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return tq.sqlAll(ctx)
+	qr := querierAll[[]*Ticker, *TickerQuery]()
+	return withInterceptors[[]*Ticker](ctx, tq, qr, tq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -211,6 +214,7 @@ func (tq *TickerQuery) AllX(ctx context.Context) []*Ticker {
 // IDs executes the query and returns a list of Ticker IDs.
 func (tq *TickerQuery) IDs(ctx context.Context) ([]int, error) {
 	var ids []int
+	ctx = newQueryContext(ctx, TypeTicker, "IDs")
 	if err := tq.Select(ticker.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -228,10 +232,11 @@ func (tq *TickerQuery) IDsX(ctx context.Context) []int {
 
 // Count returns the count of the given query.
 func (tq *TickerQuery) Count(ctx context.Context) (int, error) {
+	ctx = newQueryContext(ctx, TypeTicker, "Count")
 	if err := tq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return tq.sqlCount(ctx)
+	return withInterceptors[int](ctx, tq, querierCount[*TickerQuery](), tq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -245,10 +250,15 @@ func (tq *TickerQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (tq *TickerQuery) Exist(ctx context.Context) (bool, error) {
-	if err := tq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = newQueryContext(ctx, TypeTicker, "Exist")
+	switch _, err := tq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("entities: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return tq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -271,6 +281,7 @@ func (tq *TickerQuery) Clone() *TickerQuery {
 		limit:      tq.limit,
 		offset:     tq.offset,
 		order:      append([]OrderFunc{}, tq.order...),
+		inters:     append([]Interceptor{}, tq.inters...),
 		predicates: append([]predicate.Ticker{}, tq.predicates...),
 		withVenue:  tq.withVenue.Clone(),
 		// clone intermediate query.
@@ -283,7 +294,7 @@ func (tq *TickerQuery) Clone() *TickerQuery {
 // WithVenue tells the query-builder to eager-load the nodes that are connected to
 // the "venue" edge. The optional arguments are used to configure the query builder of the edge.
 func (tq *TickerQuery) WithVenue(opts ...func(*VenueQuery)) *TickerQuery {
-	query := &VenueQuery{config: tq.config}
+	query := (&VenueClient{config: tq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -306,16 +317,11 @@ func (tq *TickerQuery) WithVenue(opts ...func(*VenueQuery)) *TickerQuery {
 //		Aggregate(entities.Count()).
 //		Scan(ctx, &v)
 func (tq *TickerQuery) GroupBy(field string, fields ...string) *TickerGroupBy {
-	grbuild := &TickerGroupBy{config: tq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := tq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return tq.sqlQuery(ctx), nil
-	}
+	tq.fields = append([]string{field}, fields...)
+	grbuild := &TickerGroupBy{build: tq}
+	grbuild.flds = &tq.fields
 	grbuild.label = ticker.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -333,10 +339,10 @@ func (tq *TickerQuery) GroupBy(field string, fields ...string) *TickerGroupBy {
 //		Scan(ctx, &v)
 func (tq *TickerQuery) Select(fields ...string) *TickerSelect {
 	tq.fields = append(tq.fields, fields...)
-	selbuild := &TickerSelect{TickerQuery: tq}
-	selbuild.label = ticker.Label
-	selbuild.flds, selbuild.scan = &tq.fields, selbuild.Scan
-	return selbuild
+	sbuild := &TickerSelect{TickerQuery: tq}
+	sbuild.label = ticker.Label
+	sbuild.flds, sbuild.scan = &tq.fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a TickerSelect configured with the given aggregations.
@@ -345,6 +351,16 @@ func (tq *TickerQuery) Aggregate(fns ...AggregateFunc) *TickerSelect {
 }
 
 func (tq *TickerQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range tq.inters {
+		if inter == nil {
+			return fmt.Errorf("entities: uninitialized interceptor (forgotten import entities/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, tq); err != nil {
+				return err
+			}
+		}
+	}
 	for _, f := range tq.fields {
 		if !ticker.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("entities: invalid field %q for query", f)}
@@ -454,17 +470,6 @@ func (tq *TickerQuery) sqlCount(ctx context.Context) (int, error) {
 		_spec.Unique = tq.unique != nil && *tq.unique
 	}
 	return sqlgraph.CountNodes(ctx, tq.driver, _spec)
-}
-
-func (tq *TickerQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := tq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("entities: check existence: %w", err)
-	default:
-		return true, nil
-	}
 }
 
 func (tq *TickerQuery) querySpec() *sqlgraph.QuerySpec {
@@ -587,13 +592,8 @@ func (tq *TickerQuery) Modify(modifiers ...func(s *sql.Selector)) *TickerSelect 
 
 // TickerGroupBy is the group-by builder for Ticker entities.
 type TickerGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *TickerQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -602,58 +602,46 @@ func (tgb *TickerGroupBy) Aggregate(fns ...AggregateFunc) *TickerGroupBy {
 	return tgb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (tgb *TickerGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := tgb.path(ctx)
-	if err != nil {
+	ctx = newQueryContext(ctx, TypeTicker, "GroupBy")
+	if err := tgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	tgb.sql = query
-	return tgb.sqlScan(ctx, v)
+	return scanWithInterceptors[*TickerQuery, *TickerGroupBy](ctx, tgb.build, tgb, tgb.build.inters, v)
 }
 
-func (tgb *TickerGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range tgb.fields {
-		if !ticker.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (tgb *TickerGroupBy) sqlScan(ctx context.Context, root *TickerQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(tgb.fns))
+	for _, fn := range tgb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := tgb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*tgb.flds)+len(tgb.fns))
+		for _, f := range *tgb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*tgb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := tgb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := tgb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (tgb *TickerGroupBy) sqlQuery() *sql.Selector {
-	selector := tgb.sql.Select()
-	aggregation := make([]string, 0, len(tgb.fns))
-	for _, fn := range tgb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(tgb.fields)+len(tgb.fns))
-		for _, f := range tgb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(tgb.fields...)...)
-}
-
 // TickerSelect is the builder for selecting fields of Ticker entities.
 type TickerSelect struct {
 	*TickerQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -664,26 +652,27 @@ func (ts *TickerSelect) Aggregate(fns ...AggregateFunc) *TickerSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ts *TickerSelect) Scan(ctx context.Context, v any) error {
+	ctx = newQueryContext(ctx, TypeTicker, "Select")
 	if err := ts.prepareQuery(ctx); err != nil {
 		return err
 	}
-	ts.sql = ts.TickerQuery.sqlQuery(ctx)
-	return ts.sqlScan(ctx, v)
+	return scanWithInterceptors[*TickerQuery, *TickerSelect](ctx, ts.TickerQuery, ts, ts.inters, v)
 }
 
-func (ts *TickerSelect) sqlScan(ctx context.Context, v any) error {
+func (ts *TickerSelect) sqlScan(ctx context.Context, root *TickerQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(ts.fns))
 	for _, fn := range ts.fns {
-		aggregation = append(aggregation, fn(ts.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*ts.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		ts.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		ts.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := ts.sql.Query()
+	query, args := selector.Query()
 	if err := ts.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

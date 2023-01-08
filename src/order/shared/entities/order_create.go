@@ -41,49 +41,7 @@ func (oc *OrderCreate) Mutation() *OrderMutation {
 
 // Save creates the Order in the database.
 func (oc *OrderCreate) Save(ctx context.Context) (*Order, error) {
-	var (
-		err  error
-		node *Order
-	)
-	if len(oc.hooks) == 0 {
-		if err = oc.check(); err != nil {
-			return nil, err
-		}
-		node, err = oc.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*OrderMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = oc.check(); err != nil {
-				return nil, err
-			}
-			oc.mutation = mutation
-			if node, err = oc.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(oc.hooks) - 1; i >= 0; i-- {
-			if oc.hooks[i] == nil {
-				return nil, fmt.Errorf("entities: uninitialized hook (forgotten import entities/runtime?)")
-			}
-			mut = oc.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, oc.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*Order)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from OrderMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*Order, OrderMutation](ctx, oc.sqlSave, oc.mutation, oc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -120,6 +78,9 @@ func (oc *OrderCreate) check() error {
 }
 
 func (oc *OrderCreate) sqlSave(ctx context.Context) (*Order, error) {
+	if err := oc.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := oc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, oc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -129,6 +90,8 @@ func (oc *OrderCreate) sqlSave(ctx context.Context) (*Order, error) {
 	}
 	id := _spec.ID.Value.(int64)
 	_node.ID = int(id)
+	oc.mutation.id = &_node.ID
+	oc.mutation.done = true
 	return _node, nil
 }
 

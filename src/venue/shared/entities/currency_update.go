@@ -141,40 +141,7 @@ func (cu *CurrencyUpdate) RemoveCurrencyCounter(t ...*TradingPair) *CurrencyUpda
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (cu *CurrencyUpdate) Save(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(cu.hooks) == 0 {
-		if err = cu.check(); err != nil {
-			return 0, err
-		}
-		affected, err = cu.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*CurrencyMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = cu.check(); err != nil {
-				return 0, err
-			}
-			cu.mutation = mutation
-			affected, err = cu.sqlSave(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(cu.hooks) - 1; i >= 0; i-- {
-			if cu.hooks[i] == nil {
-				return 0, fmt.Errorf("entities: uninitialized hook (forgotten import entities/runtime?)")
-			}
-			mut = cu.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, cu.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, CurrencyMutation](ctx, cu.sqlSave, cu.mutation, cu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -216,6 +183,9 @@ func (cu *CurrencyUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Curre
 }
 
 func (cu *CurrencyUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := cu.check(); err != nil {
+		return n, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   currency.Table,
@@ -370,6 +340,7 @@ func (cu *CurrencyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
+	cu.mutation.done = true
 	return n, nil
 }
 
@@ -500,46 +471,7 @@ func (cuo *CurrencyUpdateOne) Select(field string, fields ...string) *CurrencyUp
 
 // Save executes the query and returns the updated Currency entity.
 func (cuo *CurrencyUpdateOne) Save(ctx context.Context) (*Currency, error) {
-	var (
-		err  error
-		node *Currency
-	)
-	if len(cuo.hooks) == 0 {
-		if err = cuo.check(); err != nil {
-			return nil, err
-		}
-		node, err = cuo.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*CurrencyMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = cuo.check(); err != nil {
-				return nil, err
-			}
-			cuo.mutation = mutation
-			node, err = cuo.sqlSave(ctx)
-			mutation.done = true
-			return node, err
-		})
-		for i := len(cuo.hooks) - 1; i >= 0; i-- {
-			if cuo.hooks[i] == nil {
-				return nil, fmt.Errorf("entities: uninitialized hook (forgotten import entities/runtime?)")
-			}
-			mut = cuo.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, cuo.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*Currency)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from CurrencyMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*Currency, CurrencyMutation](ctx, cuo.sqlSave, cuo.mutation, cuo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -581,6 +513,9 @@ func (cuo *CurrencyUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *C
 }
 
 func (cuo *CurrencyUpdateOne) sqlSave(ctx context.Context) (_node *Currency, err error) {
+	if err := cuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   currency.Table,
@@ -755,5 +690,6 @@ func (cuo *CurrencyUpdateOne) sqlSave(ctx context.Context) (_node *Currency, err
 		}
 		return nil, err
 	}
+	cuo.mutation.done = true
 	return _node, nil
 }

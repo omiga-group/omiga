@@ -19,6 +19,7 @@ import (
 	"github.com/omiga-group/omiga/src/venue/shared/models"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/sql"
 )
 
 const (
@@ -391,9 +392,24 @@ func (m *CurrencyMutation) Where(ps ...predicate.Currency) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the CurrencyMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *CurrencyMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Currency, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *CurrencyMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *CurrencyMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (Currency).
@@ -942,9 +958,24 @@ func (m *MarketMutation) Where(ps ...predicate.Market) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the MarketMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MarketMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Market, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *MarketMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MarketMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (Market).
@@ -1684,9 +1715,24 @@ func (m *OutboxMutation) Where(ps ...predicate.Outbox) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the OutboxMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *OutboxMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Outbox, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *OutboxMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *OutboxMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (Outbox).
@@ -3105,9 +3151,24 @@ func (m *TickerMutation) Where(ps ...predicate.Ticker) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the TickerMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *TickerMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Ticker, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *TickerMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *TickerMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (Ticker).
@@ -4625,9 +4686,24 @@ func (m *TradingPairMutation) Where(ps ...predicate.TradingPair) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the TradingPairMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *TradingPairMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.TradingPair, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *TradingPairMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *TradingPairMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (TradingPair).
@@ -6524,9 +6600,24 @@ func (m *VenueMutation) Where(ps ...predicate.Venue) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the VenueMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *VenueMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Venue, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *VenueMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *VenueMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (Venue).

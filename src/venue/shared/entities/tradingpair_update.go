@@ -348,40 +348,7 @@ func (tpu *TradingPairUpdate) RemoveMarket(m ...*Market) *TradingPairUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (tpu *TradingPairUpdate) Save(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(tpu.hooks) == 0 {
-		if err = tpu.check(); err != nil {
-			return 0, err
-		}
-		affected, err = tpu.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*TradingPairMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = tpu.check(); err != nil {
-				return 0, err
-			}
-			tpu.mutation = mutation
-			affected, err = tpu.sqlSave(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(tpu.hooks) - 1; i >= 0; i-- {
-			if tpu.hooks[i] == nil {
-				return 0, fmt.Errorf("entities: uninitialized hook (forgotten import entities/runtime?)")
-			}
-			mut = tpu.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, tpu.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, TradingPairMutation](ctx, tpu.sqlSave, tpu.mutation, tpu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -427,6 +394,9 @@ func (tpu *TradingPairUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *T
 }
 
 func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := tpu.check(); err != nil {
+		return n, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   tradingpair.Table,
@@ -698,6 +668,7 @@ func (tpu *TradingPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
+	tpu.mutation.done = true
 	return n, nil
 }
 
@@ -1033,46 +1004,7 @@ func (tpuo *TradingPairUpdateOne) Select(field string, fields ...string) *Tradin
 
 // Save executes the query and returns the updated TradingPair entity.
 func (tpuo *TradingPairUpdateOne) Save(ctx context.Context) (*TradingPair, error) {
-	var (
-		err  error
-		node *TradingPair
-	)
-	if len(tpuo.hooks) == 0 {
-		if err = tpuo.check(); err != nil {
-			return nil, err
-		}
-		node, err = tpuo.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*TradingPairMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = tpuo.check(); err != nil {
-				return nil, err
-			}
-			tpuo.mutation = mutation
-			node, err = tpuo.sqlSave(ctx)
-			mutation.done = true
-			return node, err
-		})
-		for i := len(tpuo.hooks) - 1; i >= 0; i-- {
-			if tpuo.hooks[i] == nil {
-				return nil, fmt.Errorf("entities: uninitialized hook (forgotten import entities/runtime?)")
-			}
-			mut = tpuo.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, tpuo.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*TradingPair)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from TradingPairMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*TradingPair, TradingPairMutation](ctx, tpuo.sqlSave, tpuo.mutation, tpuo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -1118,6 +1050,9 @@ func (tpuo *TradingPairUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)
 }
 
 func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPair, err error) {
+	if err := tpuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   tradingpair.Table,
@@ -1409,5 +1344,6 @@ func (tpuo *TradingPairUpdateOne) sqlSave(ctx context.Context) (_node *TradingPa
 		}
 		return nil, err
 	}
+	tpuo.mutation.done = true
 	return _node, nil
 }
