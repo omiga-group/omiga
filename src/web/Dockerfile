@@ -33,5 +33,8 @@ RUN apk add --no-cache bash
 # Run script which initializes env vars to fs
 RUN chmod +x env.sh
 
+# Fix CVE-2022-3996, CVE-2022-43551
+RUN apk upgrade libssl3 libcrypto3 libcurl curl
+
 # Start Nginx server
 CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
