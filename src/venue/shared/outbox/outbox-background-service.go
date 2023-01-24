@@ -99,16 +99,24 @@ func (obs *outboxBackgroundService) Run() {
 		go func(record *entities.Outbox) {
 			defer wg.Done()
 
-			err := obs.messageProducer.Produce(
+			if err := obs.messageProducer.Connect(record.Topic); err != nil {
+				mu.Lock()
+				defer mu.Unlock()
+
+				failedRecords = append(failedRecords, failedRecord{
+					record: record,
+					err:    err,
+				})
+
+				return
+			}
+
+			if err := obs.messageProducer.Produce(
 				obs.ctx,
-				record.Topic,
 				record.Key,
-				record.Payload)
-
-			mu.Lock()
-			defer mu.Unlock()
-
-			if err != nil {
+				record.Payload); err != nil {
+				mu.Lock()
+				defer mu.Unlock()
 
 				failedRecords = append(failedRecords, failedRecord{
 					record: record,

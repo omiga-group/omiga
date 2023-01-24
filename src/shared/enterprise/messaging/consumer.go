@@ -18,7 +18,8 @@ type MessageProcessedCallback func()
 type MessageFailedCallback func()
 
 type MessageConsumer interface {
-	Consume(ctx context.Context, topic string) (
+	Connect(topic string) error
+	Consume(ctx context.Context) (
 		Message,
 		MessageProcessedCallback,
 		MessageFailedCallback,

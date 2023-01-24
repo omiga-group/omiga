@@ -15,8 +15,6 @@
 //go:build wireinject
 // +build wireinject
 
-// juses fucking christ, kiram dahanet mori!
-
 // The build tag makes sure the stub is not built in the final build.
 package appsetup
 
@@ -32,6 +30,7 @@ import (
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -46,7 +45,8 @@ func NewSyntheticOrderConsumer(
 	wire.Build(
 		pulsar.NewPulsarMessageConsumer,
 		syntheticorderv1.NewConsumer,
-		subscribers.NewSyntheticOrderSubscriber)
+		subscribers.NewSyntheticOrderSubscriber,
+		time.NewTimeHelper)
 
 	return nil, nil
 }
@@ -63,8 +63,7 @@ func NewFtxOrderBookSubscriber(
 		orderbookv1.NewProducer,
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
-		subscribers.NewFtxOrderBookSubscriber,
-	)
+		subscribers.NewFtxOrderBookSubscriber)
 
 	return nil, nil
 }

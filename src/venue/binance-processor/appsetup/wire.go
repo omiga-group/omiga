@@ -28,6 +28,7 @@ import (
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -44,7 +45,8 @@ func NewSyntheticOrderConsumer(
 	wire.Build(
 		pulsar.NewPulsarMessageConsumer,
 		syntheticorderv1.NewConsumer,
-		subscribers.NewSyntheticOrderSubscriber)
+		subscribers.NewSyntheticOrderSubscriber,
+		time.NewTimeHelper)
 
 	return nil, nil
 }

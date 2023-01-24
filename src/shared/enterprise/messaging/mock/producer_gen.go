@@ -46,16 +46,30 @@ func (mr *MockMessageProducerMockRecorder) Close() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockMessageProducer)(nil).Close))
 }
 
-// Produce mocks base method.
-func (m *MockMessageProducer) Produce(ctx context.Context, topic, key string, data []byte) error {
+// Connect mocks base method.
+func (m *MockMessageProducer) Connect(topic string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Produce", ctx, topic, key, data)
+	ret := m.ctrl.Call(m, "Connect", topic)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Connect indicates an expected call of Connect.
+func (mr *MockMessageProducerMockRecorder) Connect(topic interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockMessageProducer)(nil).Connect), topic)
+}
+
+// Produce mocks base method.
+func (m *MockMessageProducer) Produce(ctx context.Context, key string, data []byte) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Produce", ctx, key, data)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Produce indicates an expected call of Produce.
-func (mr *MockMessageProducerMockRecorder) Produce(ctx, topic, key, data interface{}) *gomock.Call {
+func (mr *MockMessageProducerMockRecorder) Produce(ctx, key, data interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Produce", reflect.TypeOf((*MockMessageProducer)(nil).Produce), ctx, topic, key, data)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Produce", reflect.TypeOf((*MockMessageProducer)(nil).Produce), ctx, key, data)
 }

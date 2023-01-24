@@ -5,10 +5,10 @@ import (
 )
 
 type MessageProducer interface {
-	Close()
+	Connect(topic string) error
 	Produce(
 		ctx context.Context,
-		topic string,
 		key string,
 		data []byte) error
+	Close()
 }

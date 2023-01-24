@@ -23,6 +23,7 @@ import (
 	"github.com/omiga-group/omiga/src/order/order-processor/subscribers"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
@@ -33,7 +34,8 @@ func NewOrderConsumer(
 	wire.Build(
 		pulsar.NewPulsarMessageConsumer,
 		orderv1.NewConsumer,
-		subscribers.NewOrderSubscriber)
+		subscribers.NewOrderSubscriber,
+		time.NewTimeHelper)
 
 	return nil, nil
 }

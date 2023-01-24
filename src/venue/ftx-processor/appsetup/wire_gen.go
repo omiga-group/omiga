@@ -14,6 +14,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	configuration2 "github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -29,16 +30,20 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarClient pulsar.Pu
 	if err != nil {
 		return nil, err
 	}
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarClient)
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarClient, pulsarConfig)
 	if err != nil {
 		return nil, err
 	}
-	consumer := syntheticorderv1.NewConsumer(logger, subscriber, messageConsumer)
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	consumer := syntheticorderv1.NewConsumer(logger, subscriber, messageConsumer, timeHelper)
 	return consumer, nil
 }
 
 func NewFtxOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, pulsarClient pulsar.PulsarClient, appConfig configuration.AppConfig, venueConfig configuration2.FtxConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.FtxOrderBookSubscriber, error) {
-	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient)
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient, pulsarConfig)
 	if err != nil {
 		return nil, err
 	}

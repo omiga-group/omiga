@@ -14,6 +14,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	configuration2 "github.com/omiga-group/omiga/src/venue/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -30,16 +31,20 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarClient pulsar.Pu
 	if err != nil {
 		return nil, err
 	}
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarClient)
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarClient, pulsarConfig)
 	if err != nil {
 		return nil, err
 	}
-	consumer := syntheticorderv1.NewConsumer(logger, subscriber, messageConsumer)
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	consumer := syntheticorderv1.NewConsumer(logger, subscriber, messageConsumer, timeHelper)
 	return consumer, nil
 }
 
 func NewBinanceOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, pulsarClient pulsar.PulsarClient, appConfig configuration.AppConfig, binanceConfig configuration2.BinanceConfig, pairConfig configuration2.PairConfig, pulsarConfig pulsar.PulsarConfig, postgresConfig postgres.PostgresConfig, topic string) (subscribers.BinanceOrderBookSubscriber, error) {
-	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient)
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient, pulsarConfig)
 	if err != nil {
 		return nil, err
 	}

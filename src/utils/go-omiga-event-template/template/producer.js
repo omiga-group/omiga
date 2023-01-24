@@ -47,7 +47,11 @@ func (c *producer) Produce(ctx context.Context, key string, event ${models[0].mo
 		return err
 	}
 
-	if err := c.messageProducer.Produce(ctx, TopicName, key, data); err != nil {
+	if err := c.messageProducer.Connect(TopicName); err != nil {
+		return err
+	}
+
+	if err := c.messageProducer.Produce(ctx, key, data); err != nil {
 		return err
 	}
 

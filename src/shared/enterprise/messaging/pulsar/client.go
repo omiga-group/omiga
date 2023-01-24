@@ -4,14 +4,12 @@ import (
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
-	"github.com/lucsky/cuid"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"go.uber.org/zap"
 )
 
 type PulsarClient interface {
-	CreateProducer(topic string) (pulsar.Producer, error)
-	CreateConsumer(topic string) (pulsar.Consumer, error)
+	CreatePulsarClient() (pulsar.Client, error)
 	Close()
 }
 
@@ -69,21 +67,17 @@ func NewPulsarClient(
 	}, nil
 }
 
-func (pc *pulsarClient) CreateProducer(topic string) (pulsar.Producer, error) {
-	if pc.producer != nil {
-		return pc.producer, nil
+func (pc *pulsarClient) CreatePulsarClient() (pulsar.Client, error) {
+	if pc.pulsarClient != nil {
+		return pc.pulsarClient, nil
 	}
 
-	var err error
-
-	if err = pc.connect(); err != nil {
-		return nil, err
-	}
-
-	pc.producer, err = pc.pulsarClient.CreateProducer(
-		pulsar.ProducerOptions{
-			Topic: topic,
-			Name:  pc.pulsarConfig.ProducerName + "-" + cuid.New(),
+	pulsarClient, err := pulsar.NewClient(
+		pulsar.ClientOptions{
+			URL:               pc.pulsarConfig.Url,
+			OperationTimeout:  pc.operationTimeout,
+			ConnectionTimeout: pc.connectionTimeout,
+			Authentication:    pc.authentication,
 		})
 	if err != nil {
 		pc.Close()
@@ -91,33 +85,9 @@ func (pc *pulsarClient) CreateProducer(topic string) (pulsar.Producer, error) {
 		return nil, err
 	}
 
-	return pc.producer, nil
-}
+	pc.pulsarClient = pulsarClient
 
-func (pc *pulsarClient) CreateConsumer(topic string) (pulsar.Consumer, error) {
-	if pc.consumer != nil {
-		return pc.consumer, nil
-	}
-
-	var err error
-
-	if err = pc.connect(); err != nil {
-		return nil, err
-	}
-
-	pc.consumer, err = pc.pulsarClient.Subscribe(
-		pulsar.ConsumerOptions{
-			Topic:            topic,
-			SubscriptionName: pc.pulsarConfig.SubscriptionName,
-			Type:             pulsar.KeyShared,
-		})
-	if err != nil {
-		pc.Close()
-
-		return nil, err
-	}
-
-	return pc.consumer, nil
+	return pc.pulsarClient, nil
 }
 
 func (pc *pulsarClient) Close() {
@@ -143,25 +113,4 @@ func (pc *pulsarClient) Close() {
 		pc.pulsarClient.Close()
 		pc.pulsarClient = nil
 	}
-}
-
-func (pc *pulsarClient) connect() (err error) {
-	if pc.pulsarClient != nil {
-		return nil
-	}
-
-	pc.pulsarClient, err = pulsar.NewClient(
-		pulsar.ClientOptions{
-			URL:               pc.pulsarConfig.Url,
-			OperationTimeout:  pc.operationTimeout,
-			ConnectionTimeout: pc.connectionTimeout,
-			Authentication:    pc.authentication,
-		})
-	if err != nil {
-		pc.Close()
-
-		return err
-	}
-
-	return nil
 }

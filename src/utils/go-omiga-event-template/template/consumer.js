@@ -13,8 +13,10 @@ package ${params.packageName}
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging"
+	enterpriseTime "github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
 )
 
@@ -24,19 +26,22 @@ type Consumer interface {
 }
 
 type consumer struct {
-	logger                 *zap.SugaredLogger
-	subscriber             Subscriber
+	logger          *zap.SugaredLogger
+	subscriber      Subscriber
 	messageConsumer messaging.MessageConsumer
+	timeHelper      enterpriseTime.TimeHelper
 }
 
 func NewConsumer(
 	logger *zap.SugaredLogger,
 	subscriber Subscriber,
-	messageConsumer messaging.MessageConsumer) Consumer {
+	messageConsumer messaging.MessageConsumer,
+	timeHelper enterpriseTime.TimeHelper) Consumer {
 	return &consumer{
-		logger:                 logger,
-		subscriber:             subscriber,
+		logger:          logger,
+		subscriber:      subscriber,
 		messageConsumer: messageConsumer,
+		timeHelper:      timeHelper,
 	}
 }
 
@@ -47,7 +52,21 @@ func (c *consumer) StartAsync(ctx context.Context) error {
 				return
 			}
 
-			message, messageProcessedCallback, messageFailedCallback, err := c.messageConsumer.Consume(ctx, TopicName)
+			if err := c.messageConsumer.Connect(TopicName); err == nil {
+				break
+			} else {
+				c.logger.Warnf("Can't connect to broker on topic: %s. Error: %v", TopicName, err)
+			}
+
+			c.timeHelper.SleepOrWaitForContextGetCancelled(ctx, time.Millisecond*100)
+		}
+
+		for {
+			if ctx.Err() == context.Canceled {
+				return
+			}
+
+			message, messageProcessedCallback, messageFailedCallback, err := c.messageConsumer.Consume(ctx)
 			if err != nil && err == context.Canceled {
 				return
 			} else if err != nil && err != context.Canceled {

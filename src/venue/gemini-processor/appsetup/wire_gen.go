@@ -14,6 +14,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/client"
 	configuration2 "github.com/omiga-group/omiga/src/venue/gemini-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/subscribers"
@@ -30,17 +31,21 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarClient pulsar.Pu
 	if err != nil {
 		return nil, err
 	}
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarClient)
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarClient, pulsarConfig)
 	if err != nil {
 		return nil, err
 	}
-	consumer := syntheticorderv1.NewConsumer(logger, subscriber, messageConsumer)
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	consumer := syntheticorderv1.NewConsumer(logger, subscriber, messageConsumer, timeHelper)
 	return consumer, nil
 }
 
 func NewGeminiOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, pulsarClient pulsar.PulsarClient, appConfig configuration.AppConfig, venueConfig configuration2.GeminiConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.GeminiOrderBookSubscriber, error) {
 	apiClient := client.NewGeminiApiClient(venueConfig)
-	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient)
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient, pulsarConfig)
 	if err != nil {
 		return nil, err
 	}

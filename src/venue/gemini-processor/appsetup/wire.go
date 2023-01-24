@@ -30,6 +30,7 @@ import (
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/client"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/subscribers"
@@ -45,7 +46,8 @@ func NewSyntheticOrderConsumer(
 	wire.Build(
 		pulsar.NewPulsarMessageConsumer,
 		syntheticorderv1.NewConsumer,
-		subscribers.NewSyntheticOrderSubscriber)
+		subscribers.NewSyntheticOrderSubscriber,
+		time.NewTimeHelper)
 
 	return nil, nil
 }
@@ -63,8 +65,7 @@ func NewGeminiOrderBookSubscriber(
 		client.NewGeminiApiClient,
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
-		subscribers.NewGeminiOrderBookSubscriber,
-	)
+		subscribers.NewGeminiOrderBookSubscriber)
 
 	return nil, nil
 }

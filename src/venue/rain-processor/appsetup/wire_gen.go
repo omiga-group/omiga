@@ -13,6 +13,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/security/authentication/passwordgeneration/totp"
+	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"github.com/omiga-group/omiga/src/venue/rain-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/rain-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -27,11 +28,15 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarClient pulsar.Pu
 	if err != nil {
 		return nil, err
 	}
-	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarClient)
+	messageConsumer, err := pulsar.NewPulsarMessageConsumer(logger, pulsarClient, pulsarConfig)
 	if err != nil {
 		return nil, err
 	}
-	consumer := syntheticorderv1.NewConsumer(logger, subscriber, messageConsumer)
+	timeHelper, err := time.NewTimeHelper()
+	if err != nil {
+		return nil, err
+	}
+	consumer := syntheticorderv1.NewConsumer(logger, subscriber, messageConsumer, timeHelper)
 	return consumer, nil
 }
 

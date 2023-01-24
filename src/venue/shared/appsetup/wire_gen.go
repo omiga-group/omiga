@@ -32,7 +32,7 @@ func NewEntgoClient(logger *zap.SugaredLogger, postgresConfig postgres.PostgresC
 }
 
 func NewOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarClient pulsar.PulsarClient, pulsarConfig pulsar.PulsarConfig, outboxConfig outbox.OutboxConfig, entgoClient entities.EntgoClient, jobScheduler *gocron.Scheduler) (outbox2.OutboxBackgroundService, error) {
-	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient)
+	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient, pulsarConfig)
 	if err != nil {
 		return nil, err
 	}

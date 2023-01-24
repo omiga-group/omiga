@@ -47,10 +47,24 @@ func (mr *MockMessageConsumerMockRecorder) Close() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockMessageConsumer)(nil).Close))
 }
 
-// Consume mocks base method.
-func (m *MockMessageConsumer) Consume(ctx context.Context, topic string) (messaging.Message, messaging.MessageProcessedCallback, messaging.MessageFailedCallback, error) {
+// Connect mocks base method.
+func (m *MockMessageConsumer) Connect(topic string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Consume", ctx, topic)
+	ret := m.ctrl.Call(m, "Connect", topic)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Connect indicates an expected call of Connect.
+func (mr *MockMessageConsumerMockRecorder) Connect(topic interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockMessageConsumer)(nil).Connect), topic)
+}
+
+// Consume mocks base method.
+func (m *MockMessageConsumer) Consume(ctx context.Context) (messaging.Message, messaging.MessageProcessedCallback, messaging.MessageFailedCallback, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Consume", ctx)
 	ret0, _ := ret[0].(messaging.Message)
 	ret1, _ := ret[1].(messaging.MessageProcessedCallback)
 	ret2, _ := ret[2].(messaging.MessageFailedCallback)
@@ -59,7 +73,7 @@ func (m *MockMessageConsumer) Consume(ctx context.Context, topic string) (messag
 }
 
 // Consume indicates an expected call of Consume.
-func (mr *MockMessageConsumerMockRecorder) Consume(ctx, topic interface{}) *gomock.Call {
+func (mr *MockMessageConsumerMockRecorder) Consume(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consume", reflect.TypeOf((*MockMessageConsumer)(nil).Consume), ctx, topic)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consume", reflect.TypeOf((*MockMessageConsumer)(nil).Consume), ctx)
 }
