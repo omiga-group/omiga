@@ -10,6 +10,7 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
+	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
 	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/time"
 	"go.uber.org/zap"
@@ -51,4 +52,16 @@ func NewOsHelper() (os.OsHelper, error) {
 		return nil, err
 	}
 	return osHelper, nil
+}
+
+func NewPulsarClient(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig) (pulsar.PulsarClient, error) {
+	osHelper, err := os.NewOsHelper()
+	if err != nil {
+		return nil, err
+	}
+	pulsarClient, err := pulsar.NewPulsarClient(logger, pulsarConfig, osHelper)
+	if err != nil {
+		return nil, err
+	}
+	return pulsarClient, nil
 }

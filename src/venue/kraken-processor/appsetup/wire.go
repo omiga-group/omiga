@@ -28,7 +28,6 @@ import (
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/venue/kraken-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/kraken-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -40,10 +39,9 @@ import (
 
 func NewSyntheticOrderConsumer(
 	logger *zap.SugaredLogger,
+	pulsarClient pulsar.PulsarClient,
 	pulsarConfig pulsar.PulsarConfig) (syntheticorderv1.Consumer, error) {
 	wire.Build(
-		os.NewOsHelper,
-		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageConsumer,
 		syntheticorderv1.NewConsumer,
 		subscribers.NewSyntheticOrderSubscriber)
@@ -54,17 +52,16 @@ func NewSyntheticOrderConsumer(
 func NewKrakenOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
+	pulsarClient pulsar.PulsarClient,
 	appConfig enterpriseConfiguration.AppConfig,
 	venueConfig configuration.KrakenConfig,
 	pulsarConfig pulsar.PulsarConfig,
 	postgresConfig postgres.PostgresConfig,
 	topic string) (subscribers.KrakenOrderBookSubscriber, error) {
 	wire.Build(
-		os.NewOsHelper,
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
 		orderbookv1.NewProducer,
-		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
 		subscribers.NewKrakenOrderBookSubscriber,

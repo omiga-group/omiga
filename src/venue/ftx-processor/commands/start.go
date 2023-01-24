@@ -47,8 +47,18 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
+			pulsarClient, err := enterpriseappsetup.NewPulsarClient(
+				sugarLogger,
+				config.Pulsar)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer pulsarClient.Close()
+
 			syntheticOrderConsumer, err := appsetup.NewSyntheticOrderConsumer(
 				sugarLogger,
+				pulsarClient,
 				config.Pulsar)
 			if err != nil {
 				sugarLogger.Fatal(err)
@@ -64,11 +74,11 @@ func startCommand() *cobra.Command {
 			ftxOrderBookSubscriber, err := appsetup.NewFtxOrderBookSubscriber(
 				ctx,
 				sugarLogger,
+				pulsarClient,
 				config.App,
 				config.Ftx,
 				config.Pulsar,
-				orderbookv1.TopicName,
-			)
+				orderbookv1.TopicName)
 			if err != nil {
 				sugarLogger.Fatal(err)
 			}

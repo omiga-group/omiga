@@ -27,7 +27,6 @@ import (
 	"github.com/omiga-group/omiga/src/order/shared/outbox"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	enterpriseOutbox "github.com/omiga-group/omiga/src/shared/enterprise/outbox"
 	"go.uber.org/zap"
 )
@@ -45,13 +44,12 @@ func NewEntgoClient(
 func NewOutboxBackgroundService(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
+	pulsarClient pulsar.PulsarClient,
 	pulsarConfig pulsar.PulsarConfig,
 	outboxConfig enterpriseOutbox.OutboxConfig,
 	entgoClient entities.EntgoClient,
 	jobScheduler *gocron.Scheduler) (outbox.OutboxBackgroundService, error) {
 	wire.Build(
-		os.NewOsHelper,
-		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageProducer,
 		outbox.NewOutboxBackgroundService)
 

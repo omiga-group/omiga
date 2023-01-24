@@ -26,7 +26,6 @@ import (
 	syntheticorderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/synthetic-order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/venue/dextrade-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/dextrade-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -36,10 +35,9 @@ import (
 
 func NewSyntheticOrderConsumer(
 	logger *zap.SugaredLogger,
+	pulsarClient pulsar.PulsarClient,
 	pulsarConfig pulsar.PulsarConfig) (syntheticorderv1.Consumer, error) {
 	wire.Build(
-		os.NewOsHelper,
-		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageConsumer,
 		syntheticorderv1.NewConsumer,
 		subscribers.NewSyntheticOrderSubscriber)

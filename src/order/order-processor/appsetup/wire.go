@@ -23,16 +23,14 @@ import (
 	"github.com/omiga-group/omiga/src/order/order-processor/subscribers"
 	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"go.uber.org/zap"
 )
 
 func NewOrderConsumer(
 	logger *zap.SugaredLogger,
+	pulsarClient pulsar.PulsarClient,
 	pulsarConfig pulsar.PulsarConfig) (orderv1.Consumer, error) {
 	wire.Build(
-		os.NewOsHelper,
-		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageConsumer,
 		orderv1.NewConsumer,
 		subscribers.NewOrderSubscriber)

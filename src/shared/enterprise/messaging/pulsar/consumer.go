@@ -22,7 +22,6 @@ func NewPulsarMessageConsumer(
 }
 
 func (pmc *pulsarMessageConsumer) Close() {
-	pmc.pulsarClient.Close()
 }
 
 func (pmc *pulsarMessageConsumer) Consume(ctx context.Context, topic string) (

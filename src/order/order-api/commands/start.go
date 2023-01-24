@@ -43,9 +43,19 @@ func startCommand() *cobra.Command {
 			jobScheduler.StartAsync()
 			defer jobScheduler.Stop()
 
+			pulsarClient, err := enterpriseappsetup.NewPulsarClient(
+				sugarLogger,
+				config.Pulsar)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer pulsarClient.Close()
+
 			outboxBackgroundService, err := orderappsetup.NewOutboxBackgroundService(
 				ctx,
 				sugarLogger,
+				pulsarClient,
 				config.Pulsar,
 				config.Outbox,
 				entgoClient,

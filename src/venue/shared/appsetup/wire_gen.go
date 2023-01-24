@@ -11,7 +11,6 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/shared/enterprise/outbox"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
 	outbox2 "github.com/omiga-group/omiga/src/venue/shared/outbox"
@@ -32,15 +31,7 @@ func NewEntgoClient(logger *zap.SugaredLogger, postgresConfig postgres.PostgresC
 	return entgoClient, nil
 }
 
-func NewOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig, outboxConfig outbox.OutboxConfig, entgoClient entities.EntgoClient, jobScheduler *gocron.Scheduler) (outbox2.OutboxBackgroundService, error) {
-	osHelper, err := os.NewOsHelper()
-	if err != nil {
-		return nil, err
-	}
-	pulsarClient, err := pulsar.NewPulsarClient(logger, pulsarConfig, osHelper)
-	if err != nil {
-		return nil, err
-	}
+func NewOutboxBackgroundService(ctx context.Context, logger *zap.SugaredLogger, pulsarClient pulsar.PulsarClient, pulsarConfig pulsar.PulsarConfig, outboxConfig outbox.OutboxConfig, entgoClient entities.EntgoClient, jobScheduler *gocron.Scheduler) (outbox2.OutboxBackgroundService, error) {
 	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient)
 	if err != nil {
 		return nil, err

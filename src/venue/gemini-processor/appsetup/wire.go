@@ -30,7 +30,6 @@ import (
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/client"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/subscribers"
@@ -41,10 +40,9 @@ import (
 
 func NewSyntheticOrderConsumer(
 	logger *zap.SugaredLogger,
+	pulsarClient pulsar.PulsarClient,
 	pulsarConfig pulsar.PulsarConfig) (syntheticorderv1.Consumer, error) {
 	wire.Build(
-		os.NewOsHelper,
-		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageConsumer,
 		syntheticorderv1.NewConsumer,
 		subscribers.NewSyntheticOrderSubscriber)
@@ -55,15 +53,14 @@ func NewSyntheticOrderConsumer(
 func NewGeminiOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
+	pulsarClient pulsar.PulsarClient,
 	appConfig enterpriseConfiguration.AppConfig,
 	venueConfig configuration.GeminiConfig,
 	pulsarConfig pulsar.PulsarConfig,
 	topic string) (subscribers.GeminiOrderBookSubscriber, error) {
 	wire.Build(
-		os.NewOsHelper,
 		orderbookv1.NewProducer,
 		client.NewGeminiApiClient,
-		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
 		subscribers.NewGeminiOrderBookSubscriber,

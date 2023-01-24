@@ -32,7 +32,6 @@ import (
 	enterpriseConfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/ftx-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -42,10 +41,9 @@ import (
 
 func NewSyntheticOrderConsumer(
 	logger *zap.SugaredLogger,
+	pulsarClient pulsar.PulsarClient,
 	pulsarConfig pulsar.PulsarConfig) (syntheticorderv1.Consumer, error) {
 	wire.Build(
-		os.NewOsHelper,
-		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageConsumer,
 		syntheticorderv1.NewConsumer,
 		subscribers.NewSyntheticOrderSubscriber)
@@ -56,14 +54,13 @@ func NewSyntheticOrderConsumer(
 func NewFtxOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
+	pulsarClient pulsar.PulsarClient,
 	appConfig enterpriseConfiguration.AppConfig,
 	venueConfig configuration.FtxConfig,
 	pulsarConfig pulsar.PulsarConfig,
 	topic string) (subscribers.FtxOrderBookSubscriber, error) {
 	wire.Build(
-		os.NewOsHelper,
 		orderbookv1.NewProducer,
-		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
 		subscribers.NewFtxOrderBookSubscriber,

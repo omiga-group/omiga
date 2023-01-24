@@ -28,7 +28,6 @@ import (
 	entconfiguration "github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/binance-processor/subscribers"
 	"github.com/omiga-group/omiga/src/venue/shared/entities"
@@ -40,10 +39,9 @@ import (
 
 func NewSyntheticOrderConsumer(
 	logger *zap.SugaredLogger,
+	pulsarClient pulsar.PulsarClient,
 	pulsarConfig pulsar.PulsarConfig) (syntheticorderv1.Consumer, error) {
 	wire.Build(
-		os.NewOsHelper,
-		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageConsumer,
 		syntheticorderv1.NewConsumer,
 		subscribers.NewSyntheticOrderSubscriber)
@@ -54,6 +52,7 @@ func NewSyntheticOrderConsumer(
 func NewBinanceOrderBookSubscriber(
 	ctx context.Context,
 	logger *zap.SugaredLogger,
+	pulsarClient pulsar.PulsarClient,
 	appConfig entconfiguration.AppConfig,
 	binanceConfig configuration.BinanceConfig,
 	pairConfig configuration.PairConfig,
@@ -61,11 +60,9 @@ func NewBinanceOrderBookSubscriber(
 	postgresConfig postgres.PostgresConfig,
 	topic string) (subscribers.BinanceOrderBookSubscriber, error) {
 	wire.Build(
-		os.NewOsHelper,
 		postgres.NewPostgres,
 		entities.NewEntgoClient,
 		orderbookv1.NewProducer,
-		pulsar.NewPulsarClient,
 		pulsar.NewPulsarMessageProducer,
 		publishers.NewOrderBookPublisher,
 		subscribers.NewBinanceOrderBookSubscriber,

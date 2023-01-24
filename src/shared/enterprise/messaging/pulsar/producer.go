@@ -23,7 +23,6 @@ func NewPulsarMessageProducer(
 }
 
 func (pmp *pulsarMessageProducer) Close() {
-	pmp.pulsarClient.Close()
 }
 
 func (pmp *pulsarMessageProducer) Produce(

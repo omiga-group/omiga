@@ -44,8 +44,18 @@ func startCommand() *cobra.Command {
 				cancelFunc()
 			}()
 
+			pulsarClient, err := enterpriseappsetup.NewPulsarClient(
+				sugarLogger,
+				config.Pulsar)
+			if err != nil {
+				sugarLogger.Fatal(err)
+			}
+
+			defer pulsarClient.Close()
+
 			orderConsumer, err := appsetup.NewOrderConsumer(
 				sugarLogger,
+				pulsarClient,
 				config.Pulsar)
 			if err != nil {
 				sugarLogger.Fatal(err)

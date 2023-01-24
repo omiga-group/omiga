@@ -14,7 +14,6 @@ import (
 	"github.com/omiga-group/omiga/src/shared/enterprise/configuration"
 	"github.com/omiga-group/omiga/src/shared/enterprise/database/postgres"
 	"github.com/omiga-group/omiga/src/shared/enterprise/messaging/pulsar"
-	"github.com/omiga-group/omiga/src/shared/enterprise/os"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/client"
 	configuration2 "github.com/omiga-group/omiga/src/venue/gemini-processor/configuration"
 	"github.com/omiga-group/omiga/src/venue/gemini-processor/subscribers"
@@ -26,16 +25,8 @@ import (
 
 // Injectors from wire.go:
 
-func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.PulsarConfig) (syntheticorderv1.Consumer, error) {
+func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarClient pulsar.PulsarClient, pulsarConfig pulsar.PulsarConfig) (syntheticorderv1.Consumer, error) {
 	subscriber, err := subscribers.NewSyntheticOrderSubscriber(logger)
-	if err != nil {
-		return nil, err
-	}
-	osHelper, err := os.NewOsHelper()
-	if err != nil {
-		return nil, err
-	}
-	pulsarClient, err := pulsar.NewPulsarClient(logger, pulsarConfig, osHelper)
 	if err != nil {
 		return nil, err
 	}
@@ -47,16 +38,8 @@ func NewSyntheticOrderConsumer(logger *zap.SugaredLogger, pulsarConfig pulsar.Pu
 	return consumer, nil
 }
 
-func NewGeminiOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, appConfig configuration.AppConfig, venueConfig configuration2.GeminiConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.GeminiOrderBookSubscriber, error) {
+func NewGeminiOrderBookSubscriber(ctx context.Context, logger *zap.SugaredLogger, pulsarClient pulsar.PulsarClient, appConfig configuration.AppConfig, venueConfig configuration2.GeminiConfig, pulsarConfig pulsar.PulsarConfig, topic string) (subscribers.GeminiOrderBookSubscriber, error) {
 	apiClient := client.NewGeminiApiClient(venueConfig)
-	osHelper, err := os.NewOsHelper()
-	if err != nil {
-		return nil, err
-	}
-	pulsarClient, err := pulsar.NewPulsarClient(logger, pulsarConfig, osHelper)
-	if err != nil {
-		return nil, err
-	}
 	messageProducer, err := pulsar.NewPulsarMessageProducer(logger, pulsarClient)
 	if err != nil {
 		return nil, err
