@@ -22,7 +22,7 @@ import (
 )
 
 func TestOrderServiceSubmit(t *testing.T) {
-	rand.Seed(time.Now().UTC().UnixNano())
+	rand.NewSource(time.Now().UTC().UnixNano())
 
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Order Service Submit Tests")
