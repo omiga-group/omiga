@@ -21,11 +21,8 @@ import (
 // CurrencyQuery is the builder for querying Currency entities.
 type CurrencyQuery struct {
 	config
-	limit                    *int
-	offset                   *int
-	unique                   *bool
+	ctx                      *QueryContext
 	order                    []OrderFunc
-	fields                   []string
 	inters                   []Interceptor
 	predicates               []predicate.Currency
 	withCurrencyBase         *TradingPairQuery
@@ -47,20 +44,20 @@ func (cq *CurrencyQuery) Where(ps ...predicate.Currency) *CurrencyQuery {
 
 // Limit the number of records to be returned by this query.
 func (cq *CurrencyQuery) Limit(limit int) *CurrencyQuery {
-	cq.limit = &limit
+	cq.ctx.Limit = &limit
 	return cq
 }
 
 // Offset to start from.
 func (cq *CurrencyQuery) Offset(offset int) *CurrencyQuery {
-	cq.offset = &offset
+	cq.ctx.Offset = &offset
 	return cq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
 func (cq *CurrencyQuery) Unique(unique bool) *CurrencyQuery {
-	cq.unique = &unique
+	cq.ctx.Unique = &unique
 	return cq
 }
 
@@ -123,7 +120,7 @@ func (cq *CurrencyQuery) QueryCurrencyCounter() *TradingPairQuery {
 // First returns the first Currency entity from the query.
 // Returns a *NotFoundError when no Currency was found.
 func (cq *CurrencyQuery) First(ctx context.Context) (*Currency, error) {
-	nodes, err := cq.Limit(1).All(newQueryContext(ctx, TypeCurrency, "First"))
+	nodes, err := cq.Limit(1).All(setContextOp(ctx, cq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +143,7 @@ func (cq *CurrencyQuery) FirstX(ctx context.Context) *Currency {
 // Returns a *NotFoundError when no Currency ID was found.
 func (cq *CurrencyQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = cq.Limit(1).IDs(newQueryContext(ctx, TypeCurrency, "FirstID")); err != nil {
+	if ids, err = cq.Limit(1).IDs(setContextOp(ctx, cq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -169,7 +166,7 @@ func (cq *CurrencyQuery) FirstIDX(ctx context.Context) int {
 // Returns a *NotSingularError when more than one Currency entity is found.
 // Returns a *NotFoundError when no Currency entities are found.
 func (cq *CurrencyQuery) Only(ctx context.Context) (*Currency, error) {
-	nodes, err := cq.Limit(2).All(newQueryContext(ctx, TypeCurrency, "Only"))
+	nodes, err := cq.Limit(2).All(setContextOp(ctx, cq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -197,7 +194,7 @@ func (cq *CurrencyQuery) OnlyX(ctx context.Context) *Currency {
 // Returns a *NotFoundError when no entities are found.
 func (cq *CurrencyQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = cq.Limit(2).IDs(newQueryContext(ctx, TypeCurrency, "OnlyID")); err != nil {
+	if ids, err = cq.Limit(2).IDs(setContextOp(ctx, cq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -222,7 +219,7 @@ func (cq *CurrencyQuery) OnlyIDX(ctx context.Context) int {
 
 // All executes the query and returns a list of Currencies.
 func (cq *CurrencyQuery) All(ctx context.Context) ([]*Currency, error) {
-	ctx = newQueryContext(ctx, TypeCurrency, "All")
+	ctx = setContextOp(ctx, cq.ctx, "All")
 	if err := cq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -242,7 +239,7 @@ func (cq *CurrencyQuery) AllX(ctx context.Context) []*Currency {
 // IDs executes the query and returns a list of Currency IDs.
 func (cq *CurrencyQuery) IDs(ctx context.Context) ([]int, error) {
 	var ids []int
-	ctx = newQueryContext(ctx, TypeCurrency, "IDs")
+	ctx = setContextOp(ctx, cq.ctx, "IDs")
 	if err := cq.Select(currency.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -260,7 +257,7 @@ func (cq *CurrencyQuery) IDsX(ctx context.Context) []int {
 
 // Count returns the count of the given query.
 func (cq *CurrencyQuery) Count(ctx context.Context) (int, error) {
-	ctx = newQueryContext(ctx, TypeCurrency, "Count")
+	ctx = setContextOp(ctx, cq.ctx, "Count")
 	if err := cq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -278,7 +275,7 @@ func (cq *CurrencyQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (cq *CurrencyQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = newQueryContext(ctx, TypeCurrency, "Exist")
+	ctx = setContextOp(ctx, cq.ctx, "Exist")
 	switch _, err := cq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -306,17 +303,15 @@ func (cq *CurrencyQuery) Clone() *CurrencyQuery {
 	}
 	return &CurrencyQuery{
 		config:              cq.config,
-		limit:               cq.limit,
-		offset:              cq.offset,
+		ctx:                 cq.ctx.Clone(),
 		order:               append([]OrderFunc{}, cq.order...),
 		inters:              append([]Interceptor{}, cq.inters...),
 		predicates:          append([]predicate.Currency{}, cq.predicates...),
 		withCurrencyBase:    cq.withCurrencyBase.Clone(),
 		withCurrencyCounter: cq.withCurrencyCounter.Clone(),
 		// clone intermediate query.
-		sql:    cq.sql.Clone(),
-		path:   cq.path,
-		unique: cq.unique,
+		sql:  cq.sql.Clone(),
+		path: cq.path,
 	}
 }
 
@@ -357,9 +352,9 @@ func (cq *CurrencyQuery) WithCurrencyCounter(opts ...func(*TradingPairQuery)) *C
 //		Aggregate(entities.Count()).
 //		Scan(ctx, &v)
 func (cq *CurrencyQuery) GroupBy(field string, fields ...string) *CurrencyGroupBy {
-	cq.fields = append([]string{field}, fields...)
+	cq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &CurrencyGroupBy{build: cq}
-	grbuild.flds = &cq.fields
+	grbuild.flds = &cq.ctx.Fields
 	grbuild.label = currency.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -378,10 +373,10 @@ func (cq *CurrencyQuery) GroupBy(field string, fields ...string) *CurrencyGroupB
 //		Select(currency.FieldSymbol).
 //		Scan(ctx, &v)
 func (cq *CurrencyQuery) Select(fields ...string) *CurrencySelect {
-	cq.fields = append(cq.fields, fields...)
+	cq.ctx.Fields = append(cq.ctx.Fields, fields...)
 	sbuild := &CurrencySelect{CurrencyQuery: cq}
 	sbuild.label = currency.Label
-	sbuild.flds, sbuild.scan = &cq.fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &cq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
@@ -401,7 +396,7 @@ func (cq *CurrencyQuery) prepareQuery(ctx context.Context) error {
 			}
 		}
 	}
-	for _, f := range cq.fields {
+	for _, f := range cq.ctx.Fields {
 		if !currency.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("entities: invalid field %q for query", f)}
 		}
@@ -554,9 +549,9 @@ func (cq *CurrencyQuery) sqlCount(ctx context.Context) (int, error) {
 	if len(cq.modifiers) > 0 {
 		_spec.Modifiers = cq.modifiers
 	}
-	_spec.Node.Columns = cq.fields
-	if len(cq.fields) > 0 {
-		_spec.Unique = cq.unique != nil && *cq.unique
+	_spec.Node.Columns = cq.ctx.Fields
+	if len(cq.ctx.Fields) > 0 {
+		_spec.Unique = cq.ctx.Unique != nil && *cq.ctx.Unique
 	}
 	return sqlgraph.CountNodes(ctx, cq.driver, _spec)
 }
@@ -574,10 +569,10 @@ func (cq *CurrencyQuery) querySpec() *sqlgraph.QuerySpec {
 		From:   cq.sql,
 		Unique: true,
 	}
-	if unique := cq.unique; unique != nil {
+	if unique := cq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
 	}
-	if fields := cq.fields; len(fields) > 0 {
+	if fields := cq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, currency.FieldID)
 		for i := range fields {
@@ -593,10 +588,10 @@ func (cq *CurrencyQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if limit := cq.limit; limit != nil {
+	if limit := cq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := cq.offset; offset != nil {
+	if offset := cq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
 	if ps := cq.order; len(ps) > 0 {
@@ -612,7 +607,7 @@ func (cq *CurrencyQuery) querySpec() *sqlgraph.QuerySpec {
 func (cq *CurrencyQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(cq.driver.Dialect())
 	t1 := builder.Table(currency.Table)
-	columns := cq.fields
+	columns := cq.ctx.Fields
 	if len(columns) == 0 {
 		columns = currency.Columns
 	}
@@ -621,7 +616,7 @@ func (cq *CurrencyQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector = cq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if cq.unique != nil && *cq.unique {
+	if cq.ctx.Unique != nil && *cq.ctx.Unique {
 		selector.Distinct()
 	}
 	t1.Schema(cq.schemaConfig.Currency)
@@ -636,12 +631,12 @@ func (cq *CurrencyQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	for _, p := range cq.order {
 		p(selector)
 	}
-	if offset := cq.offset; offset != nil {
+	if offset := cq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := cq.limit; limit != nil {
+	if limit := cq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -721,7 +716,7 @@ func (cgb *CurrencyGroupBy) Aggregate(fns ...AggregateFunc) *CurrencyGroupBy {
 
 // Scan applies the selector query and scans the result into the given value.
 func (cgb *CurrencyGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeCurrency, "GroupBy")
+	ctx = setContextOp(ctx, cgb.build.ctx, "GroupBy")
 	if err := cgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -769,7 +764,7 @@ func (cs *CurrencySelect) Aggregate(fns ...AggregateFunc) *CurrencySelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (cs *CurrencySelect) Scan(ctx context.Context, v any) error {
-	ctx = newQueryContext(ctx, TypeCurrency, "Select")
+	ctx = setContextOp(ctx, cs.ctx, "Select")
 	if err := cs.prepareQuery(ctx); err != nil {
 		return err
 	}

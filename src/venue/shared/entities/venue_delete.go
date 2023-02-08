@@ -72,6 +72,12 @@ type VenueDeleteOne struct {
 	vd *VenueDelete
 }
 
+// Where appends a list predicates to the VenueDelete builder.
+func (vdo *VenueDeleteOne) Where(ps ...predicate.Venue) *VenueDeleteOne {
+	vdo.vd.mutation.Where(ps...)
+	return vdo
+}
+
 // Exec executes the deletion query.
 func (vdo *VenueDeleteOne) Exec(ctx context.Context) error {
 	n, err := vdo.vd.Exec(ctx)
@@ -87,5 +93,7 @@ func (vdo *VenueDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (vdo *VenueDeleteOne) ExecX(ctx context.Context) {
-	vdo.vd.ExecX(ctx)
+	if err := vdo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

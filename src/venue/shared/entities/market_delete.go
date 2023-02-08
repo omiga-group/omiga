@@ -72,6 +72,12 @@ type MarketDeleteOne struct {
 	md *MarketDelete
 }
 
+// Where appends a list predicates to the MarketDelete builder.
+func (mdo *MarketDeleteOne) Where(ps ...predicate.Market) *MarketDeleteOne {
+	mdo.md.mutation.Where(ps...)
+	return mdo
+}
+
 // Exec executes the deletion query.
 func (mdo *MarketDeleteOne) Exec(ctx context.Context) error {
 	n, err := mdo.md.Exec(ctx)
@@ -87,5 +93,7 @@ func (mdo *MarketDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (mdo *MarketDeleteOne) ExecX(ctx context.Context) {
-	mdo.md.ExecX(ctx)
+	if err := mdo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

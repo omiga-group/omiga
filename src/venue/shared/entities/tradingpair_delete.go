@@ -72,6 +72,12 @@ type TradingPairDeleteOne struct {
 	tpd *TradingPairDelete
 }
 
+// Where appends a list predicates to the TradingPairDelete builder.
+func (tpdo *TradingPairDeleteOne) Where(ps ...predicate.TradingPair) *TradingPairDeleteOne {
+	tpdo.tpd.mutation.Where(ps...)
+	return tpdo
+}
+
 // Exec executes the deletion query.
 func (tpdo *TradingPairDeleteOne) Exec(ctx context.Context) error {
 	n, err := tpdo.tpd.Exec(ctx)
@@ -87,5 +93,7 @@ func (tpdo *TradingPairDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (tpdo *TradingPairDeleteOne) ExecX(ctx context.Context) {
-	tpdo.tpd.ExecX(ctx)
+	if err := tpdo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

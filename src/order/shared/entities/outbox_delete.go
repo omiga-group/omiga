@@ -72,6 +72,12 @@ type OutboxDeleteOne struct {
 	od *OutboxDelete
 }
 
+// Where appends a list predicates to the OutboxDelete builder.
+func (odo *OutboxDeleteOne) Where(ps ...predicate.Outbox) *OutboxDeleteOne {
+	odo.od.mutation.Where(ps...)
+	return odo
+}
+
 // Exec executes the deletion query.
 func (odo *OutboxDeleteOne) Exec(ctx context.Context) error {
 	n, err := odo.od.Exec(ctx)
@@ -87,5 +93,7 @@ func (odo *OutboxDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (odo *OutboxDeleteOne) ExecX(ctx context.Context) {
-	odo.od.ExecX(ctx)
+	if err := odo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

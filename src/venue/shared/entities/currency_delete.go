@@ -72,6 +72,12 @@ type CurrencyDeleteOne struct {
 	cd *CurrencyDelete
 }
 
+// Where appends a list predicates to the CurrencyDelete builder.
+func (cdo *CurrencyDeleteOne) Where(ps ...predicate.Currency) *CurrencyDeleteOne {
+	cdo.cd.mutation.Where(ps...)
+	return cdo
+}
+
 // Exec executes the deletion query.
 func (cdo *CurrencyDeleteOne) Exec(ctx context.Context) error {
 	n, err := cdo.cd.Exec(ctx)
@@ -87,5 +93,7 @@ func (cdo *CurrencyDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (cdo *CurrencyDeleteOne) ExecX(ctx context.Context) {
-	cdo.cd.ExecX(ctx)
+	if err := cdo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

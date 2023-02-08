@@ -253,14 +253,14 @@ func (t *Ticker) assignValues(columns []string, values []any) error {
 
 // QueryVenue queries the "venue" edge of the Ticker entity.
 func (t *Ticker) QueryVenue() *VenueQuery {
-	return (&TickerClient{config: t.config}).QueryVenue(t)
+	return NewTickerClient(t.config).QueryVenue(t)
 }
 
 // Update returns a builder for updating this Ticker.
 // Note that you need to call Ticker.Unwrap() before calling this method if this Ticker
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (t *Ticker) Update() *TickerUpdateOne {
-	return (&TickerClient{config: t.config}).UpdateOne(t)
+	return NewTickerClient(t.config).UpdateOne(t)
 }
 
 // Unwrap unwraps the Ticker entity that was returned from a transaction after it was closed,

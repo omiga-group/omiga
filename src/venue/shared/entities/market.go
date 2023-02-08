@@ -121,19 +121,19 @@ func (m *Market) assignValues(columns []string, values []any) error {
 
 // QueryVenue queries the "venue" edge of the Market entity.
 func (m *Market) QueryVenue() *VenueQuery {
-	return (&MarketClient{config: m.config}).QueryVenue(m)
+	return NewMarketClient(m.config).QueryVenue(m)
 }
 
 // QueryTradingPair queries the "trading_pair" edge of the Market entity.
 func (m *Market) QueryTradingPair() *TradingPairQuery {
-	return (&MarketClient{config: m.config}).QueryTradingPair(m)
+	return NewMarketClient(m.config).QueryTradingPair(m)
 }
 
 // Update returns a builder for updating this Market.
 // Note that you need to call Market.Unwrap() before calling this method if this Market
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (m *Market) Update() *MarketUpdateOne {
-	return (&MarketClient{config: m.config}).UpdateOne(m)
+	return NewMarketClient(m.config).UpdateOne(m)
 }
 
 // Unwrap unwraps the Market entity that was returned from a transaction after it was closed,

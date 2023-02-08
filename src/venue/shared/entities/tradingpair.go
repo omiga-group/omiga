@@ -228,29 +228,29 @@ func (tp *TradingPair) assignValues(columns []string, values []any) error {
 
 // QueryVenue queries the "venue" edge of the TradingPair entity.
 func (tp *TradingPair) QueryVenue() *VenueQuery {
-	return (&TradingPairClient{config: tp.config}).QueryVenue(tp)
+	return NewTradingPairClient(tp.config).QueryVenue(tp)
 }
 
 // QueryBase queries the "base" edge of the TradingPair entity.
 func (tp *TradingPair) QueryBase() *CurrencyQuery {
-	return (&TradingPairClient{config: tp.config}).QueryBase(tp)
+	return NewTradingPairClient(tp.config).QueryBase(tp)
 }
 
 // QueryCounter queries the "counter" edge of the TradingPair entity.
 func (tp *TradingPair) QueryCounter() *CurrencyQuery {
-	return (&TradingPairClient{config: tp.config}).QueryCounter(tp)
+	return NewTradingPairClient(tp.config).QueryCounter(tp)
 }
 
 // QueryMarket queries the "market" edge of the TradingPair entity.
 func (tp *TradingPair) QueryMarket() *MarketQuery {
-	return (&TradingPairClient{config: tp.config}).QueryMarket(tp)
+	return NewTradingPairClient(tp.config).QueryMarket(tp)
 }
 
 // Update returns a builder for updating this TradingPair.
 // Note that you need to call TradingPair.Unwrap() before calling this method if this TradingPair
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (tp *TradingPair) Update() *TradingPairUpdateOne {
-	return (&TradingPairClient{config: tp.config}).UpdateOne(tp)
+	return NewTradingPairClient(tp.config).UpdateOne(tp)
 }
 
 // Unwrap unwraps the TradingPair entity that was returned from a transaction after it was closed,

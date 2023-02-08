@@ -265,6 +265,7 @@ func (c *CurrencyClient) DeleteOneID(id int) *CurrencyDeleteOne {
 func (c *CurrencyClient) Query() *CurrencyQuery {
 	return &CurrencyQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeCurrency},
 		inters: c.Interceptors(),
 	}
 }
@@ -420,6 +421,7 @@ func (c *MarketClient) DeleteOneID(id int) *MarketDeleteOne {
 func (c *MarketClient) Query() *MarketQuery {
 	return &MarketQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeMarket},
 		inters: c.Interceptors(),
 	}
 }
@@ -575,6 +577,7 @@ func (c *OutboxClient) DeleteOneID(id int) *OutboxDeleteOne {
 func (c *OutboxClient) Query() *OutboxQuery {
 	return &OutboxQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeOutbox},
 		inters: c.Interceptors(),
 	}
 }
@@ -692,6 +695,7 @@ func (c *TickerClient) DeleteOneID(id int) *TickerDeleteOne {
 func (c *TickerClient) Query() *TickerQuery {
 	return &TickerQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeTicker},
 		inters: c.Interceptors(),
 	}
 }
@@ -828,6 +832,7 @@ func (c *TradingPairClient) DeleteOneID(id int) *TradingPairDeleteOne {
 func (c *TradingPairClient) Query() *TradingPairQuery {
 	return &TradingPairQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeTradingPair},
 		inters: c.Interceptors(),
 	}
 }
@@ -1021,6 +1026,7 @@ func (c *VenueClient) DeleteOneID(id int) *VenueDeleteOne {
 func (c *VenueClient) Query() *VenueQuery {
 	return &VenueQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeVenue},
 		inters: c.Interceptors(),
 	}
 }

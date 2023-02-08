@@ -72,6 +72,12 @@ type TickerDeleteOne struct {
 	td *TickerDelete
 }
 
+// Where appends a list predicates to the TickerDelete builder.
+func (tdo *TickerDeleteOne) Where(ps ...predicate.Ticker) *TickerDeleteOne {
+	tdo.td.mutation.Where(ps...)
+	return tdo
+}
+
 // Exec executes the deletion query.
 func (tdo *TickerDeleteOne) Exec(ctx context.Context) error {
 	n, err := tdo.td.Exec(ctx)
@@ -87,5 +93,7 @@ func (tdo *TickerDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (tdo *TickerDeleteOne) ExecX(ctx context.Context) {
-	tdo.td.ExecX(ctx)
+	if err := tdo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

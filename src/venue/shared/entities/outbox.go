@@ -138,7 +138,7 @@ func (o *Outbox) assignValues(columns []string, values []any) error {
 // Note that you need to call Outbox.Unwrap() before calling this method if this Outbox
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (o *Outbox) Update() *OutboxUpdateOne {
-	return (&OutboxClient{config: o.config}).UpdateOne(o)
+	return NewOutboxClient(o.config).UpdateOne(o)
 }
 
 // Unwrap unwraps the Outbox entity that was returned from a transaction after it was closed,

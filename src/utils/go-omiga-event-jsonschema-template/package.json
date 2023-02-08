@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/omiga-group/omiga#readme",
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "^9.1.0",
+    "@apidevtools/json-schema-ref-parser": "^10.1.0",
     "@asyncapi/generator-filters": "^2.1.0",
     "@asyncapi/generator-hooks": "^0.1.0",
     "@asyncapi/generator-react-sdk": "^0.2.25",

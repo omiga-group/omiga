@@ -29,7 +29,7 @@ func (c *CurrencyQuery) collectField(ctx context.Context, op *graphql.OperationC
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &TradingPairQuery{config: c.config}
+				query = (&TradingPairClient{config: c.config}).Query()
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
@@ -41,7 +41,7 @@ func (c *CurrencyQuery) collectField(ctx context.Context, op *graphql.OperationC
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &TradingPairQuery{config: c.config}
+				query = (&TradingPairClient{config: c.config}).Query()
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
@@ -125,7 +125,7 @@ func (m *MarketQuery) collectField(ctx context.Context, op *graphql.OperationCon
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &VenueQuery{config: m.config}
+				query = (&VenueClient{config: m.config}).Query()
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
@@ -135,7 +135,7 @@ func (m *MarketQuery) collectField(ctx context.Context, op *graphql.OperationCon
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &TradingPairQuery{config: m.config}
+				query = (&TradingPairClient{config: m.config}).Query()
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
@@ -265,7 +265,7 @@ func (t *TickerQuery) collectField(ctx context.Context, op *graphql.OperationCon
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &VenueQuery{config: t.config}
+				query = (&VenueClient{config: t.config}).Query()
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
@@ -347,7 +347,7 @@ func (tp *TradingPairQuery) collectField(ctx context.Context, op *graphql.Operat
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &VenueQuery{config: tp.config}
+				query = (&VenueClient{config: tp.config}).Query()
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
@@ -357,7 +357,7 @@ func (tp *TradingPairQuery) collectField(ctx context.Context, op *graphql.Operat
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &CurrencyQuery{config: tp.config}
+				query = (&CurrencyClient{config: tp.config}).Query()
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
@@ -367,7 +367,7 @@ func (tp *TradingPairQuery) collectField(ctx context.Context, op *graphql.Operat
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &CurrencyQuery{config: tp.config}
+				query = (&CurrencyClient{config: tp.config}).Query()
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
@@ -377,7 +377,7 @@ func (tp *TradingPairQuery) collectField(ctx context.Context, op *graphql.Operat
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &MarketQuery{config: tp.config}
+				query = (&MarketClient{config: tp.config}).Query()
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
@@ -461,7 +461,7 @@ func (v *VenueQuery) collectField(ctx context.Context, op *graphql.OperationCont
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &TickerQuery{config: v.config}
+				query = (&TickerClient{config: v.config}).Query()
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
@@ -473,7 +473,7 @@ func (v *VenueQuery) collectField(ctx context.Context, op *graphql.OperationCont
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &TradingPairQuery{config: v.config}
+				query = (&TradingPairClient{config: v.config}).Query()
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
@@ -485,7 +485,7 @@ func (v *VenueQuery) collectField(ctx context.Context, op *graphql.OperationCont
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = &MarketQuery{config: v.config}
+				query = (&MarketClient{config: v.config}).Query()
 			)
 			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err

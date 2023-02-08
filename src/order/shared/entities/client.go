@@ -224,6 +224,7 @@ func (c *OrderClient) DeleteOneID(id int) *OrderDeleteOne {
 func (c *OrderClient) Query() *OrderQuery {
 	return &OrderQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeOrder},
 		inters: c.Interceptors(),
 	}
 }
@@ -341,6 +342,7 @@ func (c *OutboxClient) DeleteOneID(id int) *OutboxDeleteOne {
 func (c *OutboxClient) Query() *OutboxQuery {
 	return &OutboxQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeOutbox},
 		inters: c.Interceptors(),
 	}
 }

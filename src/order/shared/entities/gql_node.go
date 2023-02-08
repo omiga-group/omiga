@@ -4,7 +4,6 @@ package entities
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"sync"
 	"sync/atomic"
@@ -22,148 +21,14 @@ import (
 
 // Noder wraps the basic Node method.
 type Noder interface {
-	Node(context.Context) (*Node, error)
+	IsNode()
 }
 
-// Node in the graph.
-type Node struct {
-	ID     int      `json:"id,omitempty"`     // node id.
-	Type   string   `json:"type,omitempty"`   // node type.
-	Fields []*Field `json:"fields,omitempty"` // node fields.
-	Edges  []*Edge  `json:"edges,omitempty"`  // node edges.
-}
+// IsNode implements the Node interface check for GQLGen.
+func (n *Order) IsNode() {}
 
-// Field of a node.
-type Field struct {
-	Type  string `json:"type,omitempty"`  // field type.
-	Name  string `json:"name,omitempty"`  // field name (as in struct).
-	Value string `json:"value,omitempty"` // stringified value.
-}
-
-// Edges between two nodes.
-type Edge struct {
-	Type string `json:"type,omitempty"` // edge type.
-	Name string `json:"name,omitempty"` // edge name.
-	IDs  []int  `json:"ids,omitempty"`  // node ids (where this edge point to).
-}
-
-func (o *Order) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     o.ID,
-		Type:   "Order",
-		Fields: make([]*Field, 2),
-		Edges:  make([]*Edge, 0),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(o.OrderDetails); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "models.OrderDetails",
-		Name:  "order_details",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(o.PreferredExchanges); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "[]models.Exchange",
-		Name:  "preferred_exchanges",
-		Value: string(buf),
-	}
-	return node, nil
-}
-
-func (o *Outbox) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     o.ID,
-		Type:   "Outbox",
-		Fields: make([]*Field, 9),
-		Edges:  make([]*Edge, 0),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(o.Timestamp); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "time.Time",
-		Name:  "timestamp",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(o.Topic); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "string",
-		Name:  "topic",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(o.Key); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "key",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(o.Payload); err != nil {
-		return nil, err
-	}
-	node.Fields[3] = &Field{
-		Type:  "[]byte",
-		Name:  "payload",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(o.Headers); err != nil {
-		return nil, err
-	}
-	node.Fields[4] = &Field{
-		Type:  "map[string]string",
-		Name:  "headers",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(o.RetryCount); err != nil {
-		return nil, err
-	}
-	node.Fields[5] = &Field{
-		Type:  "int",
-		Name:  "retry_count",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(o.Status); err != nil {
-		return nil, err
-	}
-	node.Fields[6] = &Field{
-		Type:  "outbox.Status",
-		Name:  "status",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(o.LastRetry); err != nil {
-		return nil, err
-	}
-	node.Fields[7] = &Field{
-		Type:  "time.Time",
-		Name:  "last_retry",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(o.ProcessingErrors); err != nil {
-		return nil, err
-	}
-	node.Fields[8] = &Field{
-		Type:  "[]string",
-		Name:  "processing_errors",
-		Value: string(buf),
-	}
-	return node, nil
-}
-
-func (c *Client) Node(ctx context.Context, id int) (*Node, error) {
-	n, err := c.Noder(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-	return n.Node(ctx)
-}
+// IsNode implements the Node interface check for GQLGen.
+func (n *Outbox) IsNode() {}
 
 var errNodeInvalidID = &NotFoundError{"node"}
 

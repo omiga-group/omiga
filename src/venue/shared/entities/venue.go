@@ -264,24 +264,24 @@ func (v *Venue) assignValues(columns []string, values []any) error {
 
 // QueryTicker queries the "ticker" edge of the Venue entity.
 func (v *Venue) QueryTicker() *TickerQuery {
-	return (&VenueClient{config: v.config}).QueryTicker(v)
+	return NewVenueClient(v.config).QueryTicker(v)
 }
 
 // QueryTradingPair queries the "trading_pair" edge of the Venue entity.
 func (v *Venue) QueryTradingPair() *TradingPairQuery {
-	return (&VenueClient{config: v.config}).QueryTradingPair(v)
+	return NewVenueClient(v.config).QueryTradingPair(v)
 }
 
 // QueryMarket queries the "market" edge of the Venue entity.
 func (v *Venue) QueryMarket() *MarketQuery {
-	return (&VenueClient{config: v.config}).QueryMarket(v)
+	return NewVenueClient(v.config).QueryMarket(v)
 }
 
 // Update returns a builder for updating this Venue.
 // Note that you need to call Venue.Unwrap() before calling this method if this Venue
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (v *Venue) Update() *VenueUpdateOne {
-	return (&VenueClient{config: v.config}).UpdateOne(v)
+	return NewVenueClient(v.config).UpdateOne(v)
 }
 
 // Unwrap unwraps the Venue entity that was returned from a transaction after it was closed,

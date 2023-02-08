@@ -115,19 +115,19 @@ func (c *Currency) assignValues(columns []string, values []any) error {
 
 // QueryCurrencyBase queries the "currency_base" edge of the Currency entity.
 func (c *Currency) QueryCurrencyBase() *TradingPairQuery {
-	return (&CurrencyClient{config: c.config}).QueryCurrencyBase(c)
+	return NewCurrencyClient(c.config).QueryCurrencyBase(c)
 }
 
 // QueryCurrencyCounter queries the "currency_counter" edge of the Currency entity.
 func (c *Currency) QueryCurrencyCounter() *TradingPairQuery {
-	return (&CurrencyClient{config: c.config}).QueryCurrencyCounter(c)
+	return NewCurrencyClient(c.config).QueryCurrencyCounter(c)
 }
 
 // Update returns a builder for updating this Currency.
 // Note that you need to call Currency.Unwrap() before calling this method if this Currency
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (c *Currency) Update() *CurrencyUpdateOne {
-	return (&CurrencyClient{config: c.config}).UpdateOne(c)
+	return NewCurrencyClient(c.config).UpdateOne(c)
 }
 
 // Unwrap unwraps the Currency entity that was returned from a transaction after it was closed,
