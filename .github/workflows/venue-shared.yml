@@ -27,7 +27,7 @@ jobs:
   build-venue-shared:
     name: "Build - Venue Shared"
     runs-on:
-      - self-hosted
+      ubuntu-latest
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
@@ -78,7 +78,7 @@ jobs:
   build-venue-database-migrations:
     name: "Build - Venue Database Migrations"
     runs-on:
-      - self-hosted
+      ubuntu-latest
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1

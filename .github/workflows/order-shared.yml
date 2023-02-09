@@ -27,7 +27,7 @@ jobs:
   build-order-shared:
     name: "Build - Order Shared"
     runs-on:
-      - self-hosted
+      ubuntu-latest
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
@@ -78,7 +78,7 @@ jobs:
   build-order-database-migrations:
     name: "Build - Order Database Migrations"
     runs-on:
-      - self-hosted
+      ubuntu-latest
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1

@@ -7,7 +7,7 @@ jobs:
   deploy-to-prod:
     name: "Deploying to Prod"
     runs-on:
-      - self-hosted
+      ubuntu-latest
     steps:
       - name: Setting up SSH Agent
         uses: webfactory/ssh-agent@v0.5.4
