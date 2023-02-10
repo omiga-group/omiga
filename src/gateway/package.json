@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/omiga-group/omiga#readme",
   "dependencies": {
-    "@apollo/gateway": "^2.2.2",
+    "@apollo/gateway": "^2.3.1",
     "apollo-server": "^3.10.1",
     "graphql": "^16.6.0"
   }
