@@ -34,6 +34,20 @@ func (m *MockHttpServer) EXPECT() *MockHttpServerMockRecorder {
 	return m.recorder
 }
 
+// GetGraphQLHandler mocks base method.
+func (m *MockHttpServer) GetGraphQLHandler() http.Handler {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGraphQLHandler")
+	ret0, _ := ret[0].(http.Handler)
+	return ret0
+}
+
+// GetGraphQLHandler indicates an expected call of GetGraphQLHandler.
+func (mr *MockHttpServerMockRecorder) GetGraphQLHandler() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGraphQLHandler", reflect.TypeOf((*MockHttpServer)(nil).GetGraphQLHandler))
+}
+
 // GetHandler mocks base method.
 func (m *MockHttpServer) GetHandler() http.Handler {
 	m.ctrl.T.Helper()

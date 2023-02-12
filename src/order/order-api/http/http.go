@@ -12,6 +12,7 @@ import (
 )
 
 type HttpServer interface {
+	GetGraphQLHandler() http.Handler
 	GetHandler() http.Handler
 	ListenAndServe() error
 }
@@ -33,6 +34,14 @@ func NewHttpServer(
 	}, nil
 }
 
+func (hs *httpServer) GetGraphQLHandler() http.Handler {
+	mux := http.NewServeMux()
+
+	mux.Handle("/", hs.graphQLServer)
+
+	return hs.applyCors(mux)
+}
+
 func (hs *httpServer) GetHandler() http.Handler {
 	mux := http.NewServeMux()
 
@@ -40,7 +49,7 @@ func (hs *httpServer) GetHandler() http.Handler {
 	mux.Handle("/graphql", hs.graphQLServer)
 	mux.HandleFunc("/health", hs.healthHandler)
 
-	return cors.AllowAll().Handler(mux)
+	return hs.applyCors(mux)
 }
 
 func (hs *httpServer) ListenAndServe() error {
@@ -52,4 +61,8 @@ func (hs *httpServer) ListenAndServe() error {
 func (hs *httpServer) healthHandler(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Healthy\n")
+}
+
+func (hs *httpServer) applyCors(mux *http.ServeMux) http.Handler {
+	return cors.AllowAll().Handler(mux)
 }
