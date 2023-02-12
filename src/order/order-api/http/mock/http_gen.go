@@ -5,6 +5,7 @@
 package mock_http
 
 import (
+	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -31,6 +32,20 @@ func NewMockHttpServer(ctrl *gomock.Controller) *MockHttpServer {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockHttpServer) EXPECT() *MockHttpServerMockRecorder {
 	return m.recorder
+}
+
+// GetHandler mocks base method.
+func (m *MockHttpServer) GetHandler() http.Handler {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetHandler")
+	ret0, _ := ret[0].(http.Handler)
+	return ret0
+}
+
+// GetHandler indicates an expected call of GetHandler.
+func (mr *MockHttpServerMockRecorder) GetHandler() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHandler", reflect.TypeOf((*MockHttpServer)(nil).GetHandler))
 }
 
 // ListenAndServe mocks base method.

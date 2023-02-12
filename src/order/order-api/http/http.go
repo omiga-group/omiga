@@ -12,6 +12,7 @@ import (
 )
 
 type HttpServer interface {
+	GetHandler() http.Handler
 	ListenAndServe() error
 }
 
@@ -32,18 +33,20 @@ func NewHttpServer(
 	}, nil
 }
 
-func (hs *httpServer) ListenAndServe() error {
+func (hs *httpServer) GetHandler() http.Handler {
 	mux := http.NewServeMux()
 
-	mux.Handle("/", playground.Handler("Omiga - Order", "/graphql"))
+	mux.Handle("/", playground.Handler("Omiga - Order API", "/graphql"))
 	mux.Handle("/graphql", hs.graphQLServer)
 	mux.HandleFunc("/health", hs.healthHandler)
 
-	handler := cors.AllowAll().Handler(mux)
+	return cors.AllowAll().Handler(mux)
+}
 
+func (hs *httpServer) ListenAndServe() error {
 	hs.logger.Infof("Listening on: %s", hs.appConfig.ListeningInterface)
 
-	return http.ListenAndServe(hs.appConfig.ListeningInterface, handler)
+	return http.ListenAndServe(hs.appConfig.ListeningInterface, hs.GetHandler())
 }
 
 func (hs *httpServer) healthHandler(w http.ResponseWriter, req *http.Request) {
