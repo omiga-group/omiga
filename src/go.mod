@@ -12,6 +12,8 @@ require (
 	github.com/aopoltorzhicky/go_kraken/rest v0.0.4
 	github.com/aopoltorzhicky/go_kraken/websocket v0.1.10
 	github.com/apache/pulsar-client-go v0.9.0
+	github.com/aws/aws-lambda-go v1.37.0
+	github.com/awslabs/aws-lambda-go-api-proxy v0.14.0
 	github.com/deepmap/oapi-codegen v1.12.4
 	github.com/go-co-op/gocron v1.18.0
 	github.com/golang/mock v1.6.0
@@ -49,8 +51,6 @@ require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/ardielle/ardielle-go v1.5.2 // indirect
-	github.com/aws/aws-lambda-go v1.37.0 // indirect
-	github.com/awslabs/aws-lambda-go-api-proxy v0.14.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
