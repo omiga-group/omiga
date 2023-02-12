@@ -19,7 +19,7 @@ jobs:
   build-go-playwright:
     name: "Build - go-playwright Base Docker Images"
     runs-on:
-      - self-hosted
+      - ubuntu-latest
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
@@ -83,7 +83,7 @@ jobs:
   build-atlas:
     name: "Build - atlas Base Docker Images"
     runs-on:
-      - self-hosted
+      - ubuntu-latest
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
