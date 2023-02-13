@@ -43,7 +43,7 @@ jobs:
 
       - name: Unit Tests
         run: |
-          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
+          VERSION=${{ github.sha }} docker build \
              --pull \
              --target test \
             --tag ${{ env.unittest_container_tag }} \

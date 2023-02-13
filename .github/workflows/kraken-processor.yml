@@ -33,6 +33,8 @@ jobs:
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
+      DOCKER_REGISTRY: microbusiness
+      DOCKER_REPOSITORY: kraken-processor
 
     steps:
       - name: Checkout code with full history
@@ -49,7 +51,7 @@ jobs:
 
       - name: Build
         run: |
-          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
+          VERSION=${{ github.sha }} docker build \
              --pull \
              --target build \
             --tag ${{ env.build_container_tag }} \
@@ -58,7 +60,7 @@ jobs:
 
       - name: Unit Tests
         run: |
-          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
+          VERSION=${{ github.sha }} docker build \
              --pull \
              --target test \
             --tag ${{ env.unittest_container_tag }} \
@@ -84,10 +86,10 @@ jobs:
 
       - name: Build final
         run: |
-          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
+          VERSION=${{ github.sha }} docker build \
              --pull \
              --target final \
-            --tag microbusiness/kraken-processor:${{ github.sha }} \
+            --tag $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
             --file ./src/venue/kraken-processor/Dockerfile \
             ./src
 
@@ -113,14 +115,14 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           docker tag \
-            microbusiness/kraken-processor:${{ github.sha }} \
-            microbusiness/kraken-processor:latest
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
           docker tag \
-            microbusiness/kraken-processor:${{ github.sha }} \
-            microbusiness/kraken-processor:${{ env.sem_version }}
-          docker push microbusiness/kraken-processor:${{ env.sem_version }}
-          docker push microbusiness/kraken-processor:${{ github.sha }}
-          docker push microbusiness/kraken-processor:latest
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
 
       - name: Clean up
         if: always()
@@ -128,6 +130,6 @@ jobs:
           docker rm ${{ env.unittest_extract_container_name }} || true
           docker rmi ${{ env.build_container_tag }} || true
           docker rmi ${{ env.unittest_container_tag }} || true
-          docker rmi microbusiness/kraken-processor:${{ env.sem_version }} || true
-          docker rmi microbusiness/kraken-processor:${{ github.sha }} || true
-          docker rmi microbusiness/kraken-processor:latest || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }} || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest || true

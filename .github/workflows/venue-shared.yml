@@ -45,7 +45,7 @@ jobs:
 
       - name: Unit Tests
         run: |
-          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
+          VERSION=${{ github.sha }} docker build \
              --pull \
              --target test \
             --tag ${{ env.unittest_container_tag }} \
@@ -82,6 +82,8 @@ jobs:
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
+      DOCKER_REGISTRY: microbusiness
+      DOCKER_REPOSITORY: venue-database-migrations
 
     steps:
       - name: Checkout code with full history
@@ -95,9 +97,9 @@ jobs:
 
       - name: Build
         run: |
-          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
+          VERSION=${{ github.sha }} docker build \
              --pull \
-            --tag microbusiness/venue-database-migrations:${{ github.sha }} \
+            --tag $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
             --file ./src/venue/shared/migrations/Dockerfile \
             ./src
 
@@ -123,18 +125,18 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           docker tag \
-            microbusiness/venue-database-migrations:${{ github.sha }} \
-            microbusiness/venue-database-migrations:latest
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
           docker tag \
-            microbusiness/venue-database-migrations:${{ github.sha }} \
-            microbusiness/venue-database-migrations:${{ env.sem_version }}
-          docker push microbusiness/venue-database-migrations:${{ env.sem_version }}
-          docker push microbusiness/venue-database-migrations:${{ github.sha }}
-          docker push microbusiness/venue-database-migrations:latest
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
 
       - name: Clean up
         if: always()
         run: |
-          docker rmi microbusiness/venue-database-migrations:${{ env.sem_version }} || true
-          docker rmi microbusiness/venue-database-migrations:${{ github.sha }} || true
-          docker rmi microbusiness/venue-database-migrations:latest || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }} || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest || true
