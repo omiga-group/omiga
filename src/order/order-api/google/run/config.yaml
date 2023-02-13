@@ -1,0 +1,16 @@
+app:
+  source: "urn::omiga::order::order-api-graphql"
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/order"
+  maxOpenConns: 10
+
+pulsar:
+  url: "pulsar://localhost:6650"
+  producerName: "order-api"
+  operationTimeout: 30s
+  connectionTimeout: 30s
+
+outbox:
+  maxRetryCount: 30
+  retryDelay: 10s
