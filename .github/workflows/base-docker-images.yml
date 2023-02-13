@@ -23,6 +23,8 @@ jobs:
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
+      DOCKER_REGISTRY: microbusiness
+      DOCKER_REPOSITORY: go-playwright
 
     steps:
       - name: Checkout code with full history
@@ -36,9 +38,9 @@ jobs:
 
       - name: Build
         run: |
-          DOCKER_BUILDKIT=1 VERSION=${{ env.sem_version }} docker build \
+          VERSION=${{ env.sem_version }} docker build \
              --pull \
-            --tag microbusiness/go-playwright:${{ github.sha }} \
+            --tag $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
             --file ./src/shared/base-docker-images/Dockerfile.go.playwright \
             ./src/shared/base-docker-images
 
@@ -64,21 +66,21 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           docker tag \
-            microbusiness/go-playwright:${{ github.sha }} \
-            microbusiness/go-playwright:latest
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
           docker tag \
-            microbusiness/go-playwright:${{ github.sha }} \
-            microbusiness/go-playwright:${{ env.sem_version }}
-          docker push microbusiness/go-playwright:${{ env.sem_version }}
-          docker push microbusiness/go-playwright:${{ github.sha }}
-          docker push microbusiness/go-playwright:latest
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
 
       - name: Clean up
         if: always()
         run: |
-          docker rmi microbusiness/go-playwright:${{ env.sem_version }} || true
-          docker rmi microbusiness/go-playwright:${{ github.sha }} || true
-          docker rmi microbusiness/go-playwright:latest || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }} || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest || true
 
   build-atlas:
     name: "Build - atlas Base Docker Images"
@@ -87,6 +89,8 @@ jobs:
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
+      DOCKER_REGISTRY: microbusiness
+      DOCKER_REPOSITORY: atlas
 
     steps:
       - name: Checkout code with full history
@@ -100,9 +104,9 @@ jobs:
 
       - name: Build
         run: |
-          DOCKER_BUILDKIT=1 VERSION=${{ env.sem_version }} docker build \
+          VERSION=${{ env.sem_version }} docker build \
              --pull \
-            --tag microbusiness/atlas:${{ github.sha }} \
+            --tag $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
             --file ./src/shared/base-docker-images/Dockerfile.atlas \
             ./src/shared/base-docker-images
 
@@ -128,18 +132,18 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           docker tag \
-            microbusiness/atlas:${{ github.sha }} \
-            microbusiness/atlas:latest
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
           docker tag \
-            microbusiness/atlas:${{ github.sha }} \
-            microbusiness/atlas:${{ env.sem_version }}
-          docker push microbusiness/atlas:${{ env.sem_version }}
-          docker push microbusiness/atlas:${{ github.sha }}
-          docker push microbusiness/atlas:latest
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
 
       - name: Clean up
         if: always()
         run: |
-          docker rmi microbusiness/atlas:${{ env.sem_version }} || true
-          docker rmi microbusiness/atlas:${{ github.sha }} || true
-          docker rmi microbusiness/atlas:latest || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }} || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest || true
