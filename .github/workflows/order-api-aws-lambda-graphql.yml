@@ -7,7 +7,7 @@ on:
       - "main"
     paths:
       - ".github/workflows/lint.yml"
-      - ".github/workflows/order-api.yml"
+      - ".github/workflows/order-api-aws-lambda-graphql.yml"
       - "src/go.mod"
       - "src/go.sum"
       - "src/shared/**"
@@ -18,7 +18,7 @@ on:
       - "main"
     paths:
       - ".github/workflows/lint.yml"
-      - ".github/workflows/order-api.yml"
+      - ".github/workflows/order-api-aws-lambda-graphql.yml"
       - "src/go.mod"
       - "src/go.sum"
       - "src/shared/**"
@@ -55,7 +55,7 @@ jobs:
              --pull \
              --target build \
             --tag ${{ env.build_container_tag }} \
-            --file ./src/order/order-api/Dockerfile \
+            --file ./src/order/order-api/aws/lambdas/graphql/Dockerfile \
             ./src
 
       - name: Unit Tests
@@ -64,7 +64,7 @@ jobs:
              --pull \
              --target test \
             --tag ${{ env.unittest_container_tag }} \
-            --file ./src/order/order-api/Dockerfile \
+            --file ./src/order/order-api/aws/lambdas/graphql/Dockerfile \
             ./src
 
       - name: Extract coverage output
@@ -80,7 +80,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ./coverage/reports/
-          flags: unittests,order-api
+          flags: unittests,order-api-aws-lambdas-graphql
           fail_ci_if_error: true
           verbose: true
 
@@ -90,7 +90,7 @@ jobs:
              --pull \
              --target final \
             --tag $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
-            --file ./src/order/order-api/Dockerfile \
+            --file ./src/order/order-api/aws/lambdas/graphql/Dockerfile \
             ./src
 
       - name: Run Trivy vulnerability scanner
