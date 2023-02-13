@@ -1,0 +1,6 @@
+app:
+  source: "urn::omiga::venue::venue-api"
+
+postgres:
+  connectionString: "postgres://postgres:12345678@localhost/venue"
+  maxOpenConns: 10
