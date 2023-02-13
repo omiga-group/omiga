@@ -25,6 +25,8 @@ jobs:
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
+      DOCKER_REGISTRY: microbusiness
+      DOCKER_REPOSITORY: gateway
 
     steps:
       - name: Checkout code with full history
@@ -38,9 +40,9 @@ jobs:
 
       - name: Build final
         run: |
-          DOCKER_BUILDKIT=1 VERSION=${{ github.sha }} docker build \
+          VERSION=${{ github.sha }} docker build \
              --pull \
-            --tag microbusiness/gateway:${{ github.sha }} \
+            --tag $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
             --file ./src/gateway/Dockerfile \
             ./src
 
@@ -66,21 +68,21 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           docker tag \
-            microbusiness/gateway:${{ github.sha }} \
-            microbusiness/gateway:latest
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
           docker tag \
-            microbusiness/gateway:${{ github.sha }} \
-            microbusiness/gateway:${{ env.sem_version }}
-          docker push microbusiness/gateway:${{ env.sem_version }}
-          docker push microbusiness/gateway:${{ github.sha }}
-          docker push microbusiness/gateway:latest
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
 
       - name: Clean up
         if: always()
         run: |
-          docker rmi microbusiness/gateway:${{ env.sem_version }} || true
-          docker rmi microbusiness/gateway:${{ github.sha }} || true
-          docker rmi microbusiness/gateway:latest || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }} || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest || true
 
   deploy-to-dev:
     if: ${{ github.ref == 'refs/heads/main' }}

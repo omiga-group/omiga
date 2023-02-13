@@ -32,6 +32,8 @@ jobs:
     env:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
+      DOCKER_REGISTRY: microbusiness
+      DOCKER_REPOSITORY: venues-all-in-one
 
     steps:
       - name: Checkout code with full history
@@ -48,7 +50,7 @@ jobs:
 
       - name: Build
         run: |
-          DOCKER_BUILDKIT=1 VERSION=${{ env.sem_version }} docker build \
+          VERSION=${{ env.sem_version }} docker build \
              --pull \
              --target build \
             --tag ${{ env.build_container_tag }} \
@@ -57,7 +59,7 @@ jobs:
 
       - name: Unit Tests
         run: |
-          DOCKER_BUILDKIT=1 VERSION=${{ env.sem_version }} docker build \
+          VERSION=${{ env.sem_version }} docker build \
              --pull \
              --target test \
             --tag ${{ env.unittest_container_tag }} \
@@ -83,10 +85,10 @@ jobs:
 
       - name: Build final
         run: |
-          DOCKER_BUILDKIT=1 VERSION=${{ env.sem_version }} docker build \
+          VERSION=${{ env.sem_version }} docker build \
              --pull \
              --target final \
-            --tag microbusiness/venues-all-in-one:${{ github.sha }} \
+            --tag $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
             --file ./src/venue/venues-all-in-one/Dockerfile \
             ./src
 
@@ -113,14 +115,14 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           docker tag \
-            microbusiness/venues-all-in-one:${{ github.sha }} \
-            microbusiness/venues-all-in-one:latest
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
           docker tag \
-            microbusiness/venues-all-in-one:${{ github.sha }} \
-            microbusiness/venues-all-in-one:${{ env.sem_version }}
-          docker push microbusiness/venues-all-in-one:${{ env.sem_version }}
-          docker push microbusiness/venues-all-in-one:${{ github.sha }}
-          docker push microbusiness/venues-all-in-one:latest
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} \
+            $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }}
+          docker push $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest
 
       - name: Clean up
         if: always()
@@ -128,9 +130,9 @@ jobs:
           docker rm ${{ env.unittest_extract_container_name }} || true
           docker rmi ${{ env.build_container_tag }} || true
           docker rmi ${{ env.unittest_container_tag }} || true
-          docker rmi microbusiness/venues-all-in-one:${{ env.sem_version }} || true
-          docker rmi microbusiness/venues-all-in-one:${{ github.sha }} || true
-          docker rmi microbusiness/venues-all-in-one:latest || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ env.sem_version }} || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:${{ github.sha }} || true
+          docker rmi $DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest || true
 
   deploy-to-dev:
     if: ${{ github.ref == 'refs/heads/main' }}
