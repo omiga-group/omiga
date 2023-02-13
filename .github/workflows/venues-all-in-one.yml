@@ -95,7 +95,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: microbusiness/venues-all-in-one:${{ github.sha }}
+          image-ref: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPOSITORY }}:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true

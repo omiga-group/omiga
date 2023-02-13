@@ -47,7 +47,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: microbusiness/go-playwright:${{ github.sha }}
+          image-ref: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPOSITORY }}:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
@@ -113,7 +113,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: microbusiness/atlas:${{ github.sha }}
+          image-ref: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPOSITORY }}:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
