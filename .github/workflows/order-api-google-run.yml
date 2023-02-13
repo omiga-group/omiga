@@ -7,7 +7,7 @@ on:
       - "main"
     paths:
       - ".github/workflows/lint.yml"
-      - ".github/workflows/order-api-aws-lambda-graphql.yml"
+      - ".github/workflows/order-api-google-run.yml"
       - "src/go.mod"
       - "src/go.sum"
       - "src/shared/**"
@@ -18,7 +18,7 @@ on:
       - "main"
     paths:
       - ".github/workflows/lint.yml"
-      - ".github/workflows/order-api-aws-lambda-graphql.yml"
+      - ".github/workflows/order-api-google-run.yml"
       - "src/go.mod"
       - "src/go.sum"
       - "src/shared/**"
