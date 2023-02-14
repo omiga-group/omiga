@@ -27,12 +27,10 @@ func main() {
 		sugarLogger.Fatal(err)
 	}
 
-	// Determine port for HTTP service.
-	port := os.Getenv("PORT")
-	if port == "" {
+    if val, ok := os.LookupEnv("PORT"); ok {
+        config.App.ListeningInterface = ":" + val
+    }else{
 		config.App.ListeningInterface = ":8080"
-	} else {
-		config.App.ListeningInterface = ":" + port
 	}
 
 	entgoClient, err := orderappsetup.NewEntgoClient(
