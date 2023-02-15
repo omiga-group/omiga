@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1.4.1
 ARG FINAL_IMAGE=microbusiness/go-playwright:latest
-ARG BUILD_IMAGE=golang:1.20
+ARG BUILD_IMAGE=golang:1.21
 
 FROM $BUILD_IMAGE as build
 

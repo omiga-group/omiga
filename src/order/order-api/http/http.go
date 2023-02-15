@@ -53,7 +53,7 @@ func (hs *httpServer) GetHandler() http.Handler {
 }
 
 func (hs *httpServer) ListenAndServe() error {
-	hs.logger.Infof("Listening on: %s", hs.appConfig.ListeningInterface)
+	hs.logger.Infof("Listening on '%s'", hs.appConfig.ListeningInterface)
 
 	return http.ListenAndServe(hs.appConfig.ListeningInterface, hs.GetHandler())
 }

@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.4.1
-ARG BUILD_IMAGE=golang:1.20
+ARG BUILD_IMAGE=golang:1.21
 
 FROM $BUILD_IMAGE as test
 LABEL maintainer="morteza@omiga.com.au"

@@ -1,5 +1,5 @@
 app:
-  source: "urn::omiga::order::order-api-graphql"
+  source: "urn::omiga::order::order-api"
 
 postgres:
   connectionString: "postgres://postgres:12345678@localhost/order"

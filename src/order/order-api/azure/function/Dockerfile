@@ -5,18 +5,20 @@ ARG BUILD_IMAGE=golang:1.21
 FROM $BUILD_IMAGE as build
 
 RUN mkdir -p /src/shared/enterprise \
+    mkdir -p /src/shared/clients \
     mkdir -p /src/order/shared \
-    mkdir -p /src/order/orderctl
+    mkdir -p /src/order/order-api
 
 COPY go.mod /src/
 COPY go.sum /src/
 COPY shared/enterprise /src/shared/enterprise
+COPY shared/clients /src/shared/clients
 COPY order/shared /src/order/shared
-COPY order/orderctl /src/order/orderctl
+COPY order/order-api /src/order/order-api
 
-WORKDIR /src/order/orderctl
+WORKDIR /src/order/order-api/azure/function
 
-RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/orderctl main.go
+RUN --mount=type=cache,target=/go CGO_ENABLED=0 go build -v -o /bin/order-api main.go
 
 FROM build AS test
 
@@ -27,10 +29,12 @@ FROM $FINAL_IMAGE as final
 LABEL maintainer="morteza@omiga.com.au"
 
 WORKDIR /omiga
-COPY --from=build /bin/orderctl /omiga
-COPY --from=build /src/order/orderctl/config.yaml /omiga
-
-RUN /omiga/orderctl install-dependecies
+COPY --from=build /bin/order-api /omiga
+COPY --from=build /src/order/order-api/azure/function/config.yaml /omiga
+COPY --from=build /src/order/order-api/azure/function/host.json /omiga
+COPY --from=build /src/order/order-api/azure/function/GraphQL/function.json /omiga/GraphQL/function.json
 
 # Fix CVE-2022-3996
 RUN apk upgrade libssl3 libcrypto3
+
+CMD ["/omiga/order-api"]

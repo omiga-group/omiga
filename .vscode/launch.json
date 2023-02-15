@@ -1,5 +1,8 @@
 {
   "version": "0.2.0",
+  "recommendations": [
+    "ms-azuretools.vscode-azurefunctions"
+  ],
   "configurations": [
     {
       "name": "omigactl - Setup Pulsar",
@@ -7,7 +10,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/shared/omigactl/main.go",
-      "args": ["setup-pulsar"]
+      "args": [
+        "setup-pulsar"
+      ]
     },
     {
       "name": "Coingeko",
@@ -15,7 +20,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/coingeko-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Venue API",
@@ -23,7 +30,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/venue-api/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Binance Processor",
@@ -31,7 +40,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/binance-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "BitMart Processor",
@@ -39,7 +50,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/bitmart-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Bittrex Processor",
@@ -47,7 +60,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/bittrex-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Bybit Processor",
@@ -55,7 +70,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/bybit-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Mexc Processor",
@@ -63,7 +80,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/mexc-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Rain Processor",
@@ -71,7 +90,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/rain-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Coinbase Processor",
@@ -79,7 +100,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/coinbase-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Crypto Processor",
@@ -87,7 +110,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/crypto-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "DexTrade Processor",
@@ -95,7 +120,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/dextrade-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "FTX Processor",
@@ -103,7 +130,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/ftx-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Gemini Processor",
@@ -111,7 +140,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/gemini-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Huobi Processor",
@@ -119,7 +150,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/huobi-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Kraken Processor",
@@ -127,7 +160,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/kraken-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "KuCoin Processor",
@@ -135,7 +170,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/kucoin-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Xt Processor",
@@ -143,7 +180,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/venue/xt-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Order API",
@@ -151,7 +190,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/order/order-api/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     },
     {
       "name": "Order Processor",
@@ -159,7 +200,9 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/src/order/order-processor/main.go",
-      "args": ["start"]
+      "args": [
+        "start"
+      ]
     }
   ]
 }
