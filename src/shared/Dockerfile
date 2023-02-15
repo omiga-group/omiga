@@ -4,13 +4,11 @@ ARG BUILD_IMAGE=golang:1.20
 FROM $BUILD_IMAGE as test
 LABEL maintainer="morteza@omiga.com.au"
 
-RUN mkdir -p /src/shared/enterprise \
-    mkdir -p /src/shared/clients
+RUN mkdir -p /src/shared/enterprise
 
 COPY go.mod /src/
 COPY go.sum /src/
 COPY shared/enterprise /src/shared/enterprise
-COPY shared/clients /src/shared/clients
 
 WORKDIR /src/shared
 
