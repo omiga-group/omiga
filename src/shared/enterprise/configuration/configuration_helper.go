@@ -26,10 +26,9 @@ func NewConfigurationHelper(
 	osHelper os.OsHelper,
 ) (ConfigurationHelper, error) {
 	return &configurationHelper{
-			logger:   logger,
-			osHelper: osHelper,
-		},
-		nil
+		logger:   logger,
+		osHelper: osHelper,
+	}, nil
 }
 
 func (ch *configurationHelper) LoadYaml(configFilePath string, config interface{}) error {
