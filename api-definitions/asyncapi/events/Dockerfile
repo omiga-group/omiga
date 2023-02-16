@@ -1,4 +1,7 @@
-﻿FROM node:16-alpine
+﻿# syntax = docker/dockerfile:1.4.1
+ARG BUILD_IMAGE=node:18-alpine
+
+FROM $BUILD_IMAGE as build
 LABEL maintainer="morteza@omiga.com.au"
 
 RUN npm install -g @asyncapi/generator

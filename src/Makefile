@@ -10,6 +10,7 @@ all: dep generate ## Runs dep generate
 .PHONY: dep
 dep: ## Install dependencies
 	@go mod tidy
+	@go mod download
 
 .PHONY: gen-dep
 gen-dep: ## Install code generation dependencies
