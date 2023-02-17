@@ -26,7 +26,7 @@ jobs:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
       DOCKER_REGISTRY: microbusiness
-      DOCKER_REPOSITORY: gateway
+      DOCKER_REPOSITORY: omigagateway
 
     steps:
       - name: Checkout code with full history
