@@ -4,6 +4,7 @@ import (
 	"github.com/life4/genesis/slices"
 	graphqlmodels "github.com/omiga-group/omiga/src/order/order-api/graphql/models"
 	"github.com/omiga-group/omiga/src/order/shared/models"
+	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 )
 
 func FromSubmitOrderInputToOrder(src graphqlmodels.SubmitOrderInput) models.Order {
@@ -11,8 +12,8 @@ func FromSubmitOrderInputToOrder(src graphqlmodels.SubmitOrderInput) models.Orde
 		OrderDetails: models.OrderDetails{
 			BaseCurrency:    fromCurrencyInputToCurrency(src.OrderDetails.BaseCurrency),
 			CounterCurrency: fromCurrencyInputToCurrency(src.OrderDetails.CounterCurrency),
-			Type:            models.OrderType(src.OrderDetails.Type),
-			Side:            models.OrderSide(src.OrderDetails.Side),
+			Type:            orderv1.ValuesToOrderType[src.OrderDetails.Type],
+			Side:            orderv1.ValuesToOrderSide[src.OrderDetails.Side],
 			Quantity:        fromQuantityInputToQuantity(src.OrderDetails.Quantity),
 			Price:           fromQuantityInputToQuantity(src.OrderDetails.Price),
 		},

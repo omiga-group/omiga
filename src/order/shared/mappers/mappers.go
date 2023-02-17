@@ -26,8 +26,8 @@ func fromOrderDetailsToEventOrderDetails(src models.OrderDetails) orderv1.OrderD
 	return orderv1.OrderDetails{
 		BaseCurrency:    fromCurrencyToEventCurrency(src.BaseCurrency),
 		CounterCurrency: fromCurrencyToEventCurrency(src.CounterCurrency),
-		Type:            orderv1.OrderType(src.Type),
-		Side:            orderv1.OrderSide(src.Side),
+		ReservedType:    src.Type,
+		Side:            src.Side,
 		Quantity:        fromQuantityToEventQuantity(src.Quantity),
 		Price:           fromQuantityToEventQuantity(src.Price),
 	}

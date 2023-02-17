@@ -39,7 +39,7 @@ func (obp *orderBookPublisher) Publish(ctx context.Context, key string, orderBoo
 		Metadata: orderbookv1.Metadata{
 			Id:            uuid.New(),
 			Source:        obp.appConfig.Source,
-			Type:          orderbookv1.TypeOrderBookUpdated,
+			ReservedType:  orderbookv1.ReservedTypeOrderBookUpdated,
 			Time:          time.Now(),
 			CorrelationId: uuid.New(),
 		},
