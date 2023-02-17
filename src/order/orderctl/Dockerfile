@@ -5,12 +5,14 @@ ARG BUILD_IMAGE=golang:1.20
 FROM $BUILD_IMAGE as build
 
 RUN mkdir -p /src/shared/enterprise \
+    mkdir -p /src/shared/clients \
     mkdir -p /src/order/shared \
     mkdir -p /src/order/orderctl
 
 COPY go.mod /src/
 COPY go.sum /src/
 COPY shared/enterprise /src/shared/enterprise
+COPY shared/clients /src/shared/clients
 COPY order/shared /src/order/shared
 COPY order/orderctl /src/order/orderctl
 
