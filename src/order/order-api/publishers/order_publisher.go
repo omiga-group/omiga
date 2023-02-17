@@ -49,7 +49,7 @@ func (op *orderPublisher) Publish(
 		Metadata: orderv1.Metadata{
 			Id:            uuid.New(),
 			Source:        op.appConfig.Source,
-			Type:          orderv1.TypeOrderSubmitted,
+			ReservedType:  orderv1.ReservedTypeOrderSubmitted,
 			Time:          time.Now(),
 			CorrelationId: uuid.New(),
 		},

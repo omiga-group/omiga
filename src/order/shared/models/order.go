@@ -4,26 +4,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	orderv1 "github.com/omiga-group/omiga/src/shared/clients/events/omiga/order/v1"
 )
 
 type ID uuid.UUID
-
-type OrderType string
-
-const (
-	OrderTypeInstant      OrderType = "INSTANT"
-	OrderTypeMarket       OrderType = "MARKET"
-	OrderTypeLimit        OrderType = "LIMIT"
-	OrderTypeStop         OrderType = "STOP"
-	OrderTypeTrailingStop OrderType = "TRAILING_STOP"
-)
-
-type OrderSide string
-
-const (
-	OrderSideBid OrderSide = "BID"
-	OrderSideAsk OrderSide = "ASK"
-)
 
 type Currency struct {
 	Name         string
@@ -40,8 +24,8 @@ type Quantity struct {
 type OrderDetails struct {
 	BaseCurrency    Currency
 	CounterCurrency Currency
-	Type            OrderType
-	Side            OrderSide
+	Type            orderv1.OrderType
+	Side            orderv1.OrderSide
 	Quantity        Quantity
 	Price           Quantity
 }
