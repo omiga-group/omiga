@@ -1,0 +1,127 @@
+/* Add custom styles here */
+body {
+  background-color: #F5F5F5;
+}
+
+header {
+  background-color: #fff;
+  box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+}
+
+header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+}
+
+#home {
+  background-color: #fff;
+  box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin-top: 80px;
+  padding: 40px;
+  text-align: center;
+}
+
+#home h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 40px;
+}
+
+#home p {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 40px;
+}
+
+#conversational-search {
+  padding: 20px;
+  background-color: #f2f2f2;
+  border-radius: 10px;
+  box-shadow: 2px 2px 8px #ccc;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+input[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #3e8e41;
+}
+
+input[type="radio"] {
+  margin-right: 10px;
+}
+
+#products-list {
+  margin-top: 50px;
+  text-align: center;
+}
+
+#products-list h2 {
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+#products-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+#products-table th,
+#products-table td {
+  border: 1px solid gray;
+  padding: 10px;
+  text-align: center;
+}
+
+#products-table th {
+  background-color: lightgray;
+  font-size: 18px;
+}
+
+#products-table td {
+  font-size: 16px;
+}
+
+#products-table td a {
+  color: #4CAF50;
+}
+
+#products-table td a:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+

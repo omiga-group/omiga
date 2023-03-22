@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Omiga Crypto Product Finder</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="main.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#products-table').DataTable();
+    });
+  </script>
+</head>
+
+<body>
+  <!-- Header Section -->
+  <header id="header">
+    <div class="header-container">
+      <h1>Omiga Crypto Product Finder</h1>
+    </div>
+  </header>
+  <!-- Product Comparison Section -->
+  <!-- Home Page -->
+  <section id="home">
+    <p>Answer a few questions to help us understand your needs and find the Omiga cryptocurrency product for you.</p>
+
+    <!-- Conversational Search System -->
+    <form id="conversational-search">
+
+      <div class="form-group">
+        <label for="experience">How much experience do you have with cryptocurrency?</label>
+        <select id="experience">
+          <option value="">Select your experience level</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="country">What is your country of residence?</label>
+        <select id="country">
+          <option value="">Select a country</option>
+          <option value="US">United States</option>
+          <option value="UK">United Kingdom</option>
+          <option value="Canada">Canada</option>
+          <option value="Australia">Australia</option>
+          <!-- Add more country options as needed -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="investment-amount">What is your investment amount?</label>
+        <select id="investment-amount">
+          <option value="less-than-1000">Less than $1000</option>
+          <option value="1000-5000">$1000 to $5000</option>
+          <option value="5000-10000">$5000 to $10,000</option>
+          <option value="more-than-10000">More than $10,000</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="risk-tolerance">What is your risk tolerance?</label>
+        <select id="risk-tolerance">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="product-type">What type of product are you looking for?</label>
+        <select id="product-type">
+          <option value="">Select a product</option>
+          <option value="earn">Earn</option>
+          <option value="swap">Swap</option>
+          <option value="stake">Stake</option>
+          <option value="lend">Lend</option>
+        </select>
+      </div>
+
+      <div id="earn-fields" style="display:none;">
+        <label for="yield">Yield:</label>
+        <input type="text" id="yield" name="yield">
+        <br>
+
+        <label for="risk">Risk:</label>
+        <input type="text" id="risk" name="risk">
+        <br>
+
+        <label for="liquidity">Liquidity:</label>
+        <input type="text" id="liquidity" name="liquidity">
+        <br>
+
+        <label for="fees">Fees:</label>
+        <input type="text" id="fees" name="fees">
+        <br>
+      </div>
+
+      <div id="swap-fields" style="display:none;">
+        <label for="tokens">Supported tokens:</label>
+        <input type="text" id="tokens" name="tokens">
+        <br>
+
+        <label for="liquidity">Liquidity:</label>
+        <input type="text" id="liquidity" name="liquidity">
+        <br>
+
+        <label for="fees">Trading fees:</label>
+        <input type="text" id="fees" name="fees">
+        <br>
+      </div>
+
+      <div id="stake-fields" style="display:none;">
+        <label for="reward-rate">Reward Rate:</label>
+        <input type="text" id="reward-rate" name="reward-rate">
+        <br>
+
+        <label for="lockup-period">Lock-Up Period:</label>
+        <input type="text" id="lockup-period" name="lockup-period">
+        <br>
+
+        <label for="token-volatility">Token Volatility:</label>
+        <input type="text" id="token-volatility" name="token-volatility">
+        <br>
+      </div>
+
+      <div id="lend-fields" style="display:none;">
+        <label for="interest-rates">Interest Rates:</label>
+        <input type="text" id="interest-rates" name="interest-rates">
+        <br>
+
+        <label for="liquidity">Liquidity:</label>
+        <input type="text" id="liquidity" name="liquidity">
+        <br>
+      </div>
+
+      <input type="submit" value="Find My Product">      
+    </form>
+
+    <!-- Cryptocurrency Products List -->
+    <section id="products-list">
+      <h2>Recommended Cryptocurrency Products:</h2>
+      <table id="products-table">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Purpose</th>
+            <th>Experience Level</th>
+            <th>Features</th>
+            <th>Compare</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-product-id="1">
+            <td><a href="#" class="product-link" data-product-id="1">Product 1</a></td>
+            <td>Earning</td>
+            <td>Beginner</td>
+            <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</td>
+            <td><input type="checkbox" name="product1"></td>
+          </tr>
+          <tr data-product-id="2">
+            <td><a href="#" class="product-link" data-product-id="2">Product 2</a></td>
+            <td>Swapping</td>
+            <td>Intermediate</td>
+            <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</td>
+            <td><input type="checkbox" name="product2"></td>
+          </tr>
+          <tr data-product-id="3">
+            <td><a href="#" class="product-link" data-product-id="3">Product 3</a></td>
+            <td>Staking</td>
+            <td>Advanced</td>
+            <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</td>
+            <td><input type="checkbox" name="product3"></td>
+          </tr>
+          <!-- ... -->
+        </tbody>
+      </table>
+    </section>
+</body>
+
+</html>
